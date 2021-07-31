@@ -1,4 +1,4 @@
-import { hit, Intersection, IntersectionComputations, prepareComputations } from './intersections';
+import { hit, Intersection, IntersectionComputations, prepareComputations, reflectance } from './intersections';
 import { Light, pointLight } from './lights';
 import { ray, Ray } from './rays';
 import { Shape, Sphere } from './shapes'
@@ -26,11 +26,19 @@ export class World {
         });
         if(shades.length === 0){
             return [0,0,0];
-        } else {
-            shades.push(this.reflectedColor(comps, maxDepth));
-            shades.push(this.refractedColor(comps, maxDepth));
-            return shades.reduce((a, b) => add(a, b));
         }
+
+        let reflected = this.reflectedColor(comps, maxDepth);
+        let refracted = this.refractedColor(comps, maxDepth);
+
+        if(comps.object.material.reflective > 0 && comps.object.material.transparancy > 0) {
+            const r = reflectance(comps);
+            shades.push(multiply(reflected, r), multiply(refracted, (1 - r)));
+        } else {
+            shades.push(reflected, refracted);
+        }
+
+        return shades.reduce((a, b) => add(a, b));
     }
 
     colorAt(r: Ray, maxDepth: number = 4): Color {

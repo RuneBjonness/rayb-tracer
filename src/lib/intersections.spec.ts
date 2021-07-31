@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { hit, intersection, prepareComputations } from './intersections';
+import { hit, intersection, prepareComputations, reflectance } from './intersections';
 import { ray } from './rays';
 import { glassSphere, Plane, Sphere } from './shapes';
 import { scaling, translation } from './transformations';
@@ -165,20 +165,6 @@ describe('finding n1 and n2 at various intersections', () => {
     });
 });
 
-test('precomputing the state of an intersection', () => {
-    const r = ray(point(0, 0, -5), vector(0, 0, 1));
-    const s = new Sphere();
-    const i = intersection(4, s);
-
-    const comps = prepareComputations(i, r);
-
-    expect(comps.t).toEqual(i.time);
-    expect(comps.object).toEqual(i.object);
-    expect(areEqual(comps.point, point(0, 0, -1))).toBe(true);
-    expect(areEqual(comps.eyev, vector(0, 0, -1))).toBe(true);
-    expect(areEqual(comps.normalv, vector(0, 0, -1))).toBe(true);
-});
-
 test('the underPoint is offset below the surface', () => {
     const r = ray(point(0, 0, -5), vector(0, 0, 1));
     const s = glassSphere();
@@ -189,4 +175,34 @@ test('the underPoint is offset below the surface', () => {
 
     expect(comps.underPoint[2]).toBeGreaterThan(-0.00001/2);
     expect(comps.point[2]).toBeLessThan(comps.underPoint[2]);
+});
+
+test('the Schlick approximation under total internal reflection', () => {
+    const s = glassSphere();
+    const r = ray(point(0, 0, Math.sqrt(2)/2), vector(0, 1, 0));
+    const xs = [intersection(-Math.sqrt(2)/2, s), intersection(Math.sqrt(2)/2, s)];
+
+    const comps = prepareComputations(xs[1], r, xs);
+
+    expect(reflectance(comps)).toEqual(1.0);
+});
+
+test('the Schlick approximation with a perpendicular viewing angle', () => {
+    const s = glassSphere();
+    const r = ray(point(0, 0, 0), vector(0, 1, 0));
+    const xs = [intersection(-1, s), intersection(1, s)];
+
+    const comps = prepareComputations(xs[1], r, xs);
+
+    expect(reflectance(comps)).toBeCloseTo(0.04);
+});
+
+test('the Schlick approximation with a small angle and n2 > n1', () => {
+    const s = glassSphere();
+    const r = ray(point(0, 0.99, -2), vector(0, 0, 1));
+    const i = intersection(1.8589, s);
+
+    const comps = prepareComputations(i, r);
+
+    expect(reflectance(comps)).toBeCloseTo(0.48873);
 });

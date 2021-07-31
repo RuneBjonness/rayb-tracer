@@ -313,3 +313,26 @@ test('shadeHit() with a transparent material', () => {
     expect(areEqual(c, color(0.93642, 0.68642, 0.68642))).toBe(true);
 });
 
+test('shadeHit() with a reflective and transparent material', () => {
+    const w = defaultWorld();
+    const floor = new Plane();
+    floor.material.reflective = 0.5;
+    floor.material.transparancy = 0.5;
+    floor.material.refractiveIndex = 1.5;
+    floor.transform = translation(0, -1, 0);
+    w.objects.push(floor);
+
+    const ball = new Sphere();
+    ball.material.color = [1, 0, 0];
+    ball.material.ambient = 0.5;
+    ball.transform = translation(0, -3.5, -0.5);
+    w.objects.push(ball);
+
+    const r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2)/2, Math.sqrt(2)/2));
+    const i = intersection(Math.sqrt(2), floor);
+
+    const comps = prepareComputations(i, r);
+    const c = w.shadeHit(comps, 5);
+
+    expect(areEqual(c, color(0.93391, 0.69643, 0.69243))).toBe(true);
+});

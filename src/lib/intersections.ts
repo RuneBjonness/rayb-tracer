@@ -80,3 +80,20 @@ export function prepareComputations(i: Intersection, r: Ray, xs: Intersection[] 
 
     return comps;
 }
+
+export function reflectance(comps: IntersectionComputations): number {
+    let cos = dot(comps.eyev, comps.normalv);
+
+    if(comps.n1 > comps.n2) {
+        const n = comps.n1 / comps.n2;
+        const sin2t = n**2 * (1.0 - cos**2);
+        if( sin2t > 1){
+            return 1.0;
+        }
+
+        cos = Math.sqrt(1.0 - sin2t);
+    }
+
+    const r0 = ((comps.n1 - comps.n2) / (comps.n1 + comps.n2))**2;
+    return r0 + (1 - r0) * (1 - cos)**5;
+}
