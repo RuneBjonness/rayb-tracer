@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import './Canvas.css'
-import { renderSpheres } from './lib/playground';
+import { renderScene } from './lib/playground';
 
 const RtCanvas: React.FC<{}> = () => {
     let width = 200;
@@ -13,7 +13,7 @@ const RtCanvas: React.FC<{}> = () => {
         if (canvasRef.current) {
             canvasCtxRef.current = canvasRef.current.getContext('2d');
             let ctx = canvasCtxRef.current;
-            const imageData = renderSpheres(width, height);
+            const imageData = renderScene(width, height);
             
             ctx!.putImageData(imageData, 0, 0);
         }
