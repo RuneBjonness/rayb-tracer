@@ -1,7 +1,7 @@
 import { point, vector, color, Color } from './tuples';
 import { radians, rotationX, rotationY, rotationZ, scaling, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cube, Plane, Shape, Sphere } from './shapes';
+import { Cube, Cylinder, Plane, Shape, Sphere } from './shapes';
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
@@ -104,6 +104,18 @@ export function renderScene(width: number, height: number): ImageData {
         return [c1, c2];
     }
 
+    function cylindersDemo(): Shape[] {
+        const c1 = new Cylinder();
+        c1.transform = multiply(translation(0, 1, 1), multiply(scaling(1.5, 0.5, 0.5), multiply(rotationY(radians(-15)), rotationX(radians(22)))));
+        c1.material.color = color(0.1, 0.5, 1);
+
+        const c2 = new Cylinder();
+        c2.transform = multiply(translation(0, 0.75, -1), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(radians(45)), rotationX(radians(45)))));
+        c2.material.color = color(0.4, 0.7, 1);
+
+        return [c1, c2];
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -116,7 +128,8 @@ export function renderScene(width: number, height: number): ImageData {
     const floor = new Plane();
     floor.material.pattern = new Checkers3dPattern(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4));
     floor.material.pattern.transform = multiply(translation(0, 0.5, 0), rotationY(radians(-45)));
-    world.objects.push(...cubesDemo(), floor);
+    // world.objects.push(...cubesDemo(), floor);
+    world.objects.push(...cylindersDemo(), floor);
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));

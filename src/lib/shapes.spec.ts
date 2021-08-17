@@ -2,7 +2,7 @@ import each from 'jest-each';
 import { material } from './materials';
 import { areEqual, identityMatrix, multiply } from './matrices';
 import { ray } from './rays';
-import { Cube, glassSphere, Plane, Sphere, TestShape } from './shapes';
+import { Cube, Cylinder, glassSphere, Plane, Sphere, TestShape } from './shapes';
 import { rotationZ, scaling, translation } from './transformations';
 import { point, vector, areEqual as tuplesAreEqual, normalize } from './tuples'
 
@@ -244,7 +244,7 @@ describe('Cubes', () => {
     });
 
     each`
-        origin             | direction          
+        origin             | direction                          
         ${point(-2, 0, 0)} | ${vector(0.2673, 0.5345, 0.8018)}
         ${point(0, -2, 0)} | ${vector(0.8018, 0.2673, 0.5345)} 
         ${point(0, 0, -2)} | ${vector(0.5345, 0.8018, 0.2673)}
@@ -270,6 +270,49 @@ describe('Cubes', () => {
         ${point(-1, -1, -1)}    | ${vector(-1, 0, 0)} 
     `.test('the normal on a surface of a cube', ({point, normal}) => {
         const c = new Cube();
+        const n = c.normalAt(point);
+
+        expect(tuplesAreEqual(n, normal)).toBe(true);
+    });
+});
+
+
+describe('Cylinders', () => {
+
+    each`
+        origin             | direction          
+        ${point(1, 0, 0)}  | ${vector(0, 1, 0)}
+        ${point(0, 0, 0)}  | ${vector(0, 1, 0)} 
+        ${point(0, 0, -5)} | ${vector(1, 1, 1)}
+    `.test('a ray misses a cylinder', ({origin, direction}) => {
+        const c = new Cylinder();
+        const xs = c.intersects(ray(origin, normalize(direction)));
+
+        expect(xs.length).toEqual(0);
+    });
+
+    each`
+        origin               | direction            | t0         | t1
+        ${point(1, 0, -5)}   | ${vector(0, 0, 1)}   | ${5}       | ${5}
+        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${4}       | ${6}
+        ${point(0.5, 0, -5)} | ${vector(0.1, 1, 1)} | ${6.80798} | ${7.08872}
+    `.test('a ray strikes a cylinder', ({origin, direction, t0, t1}) => {
+        const c = new Cylinder();
+        const xs = c.intersects(ray(origin, normalize(direction)));
+
+        expect(xs.length).toEqual(2);
+        expect(xs[0].time).toBeCloseTo(t0);
+        expect(xs[1].time).toBeCloseTo(t1);
+    });
+
+    each`
+        point              | normal          
+        ${point(1, 0, 0)}  | ${vector(1, 0, 0)}
+        ${point(0, 5, -1)} | ${vector(0, 0, -1)} 
+        ${point(0, -2, 1)} | ${vector(0, 0, 1)}
+        ${point(-1, 1, 0)} | ${vector(-1, 0, 0)} 
+    `.test('the normal on a cylinder', ({point, normal}) => {
+        const c = new Cylinder();
         const n = c.normalAt(point);
 
         expect(tuplesAreEqual(n, normal)).toBe(true);

@@ -1,7 +1,7 @@
 import { intersection, Intersection } from './intersections';
 import { identityMatrix, inverse, multiply, transpose } from './matrices';
 import { Ray, transform } from './rays';
-import { divide, dot, normalize, point, subtract, Tuple, vector } from './tuples'
+import { dot, normalize, point, subtract, Tuple, vector } from './tuples'
 import { material, Material } from './materials';
 
 
@@ -146,5 +146,34 @@ export class Cube extends Shape {
             tmax = tMaxNumerator * Number.POSITIVE_INFINITY;
         }
         return tmin < tmax ? [tmin, tmax] : [tmax, tmin];
+    }
+}
+
+export class Cylinder extends Shape {
+    constructor(){
+        super();
+    }
+
+    protected localIntersects(r: Ray): Intersection[] {
+        const spehereToRay = subtract(r.origin, point(0, 0, 0));
+        const a = r.direction[0]**2 + r.direction[2]**2;
+        if(Math.abs(a) < 0.00001) {
+            return [];
+        }
+        const b = 2 * r.origin[0] * r.direction[0] + 2 * r.origin[2] * r.direction[2];
+        const c =  r.origin[0]**2 + r.origin[2]**2 - 1;
+        const discriminant = b**2 - 4 * a * c;
+    
+        if(discriminant < 0) {
+            return [];
+        }
+        return [
+            intersection((-b - Math.sqrt(discriminant)) / (2 * a), this),
+            intersection((-b + Math.sqrt(discriminant)) / (2 * a), this)
+        ];
+    }
+
+    protected localNormalAt(p: Tuple): Tuple {
+        return vector(p[0], 0, p[2]);
     }
 }
