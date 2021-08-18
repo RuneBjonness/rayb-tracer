@@ -317,4 +317,28 @@ describe('Cylinders', () => {
 
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
+
+    test('the default minimum and maximum for a cylinder', () => {
+        const cyl = new Cylinder();
+    
+        expect(cyl.minimum).toEqual(Number.NEGATIVE_INFINITY);
+        expect(cyl.maximum).toEqual(Number.POSITIVE_INFINITY);
+    });
+
+    each`
+        origin               | direction            | count
+        ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}
+        ${point(0, 3, -5)}   | ${vector(0, 0, 1)}   | ${0}
+        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${0}
+        ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}
+        ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}
+        ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}
+    `.test('a ray strikes a cylinder', ({origin, direction, count}) => {
+        const c = new Cylinder();
+        c.minimum = 1;
+        c.maximum = 2;
+        const xs = c.intersects(ray(origin, normalize(direction)));
+
+        expect(xs.length).toEqual(count);
+    });
 });

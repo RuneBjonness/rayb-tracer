@@ -106,12 +106,19 @@ export function renderScene(width: number, height: number): ImageData {
 
     function cylindersDemo(): Shape[] {
         const c1 = new Cylinder();
+        c1.minimum = 0;
+        c1.maximum = 2;
         c1.transform = multiply(translation(0, 1, 1), multiply(scaling(1.5, 0.5, 0.5), multiply(rotationY(radians(-15)), rotationX(radians(22)))));
-        c1.material.color = color(0.1, 0.5, 1);
+        c1.material.color = color(0.4, 0.7, 1);
 
         const c2 = new Cylinder();
+        c2.minimum = 0;
+        c2.maximum = 3;
         c2.transform = multiply(translation(0, 0.75, -1), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(radians(45)), rotationX(radians(45)))));
-        c2.material.color = color(0.4, 0.7, 1);
+        c2.material.color = color(0, 0, 0.3);
+        c2.material.reflective = 0.9;
+        c2.material.specular = 1;
+        c2.material.shininess = 400;
 
         return [c1, c2];
     }

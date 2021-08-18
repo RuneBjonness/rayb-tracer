@@ -150,12 +150,17 @@ export class Cube extends Shape {
 }
 
 export class Cylinder extends Shape {
+    minimum: number;
+    maximum: number;
+
     constructor(){
         super();
+
+        this.minimum = Number.NEGATIVE_INFINITY;
+        this.maximum = Number.POSITIVE_INFINITY;
     }
 
     protected localIntersects(r: Ray): Intersection[] {
-        const spehereToRay = subtract(r.origin, point(0, 0, 0));
         const a = r.direction[0]**2 + r.direction[2]**2;
         if(Math.abs(a) < 0.00001) {
             return [];
@@ -167,13 +172,28 @@ export class Cylinder extends Shape {
         if(discriminant < 0) {
             return [];
         }
-        return [
-            intersection((-b - Math.sqrt(discriminant)) / (2 * a), this),
-            intersection((-b + Math.sqrt(discriminant)) / (2 * a), this)
-        ];
+
+        let t0 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        let t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+
+        if(t0 > t1){
+            [t0, t1] = [t1, t0];
+        }
+
+        const xs = this.hit(r, t0);
+        xs.push(...this.hit(r, t1));
+        return xs;
     }
 
     protected localNormalAt(p: Tuple): Tuple {
         return vector(p[0], 0, p[2]);
     }
+
+    private hit(r: Ray, t: number): Intersection[] {
+        const y = r.origin[1] + t * r.direction[1];
+        return this.minimum < y && y < this.maximum 
+            ? [intersection(t, this)]
+            : [];
+    }
+
 }
