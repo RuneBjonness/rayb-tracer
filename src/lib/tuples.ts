@@ -39,7 +39,7 @@ export function isVector(t: Tuple): boolean {
 export function areEqual(t1: Tuple | Color, t2: Tuple | Color): boolean {
 
     const equal = function (a: number, b: number): boolean {
-        return Math.abs(a - b) < 0.00001;
+        return Math.abs(a - b) < 0.00001 || (Number.isNaN(a) && Number.isNaN(b));
     }
 
     if(t1.length !== t2.length){

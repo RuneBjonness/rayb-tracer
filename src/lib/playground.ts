@@ -1,7 +1,7 @@
 import { point, vector, color, Color } from './tuples';
 import { radians, rotationX, rotationY, rotationZ, scaling, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cube, Cylinder, Plane, Shape, Sphere } from './shapes';
+import { Cone, Cube, Cylinder, Plane, Shape, Sphere } from './shapes';
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
@@ -124,6 +124,20 @@ export function renderScene(width: number, height: number): ImageData {
         return [c1, c2];
     }
 
+    function conesDemo(): Shape[] {
+        const c1 = new Cone();
+        c1.minimum = -3;
+        c1.maximum = 0;
+        c1.closed = true;
+        c1.transform = translation(0, 3, 1);
+        c1.material.color = color(0, 0, 0.3);
+        c1.material.reflective = 0.9;
+        c1.material.transparancy = 1;
+        c1.material.refractiveIndex = 1.5;
+
+        return [c1];
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -137,7 +151,8 @@ export function renderScene(width: number, height: number): ImageData {
     floor.material.pattern = new Checkers3dPattern(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4));
     floor.material.pattern.transform = multiply(translation(0, 0.5, 0), rotationY(radians(-45)));
     // world.objects.push(...cubesDemo(), floor);
-    world.objects.push(...cylindersDemo(), floor);
+    // world.objects.push(...cylindersDemo(), floor);
+    world.objects.push(...conesDemo(), floor);
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
