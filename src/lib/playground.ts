@@ -114,6 +114,7 @@ export function renderScene(width: number, height: number): ImageData {
         const c2 = new Cylinder();
         c2.minimum = 0;
         c2.maximum = 3;
+        c2.closed = true;
         c2.transform = multiply(translation(0, 0.75, -1), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(radians(45)), rotationX(radians(45)))));
         c2.material.color = color(0, 0, 0.3);
         c2.material.reflective = 0.9;

@@ -279,6 +279,14 @@ describe('Cubes', () => {
 
 describe('Cylinders', () => {
 
+    test('the default properties for a cylinder', () => {
+        const cyl = new Cylinder();
+    
+        expect(cyl.minimum).toEqual(Number.NEGATIVE_INFINITY);
+        expect(cyl.maximum).toEqual(Number.POSITIVE_INFINITY);
+        expect(cyl.closed).toBe(false);
+    });
+
     each`
         origin             | direction          
         ${point(1, 0, 0)}  | ${vector(0, 1, 0)}
@@ -318,13 +326,6 @@ describe('Cylinders', () => {
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
 
-    test('the default minimum and maximum for a cylinder', () => {
-        const cyl = new Cylinder();
-    
-        expect(cyl.minimum).toEqual(Number.NEGATIVE_INFINITY);
-        expect(cyl.maximum).toEqual(Number.POSITIVE_INFINITY);
-    });
-
     each`
         origin               | direction            | count
         ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}
@@ -341,4 +342,40 @@ describe('Cylinders', () => {
 
         expect(xs.length).toEqual(count);
     });
+
+    each`
+        origin              | direction           | count
+        ${point(0, 3, 0)}   | ${vector(0, -1, 0)} | ${2}
+        ${point(0, 3, -2)}  | ${vector(0, -1, 2)} | ${2}
+        ${point(0, 4, -2)}  | ${vector(0, -1, 1)} | ${2}
+        ${point(0, 0, -2)}  | ${vector(0, 1, 2)}  | ${2}
+        ${point(0, -1, -2)} | ${vector(0, 1, 1)}  | ${2}
+    `.test('intersecting the caps of a closed cylinder', ({origin, direction, count}) => {
+        const c = new Cylinder();
+        c.minimum = 1;
+        c.maximum = 2;
+        c.closed = true;
+        const xs = c.intersects(ray(origin, normalize(direction)));
+
+        expect(xs.length).toEqual(count);
+    });
+
+    each`
+        point               | normal
+        ${point(0, 1, 0)}   | ${vector(0, -1, 0)}
+        ${point(0.5, 1, 0)} | ${vector(0, -1, 0)} 
+        ${point(0, 1, 0.5)} | ${vector(0, -1, 0)}
+        ${point(0, 2, 0)}   | ${vector(0, 1, 0)} 
+        ${point(0.5, 2, 0)} | ${vector(0, 1, 0)} 
+        ${point(0, 2, 0.5)} | ${vector(0, 1, 0)} 
+    `.test('the normal vector on a cylinder\'s end caps ', ({point, normal}) => {
+        const c = new Cylinder();
+        c.minimum = 1;
+        c.maximum = 2;
+        c.closed = true;
+        const n = c.normalAt(point);
+
+        expect(tuplesAreEqual(n, normal)).toBe(true);
+    });
+
 });
