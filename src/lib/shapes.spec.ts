@@ -2,8 +2,8 @@ import each from 'jest-each';
 import { material } from './materials';
 import { areEqual, identityMatrix, multiply } from './matrices';
 import { ray } from './rays';
-import { Cone, Cube, Cylinder, glassSphere, Plane, Sphere, TestShape } from './shapes';
-import { rotationZ, scaling, translation } from './transformations';
+import { Cone, Cube, Cylinder, glassSphere, Group, Plane, Sphere, TestShape } from './shapes';
+import { rotationY, rotationZ, scaling, translation } from './transformations';
 import { point, vector, areEqual as tuplesAreEqual, normalize } from './tuples'
 
 describe('Common shape features', () => {
@@ -69,6 +69,56 @@ describe('Common shape features', () => {
         s.transform = multiply(scaling(1, 0.5, 1), rotationZ(Math.PI/5));
         const n = s.normalAt(point(0, Math.sqrt(2) / 2, -(Math.sqrt(2) / 2)));
         expect(tuplesAreEqual(n, vector(0, 0.97014, -0.24254))).toBe(true);
+    });
+
+    test('the default parent is null', () => {
+        const s = new TestShape();
+        expect(s.parent).toBeNull();
+    });
+
+    test('converting a point from world to object space', () => {
+        const g1 = new Group();
+        g1.transform = rotationY(Math.PI/2);
+        const g2 = new Group();
+        g2.transform = scaling(2, 2, 2);
+        const s = new Sphere();
+        s.transform = translation(5, 0, 0);
+        g1.add(g2);
+        g2.add(s);
+        
+        const p = s.worldToObject(point(-2, 0, -10));
+    
+        expect(tuplesAreEqual(p, point(0, 0, -1))).toBe(true);
+    });
+
+    test('converting a normal from object to world space', () => {
+        const g1 = new Group();
+        g1.transform = rotationY(Math.PI/2);
+        const g2 = new Group();
+        g2.transform = scaling(1, 2, 3);
+        const s = new Sphere();
+        s.transform = translation(5, 0, 0);
+        g1.add(g2);
+        g2.add(s);
+        
+        const n = s.normalToWorld(vector(Math.sqrt(3)/3, Math.sqrt(3)/3, Math.sqrt(3)/3));
+    
+        expect(tuplesAreEqual(n, vector(0.28571, 0.42857, -0.85714))).toBe(true);
+    });
+
+    test('finding normal on a child object', () => {
+        const g1 = new Group();
+        g1.transform = rotationY(Math.PI/2);
+        const g2 = new Group();
+        g2.transform = scaling(1, 2, 3);
+        const s = new Sphere();
+        s.transform = translation(5, 0, 0);
+        g1.add(g2);
+        g2.add(s);
+        
+        const n = s.normalAt(point(1.7321, 1.1547, -5.5774));
+        
+        expect(tuplesAreEqual(n, vector(0.2857, 0.42854, -0.85716))).toBe(true);
     });
 });
 
@@ -380,7 +430,6 @@ describe('Cylinders', () => {
 
 });
 
-
 describe('Cones', () => {
 
     each`
@@ -432,4 +481,64 @@ describe('Cones', () => {
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
 
+});
+
+describe('Groups', () => {
+
+    test('creating a new group', () => {
+        const g = new Group();
+
+        expect(areEqual(g.transform, identityMatrix())).toBe(true);
+        expect(g.shapes.length).toBe(0);
+    });
+
+    test('adding a child to a group', () => {
+        const g = new Group();
+        const s = new TestShape()
+
+        g.add(s);
+
+        expect(g.shapes.indexOf(s)).toBeGreaterThanOrEqual(0);
+        expect(s.parent).toBe(g);
+    });
+    
+    test('intersecting a ray with an empty group', () => {
+        const g = new Group();
+        const xs = g.intersects(ray(point(0, 0, 0), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('intersecting a ray with a nonempty group', () => {
+        const g = new Group();
+        const s1 = new Sphere();
+        const s2 = new Sphere();
+        s2.transform = translation(0, 0, -3);
+        const s3 = new Sphere();
+        s3.transform = translation(5, 0, 0);
+
+        g.add(s1);
+        g.add(s2);
+        g.add(s3);
+        
+        const xs = g.intersects(ray(point(0, 0, -5), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(4);
+        expect(xs[0].object).toBe(s2);
+        expect(xs[1].object).toBe(s2);
+        expect(xs[2].object).toBe(s1);
+        expect(xs[3].object).toBe(s1);
+    });
+
+    test('intersecting a transformed group', () => {
+        const g = new Group();
+        g.transform = scaling(2, 2, 2);
+        const s = new Sphere();
+        s.transform = translation(5, 0, 0);
+        g.add(s);
+        
+        const xs = g.intersects(ray(point(10, 0, -10), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(2);
+    });
 });

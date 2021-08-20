@@ -8,6 +8,7 @@ import { material, Material } from './materials';
 export abstract class Shape {
     transform: number[][];
     material: Material;
+    parent: Group | null = null;
 
     constructor(){
         this.transform = identityMatrix();
@@ -21,13 +22,23 @@ export abstract class Shape {
     protected abstract localIntersects(r: Ray): Intersection[];
 
     normalAt(p: Tuple): Tuple {
-        const localPoint = multiply(inverse(this.transform), p);
+        const localPoint = this.worldToObject(p);
         const localNormal = this.localNormalAt(localPoint);
-        const worldNormal = multiply(transpose(inverse(this.transform)), localNormal);
-        worldNormal[3] = 0;
-        return normalize(worldNormal);
+        return this.normalToWorld(localNormal);
     }
     protected abstract localNormalAt(p: Tuple): Tuple;
+
+    worldToObject(p: Tuple): Tuple {
+        return multiply(inverse(this.transform), this.parent ? this.parent.worldToObject(p) : p);
+    }
+
+    normalToWorld(n: Tuple): Tuple {
+        let normal = multiply(transpose(inverse(this.transform)), n);
+        normal[3] = 0;
+        normal = normalize(normal);
+        return this.parent ? this.parent.normalToWorld(normal) : normal;
+    }
+
 }
 
 export class TestShape extends Shape {
@@ -289,4 +300,26 @@ export class Cone extends Shape {
             ? [intersection(t, this)]
             : [];
     }
+}
+
+export class Group extends Shape {
+    shapes: Shape[] = [];
+
+    constructor(){
+        super();
+    }
+
+    public add(child: Shape){
+        child.parent = this;
+        this.shapes.push(child);
+    }
+
+    protected localIntersects(r: Ray): Intersection[] {
+        return this.shapes.flatMap(x => x.intersects(r)).sort((a, b) => a.time - b.time);
+    }
+
+    protected localNormalAt(p: Tuple): Tuple {
+        throw new Error('Groups don\'t have normal vectors, and if this is called we have done something wrong somewhere..');
+    }
+
 }
