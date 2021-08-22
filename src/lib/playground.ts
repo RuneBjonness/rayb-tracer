@@ -1,15 +1,31 @@
 import { point, vector, color, Color } from './tuples';
 import { radians, rotationX, rotationY, rotationZ, scaling, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cone, Cube, Cylinder, Plane, Shape, Sphere } from './shapes';
+import { Cone, Cube, Cylinder, Group, Plane, Shape, Sphere } from './shapes';
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
 import { Checkers3dPattern, RadialGradientPattern, RingPattern, StripePattern } from './patterns';
-import { material } from './materials';
+import { Material, material } from './materials';
 
 
 export function renderScene(width: number, height: number): ImageData {
+
+    function reflectiveFloor(c: Color): Shape {
+        const f = new Plane();
+        f.material.color = c;
+        f.material.specular = 0.8;
+        f.material.reflective = 0.7;
+        f.transform = translation(0, -0.5, 0)
+        return f;
+    }
+
+    function checkeredFloor(c1: Color, c2: Color): Shape {
+        const f = new Plane();
+        f.material.pattern = new Checkers3dPattern(c1, c2);
+        f.material.pattern.transform = multiply(translation(0, 0.5, 0), rotationY(radians(-45)));
+        return f;
+    }
 
     function checkeredRoom(c1: Color, c2: Color): Shape[] {
         const floor = new Plane();
@@ -138,6 +154,81 @@ export function renderScene(width: number, height: number): ImageData {
         return [c1];
     }
 
+    function groupsDemo(): Shape[] {
+        function corner(mat: Material): Shape {
+            const s = new Sphere();
+            s.transform = multiply(translation(0, 0, -1), scaling(0.2, 0.2, 0.2));
+            s.material = mat;
+            return s;
+        }
+
+        function edge(mat: Material): Shape {
+            const cyl = new Cylinder();
+            cyl.minimum = 0;
+            cyl.maximum = 1;
+            cyl.transform = multiply(translation(0, 0, -1), multiply(rotationY(-Math.PI/5), multiply(rotationZ(-Math.PI/2), scaling(0.2, 1.2, 0.2))));
+            cyl.material = mat;
+            return cyl;
+        }
+
+        function side(mat: Material): Shape {
+            const g = new Group();
+            g.add(corner(mat));
+            g.add(edge(mat));
+            return g;
+        }
+
+        function pentagon(mat: Material): Shape {
+            const g = new Group();
+            for(let i = 0; i < 5; i++ ) {
+                const s = side(mat);
+                s.transform = rotationY(i * Math.PI/2.5)
+                g.add(s);
+            }
+            return g;
+        }
+
+        function halfDodecahedron(colors: Color[]): Shape {
+            const g = new Group();
+            for(let i = 0; i < 5; i++ ) {
+                const mat = material();
+                mat.color = colors[i];
+                mat.ambient = 0.3;
+                const p = pentagon(mat);
+                p.transform = multiply(rotationY(i * Math.PI/2.5), multiply(translation(0, 0, 1.2), rotationX(radians(116.565))));
+                g.add(p);
+            }
+            return g;
+        }
+
+        const rainbow = [
+            color(1,0,0), 
+            color(0.8,0,0.6), 
+            color(0.6,0,0.6), 
+            color(0.4,0,0.6), 
+            color(0,0.32,0.83), 
+            color(0.04,0.7,0.76), 
+            color(0,0.6,0), 
+            color(0.4,0.8,0), 
+            color(1,1,0), 
+            color(1,0.8,0), 
+            color(1,0.6,0), 
+            color(1,0.4,0)
+        ];
+
+        const dodecahedron = new Group();
+        const d1 = halfDodecahedron(rainbow.slice(0,5));
+        d1.transform = multiply(translation(0, 1.2, 0), multiply(rotationZ(Math.PI), rotationY(Math.PI/5)));
+        
+        const d2 = halfDodecahedron(rainbow.slice(5,10));
+
+        dodecahedron.add(d1);
+        dodecahedron.add(d2);
+
+        dodecahedron.transform = multiply(translation(0,1,1.5), multiply(rotationX(-Math.PI/6), rotationY(Math.PI/6)));
+        return[dodecahedron];
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -146,13 +237,11 @@ export function renderScene(width: number, height: number): ImageData {
 
     // world.objects.push(...checkeredRoom(color(0.9, 1, 0.9), color(0.1, 0.4, 0.1)));
     // world.objects.push(...spheresDemo());
+    // world.objects.push(...cubesDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
+    // world.objects.push(...cylindersDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
+    // world.objects.push(...conesDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
 
-    const floor = new Plane();
-    floor.material.pattern = new Checkers3dPattern(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4));
-    floor.material.pattern.transform = multiply(translation(0, 0.5, 0), rotationY(radians(-45)));
-    // world.objects.push(...cubesDemo(), floor);
-    // world.objects.push(...cylindersDemo(), floor);
-    world.objects.push(...conesDemo(), floor);
+    world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
