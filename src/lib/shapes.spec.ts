@@ -221,6 +221,14 @@ describe('Spheres', () => {
         expect(s.material.transparancy).toEqual(1.0);
         expect(s.material.refractiveIndex).toEqual(1.5);
     });
+
+    test('the bounds of a sphere', () => {
+        const s = new Sphere();
+        const [min, max] = s.bounds();
+    
+        expect(min).toEqual(point(-1, -1, -1));
+        expect(max).toEqual(point(1, 1, 1));
+    });
 });
 
 describe('Planes', () => {
@@ -271,6 +279,13 @@ describe('Planes', () => {
         expect(xs[0].object).toBe(p);
     });
 
+    test('the bounds of a plane', () => {
+        const p = new Plane();
+        const [min, max] = p.bounds();
+    
+        expect(min).toEqual(point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY));
+        expect(max).toEqual(point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY));
+    });
 });
 
 describe('Cubes', () => {
@@ -323,6 +338,14 @@ describe('Cubes', () => {
         const n = c.normalAt(point);
 
         expect(tuplesAreEqual(n, normal)).toBe(true);
+    });
+
+    test('the bounds of a cube', () => {
+        const c = new Cube();
+        const [min, max] = c.bounds();
+    
+        expect(min).toEqual(point(-1, -1, -1));
+        expect(max).toEqual(point(1, 1, 1));
     });
 });
 
@@ -384,7 +407,7 @@ describe('Cylinders', () => {
         ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}
         ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}
         ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}
-    `.test('a ray strikes a cylinder', ({origin, direction, count}) => {
+    `.test('a ray strikes a truncated cylinder', ({origin, direction, count}) => {
         const c = new Cylinder();
         c.minimum = 1;
         c.maximum = 2;
@@ -428,6 +451,23 @@ describe('Cylinders', () => {
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
 
+    test('the default bounds of a cylinder', () => {
+        const c = new Cylinder();
+        const [min, max] = c.bounds();
+    
+        expect(min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
+        expect(max).toEqual(point(1, Number.POSITIVE_INFINITY, 1));
+    });
+
+    test('the bounds of a truncated cylinder', () => {
+        const c = new Cylinder();
+        c.minimum = -5;
+        c.maximum = 5;
+        const [min, max] = c.bounds();
+    
+        expect(min).toEqual(point(-1, -5, -1));
+        expect(max).toEqual(point(1, 5, 1));
+    });
 });
 
 describe('Cones', () => {
@@ -481,6 +521,14 @@ describe('Cones', () => {
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
 
+    test('the bounds of a cone', () => {
+        const c = new Cone();
+        c.maximum = 0;
+        const [min, max] = c.bounds();
+    
+        expect(min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
+        expect(max).toEqual(point(1, 0, 1));
+    });
 });
 
 describe('Groups', () => {
@@ -540,5 +588,37 @@ describe('Groups', () => {
         const xs = g.intersects(ray(point(10, 0, -10), vector(0, 0, 1)));
     
         expect(xs.length).toBe(2);
+    });
+
+    test('the bounds of a group contains all children bounds', () => {
+        const s = new Sphere();
+        const c = new Cylinder();
+        c.minimum = -5;
+        c.maximum = 5;
+
+        const g = new Group();
+        g.add(s);
+        g.add(c);
+        
+        const [min, max] = g.bounds();
+    
+        expect(min).toEqual(point(-1, -5, -1));
+        expect(max).toEqual(point(1, 5, 1));
+    });
+
+    test('the bounds of a group is affected by children transformations', () => {
+        const s1 = new Sphere();
+        s1.transform = scaling(2, 2, 2);
+        const s2 = new Sphere();
+        s2.transform = translation(5, 0, 0);
+
+        const g = new Group();
+        g.add(s1);
+        g.add(s2);
+        
+        const [min, max] = g.bounds();
+    
+        expect(min).toEqual(point(-2, -2, -2));
+        expect(max).toEqual(point(6, 2, 2));
     });
 });
