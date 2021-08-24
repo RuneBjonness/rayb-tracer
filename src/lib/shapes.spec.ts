@@ -2,7 +2,7 @@ import each from 'jest-each';
 import { material } from './materials';
 import { areEqual, identityMatrix, multiply } from './matrices';
 import { ray } from './rays';
-import { Cone, Cube, Cylinder, glassSphere, Group, Plane, Sphere, TestShape } from './shapes';
+import { Cone, Cube, Cylinder, glassSphere, Group, Plane, Sphere, TestShape, Triangle } from './shapes';
 import { rotationY, rotationZ, scaling, translation } from './transformations';
 import { point, vector, areEqual as tuplesAreEqual, normalize } from './tuples'
 
@@ -620,5 +620,83 @@ describe('Groups', () => {
     
         expect(min).toEqual(point(-2, -2, -2));
         expect(max).toEqual(point(6, 2, 2));
+    });
+});
+
+describe('Triangles', () => {
+    test('constructing a triangle', () => {
+        const p1 = point(0, 1, 0);
+        const p2 = point(-1, 0, 0);
+        const p3 = point(1, 0, 0);
+        const t = new Triangle(p1, p2, p3);
+
+        expect(t.p1).toEqual(p1);
+        expect(t.p2).toEqual(p2);
+        expect(t.p3).toEqual(p3);
+
+        expect(tuplesAreEqual(t.e1, vector(-1, -1, 0))).toBe(true);
+        expect(tuplesAreEqual(t.e2, vector(1, -1, 0))).toBe(true);
+        expect(tuplesAreEqual(t.normal, vector(0, 0, -1))).toBe(true);
+    });
+
+    test('the normal of a triangle is constant everywhere', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+
+        const n1 = t.normalAt(point(0, 0, 0));
+        const n2 = t.normalAt(point(10, 0, -10));
+        const n3 = t.normalAt(point(-5, 0, 150));
+
+        expect(tuplesAreEqual(n1, t.normal)).toBe(true);
+        expect(tuplesAreEqual(n2, t.normal)).toBe(true);
+        expect(tuplesAreEqual(n3, t.normal)).toBe(true);
+    });
+
+    test('a ray parallel with the triangle will not intersect', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const r = ray(point(0, -1, -2), vector(0, 1, 0));
+        const xs = t.intersects(r);
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('a ray misses the p1-p3 edge', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const r = ray(point(1, 1, -2), vector(0, 0, 1));
+        const xs = t.intersects(r);
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('a ray misses the p1-p2 edge', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const r = ray(point(-1, 1, -2), vector(0, 0, 1));
+        const xs = t.intersects(r);
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('a ray misses the p2-p3 edge', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const r = ray(point(0, -1, -2), vector(0, 0, 1));
+        const xs = t.intersects(r);
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('a ray strikes a triangle', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const r = ray(point(0, 0.5, -2), vector(0, 0, 1));
+        const xs = t.intersects(r);
+    
+        expect(xs.length).toBe(1);
+        expect(xs[0].time).toEqual(2);
+    });
+
+    test('the bounds of a triangle', () => {
+        const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+        const [min, max] = t.bounds();
+    
+        expect(min).toEqual(point(-1, 0, 0));
+        expect(max).toEqual(point(1, 1, 0));
     });
 });

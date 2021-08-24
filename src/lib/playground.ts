@@ -1,7 +1,7 @@
 import { point, vector, color, Color } from './tuples';
 import { radians, rotationX, rotationY, rotationZ, scaling, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cone, Cube, Cylinder, Group, Plane, Shape, Sphere } from './shapes';
+import { Cone, Cube, Cylinder, Group, Plane, Shape, Sphere, Triangle } from './shapes';
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
@@ -10,6 +10,21 @@ import { Material, material } from './materials';
 
 
 export function renderScene(width: number, height: number): ImageData {
+
+    const rainbow = [
+        color(1,0,0), 
+        color(0.8,0,0.6), 
+        color(0.6,0,0.6), 
+        color(0.4,0,0.6), 
+        color(0,0.32,0.83), 
+        color(0.04,0.7,0.76), 
+        color(0,0.6,0), 
+        color(0.4,0.8,0), 
+        color(1,1,0), 
+        color(1,0.8,0), 
+        color(1,0.6,0), 
+        color(1,0.4,0)
+    ];
 
     function reflectiveFloor(c: Color): Shape {
         const f = new Plane();
@@ -201,21 +216,6 @@ export function renderScene(width: number, height: number): ImageData {
             return g;
         }
 
-        const rainbow = [
-            color(1,0,0), 
-            color(0.8,0,0.6), 
-            color(0.6,0,0.6), 
-            color(0.4,0,0.6), 
-            color(0,0.32,0.83), 
-            color(0.04,0.7,0.76), 
-            color(0,0.6,0), 
-            color(0.4,0.8,0), 
-            color(1,1,0), 
-            color(1,0.8,0), 
-            color(1,0.6,0), 
-            color(1,0.4,0)
-        ];
-
         const dodecahedron = new Group();
         const d1 = halfDodecahedron(rainbow.slice(0,5));
         d1.transform = multiply(translation(0, 1.2, 0), multiply(rotationZ(Math.PI), rotationY(Math.PI/5)));
@@ -229,6 +229,32 @@ export function renderScene(width: number, height: number): ImageData {
         return[dodecahedron];
     }
 
+    function trianglesDemo(): Shape {
+        const g = new Group();
+
+        const points = [
+            point(1, 1, 1),
+            point(1, -1, -1),
+            point(-1, 1, -1),
+            point(-1, -1, 1),
+        ];
+        const triangles = [
+            new Triangle(points[0], points[1], points[2]),
+            new Triangle(points[0], points[1], points[3]),
+            new Triangle(points[0], points[2], points[3]),
+            new Triangle(points[3], points[1], points[2])
+        ];
+
+        triangles.forEach((t, i) => { 
+            t.material.color = rainbow[i];
+            t.material.ambient = 0.3;
+            g.add(t); 
+        });
+
+        g.transform = multiply(translation(0, 1, 0), multiply(rotationY(Math.PI/3), rotationZ(Math.PI/4)));
+        return g;
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -240,8 +266,8 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(...cubesDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
     // world.objects.push(...cylindersDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
     // world.objects.push(...conesDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
-
-    world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    // world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
