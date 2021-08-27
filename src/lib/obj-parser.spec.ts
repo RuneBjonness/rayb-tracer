@@ -10,8 +10,8 @@ test('ignoring unrecognized lines', () => {
 });
 
 test('parsing vertex records', () => {
-    const objData = 
-`v -1 1 0
+    const objData = `
+v -1 1 0
 v -1.0000 0.5000 0.0000
 v 1 0 0
 v 1 1 0`;
@@ -26,8 +26,8 @@ v 1 1 0`;
 });
 
 test('parsing triangle faces', () => {
-    const objData = 
-`v -1 1 0
+    const objData = `
+v -1 1 0
 v -1 0 0
 v 1 0 0
 v 1 1 0
@@ -40,6 +40,66 @@ f 1 3 4`;
 
     const t1 = parser.model.shapes[0] as Triangle;
     const t2 = parser.model.shapes[1] as Triangle;
+
+    expect(t1.p1).toEqual(parser.vertices[0]);
+    expect(t1.p2).toEqual(parser.vertices[1]);
+    expect(t1.p3).toEqual(parser.vertices[2]);
+
+    expect(t2.p1).toEqual(parser.vertices[0]);
+    expect(t2.p2).toEqual(parser.vertices[2]);
+    expect(t2.p3).toEqual(parser.vertices[3]);
+});
+
+test('triangulating polygons', () => {
+    const objData = `
+v -1 1 0
+v -1 0 0
+v 1 0 0
+v 1 1 0
+v 0 2 0
+
+f 1 2 3 4 5`;
+
+    const parser = new ObjParser();
+    parser.parse(objData);
+
+    const t1 = parser.model.shapes[0] as Triangle;
+    const t2 = parser.model.shapes[1] as Triangle;
+    const t3 = parser.model.shapes[2] as Triangle;
+
+    expect(t1.p1).toEqual(parser.vertices[0]);
+    expect(t1.p2).toEqual(parser.vertices[1]);
+    expect(t1.p3).toEqual(parser.vertices[2]);
+
+    expect(t2.p1).toEqual(parser.vertices[0]);
+    expect(t2.p2).toEqual(parser.vertices[2]);
+    expect(t2.p3).toEqual(parser.vertices[3]);
+
+    expect(t3.p1).toEqual(parser.vertices[0]);
+    expect(t3.p2).toEqual(parser.vertices[3]);
+    expect(t3.p3).toEqual(parser.vertices[4]);
+});
+
+test('parsing named groups', () => {
+    const objData = `
+v -1 1 0
+v -1 0 0
+v 1 0 0
+v 1 1 0
+
+g FirstGroup
+f 1 2 3
+g SecondGroup
+f 1 3 4`;
+
+    const parser = new ObjParser();
+    parser.parse(objData);
+
+    const g1 = parser.groups['FirstGroup'];
+    const g2 = parser.groups['SecondGroup'];
+
+    const t1 = g1.shapes[0] as Triangle;
+    const t2 = g2.shapes[0] as Triangle;
 
     expect(t1.p1).toEqual(parser.vertices[0]);
     expect(t1.p2).toEqual(parser.vertices[1]);

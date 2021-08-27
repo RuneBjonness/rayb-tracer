@@ -7,6 +7,8 @@ import { World } from './world';
 import { Camera } from './camera';
 import { Checkers3dPattern, RadialGradientPattern, RingPattern, StripePattern } from './patterns';
 import { Material, material } from './materials';
+import { ObjParser } from './obj-parser';
+import icosahedronObjFile from '../resources/icosahedron.obj?raw';
 
 
 export function renderScene(width: number, height: number): ImageData {
@@ -255,6 +257,21 @@ export function renderScene(width: number, height: number): ImageData {
         return g;
     }
 
+    function objParserDemo(): Shape {
+        const parser = new ObjParser();
+        parser.parse(icosahedronObjFile);
+
+        const g = parser.model.shapes[0] as Group;
+        g.shapes.forEach((t, i) => { 
+            t.material.color = rainbow[i%12];
+            t.material.ambient = 0.3;
+            g.add(t); 
+        });
+
+        g.transform = multiply(translation(0, 1, 0), multiply(rotationY(Math.PI/3), rotationZ(Math.PI/4)));
+        return parser.model;
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -267,7 +284,8 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(...cylindersDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
     // world.objects.push(...conesDemo(), checkeredFloor(color(0.9, 0.9, 1), color(0.1, 0.1, 0.4)));
     // world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
-    world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
+    // world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
+    world.objects.push(objParserDemo());
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
