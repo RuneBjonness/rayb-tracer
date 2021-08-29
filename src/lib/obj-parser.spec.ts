@@ -1,6 +1,6 @@
 import { ObjParser } from './obj-parser';
-import { Triangle } from './shapes';
-import { point } from './tuples';
+import { SmoothTriangle, Triangle } from './shapes';
+import { point, vector } from './tuples';
 
 test('ignoring unrecognized lines', () => {
     const parser = new ObjParser();
@@ -108,4 +108,48 @@ f 1 3 4`;
     expect(t2.p1).toEqual(parser.vertices[0]);
     expect(t2.p2).toEqual(parser.vertices[2]);
     expect(t2.p3).toEqual(parser.vertices[3]);
+});
+
+test('parsing vertex normal vectors', () => {
+    const objData = `
+vn 0 0 1
+vn 0.707 0 -0.707
+vn 1 2 3`;
+
+    const parser = new ObjParser();
+    parser.parse(objData);
+
+    expect(parser.normals[0]).toEqual(vector(0, 0, 1));
+    expect(parser.normals[1]).toEqual(vector(0.707, 0, -0.707));
+    expect(parser.normals[2]).toEqual(vector(1, 2, 3));
+});
+
+test('parsing triangle faces with normals', () => {
+    const objData = `
+v 0 1 0
+v -1 0 0
+v 1 0 0
+
+vn -1 0 0
+vn 1 0 0
+vn 0 1 0
+
+f 1//3 2//1 3//2
+f 1/0/3 2/102/1 3/14/2`;
+
+    const parser = new ObjParser();
+    parser.parse(objData);
+
+    const t1 = parser.model.shapes[0] as SmoothTriangle;
+    const t2 = parser.model.shapes[1] as SmoothTriangle;
+
+    expect(t1.p1).toEqual(parser.vertices[0]);
+    expect(t1.p2).toEqual(parser.vertices[1]);
+    expect(t1.p3).toEqual(parser.vertices[2]);
+
+    expect(t1.n1).toEqual(parser.normals[2]);
+    expect(t1.n2).toEqual(parser.normals[0]);
+    expect(t1.n3).toEqual(parser.normals[1]);
+
+    expect(t2).toEqual(t1);
 });

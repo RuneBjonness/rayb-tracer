@@ -4,7 +4,9 @@ import { add, dot, multiply, negate, reflect, subtract, Tuple } from './tuples';
 
 export type Intersection = {
     time: number,
-    object: Shape
+    object: Shape,
+    u: number,
+    v: number
 }
 
 export type IntersectionComputations = {
@@ -22,8 +24,8 @@ export type IntersectionComputations = {
 }
 
 
-export function intersection(time: number, object: Shape): Intersection {
-    return { time, object };
+export function intersection(time: number, object: Shape, u: number = 0, v: number = 0): Intersection {
+    return { time, object, u, v };
 }
 
 export function hit(intersections: Intersection[]): Intersection | null {
@@ -42,7 +44,7 @@ export function prepareComputations(i: Intersection, r: Ray, xs: Intersection[] 
         object: i.object,
         point: p,
         eyev: negate(r.direction),
-        normalv: i.object.normalAt(p),
+        normalv: i.object.normalAt(p, i),
         inside: false,
         overPoint: p,
         underPoint: p,

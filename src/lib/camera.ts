@@ -42,6 +42,8 @@ export class Camera {
         const c = new Canvas(this.width, this.height);
 
         for(let y=0; y < this.height; y++) {
+            console.log(`       -redering ${y/this.height} %`);
+
             for(let x=0; x < this.width; x++){
                 c.pixels[x][y] = w.colorAt(this.rayForPixel(x, y));
             }

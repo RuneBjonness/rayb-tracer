@@ -1,7 +1,7 @@
 import each from 'jest-each';
 import { hit, intersection, prepareComputations, reflectance } from './intersections';
 import { ray } from './rays';
-import { glassSphere, Plane, Sphere } from './shapes';
+import { glassSphere, Plane, Sphere, Triangle } from './shapes';
 import { scaling, translation } from './transformations';
 import { areEqual, point, vector } from './tuples';
 
@@ -11,6 +11,14 @@ test('an intersection encapsulates time and object', () => {
 
     expect(i.time).toEqual(3.5);
     expect(i.object).toBe(s);
+});
+
+test('an intersection can encapsulate u and v', () => {
+    const tri = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
+    const i = intersection(3.5, tri, 0.2, 0.4);
+
+    expect(i.u).toEqual(0.2);
+    expect(i.v).toBe(0.4);
 });
 
 test('aggregating intersections', () => {
