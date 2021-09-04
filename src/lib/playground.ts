@@ -1,7 +1,9 @@
 import { point, vector, color, Color } from './tuples';
 import { radians, rotationX, rotationY, rotationZ, scaling, shearing, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cone, CsgShape, Cube, Cylinder, Group, Plane, Shape, Sphere, Triangle } from './shapes';
+import { Shape } from './shapes/shape';
+import { CsgShape } from "./shapes/csg-shape";
+import { Group } from "./shapes/group";
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
@@ -10,6 +12,12 @@ import { Material, material } from './materials';
 import { ObjParser } from './obj-parser';
 import icosahedronObjFile from '../resources/icosahedron.obj?raw';
 import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
+import { Cone } from './shapes/primitives/cone';
+import { Cube } from './shapes/primitives/cube';
+import { Cylinder } from './shapes/primitives/cylinder';
+import { Plane } from './shapes/primitives/plane';
+import { Sphere } from './shapes/primitives/sphere';
+import { Triangle } from './shapes/primitives/triangle';
 
 
 export function renderScene(width: number, height: number): ImageData {
@@ -339,7 +347,7 @@ export function renderScene(width: number, height: number): ImageData {
         rb.add(r);
         rb.add(b);
 
-        rb.transform = multiply(translation(0, 1, 1), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(Math.PI/6), rotationX(-Math.PI/2))));
+        rb.transform = multiply(translation(0, 1, 3), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(Math.PI/6), rotationX(-Math.PI/2))));
 
         return rb;
 

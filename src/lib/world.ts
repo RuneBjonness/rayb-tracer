@@ -1,7 +1,8 @@
 import { hit, Intersection, IntersectionComputations, prepareComputations, reflectance } from './intersections';
 import { Light, pointLight } from './lights';
 import { ray, Ray } from './rays';
-import { Shape, Sphere } from './shapes'
+import { Shape } from './shapes/shape'
+import { Sphere } from "./shapes/primitives/sphere";
 import { add, Color, color, dot, magnitude, multiply, normalize, point, subtract, Tuple } from './tuples';
 import { scaling} from './transformations';
 import { lighting } from './materials';

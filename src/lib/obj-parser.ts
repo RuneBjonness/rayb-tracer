@@ -1,4 +1,6 @@
-import { Group, SmoothTriangle, Triangle } from './shapes';
+import { Group } from "./shapes/group";
+import { SmoothTriangle } from "./shapes/primitives/smooth-triangle";
+import { Triangle } from "./shapes/primitives/triangle";
 import { point, Tuple, vector } from './tuples'
 
 export class ObjParser {

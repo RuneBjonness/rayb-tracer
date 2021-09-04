@@ -1,7 +1,7 @@
 import { add, color, Color, dot, multiply, negate, normalize, reflect, subtract, Tuple } from './tuples'
 import { Light } from './lights';
 import { Pattern } from './patterns';
-import { Shape } from './shapes';
+import { Shape } from './shapes/shape';
 
 export type Material = {
     color: Color,

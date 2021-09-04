@@ -1,5 +1,5 @@
 import { position, Ray } from './rays';
-import { Shape } from './shapes';
+import { Shape } from './shapes/shape';
 import { add, dot, multiply, negate, reflect, subtract, Tuple } from './tuples';
 
 export type Intersection = {

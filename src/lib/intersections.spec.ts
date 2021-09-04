@@ -1,7 +1,9 @@
 import each from 'jest-each';
 import { hit, intersection, prepareComputations, reflectance } from './intersections';
 import { ray } from './rays';
-import { glassSphere, Plane, Sphere, Triangle } from './shapes';
+import { Plane } from './shapes/primitives/plane';
+import { Sphere, glassSphere } from './shapes/primitives/sphere';
+import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './transformations';
 import { areEqual, point, vector } from './tuples';
 

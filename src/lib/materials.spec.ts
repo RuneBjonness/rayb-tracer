@@ -1,7 +1,7 @@
 import { pointLight } from './lights';
 import { lighting, material } from './materials';
 import { StripePattern } from './patterns';
-import { Sphere } from './shapes';
+import { Sphere } from './shapes/primitives/sphere';
 import { areEqual, color, point, Tuple, vector } from './tuples'
 
 test('the default material', () => {
