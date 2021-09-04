@@ -1,7 +1,7 @@
 import { point, vector, color, Color } from './tuples';
-import { radians, rotationX, rotationY, rotationZ, scaling, translation, viewTransform } from './transformations';
+import { radians, rotationX, rotationY, rotationZ, scaling, shearing, translation, viewTransform } from './transformations';
 import { multiply } from './matrices';
-import { Cone, Cube, Cylinder, Group, Plane, Shape, Sphere, Triangle } from './shapes';
+import { Cone, CsgShape, Cube, Cylinder, Group, Plane, Shape, Sphere, Triangle } from './shapes';
 import { pointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
@@ -280,6 +280,71 @@ export function renderScene(width: number, height: number): ImageData {
         return parser.model;
     }
 
+    function csgDemo(): Shape {
+        const baseMaterial = material();
+        baseMaterial.color = color(1, 0, 0);
+        baseMaterial.reflective = 0.3;
+
+        function halfCircle(): Shape {
+            const outerCylinder = new Cylinder();
+            outerCylinder.minimum = 0;
+            outerCylinder.maximum = 0.5;
+            outerCylinder.closed = true;
+            outerCylinder.material = baseMaterial
+    
+            const innerCylinder = new Cylinder();
+            innerCylinder.minimum = 0;
+            innerCylinder.maximum = 0.6;
+            innerCylinder.closed = true;
+            innerCylinder.transform = scaling(0.5, 1, 0.5);
+            innerCylinder.material = baseMaterial
+    
+            const circle = new CsgShape('difference', outerCylinder, innerCylinder);
+    
+            const cube = new Cube();
+            cube.transform = translation(-1, 0, 0);
+    
+            return new CsgShape('difference', circle, cube);
+        }
+
+        function letterP(): Shape {
+            const leftLeg = new Cube();
+            leftLeg.material = baseMaterial;
+            leftLeg.transform = multiply(translation(-0.25, 0, -1), scaling(0.25, 0.5, 2));
+    
+            return new CsgShape('union', leftLeg, halfCircle());
+        }
+
+        function letterR(): Shape {
+            const rightLeg = new Cube();
+            rightLeg.material = baseMaterial;
+            rightLeg.transform = multiply(translation(0.5, 0, -1.9), multiply(scaling(0.25, 0.5, 1.1), shearing(0, -1, 0, 0, 0, 0)));
+   
+            return new CsgShape('union', rightLeg, letterP());
+        }
+
+        function letterB(): Shape {
+            const lowerHalfCircle = halfCircle();
+            lowerHalfCircle.material = baseMaterial;
+            lowerHalfCircle.transform = multiply(translation(0, 0, -2), scaling(1.25, 1, 1));
+   
+            return new CsgShape('union', lowerHalfCircle, letterP());
+        }
+
+        const rb = new Group();
+        const r = letterR();
+        r.transform = translation(-1, 0, 0);
+        const b = letterB();
+        b.transform = translation(1, 0, 0);
+        rb.add(r);
+        rb.add(b);
+
+        rb.transform = multiply(translation(0, 1, 1), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(Math.PI/6), rotationX(-Math.PI/2))));
+
+        return rb;
+
+    }
+
     const world = new World()
     world.lights.push(
         pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -294,7 +359,8 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
     // world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
     // world.objects.push(objParserDemo());
-    world.objects.push(teapotDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    // world.objects.push(teapotDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    world.objects.push(csgDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));

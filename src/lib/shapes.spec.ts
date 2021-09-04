@@ -3,7 +3,7 @@ import { intersection, prepareComputations } from './intersections';
 import { material } from './materials';
 import { areEqual, identityMatrix, multiply } from './matrices';
 import { ray } from './rays';
-import { Cone, Cube, Cylinder, glassSphere, Group, Plane, SmoothTriangle, Sphere, TestShape, Triangle } from './shapes';
+import { Cone, CsgShape, Cube, Cylinder, glassSphere, Group, Plane, SmoothTriangle, Sphere, TestShape, Triangle } from './shapes';
 import { rotationY, rotationZ, scaling, translation } from './transformations';
 import { point, vector, areEqual as tuplesAreEqual, normalize } from './tuples'
 
@@ -350,7 +350,6 @@ describe('Cubes', () => {
     });
 });
 
-
 describe('Cylinders', () => {
 
     test('the default properties for a cylinder', () => {
@@ -532,98 +531,6 @@ describe('Cones', () => {
     });
 });
 
-describe('Groups', () => {
-
-    test('creating a new group', () => {
-        const g = new Group();
-
-        expect(areEqual(g.transform, identityMatrix())).toBe(true);
-        expect(g.shapes.length).toBe(0);
-    });
-
-    test('adding a child to a group', () => {
-        const g = new Group();
-        const s = new TestShape()
-
-        g.add(s);
-
-        expect(g.shapes.indexOf(s)).toBeGreaterThanOrEqual(0);
-        expect(s.parent).toBe(g);
-    });
-    
-    test('intersecting a ray with an empty group', () => {
-        const g = new Group();
-        const xs = g.intersects(ray(point(0, 0, 0), vector(0, 0, 1)));
-    
-        expect(xs.length).toBe(0);
-    });
-
-    test('intersecting a ray with a nonempty group', () => {
-        const g = new Group();
-        const s1 = new Sphere();
-        const s2 = new Sphere();
-        s2.transform = translation(0, 0, -3);
-        const s3 = new Sphere();
-        s3.transform = translation(5, 0, 0);
-
-        g.add(s1);
-        g.add(s2);
-        g.add(s3);
-        
-        const xs = g.intersects(ray(point(0, 0, -5), vector(0, 0, 1)));
-    
-        expect(xs.length).toBe(4);
-        expect(xs[0].object).toBe(s2);
-        expect(xs[1].object).toBe(s2);
-        expect(xs[2].object).toBe(s1);
-        expect(xs[3].object).toBe(s1);
-    });
-
-    test('intersecting a transformed group', () => {
-        const g = new Group();
-        g.transform = scaling(2, 2, 2);
-        const s = new Sphere();
-        s.transform = translation(5, 0, 0);
-        g.add(s);
-        
-        const xs = g.intersects(ray(point(10, 0, -10), vector(0, 0, 1)));
-    
-        expect(xs.length).toBe(2);
-    });
-
-    test('the bounds of a group contains all children bounds', () => {
-        const s = new Sphere();
-        const c = new Cylinder();
-        c.minimum = -5;
-        c.maximum = 5;
-
-        const g = new Group();
-        g.add(s);
-        g.add(c);
-        
-        const [min, max] = g.bounds();
-    
-        expect(min).toEqual(point(-1, -5, -1));
-        expect(max).toEqual(point(1, 5, 1));
-    });
-
-    test('the bounds of a group is affected by children transformations', () => {
-        const s1 = new Sphere();
-        s1.transform = scaling(2, 2, 2);
-        const s2 = new Sphere();
-        s2.transform = translation(5, 0, 0);
-
-        const g = new Group();
-        g.add(s1);
-        g.add(s2);
-        
-        const [min, max] = g.bounds();
-    
-        expect(min).toEqual(point(-2, -2, -2));
-        expect(max).toEqual(point(6, 2, 2));
-    });
-});
-
 describe('Triangles', () => {
     test('constructing a triangle', () => {
         const p1 = point(0, 1, 0);
@@ -749,5 +656,215 @@ describe('Smooth Triangles', () => {
         const comps = prepareComputations(i, r);
     
         expect(tuplesAreEqual(comps.normalv, vector(-0.5547, 0.83205, 0))).toBe(true);
+    });
+});
+
+describe('Groups', () => {
+
+    test('creating a new group', () => {
+        const g = new Group();
+
+        expect(areEqual(g.transform, identityMatrix())).toBe(true);
+        expect(g.shapes.length).toBe(0);
+    });
+
+    test('adding a child to a group', () => {
+        const g = new Group();
+        const s = new TestShape()
+
+        g.add(s);
+
+        expect(g.shapes.indexOf(s)).toBeGreaterThanOrEqual(0);
+        expect(s.parent).toBe(g);
+    });
+    
+    test('intersecting a ray with an empty group', () => {
+        const g = new Group();
+        const xs = g.intersects(ray(point(0, 0, 0), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('intersecting a ray with a nonempty group', () => {
+        const g = new Group();
+        const s1 = new Sphere();
+        const s2 = new Sphere();
+        s2.transform = translation(0, 0, -3);
+        const s3 = new Sphere();
+        s3.transform = translation(5, 0, 0);
+
+        g.add(s1);
+        g.add(s2);
+        g.add(s3);
+        
+        const xs = g.intersects(ray(point(0, 0, -5), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(4);
+        expect(xs[0].object).toBe(s2);
+        expect(xs[1].object).toBe(s2);
+        expect(xs[2].object).toBe(s1);
+        expect(xs[3].object).toBe(s1);
+    });
+
+    test('intersecting a transformed group', () => {
+        const g = new Group();
+        g.transform = scaling(2, 2, 2);
+        const s = new Sphere();
+        s.transform = translation(5, 0, 0);
+        g.add(s);
+        
+        const xs = g.intersects(ray(point(10, 0, -10), vector(0, 0, 1)));
+    
+        expect(xs.length).toBe(2);
+    });
+
+    test('the bounds of a group contains all children bounds', () => {
+        const s = new Sphere();
+        const c = new Cylinder();
+        c.minimum = -5;
+        c.maximum = 5;
+
+        const g = new Group();
+        g.add(s);
+        g.add(c);
+        
+        const [min, max] = g.bounds();
+    
+        expect(min).toEqual(point(-1, -5, -1));
+        expect(max).toEqual(point(1, 5, 1));
+    });
+
+    test('the bounds of a group is affected by children transformations', () => {
+        const s1 = new Sphere();
+        s1.transform = scaling(2, 2, 2);
+        const s2 = new Sphere();
+        s2.transform = translation(5, 0, 0);
+
+        const g = new Group();
+        g.add(s1);
+        g.add(s2);
+        
+        const [min, max] = g.bounds();
+    
+        expect(min).toEqual(point(-2, -2, -2));
+        expect(max).toEqual(point(6, 2, 2));
+    });
+});
+
+describe('CSG Shapes', () => {
+
+    test('CSG is created with an operation and two shapes', () => {
+        const s = new Sphere();
+        const c = new Cube();
+        const csg = new CsgShape('union', s, c);
+
+        expect(csg.operation).toEqual('union');
+        expect(csg.left).toBe(s);
+        expect(csg.right).toBe(c);
+        expect(s.parent).toBe(csg);
+        expect(c.parent).toBe(csg);
+    });
+
+    each`
+        operation         | leftHit  | inLeft   | inRight  | result
+        ${'union'}        | ${true}  | ${true}  | ${true}  | ${false}
+        ${'union'}        | ${true}  | ${true}  | ${false} | ${true}
+        ${'union'}        | ${true}  | ${false} | ${true}  | ${false}
+        ${'union'}        | ${true}  | ${false} | ${false} | ${true}
+        ${'union'}        | ${false} | ${true}  | ${true}  | ${false}
+        ${'union'}        | ${false} | ${true}  | ${false} | ${false}
+        ${'union'}        | ${false} | ${false} | ${true}  | ${true}
+        ${'union'}        | ${false} | ${false} | ${false} | ${true}
+        ${'intersection'} | ${true}  | ${true}  | ${true}  | ${true}
+        ${'intersection'} | ${true}  | ${true}  | ${false} | ${false}
+        ${'intersection'} | ${true}  | ${false} | ${true}  | ${true}
+        ${'intersection'} | ${true}  | ${false} | ${false} | ${false}
+        ${'intersection'} | ${false} | ${true}  | ${true}  | ${true}
+        ${'intersection'} | ${false} | ${true}  | ${false} | ${true}
+        ${'intersection'} | ${false} | ${false} | ${true}  | ${false}
+        ${'intersection'} | ${false} | ${false} | ${false} | ${false}
+        ${'difference'}   | ${true}  | ${true}  | ${true}  | ${false}
+        ${'difference'}   | ${true}  | ${true}  | ${false} | ${true}
+        ${'difference'}   | ${true}  | ${false} | ${true}  | ${false}
+        ${'difference'}   | ${true}  | ${false} | ${false} | ${true}
+        ${'difference'}   | ${false} | ${true}  | ${true}  | ${true}
+        ${'difference'}   | ${false} | ${true}  | ${false} | ${true}
+        ${'difference'}   | ${false} | ${false} | ${true}  | ${false}
+        ${'difference'}   | ${false} | ${false} | ${false} | ${false}
+    `.test('evaluating the intersections for csg operation $operation', ({operation, leftHit, inLeft, inRight, result}) => {
+        const csg = new CsgShape(operation, new TestShape(), new TestShape());
+
+        expect(csg.validIntersection(leftHit, inLeft, inRight)).toBe(result);
+    });
+
+    each`
+        operation         | x0   | x1
+        ${'union'}        | ${0} | ${3}
+        ${'intersection'} | ${1} | ${2}
+        ${'difference'}   | ${0} | ${1}
+    `.test('filtering a list of intersections', ({operation, x0, x1}) => {
+        const s = new Sphere();
+        const c = new Cube();
+        const csg = new CsgShape(operation, s, c);
+        const xs = [intersection(1, s), intersection(2, c), intersection(3, s), intersection(4, c)];
+        
+        const result = csg.filterIntersections(xs);
+
+        expect(result.length).toBe(2);
+        expect(result[0]).toStrictEqual(xs[x0]);
+        expect(result[1]).toStrictEqual(xs[x1]);
+    });
+
+    test('a ray misses a csg shape', () => {
+        const s = new Sphere();
+        const c = new Cube();
+        const csg = new CsgShape('union', s, c);
+        
+        const r = ray(point(0, 2, -5), vector(0, 0, 1));
+        const xs = csg.intersects(r);
+    
+        expect(xs.length).toBe(0);
+    });
+
+    test('a ray hits a csg shape', () => {
+        const s1 = new Sphere();
+        const s2 = new Sphere();
+        s2.transform = translation(0, 0, 0.5);
+        const csg = new CsgShape('union', s1, s2);
+        
+        const r = ray(point(0, 0, -5), vector(0, 0, 1));
+        const xs = csg.intersects(r);
+    
+        expect(xs.length).toBe(2);
+        expect(xs[0].time).toEqual(4);
+        expect(xs[0].object).toBe(s1);
+        expect(xs[1].time).toEqual(6.5);
+        expect(xs[1].object).toBe(s2);
+    });
+
+    test('the bounds of a csg contains both operands bounds', () => {
+        const s = new Sphere();
+        const c = new Cylinder();
+        c.minimum = -5;
+        c.maximum = 5;
+
+        const csg = new CsgShape('union', s, c);
+        const [min, max] = csg.bounds();
+    
+        expect(min).toEqual(point(-1, -5, -1));
+        expect(max).toEqual(point(1, 5, 1));
+    });
+
+    test('the bounds of a csg is affected by children transformations', () => {
+        const s1 = new Sphere();
+        s1.transform = scaling(2, 2, 2);
+        const s2 = new Sphere();
+        s2.transform = translation(5, 0, 0);
+
+        const csg = new CsgShape('union', s1, s2);
+        const [min, max] = csg.bounds();
+    
+        expect(min).toEqual(point(-2, -2, -2));
+        expect(max).toEqual(point(6, 2, 2));
     });
 });
