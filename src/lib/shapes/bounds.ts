@@ -1,9 +1,55 @@
+import { multiply } from "../matrices";
 import { point, Tuple } from "../tuples";
+import { Shape } from "./shape";
 
 export type Bounds = [
     min: Tuple,
     max: Tuple
 ]
+
+export function boundsContainsPoint(b: Bounds, p: Tuple): boolean {
+    return p[0] >= b[0][0] && p[0] <= b[1][0] &&
+        p[1] >= b[0][1] && p[1] <= b[1][1] &&
+        p[2] >= b[0][2] && p[2] <= b[1][2];
+}
+
+export function boundsContainsBounds(b1: Bounds, b2: Bounds): boolean {
+    return boundsContainsPoint(b1, b2[0]) && boundsContainsPoint(b1, b2[1]);
+}
+
+export function transformBoundsCorners(b: Bounds, m: number[][]): Tuple[] {
+    const [sMin, sMax] = b;
+    let corners = [
+        point(sMin[0], sMin[1], sMin[2]),
+        point(sMin[0], sMin[1], sMax[2]),
+        point(sMin[0], sMax[1], sMax[2]),
+        point(sMin[0], sMax[1], sMin[2]),
+        point(sMax[0], sMin[1], sMin[2]),
+        point(sMax[0], sMin[1], sMax[2]),
+        point(sMax[0], sMax[1], sMax[2]),
+        point(sMax[0], sMax[1], sMin[2])
+    ];
+
+    return corners.map((t) => multiply(m, t));
+}
+
+export function transformGroupBounds(shapes: Shape[]): Bounds {
+
+    const groupPoints: Tuple[] = shapes.flatMap(s => transformBoundsCorners(s.bounds(), s.transform));
+
+    return [
+        point(
+            Math.min(...groupPoints.map(p => p[0])),
+            Math.min(...groupPoints.map(p => p[1])),
+            Math.min(...groupPoints.map(p => p[2]))
+        ),
+        point(
+            Math.max(...groupPoints.map(p => p[0])),
+            Math.max(...groupPoints.map(p => p[1])),
+            Math.max(...groupPoints.map(p => p[2]))
+        )
+    ];
+}
 
 export function splitBounds(b: Bounds): [Bounds, Bounds] {
     let [x0, y0, z0] = b[0];

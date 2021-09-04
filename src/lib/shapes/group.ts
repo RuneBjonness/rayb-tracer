@@ -2,7 +2,7 @@ import { Intersection } from '../intersections';
 import { multiply } from '../matrices';
 import { Ray } from '../rays';
 import { point, Tuple } from '../tuples';
-import { Bounds } from './bounds';
+import { Bounds, transformGroupBounds } from './bounds';
 import { Shape } from './shape';
 
 
@@ -16,39 +16,9 @@ export class Group extends Shape {
     }
 
     bounds(): Bounds {
-        if (this.groupBounds) {
-            return this.groupBounds;
+        if (!this.groupBounds) {
+            this.groupBounds = transformGroupBounds(this.shapes);
         }
-        const groupPoints: Tuple[] = [];
-
-        this.shapes.forEach(s => {
-            const [sMin, sMax] = s.bounds();
-            let corners = [
-                point(sMin[0], sMin[1], sMin[2]),
-                point(sMin[0], sMin[1], sMax[2]),
-                point(sMin[0], sMax[1], sMax[2]),
-                point(sMin[0], sMax[1], sMin[2]),
-                point(sMax[0], sMin[1], sMin[2]),
-                point(sMax[0], sMin[1], sMax[2]),
-                point(sMax[0], sMax[1], sMax[2]),
-                point(sMax[0], sMax[1], sMin[2])
-            ];
-
-            groupPoints.push(...corners.map((v) => multiply(s.transform, v)));
-        });
-
-        this.groupBounds = [
-            point(
-                Math.min(...groupPoints.map(p => p[0])),
-                Math.min(...groupPoints.map(p => p[1])),
-                Math.min(...groupPoints.map(p => p[2]))
-            ),
-            point(
-                Math.max(...groupPoints.map(p => p[0])),
-                Math.max(...groupPoints.map(p => p[1])),
-                Math.max(...groupPoints.map(p => p[2]))
-            )
-        ];
         return this.groupBounds;
     }
 

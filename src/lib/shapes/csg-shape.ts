@@ -2,14 +2,14 @@ import { Intersection } from '../intersections';
 import { multiply } from '../matrices';
 import { Ray } from '../rays';
 import { point, Tuple } from '../tuples';
-import { Bounds } from './bounds';
+import { Bounds, transformGroupBounds } from './bounds';
 import { Group } from './group';
 import { Shape } from './shape';
 
 
 export class CsgShape extends Shape {
 
-    private combinedBounds: Bounds | null = null;
+    private groupBounds: Bounds | null = null;
 
     constructor(public operation: 'union' | 'intersection' | 'difference',
         public left: Shape,
@@ -20,40 +20,10 @@ export class CsgShape extends Shape {
     }
 
     bounds(): Bounds {
-        if (this.combinedBounds) {
-            return this.combinedBounds;
+        if (!this.groupBounds) {
+            this.groupBounds = transformGroupBounds([this.left, this.right]);
         }
-        const groupPoints: Tuple[] = [];
-
-        [this.left, this.right].forEach(s => {
-            const [sMin, sMax] = s.bounds();
-            let corners = [
-                point(sMin[0], sMin[1], sMin[2]),
-                point(sMin[0], sMin[1], sMax[2]),
-                point(sMin[0], sMax[1], sMax[2]),
-                point(sMin[0], sMax[1], sMin[2]),
-                point(sMax[0], sMin[1], sMin[2]),
-                point(sMax[0], sMin[1], sMax[2]),
-                point(sMax[0], sMax[1], sMax[2]),
-                point(sMax[0], sMax[1], sMin[2])
-            ];
-
-            groupPoints.push(...corners.map((v) => multiply(s.transform, v)));
-        });
-
-        this.combinedBounds = [
-            point(
-                Math.min(...groupPoints.map(p => p[0])),
-                Math.min(...groupPoints.map(p => p[1])),
-                Math.min(...groupPoints.map(p => p[2]))
-            ),
-            point(
-                Math.max(...groupPoints.map(p => p[0])),
-                Math.max(...groupPoints.map(p => p[1])),
-                Math.max(...groupPoints.map(p => p[2]))
-            )
-        ];
-        return this.combinedBounds;
+        return this.groupBounds;
     }
 
     validIntersection(leftHit: boolean, inLeft: boolean, inRight: boolean): boolean {
