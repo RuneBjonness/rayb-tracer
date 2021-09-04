@@ -521,13 +521,22 @@ describe('Cones', () => {
         expect(tuplesAreEqual(n, normal)).toBe(true);
     });
 
-    test('the bounds of a cone', () => {
+    test('the bounds of a unbounded cone', () => {
         const c = new Cone();
-        c.maximum = 0;
         const [min, max] = c.bounds();
     
-        expect(min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
-        expect(max).toEqual(point(1, 0, 1));
+        expect(min).toEqual(point(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY));
+        expect(max).toEqual(point(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY));
+    });
+
+    test('the bounds of a cone', () => {
+        const c = new Cone();
+        c.minimum = -5;
+        c.maximum = 3;
+        const [min, max] = c.bounds();
+    
+        expect(min).toEqual(point(-5, -5, -5));
+        expect(max).toEqual(point(5, 3, 5));
     });
 });
 

@@ -270,9 +270,10 @@ export class Cone extends Shape {
     }
 
     bounds(): Bounds {
+        const limit = Math.max(Math.abs(this.minimum), Math.abs(this.maximum));
         return [
-            point(-1, this.minimum, -1), 
-            point(1, this.maximum, 1)
+            point(-limit, this.minimum, -limit), 
+            point(limit, this.maximum, limit)
         ];
     }
 
