@@ -107,18 +107,10 @@ describe('Common shape features', () => {
         expect(tuplesAreEqual(n, vector(0.28571, 0.42857, -0.85714))).toBe(true);
     });
 
-    test('finding normal on a child object', () => {
-        const g1 = new Group();
-        g1.transform = rotationY(Math.PI/2);
-        const g2 = new Group();
-        g2.transform = scaling(1, 2, 3);
+    test('dividing a primitive does nothing', () => {
         const s = new Sphere();
-        s.transform = translation(5, 0, 0);
-        g1.add(g2);
-        g2.add(s);
-        
-        const n = s.normalAt(point(1.7321, 1.1547, -5.5774));
-        
-        expect(tuplesAreEqual(n, vector(0.2857, 0.42854, -0.85716))).toBe(true);
+        s.divide(1);
+       
+        expect(s).toStrictEqual(new Sphere());
     });
 });

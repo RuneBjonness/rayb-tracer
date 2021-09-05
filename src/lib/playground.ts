@@ -283,9 +283,9 @@ export function renderScene(width: number, height: number): ImageData {
 
     function teapotDemo(): Shape {
         const parser = new ObjParser();
-        parser.parse(teapotLowResObjFile);
-        parser.model.transform = multiply(translation(0, -0.5, 0), multiply(scaling(0.1, 0.1, 0.1), multiply(rotationY(Math.PI/5), rotationX(-Math.PI/2))));
-        return parser.model;
+        const model = parser.parse(teapotLowResObjFile);
+        model.transform = multiply(translation(0, -0.5, 0), multiply(scaling(0.1, 0.1, 0.1), multiply(rotationY(Math.PI/5), rotationX(-Math.PI/2))));
+        return model;
     }
 
     function csgDemo(): Shape {
@@ -348,7 +348,7 @@ export function renderScene(width: number, height: number): ImageData {
         rb.add(b);
 
         rb.transform = multiply(translation(0, 1, 3), multiply(scaling(0.5, 0.5, 0.5), multiply(rotationY(Math.PI/6), rotationX(-Math.PI/2))));
-
+        rb.divide(2);
         return rb;
 
     }

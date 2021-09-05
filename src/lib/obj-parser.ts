@@ -15,8 +15,11 @@ export class ObjParser {
     constructor() {
     }
 
-    parse(data: string): void {
+    parse(data: string): Group {
         data.split('\n').forEach(cmd => this.parseLine(cmd));
+
+        this.model.divide(4);
+        return this.model;
     }
 
     private parseLine(command: string): void {

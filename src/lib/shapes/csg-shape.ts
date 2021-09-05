@@ -26,6 +26,11 @@ export class CsgShape extends Shape {
         return this.groupBounds;
     }
 
+    override divide(threshold: number): void {
+        this.left.divide(threshold);
+        this.right.divide(threshold);
+    }
+
     validIntersection(leftHit: boolean, inLeft: boolean, inRight: boolean): boolean {
         if (this.operation === 'union') {
             return (leftHit && !inRight) || (!leftHit && !inLeft);

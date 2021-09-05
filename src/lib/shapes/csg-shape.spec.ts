@@ -4,6 +4,7 @@ import { ray } from "../rays";
 import { translation, scaling } from "../transformations";
 import { point, vector } from "../tuples";
 import { CsgShape } from "./csg-shape";
+import { Group } from "./group";
 import { Cube } from "./primitives/cube";
 import { Cylinder } from "./primitives/cylinder";
 import { Sphere } from "./primitives/sphere";
@@ -124,5 +125,31 @@ describe('CSG Shapes', () => {
     
         expect(min).toEqual(point(-2, -2, -2));
         expect(max).toEqual(point(6, 2, 2));
+    });
+
+    test('dividing a csg shape partitions its children', () => {
+        const s1 = new Sphere();
+        s1.transform = translation(-1.5, 0, 0);
+        const s2 = new Sphere();
+        s2.transform = translation(1.5, 0, 0);
+        const g1 = new Group();
+        g1.add(s1);
+        g1.add(s2);
+
+        const s3 = new Sphere();
+        s3.transform = translation(0, 0, -1.5);
+        const s4 = new Sphere();
+        s4.transform = translation(0, 0, 1.5);
+        const g2 = new Group();
+        g2.add(s3);
+        g2.add(s4);
+
+        const csg = new CsgShape('difference', g1, g2);
+        csg.divide(1);
+
+        expect((g1.shapes[0] as Group).shapes[0].transform).toEqual(s1.transform);
+        expect((g1.shapes[1] as Group).shapes[0].transform).toEqual(s2.transform);
+        expect((g2.shapes[0] as Group).shapes[0].transform).toEqual(s3.transform);
+        expect((g2.shapes[1] as Group).shapes[0].transform).toEqual(s4.transform);
     });
 });

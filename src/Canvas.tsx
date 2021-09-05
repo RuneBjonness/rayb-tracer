@@ -3,8 +3,8 @@ import './Canvas.css'
 import { renderScene } from './lib/playground';
 
 const RtCanvas: React.FC<{}> = () => {
-    let width = 200;
-    let height = 150;
+    let width = 400;
+    let height = 300;
 
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);

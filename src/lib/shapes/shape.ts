@@ -43,6 +43,10 @@ export abstract class Shape {
         normal = normalize(normal);
         return this.parent ? this.parent.normalToWorld(normal) : normal;
     }
+
+    divide(threshold: number): void {
+        return;
+    }
 }
 
 export class TestShape extends Shape {
