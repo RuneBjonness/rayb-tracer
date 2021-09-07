@@ -1,5 +1,5 @@
 import { hit, Intersection, IntersectionComputations, prepareComputations, reflectance } from './intersections';
-import { Light, pointLight } from './lights';
+import { Light, PointLight } from './lights';
 import { ray, Ray } from './rays';
 import { Shape } from './shapes/shape'
 import { Sphere } from "./shapes/primitives/sphere";
@@ -23,7 +23,7 @@ export class World {
     shadeHit(comps: IntersectionComputations, maxDepth: number = 4): Color {
         let shades: Color[] = [];
         this.lights.forEach(l => {
-            shades.push(lighting(comps.object, l, comps.point, comps.eyev, comps.normalv, this.isShadowed(comps.overPoint, l)));
+            shades.push(lighting(comps.object, l, comps.point, comps.eyev, comps.normalv, l.intensityAt(comps.overPoint, this)));
         });
         if(shades.length === 0){
             return [0,0,0];
@@ -48,8 +48,8 @@ export class World {
         return i ? this.shadeHit(prepareComputations(i, r, xs), maxDepth) : [0,0,0];
     }
 
-    isShadowed(p: Tuple, l: Light): boolean {
-        const v = subtract(l.position, p);
+    isShadowed(p: Tuple, lightPosition: Tuple): boolean {
+        const v = subtract(lightPosition, p);
         const distance = magnitude(v);
         const direction = normalize(v);
         const r = ray(p, direction);
@@ -87,7 +87,7 @@ export class World {
 
 export function defaultWorld(): World {
     const w = new World();
-    w.lights.push(pointLight(point(-10, 10, -10), color(1, 1, 1)));
+    w.lights.push(new PointLight(point(-10, 10, -10), color(1, 1, 1)));
 
     const s1 = new Sphere();
     s1.material.color = color(0.8, 1.0, 0.6)

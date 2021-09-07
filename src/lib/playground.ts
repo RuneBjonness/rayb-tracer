@@ -4,7 +4,7 @@ import { multiply } from './matrices';
 import { Shape } from './shapes/shape';
 import { CsgShape } from "./shapes/csg-shape";
 import { Group } from "./shapes/group";
-import { pointLight } from './lights';
+import { AreaLight, PointLight } from './lights';
 import { World } from './world';
 import { Camera } from './camera';
 import { Checkers3dPattern, RadialGradientPattern, RingPattern, StripePattern } from './patterns';
@@ -36,6 +36,14 @@ export function renderScene(width: number, height: number): ImageData {
         color(1,0.6,0), 
         color(1,0.4,0)
     ];
+
+    function matteFloor(): Shape {
+        const f = new Plane();
+        f.material.specular = 0;
+        f.material.ambient = 0.025;
+        f.material.diffuse = 0.67;
+        return f;
+    }
 
     function reflectiveFloor(c: Color): Shape {
         const f = new Plane();
@@ -88,6 +96,16 @@ export function renderScene(width: number, height: number): ImageData {
         rightHiddenWall.material = wallMaterial;
     
         return [floor, ceiling, leftWall, leftHiddenWall, rightWall, rightHiddenWall];
+    }
+
+    function basicShere(): Shape { 
+        const s = new Sphere();
+        s.transform = translation(-1, 1, 0);
+        s.material.color = color(0.5, 0, 1);
+        s.material.diffuse = 0.6;
+        s.material.specular = 0;
+        s.material.ambient = 0.1;
+        return s;
     }
 
     function spheresDemo(): Shape[] { 
@@ -355,8 +373,9 @@ export function renderScene(width: number, height: number): ImageData {
 
     const world = new World()
     world.lights.push(
-        pointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
-        // pointLight(point(2.5, 4.99, -2.5), color(0.3, 0.3, 0.3))
+        // new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
+        // new PointLight(point(2.5, 4.99, -2.5), color(0.3, 0.3, 0.3)),
+        new AreaLight(point(-3.5, 2.5, -2), vector(2, 0, 0), 8, vector(0, 2, 0), 8, color(1.5, 1.5, 1.5))
     );
 
     // world.objects.push(...checkeredRoom(color(0.9, 1, 0.9), color(0.1, 0.4, 0.1)));
@@ -368,7 +387,9 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
     // world.objects.push(objParserDemo());
     // world.objects.push(teapotDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
-    world.objects.push(csgDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    // world.objects.push(csgDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+
+    world.objects.push(basicShere(), matteFloor());
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));

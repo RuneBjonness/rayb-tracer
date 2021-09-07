@@ -29,7 +29,7 @@ export function material(): Material {
     };
 }
 
-export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, normalv: Tuple, inShadow: boolean): Color {
+export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, normalv: Tuple, lightIntensity: number): Color {
     let mColor: Color
     if(shape.material.pattern) {
         mColor = shape.material.pattern.colorAt(shape, point);
@@ -40,7 +40,7 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
     const lightv = normalize(subtract(light.position, point));
     const ambient = multiply(effectiveColor, shape.material.ambient);
 
-    if(inShadow){
+    if(lightIntensity === 0.0){
         return ambient;
     }
 
@@ -50,7 +50,7 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
         diffuse = color(0, 0, 0);
         specular = color(0, 0, 0);
     } else {
-        diffuse = multiply(multiply(effectiveColor, shape.material.diffuse), lightDotNormal);
+        diffuse = multiply(multiply(multiply(effectiveColor, shape.material.diffuse), lightDotNormal), lightIntensity);
 
         const reflectv = reflect(negate(lightv), normalv);
         const reflectDotEye = dot(reflectv, eyev);
@@ -58,7 +58,7 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
             specular = color(0, 0, 0);
         } else {
             const factor = Math.pow(reflectDotEye, shape.material.shininess);
-            specular = multiply(multiply(light.intensity, shape.material.specular), factor);
+            specular = multiply(multiply(multiply(light.intensity, shape.material.specular), factor), lightIntensity);
         }
     }
 

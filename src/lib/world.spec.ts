@@ -1,5 +1,5 @@
 import { World, defaultWorld } from './world';
-import { pointLight } from './lights';
+import { PointLight } from './lights';
 import { areEqual, color, point, vector } from './tuples'
 import { scaling, translation } from './transformations';
 import { ray } from './rays';
@@ -7,6 +7,7 @@ import { intersection, prepareComputations } from './intersections';
 import { TestPattern } from './patterns';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere } from './shapes/primitives/sphere';
+import each from 'jest-each';
 
 test('creating a world', () => {
     const w = new World();
@@ -16,7 +17,7 @@ test('creating a world', () => {
 });
 
 test('the default world', () => {
-    const light = pointLight(point(-10, 10, -10), color(1, 1, 1));
+    const light = new PointLight(point(-10, 10, -10), color(1, 1, 1));
 
     const s1 = new Sphere();
     s1.material.color = color(0.8, 1.0, 0.6)
@@ -58,7 +59,7 @@ test('shading an intersection', () => {
 
 test('shading an intersection from the inside', () => {
     const w = defaultWorld();
-    w.lights[0] = pointLight(point(0, 0.25, 0), color(1, 1, 1));
+    w.lights[0] = new PointLight(point(0, 0.25, 0), color(1, 1, 1));
     const r = ray(point(0, 0, 0), vector(0, 0, 1));
     const shape = w.objects[1];
     const i = intersection(0.5, shape);
@@ -98,37 +99,21 @@ test('the color with an intersection behind the ray', () => {
     expect(areEqual(c, inner.material.color)).toBe(true);
 });
 
-test('there is no shadow when nothing is collinear with point and light', () => {
+each`
+    case                                                | p                      | result
+    ${'nothing is collinear with point and light'}      | ${point(0, 10, 0)}     | ${false}
+    ${'an object is between the point and the light'}   | ${point(10, -10, 10)}  | ${true}
+    ${'an object is behind the light'}                  | ${point(-20, 20, -20)} | ${false}
+    ${'an object is behind the point'}                  | ${point(-2, 2, -2)}    | ${false}
+`.test('isShadowed() when $case', ({p, result}) => {
     const w = defaultWorld();
-    const p = point(0, 10, 0);
-
-    expect(w.isShadowed(p, w.lights[0])).toBe(false);
-});
-
-test('the shadow when an object is between the point and the light', () => {
-    const w = defaultWorld();
-    const p = point(10, -10, 10);
-
-    expect(w.isShadowed(p, w.lights[0])).toBe(true);
-});
-
-test('there is no shadow when an object is behind the light', () => {
-    const w = defaultWorld();
-    const p = point(-20, 20, -20);
-
-    expect(w.isShadowed(p, w.lights[0])).toBe(false);
-});
-
-test('there is no shadow when an object is behind the point', () => {
-    const w = defaultWorld();
-    const p = point(-2, 2, -2);
-
-    expect(w.isShadowed(p, w.lights[0])).toBe(false);
+    const lightPos = point(-10, 10, -10);
+    expect(w.isShadowed(p, lightPos)).toBe(result);
 });
 
 test('shading an intersection in shadow', () => {
     const w = new World();
-    w.lights.push(pointLight(point(0, 0, -10), color(1, 1, 1)));
+    w.lights.push(new PointLight(point(0, 0, -10), color(1, 1, 1)));
     const s = new Sphere();
     s.transform = translation(0, 0, 10);
     w.objects.push(new Sphere(), s);
@@ -187,7 +172,7 @@ test('shadeHit() with a reflective material', () => {
 
 test('colorAt() with mutually reflective surfaces', () => {
     const w = new World();
-    w.lights.push(pointLight(point(0,0,0), color(1, 1, 1)));
+    w.lights.push(new PointLight(point(0,0,0), color(1, 1, 1)));
 
     const lower = new Plane();
     lower.material.reflective = 1;
