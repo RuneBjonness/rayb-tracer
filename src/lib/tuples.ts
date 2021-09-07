@@ -95,8 +95,14 @@ export function multiply(a1: number[], scalarOrC2: number | number[]): number[] 
     return res as Color;
 }
 
-export function divide(t1: Tuple, scalar: number): Tuple {
-    return t1.map((v) => v / scalar) as Tuple;
+export function divide(t1: Tuple, scalar: number): Tuple;
+export function divide(c1: Color, scalar: number): Color;
+export function divide(a1: number[], scalar: number): number[] {
+    const res = a1.map((v) => v / scalar);
+    if(res.length === 4){
+        return res as Tuple;
+    }
+    return res as Color;
 }
 
 export function magnitude(t: Tuple): number {

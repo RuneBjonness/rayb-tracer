@@ -105,6 +105,7 @@ export function renderScene(width: number, height: number): ImageData {
         s.material.diffuse = 0.6;
         s.material.specular = 0;
         s.material.ambient = 0.1;
+        s.material.reflective = 0.3;
         return s;
     }
 
@@ -375,8 +376,16 @@ export function renderScene(width: number, height: number): ImageData {
     world.lights.push(
         // new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
         // new PointLight(point(2.5, 4.99, -2.5), color(0.3, 0.3, 0.3)),
-        new AreaLight(point(-3.5, 2.5, -2), vector(2, 0, 0), 8, vector(0, 2, 0), 8, color(1.5, 1.5, 1.5))
+        new AreaLight(point(-5.5, 3.5, -5), vector(3, 0, 0), 8, vector(0, 3, 0), 8, color(1.5, 1.5, 1.5))
     );
+
+    const lamp = new Cube();
+    lamp.material.color = color(1.5, 1.5, 1.5);
+    lamp.material.diffuse = 0;
+    lamp.material.specular = 0;
+    lamp.material.ambient = 1;
+    lamp.transform = multiply(translation(-4, 5, -5.1), scaling(1, 1, 0.01));
+    world.objects.push(lamp);
 
     // world.objects.push(...checkeredRoom(color(0.9, 1, 0.9), color(0.1, 0.4, 0.1)));
     // world.objects.push(...spheresDemo());

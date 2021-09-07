@@ -2,23 +2,26 @@ import { add, Color, divide, multiply, point, Tuple } from './tuples'
 import { World } from './world';
 
 export interface Light {
-    position: Tuple;
     intensity: Color;
     intensityAt(p: Tuple, w: World): number;
+    samplePoints(): Tuple[];
 }
 
 
 export class PointLight implements Light {
-    constructor(public position: Tuple, public intensity: Color){
+    constructor(private position: Tuple, public intensity: Color) {
     }
     
+    samplePoints(): Tuple[] {
+        return [this.position];
+    }
+
     intensityAt(p: Tuple, w: World): number {
-        return w.isShadowed(p, this.position) ? 0.0 : 1.0;
+        return w.isShadowed(p, this.samplePoints()[0]) ? 0.0 : 1.0;
     }
 }
 
 export class AreaLight implements Light {
-    position: Tuple = point(1, 0, 0.5);
     private uVec: Tuple; 
     private vVec: Tuple; 
     private samples: number;
@@ -28,19 +31,25 @@ export class AreaLight implements Light {
         this.samples = uSteps * vSteps;
         this.uVec = divide(fullUvec, uSteps);
         this.vVec = divide(fullVvec, vSteps);
-        this.position = corner;
+    }
+
+    samplePoints(): Tuple[] {
+        const pts: Tuple[] = [];
+        for(let v = 0; v < this.vSteps; v++){
+            for(let u = 0; u < this.uSteps; u++){
+                pts.push(this.pointOnLight(u, v));
+            }
+        }
+        return pts;
     }
     
     intensityAt(p: Tuple, w: World): number {
         let total = 0.0;
-
-        for(let v = 0; v < this.vSteps; v++){
-            for(let u = 0; u < this.uSteps; u++){
-                if(!w.isShadowed(p, this.pointOnLight(u, v))) {
-                    total += 1.0;
-                }
+        this.samplePoints().forEach(sp => {
+            if(!w.isShadowed(p, sp)) {
+                total += 1.0;
             }
-        }
+        })
         return total / this.samples;
     }
 
@@ -48,7 +57,7 @@ export class AreaLight implements Light {
         return add(
             this.corner, 
             add(
-                multiply(this.uVec, (u + 0.5)),
-                multiply(this.vVec, (v + 0.5))));
+                multiply(this.uVec, (u + Math.random())),
+                multiply(this.vVec, (v + Math.random()))));
     }
 }

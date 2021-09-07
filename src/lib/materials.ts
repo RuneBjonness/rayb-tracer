@@ -1,4 +1,4 @@
-import { add, color, Color, dot, multiply, negate, normalize, reflect, subtract, Tuple } from './tuples'
+import { add, color, Color, divide, dot, multiply, negate, normalize, reflect, subtract, Tuple } from './tuples'
 import { Light } from './lights';
 import { Pattern } from './patterns';
 import { Shape } from './shapes/shape';
@@ -37,30 +37,37 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
         mColor = shape.material.color;
     }
     const effectiveColor = multiply(mColor, light.intensity);
-    const lightv = normalize(subtract(light.position, point));
     const ambient = multiply(effectiveColor, shape.material.ambient);
 
     if(lightIntensity === 0.0){
         return ambient;
     }
 
-    let diffuse: Color, specular: Color;
-    const lightDotNormal = dot(lightv, normalv);
-    if(lightDotNormal < 0) {
-        diffuse = color(0, 0, 0);
-        specular = color(0, 0, 0);
-    } else {
-        diffuse = multiply(multiply(multiply(effectiveColor, shape.material.diffuse), lightDotNormal), lightIntensity);
+    let sum = color(0, 0, 0);
+    const lightSamples = light.samplePoints();
 
-        const reflectv = reflect(negate(lightv), normalv);
-        const reflectDotEye = dot(reflectv, eyev);
-        if(reflectDotEye <= 0){
+    lightSamples.forEach(lightSample => {
+        const lightv = normalize(subtract(lightSample, point));
+        let diffuse: Color, specular: Color;
+        const lightDotNormal = dot(lightv, normalv);
+
+        if(lightDotNormal < 0) {
+            diffuse = color(0, 0, 0);
             specular = color(0, 0, 0);
         } else {
-            const factor = Math.pow(reflectDotEye, shape.material.shininess);
-            specular = multiply(multiply(multiply(light.intensity, shape.material.specular), factor), lightIntensity);
+            diffuse = multiply(multiply(effectiveColor, shape.material.diffuse), lightDotNormal);
+    
+            const reflectv = reflect(negate(lightv), normalv);
+            const reflectDotEye = dot(reflectv, eyev);
+            if(reflectDotEye <= 0){
+                specular = color(0, 0, 0);
+            } else {
+                const factor = Math.pow(reflectDotEye, shape.material.shininess);
+                specular = multiply(multiply(light.intensity, shape.material.specular), factor);
+            }
         }
-    }
+        sum = add(add(sum, diffuse), specular);
+    });
 
-    return add(add(ambient, diffuse), specular);
+    return add(ambient, multiply((divide(sum, lightSamples.length)), lightIntensity));
 }
