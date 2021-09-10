@@ -44,6 +44,7 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
     }
 
     let sum = color(0, 0, 0);
+    const specularLight = multiply(light.intensity, shape.material.specular);
     const lightSamples = light.samplePoints();
 
     lightSamples.forEach(lightSample => {
@@ -62,8 +63,7 @@ export function lighting(shape: Shape, light: Light, point: Tuple, eyev: Tuple, 
             if(reflectDotEye <= 0){
                 specular = color(0, 0, 0);
             } else {
-                const factor = Math.pow(reflectDotEye, shape.material.shininess);
-                specular = multiply(multiply(light.intensity, shape.material.specular), factor);
+                specular = multiply(specularLight, Math.pow(reflectDotEye, shape.material.shininess));
             }
         }
         sum = add(add(sum, diffuse), specular);

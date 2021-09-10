@@ -4,7 +4,16 @@ import { Shape } from './shapes/shape';
 
 
 export abstract class Pattern {
-    transform: number[][];
+    private _transform: number[][] = [];
+    public get transform() { 
+        return this._transform; 
+    }
+    public set transform(m: number[][]) { 
+        this._transform = m;
+        this.invTransform = inverse(m);
+    }
+
+    private invTransform: number[][] = [];
 
     constructor(){
         this.transform = identityMatrix();
@@ -12,7 +21,7 @@ export abstract class Pattern {
 
     colorAt(shape: Shape, p: Tuple): Color {
         const objectPoint = shape.worldToObject(p);
-        const patternPoint = multiply(inverse(this.transform), objectPoint);
+        const patternPoint = multiply(this.invTransform, objectPoint);
         return this.localColorAt(patternPoint);
     }    
     protected abstract localColorAt(p: Tuple): Color;

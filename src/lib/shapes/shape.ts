@@ -9,9 +9,19 @@ import { CsgShape } from './csg-shape';
 
 
 export abstract class Shape {
-    transform: number[][];
+    private _transform: number[][] = [];
+    public get transform() { 
+        return this._transform; 
+    }
+    public set transform(m: number[][]) { 
+        this._transform = m;
+        this.invTransform = inverse(m);
+    }
+
     material: Material;
     parent: Group | CsgShape | null = null;
+
+    private invTransform: number[][] = [];
 
     constructor(){
         this.transform = identityMatrix();
@@ -21,24 +31,21 @@ export abstract class Shape {
     abstract bounds(): Bounds;
 
     intersects(r: Ray): Intersection[] {
-        const ray = transform(r, inverse(this.transform));
-        return this.localIntersects(ray);
+        return this.localIntersects(transform(r, this.invTransform));
     }    
     protected abstract localIntersects(r: Ray): Intersection[];
 
     normalAt(p: Tuple, i: Intersection | null = null): Tuple {
-        const localPoint = this.worldToObject(p);
-        const localNormal = this.localNormalAt(localPoint, i);
-        return this.normalToWorld(localNormal);
+        return this.normalToWorld(this.localNormalAt(this.worldToObject(p), i));
     }
     protected abstract localNormalAt(p: Tuple, i: Intersection | null): Tuple;
 
     worldToObject(p: Tuple): Tuple {
-        return multiply(inverse(this.transform), this.parent ? this.parent.worldToObject(p) : p);
+        return multiply(this.invTransform, this.parent ? this.parent.worldToObject(p) : p);
     }
 
     normalToWorld(n: Tuple): Tuple {
-        let normal = multiply(transpose(inverse(this.transform)), n);
+        let normal = multiply(transpose(this.invTransform), n);
         normal[3] = 0;
         normal = normalize(normal);
         return this.parent ? this.parent.normalToWorld(normal) : normal;

@@ -1,15 +1,26 @@
 import { identityMatrix, inverse, multiply } from './matrices';
 import { ray, Ray } from './rays';
-import { Color, normalize, point, subtract } from './tuples'
+import { Color, normalize, point, subtract, Tuple } from './tuples'
 import { World } from './world';
 import { Canvas } from './canvas';
 
 export class Camera {
-    public transform: number[][];
+    private _transform: number[][] = [];
+    public get transform() { 
+        return this._transform; 
+    }
+    public set transform(m: number[][]) { 
+        this._transform = m;
+        this.invTransform = inverse(m);
+        this.origin = multiply(this.invTransform, point(0, 0, 0));
+    }
+
     public pixelSize: number;
 
     private halfWidth: number;
     private halfHeight: number;
+    private invTransform: number[][] = [];
+    private origin: Tuple = point(0, 0, 0);
 
     constructor(public width: number, public height: number, public fieldOfView: number) {
         this.transform = identityMatrix();
@@ -32,10 +43,9 @@ export class Camera {
         const worldX = this.halfWidth - xOffset;
         const worldY = this.halfHeight - yOffset;
 
-        const px = multiply(inverse(this.transform), point(worldX, worldY, -1));
-        const origin = multiply(inverse(this.transform), point(0, 0, 0));
-        const direction = normalize(subtract(px, origin));
-        return ray(origin, direction);
+        const px = multiply(this.invTransform, point(worldX, worldY, -1));
+        const direction = normalize(subtract(px, this.origin));
+        return ray(this.origin, direction);
     }
 
     render(w: World): Canvas {

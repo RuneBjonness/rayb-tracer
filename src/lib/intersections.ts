@@ -56,8 +56,9 @@ export function prepareComputations(i: Intersection, r: Ray, xs: Intersection[] 
         comps.inside = true;
         comps.normalv = negate(comps.normalv);
     }
-    comps.overPoint = add(comps.point, multiply(comps.normalv, 0.0001));
-    comps.underPoint = subtract(comps.point, multiply(comps.normalv, 0.0001));
+    const adjustv = multiply(comps.normalv, 0.0001);
+    comps.overPoint = add(comps.point, adjustv);
+    comps.underPoint = subtract(comps.point, adjustv);
     comps.reflectv = reflect(r.direction, comps.normalv);
 
     const containers: Shape[] = [];
