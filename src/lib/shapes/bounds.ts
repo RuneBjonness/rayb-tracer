@@ -1,5 +1,6 @@
 import { multiply } from "../matrices";
-import { point, Tuple } from "../tuples";
+import { Ray } from "../rays";
+import { point, Tuple, vector } from "../tuples";
 import { Shape } from "./shape";
 
 export type Bounds = [
@@ -73,4 +74,19 @@ export function splitBounds(b: Bounds): [Bounds, Bounds] {
         [b[0], point(x1, y1, z1)],
         [point(x0, y0, z0), b[1]]
     ];
+}
+
+export function intersectsBounds(b: Bounds, r: Ray): boolean {
+    const [bMin, bMax] = b;
+    const invRayDir = vector(1/r.direction[0], 1/r.direction[1], 1/r.direction[2]);
+    const tx1 = (bMin[0] - r.origin[0]) * invRayDir[0];
+    const tx2 = (bMax[0] - r.origin[0]) * invRayDir[0];
+    const ty1 = (bMin[1] - r.origin[1]) * invRayDir[1];
+    const ty2 = (bMax[1] - r.origin[1]) * invRayDir[1];
+    const tz1 = (bMin[2] - r.origin[2]) * invRayDir[2];
+    const tz2 = (bMax[2] - r.origin[2]) * invRayDir[2];
+    const tmin = Math.max(Math.min(tx1, tx2), Math.min(ty1, ty2), Math.min(tz1, tz2), 0);
+    const tmax = Math.min(Math.max(tx1, tx2), Math.max(ty1, ty2), Math.max(tz1, tz2));
+
+    return tmin <= tmax;
 }

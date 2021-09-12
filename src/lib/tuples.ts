@@ -80,6 +80,7 @@ export function negate(t: Tuple): Tuple {
 }
 
 export function multiply(t1: Tuple, scalar: number): Tuple;
+export function multiply(t1: Tuple, t2: Tuple): Tuple;
 export function multiply(c1: Color, scalar: number): Color;
 export function multiply(c1: Color, c2: Color): Color;
 export function multiply(a1: number[], scalarOrC2: number | number[]): number[] {
@@ -89,6 +90,7 @@ export function multiply(a1: number[], scalarOrC2: number | number[]): number[] 
     } else {
         res = a1.map((v) => v * scalarOrC2);
     }
+    
     if(res.length === 4){
         return res as Tuple;
     }

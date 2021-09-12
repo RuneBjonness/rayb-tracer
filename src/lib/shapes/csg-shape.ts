@@ -1,8 +1,7 @@
 import { Intersection } from '../intersections';
-import { multiply } from '../matrices';
 import { Ray } from '../rays';
-import { point, Tuple } from '../tuples';
-import { Bounds, transformGroupBounds } from './bounds';
+import { Tuple } from '../tuples';
+import { Bounds, intersectsBounds, transformGroupBounds } from './bounds';
 import { Group } from './group';
 import { Shape } from './shape';
 
@@ -64,21 +63,9 @@ export class CsgShape extends Shape {
     }
 
     protected localIntersects(r: Ray): Intersection[] {
-        const [bMin, bMax] = this.bounds();
-
-        const [xtmin, xtmax] = this.checkAxis(r.origin[0], r.direction[0], bMin[0], bMax[0]);
-        const [ytmin, ytmax] = this.checkAxis(r.origin[1], r.direction[1], bMin[1], bMax[1]);
-        const [ztmin, ztmax] = this.checkAxis(r.origin[2], r.direction[2], bMin[2], bMax[2]);
-
-        const tmin = Math.max(xtmin, ytmin, ztmin);
-        const tmax = Math.min(xtmax, ytmax, ztmax);
-
-        if (tmin > tmax) {
-            return [];
-        }
-
-        const xs = [this.left, this.right].flatMap(x => x.intersects(r)).sort((a, b) => a.time - b.time);
-        return this.filterIntersections(xs);
+        return intersectsBounds(this.bounds(), r) 
+            ? this.filterIntersections([this.left, this.right].flatMap(x => x.intersects(r)).sort((a, b) => a.time - b.time))
+            : [];
     }
 
     protected localNormalAt(p: Tuple): Tuple {
@@ -102,21 +89,4 @@ export class CsgShape extends Shape {
         return (<CsgShape>shape).operation !== undefined;
     }
 
-
-
-    private checkAxis(origin: number, direction: number, min: number, max: number): [number, number] {
-        const tMinNumerator = (min - origin);
-        const tMaxNumerator = (max - origin);
-
-        let tmin, tmax: number;
-
-        if (Math.abs(direction) >= 0.00001) {
-            tmin = tMinNumerator / direction;
-            tmax = tMaxNumerator / direction;
-        } else {
-            tmin = tMinNumerator * Number.POSITIVE_INFINITY;
-            tmax = tMaxNumerator * Number.POSITIVE_INFINITY;
-        }
-        return tmin < tmax ? [tmin, tmax] : [tmax, tmin];
-    }
 }

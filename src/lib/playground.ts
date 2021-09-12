@@ -12,6 +12,7 @@ import { Material, material } from './materials';
 import { ObjParser } from './obj-parser';
 import icosahedronObjFile from '../resources/icosahedron.obj?raw';
 import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
+import teapotObjFile from '../resources/teapot.obj?raw';
 import { Cone } from './shapes/primitives/cone';
 import { Cube } from './shapes/primitives/cube';
 import { Cylinder } from './shapes/primitives/cylinder';
@@ -300,10 +301,10 @@ export function renderScene(width: number, height: number): ImageData {
         return parser.model;
     }
 
-    function teapotDemo(): Shape {
+    function teapotDemo(highRes: boolean): Shape {
         const parser = new ObjParser();
-        const model = parser.parse(teapotLowResObjFile);
-        model.transform = multiply(translation(0, -0.5, 0), multiply(scaling(0.1, 0.1, 0.1), multiply(rotationY(Math.PI/5), rotationX(-Math.PI/2))));
+        const model = parser.parse(highRes ? teapotObjFile : teapotLowResObjFile);
+        model.transform = multiply(translation(0, -0.5, 0), multiply(scaling(0.1, 0.1, 0.1), rotationX(-Math.PI/2)));
         return model;
     }
 
@@ -395,10 +396,10 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
     // world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
     // world.objects.push(objParserDemo());
-    // world.objects.push(teapotDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
-    // world.objects.push(csgDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    world.objects.push(teapotDemo(true), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    // world.objects.push(csgDemo(), reflectiveFloor(color(0.0, 0.2, 0.0)));
 
-    world.objects.push(basicShere(), matteFloor());
+    // world.objects.push(basicShere(), matteFloor());
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
