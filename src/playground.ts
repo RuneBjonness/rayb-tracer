@@ -1,27 +1,27 @@
-import { point, vector, color, Color } from './tuples';
-import { radians, rotationX, rotationY, rotationZ, scaling, shearing, translation, viewTransform } from './transformations';
-import { multiply } from './matrices';
-import { Shape } from './shapes/shape';
-import { CsgShape } from "./shapes/csg-shape";
-import { Group } from "./shapes/group";
-import { AreaLight, PointLight } from './lights';
-import { World } from './world';
-import { Camera } from './camera';
-import { Checkers3dPattern, RadialGradientPattern, RingPattern, StripePattern } from './patterns';
-import { Material, material } from './materials';
-import { ObjParser } from './obj-parser';
-import icosahedronObjFile from '../resources/icosahedron.obj?raw';
-import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
-import teapotObjFile from '../resources/teapot.obj?raw';
-import { Cone } from './shapes/primitives/cone';
-import { Cube } from './shapes/primitives/cube';
-import { Cylinder } from './shapes/primitives/cylinder';
-import { Plane } from './shapes/primitives/plane';
-import { Sphere } from './shapes/primitives/sphere';
-import { Triangle } from './shapes/primitives/triangle';
+import { point, vector, color, Color } from './lib/tuples';
+import { radians, rotationX, rotationY, rotationZ, scaling, shearing, translation, viewTransform } from './lib/transformations';
+import { multiply } from './lib/matrices';
+import { Shape } from './lib/shapes/shape';
+import { CsgShape } from "./lib/shapes/csg-shape";
+import { Group } from "./lib/shapes/group";
+import { AreaLight, PointLight } from './lib/lights';
+import { World } from './lib/world';
+import { Camera } from './lib/camera';
+import { Checkers3dPattern, RadialGradientPattern, RingPattern, StripePattern } from './lib/patterns';
+import { Material, material } from './lib/materials';
+import { ObjParser } from './lib/obj-parser';
+import icosahedronObjFile from './resources/icosahedron.obj?raw';
+import teapotLowResObjFile from './resources/teapot-lowres.obj?raw';
+import teapotObjFile from './resources/teapot.obj?raw';
+import { Cone } from './lib/shapes/primitives/cone';
+import { Cube } from './lib/shapes/primitives/cube';
+import { Cylinder } from './lib/shapes/primitives/cylinder';
+import { Plane } from './lib/shapes/primitives/plane';
+import { Sphere } from './lib/shapes/primitives/sphere';
+import { Triangle } from './lib/shapes/primitives/triangle';
 
 
-export function renderScene(width: number, height: number): ImageData {
+export function configureWorld(): World {
 
     const rainbow = [
         color(1,0,0), 
@@ -396,10 +396,15 @@ export function renderScene(width: number, height: number): ImageData {
     // world.objects.push(...groupsDemo(), reflectiveFloor(color(0.2, 0.2, 0.2)));
     // world.objects.push(trianglesDemo(), reflectiveFloor(color(0, 0, 0.1)));
     // world.objects.push(objParserDemo());
-    world.objects.push(teapotDemo(true), reflectiveFloor(color(0.2, 0.2, 0.2)));
+    // world.objects.push(teapotDemo(true), reflectiveFloor(color(0.2, 0.2, 0.2)));
     // world.objects.push(csgDemo(), reflectiveFloor(color(0.0, 0.2, 0.0)));
 
-    // world.objects.push(basicShere(), matteFloor());
+    world.objects.push(basicShere(), matteFloor());
+
+    return world;
+}
+
+export function renderScene(world: World, width: number, height: number): ImageData {
 
     const camera = new Camera(width, height, Math.PI / 3);
     camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));

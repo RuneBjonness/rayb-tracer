@@ -1,6 +1,6 @@
 import { identityMatrix, inverse, multiply } from './matrices';
 import { ray, Ray } from './rays';
-import { Color, normalize, point, subtract, Tuple } from './tuples'
+import { normalize, point, subtract, Tuple } from './tuples'
 import { World } from './world';
 import { Canvas } from './canvas';
 
@@ -49,16 +49,16 @@ export class Camera {
     }
 
     render(w: World): Canvas {
-        const c = new Canvas(this.width, this.height);
+        return this.renderPart(w, 0, 0, this.width, this.height);
+    }
 
-        for(let y=0; y < this.height; y++) {
-            console.log(`       -redering ${y/this.height*100} %`);
-
-            for(let x=0; x < this.width; x++){
-                c.pixels[x][y] = w.colorAt(this.rayForPixel(x, y));
+    renderPart(w: World, startX: number, startY: number, lengthX: number, lengthY: number): Canvas {
+        const c = new Canvas(lengthX, lengthY);
+        for(let y = 0; y < lengthY; y++) {
+            for(let x = 0; x < lengthX; x++){
+                c.pixels[x][y] = w.colorAt(this.rayForPixel(startX + x, startY + y));
             }
         }
         return c;
-    }
+    }    
 }
-
