@@ -4,7 +4,6 @@ import { point, Tuple, vector } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
-
 export class Cube extends Shape {
     constructor() {
         super();
@@ -26,10 +25,7 @@ export class Cube extends Shape {
             return [];
         }
 
-        return [
-            intersection(tmin, this),
-            intersection(tmax, this)
-        ];
+        return [intersection(tmin, this), intersection(tmax, this)];
     }
 
     protected localNormalAt(p: Tuple): Tuple {
@@ -45,8 +41,8 @@ export class Cube extends Shape {
     }
 
     private checkAxis(origin: number, direction: number): [number, number] {
-        const tMinNumerator = (-1 - origin);
-        const tMaxNumerator = (1 - origin);
+        const tMinNumerator = -1 - origin;
+        const tMaxNumerator = 1 - origin;
 
         let tmin, tmax: number;
 

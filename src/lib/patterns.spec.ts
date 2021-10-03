@@ -1,22 +1,28 @@
 import { areEqual, identityMatrix } from './matrices';
-import { Checkers3dPattern, GradientPattern, RadialGradientPattern, RingPattern, SolidPattern, StripePattern, TestPattern } from './patterns';
-import { Sphere } from "./shapes/primitives/sphere";
+import {
+    Checkers3dPattern,
+    GradientPattern,
+    RadialGradientPattern,
+    RingPattern,
+    SolidPattern,
+    StripePattern,
+    TestPattern,
+} from './patterns';
+import { Sphere } from './shapes/primitives/sphere';
 import { scaling, translation } from './transformations';
-import { point, areEqual as tuplesAreEqual, color } from './tuples'
-
+import { point, areEqual as tuplesAreEqual, color } from './tuples';
 
 describe('Common pattern features', () => {
-
     test('the default transformation', () => {
         const p = new TestPattern();
         expect(areEqual(p.transform, identityMatrix())).toBe(true);
     });
-    
+
     test('assigning transformation', () => {
         const p = new TestPattern();
         const t = translation(1, 2, 3);
         p.transform = t;
-    
+
         expect(areEqual(p.transform, t)).toBe(true);
     });
 
@@ -25,7 +31,7 @@ describe('Common pattern features', () => {
         s.transform = scaling(2, 2, 2);
         const p = new TestPattern();
         const c = p.colorAt(s, point(2, 3, 4));
-        
+
         expect(tuplesAreEqual(c, color(1, 1.5, 2))).toBe(true);
     });
 
@@ -34,10 +40,10 @@ describe('Common pattern features', () => {
         const p = new TestPattern();
         p.transform = scaling(2, 2, 2);
         const c = p.colorAt(s, point(2, 3, 4));
-        
+
         expect(tuplesAreEqual(c, color(1, 1.5, 2))).toBe(true);
     });
-    
+
     test('a pattern with both an object and a pattern transformation', () => {
         const s = new Sphere();
         s.transform = scaling(2, 2, 2);
@@ -54,7 +60,7 @@ describe('Stripe pattern', () => {
     const white = color(1, 1, 1);
     const s = new Sphere();
     const p = new StripePattern(white, black);
-   
+
     test('creating a stripe pattern', () => {
         expect(p.a).toBe(white);
         expect(p.b).toBe(black);
@@ -90,9 +96,15 @@ describe('Gradient pattern', () => {
 
     test('a gradient linearly interpolates between colors', () => {
         expect(p.colorAt(s, point(0, 0, 0))).toStrictEqual(white);
-        expect(p.colorAt(s, point(0.25, 0, 0))).toStrictEqual(color(0.75, 0.75, 0.75));
-        expect(p.colorAt(s, point(0.5, 0, 0))).toStrictEqual(color(0.5, 0.5, 0.5));
-        expect(p.colorAt(s, point(0.75, 0, 0))).toStrictEqual(color(0.25, 0.25, 0.25));
+        expect(p.colorAt(s, point(0.25, 0, 0))).toStrictEqual(
+            color(0.75, 0.75, 0.75)
+        );
+        expect(p.colorAt(s, point(0.5, 0, 0))).toStrictEqual(
+            color(0.5, 0.5, 0.5)
+        );
+        expect(p.colorAt(s, point(0.75, 0, 0))).toStrictEqual(
+            color(0.25, 0.25, 0.25)
+        );
     });
 });
 
@@ -143,10 +155,18 @@ describe('Radial Gradient pattern', () => {
 
     test('a radial gradient linearly interpolates between colors in both x and z', () => {
         expect(p.colorAt(s, point(0, 0, 0))).toStrictEqual(white);
-        expect(p.colorAt(s, point(0.25, 0, 0))).toStrictEqual(color(0.75, 0.75, 0.75));
-        expect(p.colorAt(s, point(0, 0, 0.5))).toStrictEqual(color(0.5, 0.5, 0.5));
-        expect(p.colorAt(s, point(0.75, 0, 0))).toStrictEqual(color(0.25, 0.25, 0.25));
-        expect(tuplesAreEqual(p.colorAt(s, point(0.707107, 0, 0.707107)), white)).toBe(true);
+        expect(p.colorAt(s, point(0.25, 0, 0))).toStrictEqual(
+            color(0.75, 0.75, 0.75)
+        );
+        expect(p.colorAt(s, point(0, 0, 0.5))).toStrictEqual(
+            color(0.5, 0.5, 0.5)
+        );
+        expect(p.colorAt(s, point(0.75, 0, 0))).toStrictEqual(
+            color(0.25, 0.25, 0.25)
+        );
+        expect(
+            tuplesAreEqual(p.colorAt(s, point(0.707107, 0, 0.707107)), white)
+        ).toBe(true);
     });
 });
 

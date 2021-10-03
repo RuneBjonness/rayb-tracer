@@ -1,13 +1,13 @@
-import { add, multiply, Tuple } from './tuples'
-import * as matrices from './matrices'
+import { add, multiply, Tuple } from './tuples';
+import * as matrices from './matrices';
 
 export type Ray = {
-    origin: Tuple,
-    direction: Tuple
-}
+    origin: Tuple;
+    direction: Tuple;
+};
 
 export function ray(origin: Tuple, direction: Tuple): Ray {
-    return { origin, direction};
+    return { origin, direction };
 }
 
 export function position(ray: Ray, time: number): Tuple {
@@ -15,8 +15,8 @@ export function position(ray: Ray, time: number): Tuple {
 }
 
 export function transform(ray: Ray, m: number[][]): Ray {
-    return { 
-        origin: matrices.multiply(m, ray.origin), 
-        direction: matrices.multiply(m, ray.direction)
+    return {
+        origin: matrices.multiply(m, ray.origin),
+        direction: matrices.multiply(m, ray.direction),
     };
 }

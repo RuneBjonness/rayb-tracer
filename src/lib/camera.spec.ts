@@ -1,5 +1,9 @@
 import { Camera } from './camera';
-import { areEqual as matricesAreEqual, identityMatrix, multiply } from './matrices';
+import {
+    areEqual as matricesAreEqual,
+    identityMatrix,
+    multiply,
+} from './matrices';
 import { rotationY, translation, viewTransform } from './transformations';
 import { areEqual, color, point, vector } from './tuples';
 import { defaultWorld } from './world';
@@ -36,7 +40,9 @@ test('constructing a ray through a corner of the canvas', () => {
     const r = c.rayForPixel(0, 0);
 
     expect(areEqual(r.origin, point(0, 0, 0))).toBe(true);
-    expect(areEqual(r.direction, vector(0.66519, 0.33259, -0.66851))).toBe(true);
+    expect(areEqual(r.direction, vector(0.66519, 0.33259, -0.66851))).toBe(
+        true
+    );
 });
 
 test('constructing a ray when the camera is transformed', () => {
@@ -45,7 +51,9 @@ test('constructing a ray when the camera is transformed', () => {
     const r = c.rayForPixel(100, 50);
 
     expect(areEqual(r.origin, point(0, 2, -5))).toBe(true);
-    expect(areEqual(r.direction, vector(Math.sqrt(2)/2, 0, -Math.sqrt(2)/2))).toBe(true);
+    expect(
+        areEqual(r.direction, vector(Math.sqrt(2) / 2, 0, -Math.sqrt(2) / 2))
+    ).toBe(true);
 });
 
 test('rendering a world with a camera', () => {
@@ -57,5 +65,7 @@ test('rendering a world with a camera', () => {
 
     const image = c.render(defaultWorld());
 
-    expect(areEqual(image.pixels[5][5], color(0.38066, 0.47583, 0.2855))).toBe(true);
+    expect(areEqual(image.pixels[5][5], color(0.38066, 0.47583, 0.2855))).toBe(
+        true
+    );
 });

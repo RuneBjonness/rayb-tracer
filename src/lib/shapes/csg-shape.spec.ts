@@ -1,17 +1,16 @@
-import each from "jest-each";
-import { intersection } from "../intersections";
-import { ray } from "../rays";
-import { translation, scaling } from "../transformations";
-import { point, vector } from "../tuples";
-import { CsgShape } from "./csg-shape";
-import { Group } from "./group";
-import { Cube } from "./primitives/cube";
-import { Cylinder } from "./primitives/cylinder";
-import { Sphere } from "./primitives/sphere";
-import { TestShape } from "./shape";
+import each from 'jest-each';
+import { intersection } from '../intersections';
+import { ray } from '../rays';
+import { translation, scaling } from '../transformations';
+import { point, vector } from '../tuples';
+import { CsgShape } from './csg-shape';
+import { Group } from './group';
+import { Cube } from './primitives/cube';
+import { Cylinder } from './primitives/cylinder';
+import { Sphere } from './primitives/sphere';
+import { TestShape } from './shape';
 
 describe('CSG Shapes', () => {
-
     test('CSG is created with an operation and two shapes', () => {
         const s = new Sphere();
         const c = new Cube();
@@ -50,23 +49,37 @@ describe('CSG Shapes', () => {
         ${'difference'}   | ${false} | ${true}  | ${false} | ${true}
         ${'difference'}   | ${false} | ${false} | ${true}  | ${false}
         ${'difference'}   | ${false} | ${false} | ${false} | ${false}
-    `.test('evaluating the intersections for csg operation $operation', ({operation, leftHit, inLeft, inRight, result}) => {
-        const csg = new CsgShape(operation, new TestShape(), new TestShape());
+    `.test(
+        'evaluating the intersections for csg operation $operation',
+        ({ operation, leftHit, inLeft, inRight, result }) => {
+            const csg = new CsgShape(
+                operation,
+                new TestShape(),
+                new TestShape()
+            );
 
-        expect(csg.validIntersection(leftHit, inLeft, inRight)).toBe(result);
-    });
+            expect(csg.validIntersection(leftHit, inLeft, inRight)).toBe(
+                result
+            );
+        }
+    );
 
     each`
         operation         | x0   | x1
         ${'union'}        | ${0} | ${3}
         ${'intersection'} | ${1} | ${2}
         ${'difference'}   | ${0} | ${1}
-    `.test('filtering a list of intersections', ({operation, x0, x1}) => {
+    `.test('filtering a list of intersections', ({ operation, x0, x1 }) => {
         const s = new Sphere();
         const c = new Cube();
         const csg = new CsgShape(operation, s, c);
-        const xs = [intersection(1, s), intersection(2, c), intersection(3, s), intersection(4, c)];
-        
+        const xs = [
+            intersection(1, s),
+            intersection(2, c),
+            intersection(3, s),
+            intersection(4, c),
+        ];
+
         const result = csg.filterIntersections(xs);
 
         expect(result.length).toBe(2);
@@ -78,10 +91,10 @@ describe('CSG Shapes', () => {
         const s = new Sphere();
         const c = new Cube();
         const csg = new CsgShape('union', s, c);
-        
+
         const r = ray(point(0, 2, -5), vector(0, 0, 1));
         const xs = csg.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -90,10 +103,10 @@ describe('CSG Shapes', () => {
         const s2 = new Sphere();
         s2.transform = translation(0, 0, 0.5);
         const csg = new CsgShape('union', s1, s2);
-        
+
         const r = ray(point(0, 0, -5), vector(0, 0, 1));
         const xs = csg.intersects(r);
-    
+
         expect(xs.length).toBe(2);
         expect(xs[0].time).toEqual(4);
         expect(xs[0].object).toBe(s1);
@@ -109,7 +122,7 @@ describe('CSG Shapes', () => {
 
         const csg = new CsgShape('union', s, c);
         const [min, max] = csg.bounds();
-    
+
         expect(min).toEqual(point(-1, -5, -1));
         expect(max).toEqual(point(1, 5, 1));
     });
@@ -122,7 +135,7 @@ describe('CSG Shapes', () => {
 
         const csg = new CsgShape('union', s1, s2);
         const [min, max] = csg.bounds();
-    
+
         expect(min).toEqual(point(-2, -2, -2));
         expect(max).toEqual(point(6, 2, 2));
     });
@@ -147,9 +160,17 @@ describe('CSG Shapes', () => {
         const csg = new CsgShape('difference', g1, g2);
         csg.divide(1);
 
-        expect((g1.shapes[0] as Group).shapes[0].transform).toEqual(s1.transform);
-        expect((g1.shapes[1] as Group).shapes[0].transform).toEqual(s2.transform);
-        expect((g2.shapes[0] as Group).shapes[0].transform).toEqual(s3.transform);
-        expect((g2.shapes[1] as Group).shapes[0].transform).toEqual(s4.transform);
+        expect((g1.shapes[0] as Group).shapes[0].transform).toEqual(
+            s1.transform
+        );
+        expect((g1.shapes[1] as Group).shapes[0].transform).toEqual(
+            s2.transform
+        );
+        expect((g2.shapes[0] as Group).shapes[0].transform).toEqual(
+            s3.transform
+        );
+        expect((g2.shapes[1] as Group).shapes[0].transform).toEqual(
+            s4.transform
+        );
     });
 });

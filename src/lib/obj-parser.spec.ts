@@ -5,7 +5,9 @@ import { point, vector } from './tuples';
 
 test('ignoring unrecognized lines', () => {
     const parser = new ObjParser();
-    parser.parse("gibberish gibberish gibberish\nmore gibberish\neven more gibberish");
+    parser.parse(
+        'gibberish gibberish gibberish\nmore gibberish\neven more gibberish'
+    );
 
     expect(parser.ignoredLines).toBe(3);
 });

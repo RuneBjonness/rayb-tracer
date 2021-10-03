@@ -2,7 +2,7 @@ import { PointLight } from './lights';
 import { lighting, material } from './materials';
 import { StripePattern } from './patterns';
 import { Sphere } from './shapes/primitives/sphere';
-import { areEqual, color, point, Tuple, vector } from './tuples'
+import { areEqual, color, point, Tuple, vector } from './tuples';
 import { defaultWorld } from './world';
 
 test('the default material', () => {
@@ -31,7 +31,7 @@ describe('lighting features', () => {
 
         expect(areEqual(result, color(1.9, 1.9, 1.9))).toBe(true);
     });
-    
+
     test('lighting with the eye between the light and the surface, eye offset 45deg', () => {
         const eyev = vector(0, Math.sqrt(2) / 2, -(Math.sqrt(2) / 2));
         const light = new PointLight(point(0, 0, -10), color(1, 1, 1));
@@ -79,9 +79,24 @@ describe('lighting features', () => {
         const pt = point(0, 0, -1);
         const eyev = vector(0, 0, -1);
 
-        expect(areEqual(lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 1.0), color(1, 1, 1))).toBe(true);
-        expect(areEqual(lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 0.5), color(0.55, 0.55, 0.55))).toBe(true);
-        expect(areEqual(lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 0.0), color(0.1, 0.1, 0.1))).toBe(true);
+        expect(
+            areEqual(
+                lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 1.0),
+                color(1, 1, 1)
+            )
+        ).toBe(true);
+        expect(
+            areEqual(
+                lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 0.5),
+                color(0.55, 0.55, 0.55)
+            )
+        ).toBe(true);
+        expect(
+            areEqual(
+                lighting(w.objects[0], w.lights[0], pt, eyev, normalv, 0.0),
+                color(0.1, 0.1, 0.1)
+            )
+        ).toBe(true);
     });
 
     test('lighting with a pattern applied', () => {

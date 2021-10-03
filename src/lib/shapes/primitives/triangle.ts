@@ -1,8 +1,8 @@
-import { Intersection, intersection } from "../../intersections";
-import { Ray } from "../../rays";
-import { Tuple, subtract, normalize, cross, point, dot } from "../../tuples";
-import { Bounds } from "../bounds";
-import { Shape } from "../shape";
+import { Intersection, intersection } from '../../intersections';
+import { Ray } from '../../rays';
+import { Tuple, subtract, normalize, cross, point, dot } from '../../tuples';
+import { Bounds } from '../bounds';
+import { Shape } from '../shape';
 
 export class Triangle extends Shape {
     e1: Tuple;
@@ -33,7 +33,7 @@ export class Triangle extends Shape {
                 Math.max(this.p1[0], this.p2[0], this.p3[0]),
                 Math.max(this.p1[1], this.p2[1], this.p3[1]),
                 Math.max(this.p1[2], this.p2[2], this.p3[2])
-            )
+            ),
         ];
         return this.calculatedBounds;
     }
@@ -57,7 +57,7 @@ export class Triangle extends Shape {
         const originCrossE1 = cross(p1ToOrigin, this.e1);
         const v = f * dot(r.direction, originCrossE1);
 
-        if (v < 0 || (u + v) > 1) {
+        if (v < 0 || u + v > 1) {
             return [];
         }
 

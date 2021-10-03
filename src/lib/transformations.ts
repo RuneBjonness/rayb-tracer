@@ -18,7 +18,7 @@ export function scaling(x: number, y: number, z: number): number[][] {
 }
 
 export function radians(deg: number): number {
-    return deg / 180 * Math.PI;
+    return (deg / 180) * Math.PI;
 }
 
 export function rotationX(radians: number): number[][] {
@@ -28,7 +28,7 @@ export function rotationX(radians: number): number[][] {
         [1, 0, 0, 0],
         [0, cosR, -sinR, 0],
         [0, sinR, cosR, 0],
-        [0, 0, 0, 1]
+        [0, 0, 0, 1],
     ];
 }
 
@@ -39,7 +39,7 @@ export function rotationY(radians: number): number[][] {
         [cosR, 0, sinR, 0],
         [0, 1, 0, 0],
         [-sinR, 0, cosR, 0],
-        [0, 0, 0, 1]
+        [0, 0, 0, 1],
     ];
 }
 
@@ -50,16 +50,23 @@ export function rotationZ(radians: number): number[][] {
         [cosR, -sinR, 0, 0],
         [sinR, cosR, 0, 0],
         [0, 0, 1, 0],
-        [0, 0, 0, 1]
+        [0, 0, 0, 1],
     ];
 }
 
-export function shearing(xy: number, xz: number, yx: number, yz: number, zx: number, zy: number): number[][] {
+export function shearing(
+    xy: number,
+    xz: number,
+    yx: number,
+    yz: number,
+    zx: number,
+    zy: number
+): number[][] {
     return [
         [1, xy, xz, 0],
         [yx, 1, yz, 0],
         [zx, zy, 1, 0],
-        [0, 0, 0, 1]
+        [0, 0, 0, 1],
     ];
 }
 
@@ -73,7 +80,7 @@ export function viewTransform(from: Tuple, to: Tuple, up: Tuple): number[][] {
         [left[0], left[1], left[2], 0],
         [trueUp[0], trueUp[1], trueUp[2], 0],
         [-forward[0], -forward[1], -forward[2], 0],
-        [0, 0, 0, 1]
+        [0, 0, 0, 1],
     ];
     return multiply(orientation, translation(-from[0], -from[1], -from[2]));
 }

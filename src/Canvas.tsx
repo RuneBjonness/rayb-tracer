@@ -11,8 +11,8 @@ import RenderWorker from './render-worker?worker'
 const RtCanvas: React.FC<{}> = () => {
     let width = 1024;
     let height = 768;
-    // let width = 1024 / 4;
-    // let height = 768 / 3;
+    //let width = 1024 / 4;
+    //let height = 768 / 3;
 
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);

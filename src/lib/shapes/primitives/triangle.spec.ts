@@ -1,6 +1,6 @@
-import { ray } from "../../rays";
-import { areEqual, point, vector } from "../../tuples";
-import { Triangle } from "./triangle";
+import { ray } from '../../rays';
+import { areEqual, point, vector } from '../../tuples';
+import { Triangle } from './triangle';
 
 describe('Triangles', () => {
     test('constructing a triangle', () => {
@@ -34,7 +34,7 @@ describe('Triangles', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const r = ray(point(0, -1, -2), vector(0, 1, 0));
         const xs = t.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -42,7 +42,7 @@ describe('Triangles', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const r = ray(point(1, 1, -2), vector(0, 0, 1));
         const xs = t.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -50,7 +50,7 @@ describe('Triangles', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const r = ray(point(-1, 1, -2), vector(0, 0, 1));
         const xs = t.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -58,7 +58,7 @@ describe('Triangles', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const r = ray(point(0, -1, -2), vector(0, 0, 1));
         const xs = t.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -66,7 +66,7 @@ describe('Triangles', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const r = ray(point(0, 0.5, -2), vector(0, 0, 1));
         const xs = t.intersects(r);
-    
+
         expect(xs.length).toBe(1);
         expect(xs[0].time).toEqual(2);
     });
@@ -74,7 +74,7 @@ describe('Triangles', () => {
     test('the bounds of a triangle', () => {
         const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
         const [min, max] = t.bounds();
-    
+
         expect(min).toEqual(point(-1, 0, 0));
         expect(max).toEqual(point(1, 1, 0));
     });

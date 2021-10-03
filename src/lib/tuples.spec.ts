@@ -1,21 +1,41 @@
-import { Tuple, Color, tuple, point, isPoint, isVector, areEqual, vector, multiply, add, subtract, negate, divide, magnitude, normalize, dot, cross, color, reflect } from './tuples';
+import {
+    Tuple,
+    Color,
+    tuple,
+    point,
+    isPoint,
+    isVector,
+    areEqual,
+    vector,
+    multiply,
+    add,
+    subtract,
+    negate,
+    divide,
+    magnitude,
+    normalize,
+    dot,
+    cross,
+    color,
+    reflect,
+} from './tuples';
 
 test('a tuple with w=1.0 is a point', () => {
     const t = tuple(4.3, -4.2, 3.1, 1.0);
-    const [x,y,z,w] = t;
+    const [x, y, z, w] = t;
 
     expect(x).toBe(4.3);
     expect(y).toBe(-4.2);
     expect(z).toBe(3.1);
     expect(w).toBe(1.0);
-    
+
     expect(isPoint(t)).toBe(true);
     expect(isVector(t)).toBe(false);
 });
 
 test('a tuple with w=0.0 is a vector', () => {
     const t = tuple(4.3, -4.2, 3.1, 0.0);
-    const [x,y,z,w] = t;
+    const [x, y, z, w] = t;
 
     expect(x).toBe(4.3);
     expect(y).toBe(-4.2);
@@ -27,14 +47,14 @@ test('a tuple with w=0.0 is a vector', () => {
 });
 
 test('two tuples are equal if no values have a difference greater than 0.00001 ', () => {
-    const t1: Tuple = [1, -1.000010, 0, 1];
+    const t1: Tuple = [1, -1.00001, 0, 1];
     const t2: Tuple = [1, -1.000019, 0, 1];
 
     expect(areEqual(t1, t2)).toBe(true);
 });
 
 test('two tuples are not equal if any value has a difference greater than 0.00001 ', () => {
-    const t1: Tuple = [1, -1.00000, 0, 1];
+    const t1: Tuple = [1, -1.0, 0, 1];
     const t2: Tuple = [1, -1.00002, 0, 1];
 
     expect(areEqual(t1, t2)).toBe(false);
@@ -42,7 +62,7 @@ test('two tuples are not equal if any value has a difference greater than 0.0000
 
 test('point() creates a tuple with w=1', () => {
     const p = point(4, -4, 3);
-    const t: Tuple =  [4, -4, 3, 1];
+    const t: Tuple = [4, -4, 3, 1];
 
     expect(areEqual(p, t)).toBe(true);
 });
@@ -171,9 +191,8 @@ test('cross product of two vectors', () => {
     expect(areEqual(cross(b, a), vector(1, -2, 1))).toBe(true);
 });
 
-
 test('colors are (red, green, blue) tuples', () => {
-    const [r,g,b] = color(-0.5, 0.4, 1.7);
+    const [r, g, b] = color(-0.5, 0.4, 1.7);
 
     expect(r).toBe(-0.5);
     expect(g).toBe(0.4);
@@ -181,7 +200,7 @@ test('colors are (red, green, blue) tuples', () => {
 });
 
 test('two colors are equal if no values have a difference greater than 0.00001 ', () => {
-    const c1: Color = [1, 0.000010, 0];
+    const c1: Color = [1, 0.00001, 0];
     const c2: Color = [1, 0.000019, 0];
 
     expect(areEqual(c1, c2)).toBe(true);

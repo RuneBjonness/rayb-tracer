@@ -4,7 +4,6 @@ import { dot, point, subtract, Tuple } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
-
 export class Sphere extends Shape {
     constructor() {
         super();
@@ -26,7 +25,7 @@ export class Sphere extends Shape {
         }
         return [
             intersection((-b - Math.sqrt(discriminant)) / (2 * a), this),
-            intersection((-b + Math.sqrt(discriminant)) / (2 * a), this)
+            intersection((-b + Math.sqrt(discriminant)) / (2 * a), this),
         ];
     }
 
@@ -41,4 +40,3 @@ export function glassSphere(): Sphere {
     s.material.refractiveIndex = 1.5;
     return s;
 }
-

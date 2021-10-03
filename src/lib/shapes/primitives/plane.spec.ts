@@ -1,6 +1,6 @@
-import { ray } from "../../rays";
-import { areEqual, point, vector } from "../../tuples";
-import { Plane } from "./plane";
+import { ray } from '../../rays';
+import { areEqual, point, vector } from '../../tuples';
+import { Plane } from './plane';
 
 describe('Planes', () => {
     test('the normal of a plane is constant everywhere', () => {
@@ -18,7 +18,7 @@ describe('Planes', () => {
         const p = new Plane();
         const r = ray(point(0, 10, 0), vector(0, 0, 1));
         const xs = p.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -26,7 +26,7 @@ describe('Planes', () => {
         const p = new Plane();
         const r = ray(point(0, 0, 0), vector(0, 0, 1));
         const xs = p.intersects(r);
-    
+
         expect(xs.length).toBe(0);
     });
 
@@ -34,7 +34,7 @@ describe('Planes', () => {
         const p = new Plane();
         const r = ray(point(0, 1, 0), vector(0, -1, 0));
         const xs = p.intersects(r);
-    
+
         expect(xs.length).toBe(1);
         expect(xs[0].time).toEqual(1);
         expect(xs[0].object).toBe(p);
@@ -44,7 +44,7 @@ describe('Planes', () => {
         const p = new Plane();
         const r = ray(point(0, -1, 0), vector(0, 1, 0));
         const xs = p.intersects(r);
-    
+
         expect(xs.length).toBe(1);
         expect(xs[0].time).toEqual(1);
         expect(xs[0].object).toBe(p);
@@ -53,8 +53,12 @@ describe('Planes', () => {
     test('the bounds of a plane', () => {
         const p = new Plane();
         const [min, max] = p.bounds();
-    
-        expect(min).toEqual(point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY));
-        expect(max).toEqual(point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY));
+
+        expect(min).toEqual(
+            point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY)
+        );
+        expect(max).toEqual(
+            point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY)
+        );
     });
 });

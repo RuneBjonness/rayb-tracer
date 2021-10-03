@@ -4,7 +4,6 @@ import { point, Tuple, vector } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
-
 export class Cone extends Shape {
     minimum: number = Number.NEGATIVE_INFINITY;
     maximum: number = Number.POSITIVE_INFINITY;
@@ -18,15 +17,19 @@ export class Cone extends Shape {
         const limit = Math.max(Math.abs(this.minimum), Math.abs(this.maximum));
         return [
             point(-limit, this.minimum, -limit),
-            point(limit, this.maximum, limit)
+            point(limit, this.maximum, limit),
         ];
     }
 
     protected localIntersects(r: Ray): Intersection[] {
         const xs: Intersection[] = [];
 
-        const a = r.direction[0] ** 2 - r.direction[1] ** 2 + r.direction[2] ** 2;
-        const b = 2 * r.origin[0] * r.direction[0] - 2 * r.origin[1] * r.direction[1] + 2 * r.origin[2] * r.direction[2];
+        const a =
+            r.direction[0] ** 2 - r.direction[1] ** 2 + r.direction[2] ** 2;
+        const b =
+            2 * r.origin[0] * r.direction[0] -
+            2 * r.origin[1] * r.direction[1] +
+            2 * r.origin[2] * r.direction[2];
         const c = r.origin[0] ** 2 - r.origin[1] ** 2 + r.origin[2] ** 2;
 
         if (Math.abs(a) > 0.00001) {
@@ -80,8 +83,6 @@ export class Cone extends Shape {
         const t = (y - r.origin[1]) / r.direction[1];
         const x = r.origin[0] + t * r.direction[0];
         const z = r.origin[2] + t * r.direction[2];
-        return (x ** 2 + z ** 2) <= Math.abs(y)
-            ? [intersection(t, this)]
-            : [];
+        return x ** 2 + z ** 2 <= Math.abs(y) ? [intersection(t, this)] : [];
     }
 }

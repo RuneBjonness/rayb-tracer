@@ -1,16 +1,30 @@
-import { areEqual, point, vector } from './tuples'
-import { inverse, multiply, areEqual as matricesAreEqual, identityMatrix } from './matrices';
-import { translation, scaling, rotationX, radians, rotationY, rotationZ, shearing, viewTransform } from './transformations';
+import { areEqual, point, vector } from './tuples';
+import {
+    inverse,
+    multiply,
+    areEqual as matricesAreEqual,
+    identityMatrix,
+} from './matrices';
+import {
+    translation,
+    scaling,
+    rotationX,
+    radians,
+    rotationY,
+    rotationZ,
+    shearing,
+    viewTransform,
+} from './transformations';
 
 test('multiplying by a translation matrix', () => {
-    const transform = translation(5,-3, 2);
+    const transform = translation(5, -3, 2);
     const result = multiply(transform, point(-3, 4, 5));
 
     expect(areEqual(result, point(2, 1, 7))).toBe(true);
 });
 
 test('multiplying by the inverse of a translation matrix', () => {
-    const transform = translation(5,-3, 2);
+    const transform = translation(5, -3, 2);
     const inv = inverse(transform);
     const result = multiply(inv, point(-3, 4, 5));
 
@@ -18,7 +32,7 @@ test('multiplying by the inverse of a translation matrix', () => {
 });
 
 test('translation does not affect vectors', () => {
-    const transform = translation(5,-3, 2);
+    const transform = translation(5, -3, 2);
     const v = vector(-3, 4, 5);
     const result = multiply(transform, v);
 
@@ -56,41 +70,61 @@ test('reflection is scaling by a negative value', () => {
 
 test('rotating a point around the x axis', () => {
     const p = point(0, 1, 0);
-    const halfQuarter = rotationX(Math.PI/4);
-    const fullQuarter = rotationX(Math.PI/2);
+    const halfQuarter = rotationX(Math.PI / 4);
+    const fullQuarter = rotationX(Math.PI / 2);
 
-    expect(areEqual(multiply(halfQuarter, p), point(0, Math.sqrt(2)/2, Math.sqrt(2)/2))).toBe(true);
+    expect(
+        areEqual(
+            multiply(halfQuarter, p),
+            point(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2)
+        )
+    ).toBe(true);
     expect(areEqual(multiply(fullQuarter, p), point(0, 0, 1))).toBe(true);
 });
 
 test('degreees to radians conversion', () => {
     expect(radians(180)).toEqual(Math.PI);
-    expect(radians(90)).toEqual(Math.PI/2);
-    expect(radians(45)).toEqual(Math.PI/4);
+    expect(radians(90)).toEqual(Math.PI / 2);
+    expect(radians(45)).toEqual(Math.PI / 4);
 });
 
 test('the inverse of an x-rotatition rotates in the opposite direction', () => {
     const p = point(0, 1, 0);
-    const inv = inverse(rotationX(Math.PI/4));
+    const inv = inverse(rotationX(Math.PI / 4));
 
-    expect(areEqual(multiply(inv, p), point(0, Math.sqrt(2)/2, -Math.sqrt(2)/2))).toBe(true);
+    expect(
+        areEqual(
+            multiply(inv, p),
+            point(0, Math.sqrt(2) / 2, -Math.sqrt(2) / 2)
+        )
+    ).toBe(true);
 });
 
 test('rotating a point around the y axis', () => {
     const p = point(0, 0, 1);
-    const halfQuarter = rotationY(Math.PI/4);
-    const fullQuarter = rotationY(Math.PI/2);
+    const halfQuarter = rotationY(Math.PI / 4);
+    const fullQuarter = rotationY(Math.PI / 2);
 
-    expect(areEqual(multiply(halfQuarter, p), point(Math.sqrt(2)/2, 0, Math.sqrt(2)/2))).toBe(true);
+    expect(
+        areEqual(
+            multiply(halfQuarter, p),
+            point(Math.sqrt(2) / 2, 0, Math.sqrt(2) / 2)
+        )
+    ).toBe(true);
     expect(areEqual(multiply(fullQuarter, p), point(1, 0, 0))).toBe(true);
 });
 
 test('rotating a point around the z axis', () => {
     const p = point(0, 1, 0);
-    const halfQuarter = rotationZ(Math.PI/4);
-    const fullQuarter = rotationZ(Math.PI/2);
+    const halfQuarter = rotationZ(Math.PI / 4);
+    const fullQuarter = rotationZ(Math.PI / 2);
 
-    expect(areEqual(multiply(halfQuarter, p), point(-Math.sqrt(2)/2, Math.sqrt(2)/2, 0))).toBe(true);
+    expect(
+        areEqual(
+            multiply(halfQuarter, p),
+            point(-Math.sqrt(2) / 2, Math.sqrt(2) / 2, 0)
+        )
+    ).toBe(true);
     expect(areEqual(multiply(fullQuarter, p), point(-1, 0, 0))).toBe(true);
 });
 
@@ -199,8 +233,8 @@ test('an arbitrary view tranformation', () => {
     const expected = [
         [-0.50709, 0.50709, 0.67612, -2.36643],
         [0.76772, 0.60609, 0.12122, -2.82843],
-        [-0.35857, 0.59761, -0.71714, 0.00000],
-        [0.00000, 0.00000, 0.00000, 1.00000]
+        [-0.35857, 0.59761, -0.71714, 0.0],
+        [0.0, 0.0, 0.0, 1.0],
     ];
 
     expect(matricesAreEqual(t, expected)).toBe(true);

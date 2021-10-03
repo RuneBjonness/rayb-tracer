@@ -1,5 +1,10 @@
 import each from 'jest-each';
-import { hit, intersection, prepareComputations, reflectance } from './intersections';
+import {
+    hit,
+    intersection,
+    prepareComputations,
+    reflectance,
+} from './intersections';
 import { ray } from './rays';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere, glassSphere } from './shapes/primitives/sphere';
@@ -32,7 +37,7 @@ test('aggregating intersections', () => {
 
     expect(xs[0].object).toBe(s);
     expect(xs[0].time).toEqual(1);
-    
+
     expect(xs[1].object).toBe(s);
     expect(xs[1].time).toEqual(2);
 });
@@ -126,17 +131,22 @@ test('the hit should offset the point', () => {
 
     const comps = prepareComputations(i, r);
 
-    expect(comps.overPoint[2]).toBeLessThan(-0.00001/2);
+    expect(comps.overPoint[2]).toBeLessThan(-0.00001 / 2);
     expect(comps.point[2]).toBeGreaterThan(comps.overPoint[2]);
 });
 
 test('precompuiting the reflection vector', () => {
     const shape = new Plane();
-    const r = ray(point(0, 1, -1), vector(0, -Math.sqrt(2)/2, Math.sqrt(2)/2));
+    const r = ray(
+        point(0, 1, -1),
+        vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
+    );
     const i = intersection(Math.sqrt(2), shape);
     const comps = prepareComputations(i, r);
 
-    expect(areEqual(comps.reflectv, vector(0, Math.sqrt(2)/2, Math.sqrt(2)/2))).toBe(true);
+    expect(
+        areEqual(comps.reflectv, vector(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2))
+    ).toBe(true);
 });
 
 describe('finding n1 and n2 at various intersections', () => {
@@ -158,14 +168,14 @@ describe('finding n1 and n2 at various intersections', () => {
         ${3}  | ${2.5} | ${2.5}
         ${4}  | ${2.5} | ${1.5}
         ${5}  | ${1.5} | ${1.0}
-    `.test('at index $index', ({index, n1, n2}) => {
+    `.test('at index $index', ({ index, n1, n2 }) => {
         const xs = [
             intersection(2, a),
             intersection(2.75, b),
             intersection(3.25, c),
             intersection(4.75, b),
             intersection(5.25, c),
-            intersection(6, a)
+            intersection(6, a),
         ];
 
         const comps = prepareComputations(xs[index], r, xs);
@@ -183,14 +193,17 @@ test('the underPoint is offset below the surface', () => {
 
     const comps = prepareComputations(i, r);
 
-    expect(comps.underPoint[2]).toBeGreaterThan(-0.00001/2);
+    expect(comps.underPoint[2]).toBeGreaterThan(-0.00001 / 2);
     expect(comps.point[2]).toBeLessThan(comps.underPoint[2]);
 });
 
 test('the Schlick approximation under total internal reflection', () => {
     const s = glassSphere();
-    const r = ray(point(0, 0, Math.sqrt(2)/2), vector(0, 1, 0));
-    const xs = [intersection(-Math.sqrt(2)/2, s), intersection(Math.sqrt(2)/2, s)];
+    const r = ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
+    const xs = [
+        intersection(-Math.sqrt(2) / 2, s),
+        intersection(Math.sqrt(2) / 2, s),
+    ];
 
     const comps = prepareComputations(xs[1], r, xs);
 

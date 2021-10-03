@@ -4,7 +4,6 @@ import { point, Tuple, vector } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
-
 export class Cylinder extends Shape {
     minimum: number = Number.NEGATIVE_INFINITY;
     maximum: number = Number.POSITIVE_INFINITY;
@@ -15,10 +14,7 @@ export class Cylinder extends Shape {
     }
 
     bounds(): Bounds {
-        return [
-            point(-1, this.minimum, -1),
-            point(1, this.maximum, 1)
-        ];
+        return [point(-1, this.minimum, -1), point(1, this.maximum, 1)];
     }
 
     protected localIntersects(r: Ray): Intersection[] {
@@ -27,7 +23,9 @@ export class Cylinder extends Shape {
         const a = r.direction[0] ** 2 + r.direction[2] ** 2;
 
         if (Math.abs(a) > 0.00001) {
-            const b = 2 * r.origin[0] * r.direction[0] + 2 * r.origin[2] * r.direction[2];
+            const b =
+                2 * r.origin[0] * r.direction[0] +
+                2 * r.origin[2] * r.direction[2];
             const c = r.origin[0] ** 2 + r.origin[2] ** 2 - 1;
             const discriminant = b ** 2 - 4 * a * c;
 
@@ -45,8 +43,18 @@ export class Cylinder extends Shape {
         }
 
         if (this.closed && Math.abs(r.direction[1]) > 0.00001) {
-            xs.push(...this.hitCaps(r, (this.minimum - r.origin[1]) / r.direction[1]));
-            xs.push(...this.hitCaps(r, (this.maximum - r.origin[1]) / r.direction[1]));
+            xs.push(
+                ...this.hitCaps(
+                    r,
+                    (this.minimum - r.origin[1]) / r.direction[1]
+                )
+            );
+            xs.push(
+                ...this.hitCaps(
+                    r,
+                    (this.maximum - r.origin[1]) / r.direction[1]
+                )
+            );
         }
 
         return xs;
@@ -75,8 +83,6 @@ export class Cylinder extends Shape {
     private hitCaps(r: Ray, t: number): Intersection[] {
         const x = r.origin[0] + t * r.direction[0];
         const z = r.origin[2] + t * r.direction[2];
-        return (x ** 2 + z ** 2) <= 1
-            ? [intersection(t, this)]
-            : [];
+        return x ** 2 + z ** 2 <= 1 ? [intersection(t, this)] : [];
     }
 }

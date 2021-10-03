@@ -4,7 +4,6 @@ import { point, Tuple, vector } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
-
 export class Plane extends Shape {
     constructor() {
         super();
@@ -13,7 +12,7 @@ export class Plane extends Shape {
     bounds(): Bounds {
         return [
             point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY),
-            point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY)
+            point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY),
         ];
     }
 

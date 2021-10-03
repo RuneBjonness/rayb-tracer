@@ -1,19 +1,18 @@
 import { Intersection } from '../intersections';
 import { identityMatrix, inverse, multiply, transpose } from '../matrices';
 import { Ray, transform } from '../rays';
-import { normalize, point, Tuple, vector } from '../tuples'
+import { normalize, point, Tuple, vector } from '../tuples';
 import { material, Material } from '../materials';
 import { Bounds } from './bounds';
 import { Group } from './group';
 import { CsgShape } from './csg-shape';
 
-
 export abstract class Shape {
     private _transform: number[][] = [];
-    public get transform() { 
-        return this._transform; 
+    public get transform() {
+        return this._transform;
     }
-    public set transform(m: number[][]) { 
+    public set transform(m: number[][]) {
         this._transform = m;
         this.invTransform = inverse(m);
     }
@@ -23,16 +22,16 @@ export abstract class Shape {
 
     private invTransform: number[][] = [];
 
-    constructor(){
+    constructor() {
         this.transform = identityMatrix();
-        this.material = material()
+        this.material = material();
     }
 
     abstract bounds(): Bounds;
 
     intersects(r: Ray): Intersection[] {
         return this.localIntersects(transform(r, this.invTransform));
-    }    
+    }
     protected abstract localIntersects(r: Ray): Intersection[];
 
     normalAt(p: Tuple, i: Intersection | null = null): Tuple {
@@ -41,7 +40,10 @@ export abstract class Shape {
     protected abstract localNormalAt(p: Tuple, i: Intersection | null): Tuple;
 
     worldToObject(p: Tuple): Tuple {
-        return multiply(this.invTransform, this.parent ? this.parent.worldToObject(p) : p);
+        return multiply(
+            this.invTransform,
+            this.parent ? this.parent.worldToObject(p) : p
+        );
     }
 
     normalToWorld(n: Tuple): Tuple {
@@ -59,7 +61,7 @@ export abstract class Shape {
 export class TestShape extends Shape {
     localRayFromBase: Ray | null = null;
 
-    constructor(){
+    constructor() {
         super();
     }
 
