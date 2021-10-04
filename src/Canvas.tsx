@@ -9,10 +9,14 @@ import RenderWorker from './render-worker?worker'
 
 
 const RtCanvas: React.FC<{}> = () => {
-    let width = 1024;
-    let height = 768;
-    //let width = 1024 / 4;
-    //let height = 768 / 3;
+    //let width = 1024;
+    //let height = 768;
+    let width = 800;
+    let height = 600;
+    //let width = 640;
+    //let height = 480;
+    //let width = 320;
+    //let height = 240;
 
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -34,9 +38,9 @@ const RtCanvas: React.FC<{}> = () => {
             type CanvasPart = { fullWidth: number, fullHeight: number, x: number, y: number, w: number, h: number }; 
             const canvasParts: CanvasPart[]= [];
             const chunkWidth = width / 8;
-            const chunkHeight = height / 16;
+            const chunkHeight = height / 8;
             for(let x=0; x < 8; x++) {
-                for(let y=0; y < 16; y++) {
+                for(let y=0; y < 8; y++) {
                     canvasParts.push({ fullWidth: width, fullHeight: height, x: x * chunkWidth, y: y * chunkHeight, w: chunkWidth, h: chunkHeight });
                 }
             } 
@@ -48,13 +52,13 @@ const RtCanvas: React.FC<{}> = () => {
                     const c = new Canvas(chunkWidth, chunkHeight);
                     c.pixels = (e.data[1] as Canvas).pixels;
                     ctx!.putImageData(c.getImageData(), cfg.x, cfg.y);
-                    console.log(`   --Worker #${i} done rendering Part[${cfg.x}, ${cfg.y}] at ${ (Date.now() - startTime) / 1000 } s`);
 
                     const cp = canvasParts.pop();
                     if(cp) {
                         worker.postMessage([cp]);
                     } else {
                         worker.terminate();
+                        console.log(`   --Worker #${i} terminated after ${ (Date.now() - startTime) / 1000 } s`);
                     }
                 }
 

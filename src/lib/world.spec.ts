@@ -4,7 +4,7 @@ import { areEqual, color, point, vector } from './tuples';
 import { scaling, translation } from './transformations';
 import { ray } from './rays';
 import { intersection, prepareComputations } from './intersections';
-import { TestPattern } from './patterns';
+import { TestPattern } from './patterns/patterns';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere } from './shapes/primitives/sphere';
 import each from 'jest-each';

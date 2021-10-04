@@ -1,6 +1,6 @@
 import { PointLight } from './lights';
 import { lighting, material } from './materials';
-import { StripePattern } from './patterns';
+import { StripePattern } from './patterns/patterns';
 import { Sphere } from './shapes/primitives/sphere';
 import { areEqual, color, point, Tuple, vector } from './tuples';
 import { defaultWorld } from './world';

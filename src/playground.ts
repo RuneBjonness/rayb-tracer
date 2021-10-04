@@ -21,7 +21,7 @@ import {
     RadialGradientPattern,
     RingPattern,
     StripePattern,
-} from './lib/patterns';
+} from './lib/patterns/patterns';
 import { Material, material } from './lib/materials';
 import { ObjParser } from './lib/obj-parser';
 import icosahedronObjFile from './resources/icosahedron.obj?raw';
@@ -33,6 +33,9 @@ import { Cylinder } from './lib/shapes/primitives/cylinder';
 import { Plane } from './lib/shapes/primitives/plane';
 import { Sphere } from './lib/shapes/primitives/sphere';
 import { Triangle } from './lib/shapes/primitives/triangle';
+import { TextureMap } from './lib/patterns/texture-mapping/texture-map';
+import { CheckersUvPattern } from './lib/patterns/texture-mapping/uv-patterns';
+import { SphericalMapper } from './lib/patterns/texture-mapping/uv-mappers';
 
 export function configureWorld(): World {
     const rainbow = [
@@ -510,6 +513,25 @@ export function configureWorld(): World {
         return rb;
     }
 
+    function textureMappedShereDemo(): Shape {
+        const s = new Sphere();
+        s.transform = translation(0, 1, 0);
+        s.material.pattern = new TextureMap(
+            new CheckersUvPattern(
+                16,
+                8,
+                color(0.9, 1, 0.9),
+                color(0.1, 0.4, 0.1)
+            ),
+            new SphericalMapper()
+        );
+        s.material.diffuse = 0.6;
+        s.material.specular = 0;
+        s.material.ambient = 0.1;
+        s.material.reflective = 0.3;
+        return s;
+    }
+
     const world = new World();
     world.lights.push(
         // new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -543,7 +565,8 @@ export function configureWorld(): World {
     // world.objects.push(teapotDemo(true), reflectiveFloor(color(0.2, 0.2, 0.2)));
     // world.objects.push(csgDemo(), reflectiveFloor(color(0.0, 0.2, 0.0)));
 
-    world.objects.push(basicShere(), matteFloor());
+    // world.objects.push(basicShere(), matteFloor());
+    world.objects.push(textureMappedShereDemo(), matteFloor());
 
     return world;
 }

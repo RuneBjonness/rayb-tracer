@@ -12,7 +12,7 @@ import {
     Tuple,
 } from './tuples';
 import { Light } from './lights';
-import { Pattern } from './patterns';
+import { Pattern } from './patterns/patterns';
 import { Shape } from './shapes/shape';
 
 export type Material = {

@@ -1,4 +1,4 @@
-import { identityMatrix, inverse, multiply } from './matrices';
+import { identityMatrix, inverse, multiply } from '../matrices';
 import {
     add,
     color,
@@ -6,8 +6,8 @@ import {
     subtract,
     Tuple,
     multiply as tupleMultiply,
-} from './tuples';
-import { Shape } from './shapes/shape';
+} from '../tuples';
+import { Shape } from '../shapes/shape';
 
 export abstract class Pattern {
     private _transform: number[][] = [];
