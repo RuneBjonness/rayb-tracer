@@ -30,3 +30,17 @@ export class PlanarMapper implements UvMapper {
         return [u, v];
     }
 }
+
+export class CylindricalMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        const theta = Math.atan2(p[0], p[2]);
+        const rawU = theta / (2 * Math.PI);
+        const u = 1 - (rawU + 0.5);
+
+        let v = p[1] % 1;
+        if (v < 0) {
+            v = 1 + v;
+        }
+        return [u, v];
+    }
+}

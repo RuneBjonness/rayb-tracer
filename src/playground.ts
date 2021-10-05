@@ -36,6 +36,7 @@ import { Triangle } from './lib/shapes/primitives/triangle';
 import { TextureMap } from './lib/patterns/texture-mapping/texture-map';
 import { CheckersUvPattern } from './lib/patterns/texture-mapping/uv-patterns';
 import {
+    CylindricalMapper,
     PlanarMapper,
     SphericalMapper,
 } from './lib/patterns/texture-mapping/uv-mappers';
@@ -522,8 +523,8 @@ export function configureWorld(): World {
             new CheckersUvPattern(
                 4,
                 4,
-                color(0.9, 1, 0.9),
-                color(0.1, 0.4, 0.1)
+                color(0.83, 0.9, 0.95),
+                color(0.1, 0.32, 0.46)
             ),
             new PlanarMapper()
         );
@@ -538,8 +539,8 @@ export function configureWorld(): World {
             new CheckersUvPattern(
                 16,
                 8,
-                color(0.9, 1, 0.9),
-                color(0.1, 0.4, 0.1)
+                color(1, 0.98, 0.91),
+                color(0.95, 0.77, 0.06)
             ),
             new SphericalMapper()
         );
@@ -547,7 +548,29 @@ export function configureWorld(): World {
         s.material.specular = 0;
         s.material.ambient = 0.1;
         s.material.reflective = 0.3;
-        return [f, s];
+
+        const cyl = new Cylinder();
+        cyl.minimum = 0;
+        cyl.maximum = 1;
+        cyl.transform = multiply(
+            translation(-1.5, -0.5, 2),
+            scaling(1, 3.1415, 1)
+        );
+        cyl.material.pattern = new TextureMap(
+            new CheckersUvPattern(
+                16,
+                8,
+                color(0.91, 0.96, 0.95),
+                color(0.08, 0.56, 0.47)
+            ),
+            new CylindricalMapper()
+        );
+        cyl.material.diffuse = 0.6;
+        cyl.material.specular = 0;
+        cyl.material.ambient = 0.1;
+        cyl.material.reflective = 0.3;
+
+        return [f, s, cyl];
     }
 
     const world = new World();
