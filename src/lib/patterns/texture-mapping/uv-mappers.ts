@@ -44,3 +44,50 @@ export class CylindricalMapper implements UvMapper {
         return [u, v];
     }
 }
+
+export class CubeLeftMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((p[2] + 1) % 2) / 2.0;
+        let v = ((p[1] + 1) % 2) / 2.0;
+        return [u, v];
+    }
+}
+export class CubeFrontMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((p[0] + 1) % 2) / 2.0;
+        let v = ((p[1] + 1) % 2) / 2.0;
+        return [u, v];
+    }
+}
+
+export class CubeRightMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((1 - p[2]) % 2) / 2.0;
+        let v = ((p[1] + 1) % 2) / 2.0;
+        return [u, v];
+    }
+}
+
+export class CubeBackMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((1 - p[0]) % 2) / 2.0;
+        let v = ((p[1] + 1) % 2) / 2.0;
+        return [u, v];
+    }
+}
+
+export class CubeTopMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((p[0] + 1) % 2) / 2.0;
+        let v = ((1 - p[2]) % 2) / 2.0;
+        return [u, v];
+    }
+}
+
+export class CubeBottomMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = ((p[0] + 1) % 2) / 2.0;
+        let v = ((p[2] + 1) % 2) / 2.0;
+        return [u, v];
+    }
+}

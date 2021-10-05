@@ -33,8 +33,14 @@ import { Cylinder } from './lib/shapes/primitives/cylinder';
 import { Plane } from './lib/shapes/primitives/plane';
 import { Sphere } from './lib/shapes/primitives/sphere';
 import { Triangle } from './lib/shapes/primitives/triangle';
-import { TextureMap } from './lib/patterns/texture-mapping/texture-map';
-import { CheckersUvPattern } from './lib/patterns/texture-mapping/uv-patterns';
+import {
+    CubeMap,
+    TextureMap,
+} from './lib/patterns/texture-mapping/texture-map';
+import {
+    CheckersUvPattern,
+    UvAlignTestPattern,
+} from './lib/patterns/texture-mapping/uv-patterns';
 import {
     CylindricalMapper,
     PlanarMapper,
@@ -521,8 +527,8 @@ export function configureWorld(): World {
         const f = new Plane();
         f.material.pattern = new TextureMap(
             new CheckersUvPattern(
-                4,
-                4,
+                2,
+                2,
                 color(0.83, 0.9, 0.95),
                 color(0.1, 0.32, 0.46)
             ),
@@ -570,7 +576,63 @@ export function configureWorld(): World {
         cyl.material.ambient = 0.1;
         cyl.material.reflective = 0.3;
 
-        return [f, s, cyl];
+        const cubeMap = new CubeMap([
+            new UvAlignTestPattern(
+                rainbow[0],
+                rainbow[1],
+                rainbow[2],
+                rainbow[3],
+                rainbow[4]
+            ),
+            new UvAlignTestPattern(
+                rainbow[1],
+                rainbow[2],
+                rainbow[0],
+                rainbow[4],
+                rainbow[5]
+            ),
+            new UvAlignTestPattern(
+                rainbow[2],
+                rainbow[0],
+                rainbow[6],
+                rainbow[5],
+                rainbow[7]
+            ),
+            new UvAlignTestPattern(
+                rainbow[5],
+                rainbow[6],
+                rainbow[1],
+                rainbow[7],
+                rainbow[3]
+            ),
+            new UvAlignTestPattern(
+                rainbow[4],
+                rainbow[1],
+                rainbow[6],
+                rainbow[2],
+                rainbow[0]
+            ),
+            new UvAlignTestPattern(
+                rainbow[6],
+                rainbow[4],
+                rainbow[5],
+                rainbow[3],
+                rainbow[7]
+            ),
+        ]);
+
+        const cube = new Cube();
+        cube.transform = multiply(
+            translation(1.5, 1, 2),
+            rotationY(radians(45))
+        );
+        cube.material.pattern = cubeMap;
+        cube.material.diffuse = 0.6;
+        cube.material.specular = 0;
+        cube.material.ambient = 0.1;
+        cube.material.reflective = 0.3;
+
+        return [f, s, cyl, cube];
     }
 
     const world = new World();

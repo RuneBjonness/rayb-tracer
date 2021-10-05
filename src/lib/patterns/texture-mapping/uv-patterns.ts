@@ -4,6 +4,36 @@ export interface UvPattern {
     colorAt(u: number, v: number): Color;
 }
 
+export class UvAlignTestPattern implements UvPattern {
+    constructor(
+        private main: Color,
+        private ul: Color,
+        private ur: Color,
+        private bl: Color,
+        private br: Color
+    ) {}
+
+    colorAt(u: number, v: number): Color {
+        if (v > 0.8) {
+            if (u < 0.2) {
+                return this.ul;
+            }
+            if (u > 0.8) {
+                return this.ur;
+            }
+        }
+        if (v < 0.2) {
+            if (u < 0.2) {
+                return this.bl;
+            }
+            if (u > 0.8) {
+                return this.br;
+            }
+        }
+        return this.main;
+    }
+}
+
 export class CheckersUvPattern implements UvPattern {
     constructor(
         private width: number,
