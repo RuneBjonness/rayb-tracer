@@ -16,3 +16,17 @@ export class SphericalMapper implements UvMapper {
         return [u, v];
     }
 }
+
+export class PlanarMapper implements UvMapper {
+    map(p: Tuple): [u: number, v: number] {
+        let u = p[0] % 1;
+        let v = p[2] % 1;
+        if (u < 0) {
+            u = 1 + u;
+        }
+        if (v < 0) {
+            v = 1 + v;
+        }
+        return [u, v];
+    }
+}

@@ -35,7 +35,10 @@ import { Sphere } from './lib/shapes/primitives/sphere';
 import { Triangle } from './lib/shapes/primitives/triangle';
 import { TextureMap } from './lib/patterns/texture-mapping/texture-map';
 import { CheckersUvPattern } from './lib/patterns/texture-mapping/uv-patterns';
-import { SphericalMapper } from './lib/patterns/texture-mapping/uv-mappers';
+import {
+    PlanarMapper,
+    SphericalMapper,
+} from './lib/patterns/texture-mapping/uv-mappers';
 
 export function configureWorld(): World {
     const rainbow = [
@@ -513,7 +516,22 @@ export function configureWorld(): World {
         return rb;
     }
 
-    function textureMappedShereDemo(): Shape {
+    function textureMappingDemo(): Shape[] {
+        const f = new Plane();
+        f.material.pattern = new TextureMap(
+            new CheckersUvPattern(
+                4,
+                4,
+                color(0.9, 1, 0.9),
+                color(0.1, 0.4, 0.1)
+            ),
+            new PlanarMapper()
+        );
+        f.material.pattern.transform = multiply(
+            translation(0, 0.5, 0),
+            rotationY(radians(-45))
+        );
+
         const s = new Sphere();
         s.transform = translation(0, 1, 0);
         s.material.pattern = new TextureMap(
@@ -529,7 +547,7 @@ export function configureWorld(): World {
         s.material.specular = 0;
         s.material.ambient = 0.1;
         s.material.reflective = 0.3;
-        return s;
+        return [f, s];
     }
 
     const world = new World();
@@ -566,7 +584,7 @@ export function configureWorld(): World {
     // world.objects.push(csgDemo(), reflectiveFloor(color(0.0, 0.2, 0.0)));
 
     // world.objects.push(basicShere(), matteFloor());
-    world.objects.push(textureMappedShereDemo(), matteFloor());
+    world.objects.push(...textureMappingDemo());
 
     return world;
 }
