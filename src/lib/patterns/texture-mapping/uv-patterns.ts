@@ -48,3 +48,13 @@ export class CheckersUvPattern implements UvPattern {
         return (uw + vh) % 2 === 0 ? this.c1 : this.c2;
     }
 }
+
+export class ImageUvPattern implements UvPattern {
+    constructor(private pixels: Color[][]) {}
+
+    colorAt(u: number, v: number): Color {
+        const x = Math.round(u * (this.pixels.length - 1));
+        const y = Math.round((1 - v) * (this.pixels[x].length - 1));
+        return this.pixels[x][y];
+    }
+}
