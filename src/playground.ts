@@ -23,7 +23,7 @@ import {
     StripePattern,
 } from './lib/patterns/patterns';
 import { Material, material } from './lib/materials';
-import { ObjParser } from './lib/obj-parser';
+import { ObjParser } from './tools/obj-parser';
 import icosahedronObjFile from './resources/icosahedron.obj?raw';
 import teapotLowResObjFile from './resources/teapot-lowres.obj?raw';
 import teapotObjFile from './resources/teapot.obj?raw';
@@ -39,6 +39,7 @@ import {
 } from './lib/patterns/texture-mapping/texture-map';
 import {
     CheckersUvPattern,
+    ImageUvPattern,
     UvAlignTestPattern,
 } from './lib/patterns/texture-mapping/uv-patterns';
 import {
@@ -46,6 +47,8 @@ import {
     PlanarMapper,
     SphericalMapper,
 } from './lib/patterns/texture-mapping/uv-mappers';
+import moonImgMapFile from './resources/moon.ppm?raw';
+import { parsePPM } from './tools/ppm-parser';
 
 export function configureWorld(): World {
     const rainbow = [
@@ -635,6 +638,18 @@ export function configureWorld(): World {
         return [f, s, cyl, cube];
     }
 
+    function imageMappingDemo(): Shape[] {
+        const img = parsePPM(moonImgMapFile);
+
+        const s = new Sphere();
+        s.transform = multiply(translation(0, 1, 0), scaling(1.8, 1.8, 1.8));
+        s.material.pattern = new TextureMap(
+            new ImageUvPattern(img.pixels),
+            new SphericalMapper()
+        );
+        return [s];
+    }
+
     const world = new World();
     world.lights.push(
         // new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
@@ -669,7 +684,8 @@ export function configureWorld(): World {
     // world.objects.push(csgDemo(), reflectiveFloor(color(0.0, 0.2, 0.0)));
 
     // world.objects.push(basicShere(), matteFloor());
-    world.objects.push(...textureMappingDemo());
+    // world.objects.push(...textureMappingDemo());
+    world.objects.push(...imageMappingDemo());
 
     return world;
 }
