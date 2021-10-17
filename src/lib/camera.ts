@@ -56,14 +56,9 @@ export class Camera {
 
         const rays: Ray[] = [];
         if (this.aperture > 0) {
-            for (let i = 0; i < this.focalSamplingRate; i++) {
-                const sampleOrigin = point(
-                    this.origin[0] + (Math.random() - 0.5) * this.aperture,
-                    this.origin[1] + (Math.random() - 0.5) * this.aperture,
-                    this.origin[2]
-                );
-                rays.push(rayToTarget(sampleOrigin, fp));
-            }
+            this.sampleApertureOrigins().forEach((o) =>
+                rays.push(rayToTarget(o, fp))
+            );
         } else {
             rays.push(rayToTarget(this.origin, px));
         }
@@ -94,5 +89,28 @@ export class Camera {
             }
         }
         return c;
+    }
+
+    private sampleApertureOrigins(): Tuple[] {
+        const pts: Tuple[] = [];
+        const baseOffset = -this.aperture / 2.0;
+        const uvStep = this.aperture / this.focalSamplingRate;
+
+        for (let v = 0; v < this.focalSamplingRate; v++) {
+            for (let u = 0; u < this.focalSamplingRate; u++) {
+                pts.push(
+                    point(
+                        this.origin[0] +
+                            baseOffset +
+                            (u + Math.random()) * uvStep,
+                        this.origin[1] +
+                            baseOffset +
+                            (v + Math.random()) * uvStep,
+                        this.origin[2]
+                    )
+                );
+            }
+        }
+        return pts;
     }
 }

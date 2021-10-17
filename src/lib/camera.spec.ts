@@ -78,11 +78,11 @@ test('a camera with default aperture will construct 1 ray per pixel ', () => {
     expect(rays.length).toBe(1);
 });
 
-test('a camera with a bigger aperture will sample a number of rays per pixel defined by focalSamplingRate', () => {
+test('a camera with a bigger aperture will sample a number of rays per pixel defined by focalSamplingRate squared', () => {
     const c = new Camera(201, 101, Math.PI / 2);
     c.aperture = 0.01;
     c.focalSamplingRate = 2;
     const rays = c.raysForPixel(100, 50);
 
-    expect(rays.length).toEqual(c.focalSamplingRate);
+    expect(rays.length).toEqual(c.focalSamplingRate ** 2);
 });
