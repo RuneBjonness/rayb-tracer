@@ -1,4 +1,4 @@
-import { add, multiply, Tuple } from './tuples';
+import { add, subtract, multiply, Tuple, normalize } from './tuples';
 import * as matrices from './matrices';
 
 export type Ray = {
@@ -8,6 +8,19 @@ export type Ray = {
 
 export function ray(origin: Tuple, direction: Tuple): Ray {
     return { origin, direction };
+}
+
+export function rayToTarget(origin: Tuple, target: Tuple): Ray {
+    const direction = normalize(subtract(target, origin));
+    return { origin, direction };
+}
+
+export function rayFocalPoint(
+    origin: Tuple,
+    target: Tuple,
+    focalLength: number
+): Tuple {
+    return position(rayToTarget(origin, target), focalLength);
 }
 
 export function position(ray: Ray, time: number): Tuple {

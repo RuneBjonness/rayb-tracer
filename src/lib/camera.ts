@@ -1,6 +1,6 @@
 import { identityMatrix, inverse, multiply } from './matrices';
-import { ray, Ray } from './rays';
-import { normalize, point, subtract, Tuple } from './tuples';
+import { Ray, rayFocalPoint, rayToTarget } from './rays';
+import { point, Tuple, add, divide } from './tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
 
@@ -16,6 +16,10 @@ export class Camera {
     }
 
     public pixelSize: number;
+
+    public aperture: number = 0;
+    public focalLength: number = 1;
+    public focalSamplingRate: number = 2;
 
     private halfWidth: number;
     private halfHeight: number;
@@ -41,15 +45,29 @@ export class Camera {
         this.pixelSize = (this.halfWidth * 2) / width;
     }
 
-    rayForPixel(x: number, y: number): Ray {
+    raysForPixel(x: number, y: number): Ray[] {
         const xOffset = (x + 0.5) * this.pixelSize;
         const yOffset = (y + 0.5) * this.pixelSize;
         const worldX = this.halfWidth - xOffset;
         const worldY = this.halfHeight - yOffset;
 
         const px = multiply(this.invTransform, point(worldX, worldY, -1));
-        const direction = normalize(subtract(px, this.origin));
-        return ray(this.origin, direction);
+        const fp = rayFocalPoint(this.origin, px, this.focalLength);
+
+        const rays: Ray[] = [];
+        if (this.aperture > 0) {
+            for (let i = 0; i < this.focalSamplingRate; i++) {
+                const sampleOrigin = point(
+                    this.origin[0] + (Math.random() - 0.5) * this.aperture,
+                    this.origin[1] + (Math.random() - 0.5) * this.aperture,
+                    this.origin[2]
+                );
+                rays.push(rayToTarget(sampleOrigin, fp));
+            }
+        } else {
+            rays.push(rayToTarget(this.origin, px));
+        }
+        return rays;
     }
 
     render(w: World): Canvas {
@@ -66,8 +84,12 @@ export class Camera {
         const c = new Canvas(lengthX, lengthY);
         for (let y = 0; y < lengthY; y++) {
             for (let x = 0; x < lengthX; x++) {
-                c.pixels[x][y] = w.colorAt(
-                    this.rayForPixel(startX + x, startY + y)
+                const samples = this.raysForPixel(startX + x, startY + y).map(
+                    (r) => w.colorAt(r)
+                );
+                c.pixels[x][y] = divide(
+                    samples.reduce((a, b) => add(a, b)),
+                    samples.length
                 );
             }
         }

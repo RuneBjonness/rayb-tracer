@@ -15,6 +15,9 @@ onmessage = function (e) {
         h: number;
     } = e.data[0];
     const camera = new Camera(cfg.fullWidth, cfg.fullHeight, Math.PI / 3);
+    camera.aperture = 0.005;
+    camera.focalLength = 2.5;
+    camera.focalSamplingRate = 16;
     camera.transform = viewTransform(
         point(0, 1.5, -5),
         point(0, 1, 0),
