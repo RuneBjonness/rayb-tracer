@@ -1,22 +1,23 @@
 import React, { useRef, useEffect } from 'react';
 import './Canvas.css'
-import { Camera } from './lib/camera';
 import { Canvas } from './lib/canvas';
-import { viewTransform } from './lib/transformations';
-import { point, vector } from './lib/tuples';
-import { configureWorld, renderScene } from './playground';
 import RenderWorker from './render-worker?worker'
 
-
 const RtCanvas: React.FC<{}> = () => {
-    //let width = 1024;
-    //let height = 768;
-    let width = 800;
-    let height = 600;
-    //let width = 640;
-    //let height = 480;
-    //let width = 320;
-    //let height = 240;
+    let width = 1024;
+    let height = 768;
+
+    // let width = 800;
+    // let height = 600;
+
+    // let width = 640;
+    // let height = 480;
+
+    // let width = 320;
+    // let height = 240;
+
+    // let width = 32;
+    // let height = 24;
 
     let canvasRef = useRef<HTMLCanvasElement | null>(null);
     let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -25,12 +26,6 @@ const RtCanvas: React.FC<{}> = () => {
         if (canvasRef.current) {
             canvasCtxRef.current = canvasRef.current.getContext('2d');
             let ctx = canvasCtxRef.current;
-            // const world = configureWorld();
-            // const imageData = renderScene(world, width, height);
-            // ctx!.putImageData(imageData, 0, 0);
-
-            // const camera = new Camera(width, height, Math.PI / 3);
-            // camera.transform = viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
         
             const startTime = Date.now();
             console.log(`renderScene(${ width }X${ height }) started..`);
@@ -45,7 +40,7 @@ const RtCanvas: React.FC<{}> = () => {
                 }
             } 
 
-            for(let i=0; i < 8; i++) {
+            for(let i=0; i < 12; i++) {
                 const worker = new RenderWorker();
                 worker.onmessage = function(e) {
                     const cfg: CanvasPart = e.data[0];
