@@ -1,5 +1,6 @@
 import { AreaLight } from '../lib/lights';
 import { multiply } from '../lib/matrices';
+import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
@@ -27,9 +28,9 @@ export class Marbles implements Scene {
             new AreaLight(
                 point(-4, 5, -3),
                 vector(3, 0, 0),
-                2,
+                6,
                 vector(0, 3, 0),
-                2,
+                6,
                 color(1.5, 1.5, 1.5)
             )
         );
@@ -65,18 +66,20 @@ export class Marbles implements Scene {
             color(1, 0.6, 1),
         ];
 
-        world.objects.push(this.glassShere(color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
+        const g = new Group();
+        g.add(this.glassShere(color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
 
-        world.objects.push(this.basicShere(sphereColors[0], -1.2, 0.2, 0.5));
-        world.objects.push(this.basicShere(sphereColors[1], -2.5, 2, 0.75));
-        world.objects.push(this.basicShere(sphereColors[2], 1.9, 6, 0.5));
-        world.objects.push(this.basicShere(sphereColors[3], 1.3, -2.5, 0.8));
-        world.objects.push(this.basicShere(sphereColors[4], -0.4, -1.5, 0.3));
-        world.objects.push(this.basicShere(sphereColors[5], -1, 7, 0.5));
-        world.objects.push(this.basicShere(sphereColors[6], 0.3, -1.1, 0.3));
-        world.objects.push(this.basicShere(sphereColors[7], -1.4, -1.5, 0.5));
-        world.objects.push(this.basicShere(sphereColors[8], -1.1, 4, 0.5));
-        world.objects.push(this.basicShere(sphereColors[9], -3, 11, 0.5));
+        g.add(this.basicShere(sphereColors[0], -1.2, 0.2, 0.5));
+        g.add(this.basicShere(sphereColors[1], -2.5, 2, 0.75));
+        g.add(this.basicShere(sphereColors[2], 1.9, 6, 0.5));
+        g.add(this.basicShere(sphereColors[4], -0.4, -1.5, 0.3));
+        g.add(this.basicShere(sphereColors[5], -1, 7, 0.5));
+        g.add(this.basicShere(sphereColors[6], 0.3, -1.1, 0.3));
+        g.add(this.basicShere(sphereColors[7], -1.4, -1.5, 0.5));
+        g.add(this.basicShere(sphereColors[8], -1.1, 4, 0.5));
+        g.add(this.basicShere(sphereColors[9], -3, 11, 0.5));
+
+        world.objects.push(g, this.basicShere(sphereColors[3], 1.3, -2.5, 0.8));
 
         return world;
     }
