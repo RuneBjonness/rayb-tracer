@@ -1,9 +1,22 @@
 import { Camera } from './lib/camera';
+import { CsgRb } from './scenes/csg-rb';
+import { Dodecahedron } from './scenes/dodecahedron';
+import { ImageMapping } from './scenes/image-mapping';
 import { Marbles } from './scenes/marbles';
-//import { PlayGround } from './scenes/playground';
+import { Patterns } from './scenes/patterns';
+import { Skybox } from './scenes/skybox';
+import { TeaPot } from './scenes/teapot';
+import { TextureMapping } from './scenes/texture-mapping';
 
-//const scene = new PlayGround();
-const scene = new Marbles();
+const scene = new CsgRb();
+//const scene = new Dodecahedron();
+//const scene = new ImageMapping();
+//const scene = new Marbles();
+//const scene = new Patterns();
+//const scene = new Skybox();
+//const scene = new TeaPot();
+//const scene = new TextureMapping();
+
 const world = scene.configureWorld();
 
 onmessage = function (e) {

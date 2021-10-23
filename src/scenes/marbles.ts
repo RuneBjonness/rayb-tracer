@@ -67,24 +67,27 @@ export class Marbles implements Scene {
         ];
 
         const g = new Group();
-        g.add(this.glassShere(color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
+        g.add(this.glassSphere(color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
 
-        g.add(this.basicShere(sphereColors[0], -1.2, 0.2, 0.5));
-        g.add(this.basicShere(sphereColors[1], -2.5, 2, 0.75));
-        g.add(this.basicShere(sphereColors[2], 1.9, 6, 0.5));
-        g.add(this.basicShere(sphereColors[4], -0.4, -1.5, 0.3));
-        g.add(this.basicShere(sphereColors[5], -1, 7, 0.5));
-        g.add(this.basicShere(sphereColors[6], 0.3, -1.1, 0.3));
-        g.add(this.basicShere(sphereColors[7], -1.4, -1.5, 0.5));
-        g.add(this.basicShere(sphereColors[8], -1.1, 4, 0.5));
-        g.add(this.basicShere(sphereColors[9], -3, 11, 0.5));
+        g.add(this.basicSphere(sphereColors[0], -1.2, 0.2, 0.5));
+        g.add(this.basicSphere(sphereColors[1], -2.5, 2, 0.75));
+        g.add(this.basicSphere(sphereColors[2], 1.9, 6, 0.5));
+        g.add(this.basicSphere(sphereColors[4], -0.4, -1.5, 0.3));
+        g.add(this.basicSphere(sphereColors[5], -1, 7, 0.5));
+        g.add(this.basicSphere(sphereColors[6], 0.3, -1.1, 0.3));
+        g.add(this.basicSphere(sphereColors[7], -1.4, -1.5, 0.5));
+        g.add(this.basicSphere(sphereColors[8], -1.1, 4, 0.5));
+        g.add(this.basicSphere(sphereColors[9], -3, 11, 0.5));
 
-        world.objects.push(g, this.basicShere(sphereColors[3], 1.3, -2.5, 0.8));
+        world.objects.push(
+            g,
+            this.basicSphere(sphereColors[3], 1.3, -2.5, 0.8)
+        );
 
         return world;
     }
 
-    private basicShere(
+    private basicSphere(
         color: Color,
         x: number,
         z: number,
@@ -103,13 +106,13 @@ export class Marbles implements Scene {
         return s;
     }
 
-    private glassShere(
+    private glassSphere(
         color: Color,
         x: number,
         z: number,
         scale: number
     ): Shape {
-        const s = this.basicShere(color, x, z, scale);
+        const s = this.basicSphere(color, x, z, scale);
         s.material.reflective = 0.9;
         s.material.transparancy = 1;
         s.material.refractiveIndex = 1.5;
