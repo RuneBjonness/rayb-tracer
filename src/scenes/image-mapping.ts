@@ -7,7 +7,7 @@ import { World } from '../lib/world';
 import { SphericalMapper } from '../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../resources/moon.ppm?raw';
 import { parsePPM } from '../tools/ppm-parser';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 import { TextureMap } from '../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
 

@@ -12,7 +12,7 @@ import { World } from '../lib/world';
 // import posYImgMapFile from '../resources/skybox/posy.ppm?raw';
 // import posZImgMapFile from '../resources/skybox/posz.ppm?raw';
 import { parsePPM } from '../tools/ppm-parser';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 
 export class Skybox implements Scene {
     cameraCfg: CamerConfiguration = {

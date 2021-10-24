@@ -20,7 +20,7 @@ import {
 import { material } from '../lib/materials';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 
 export class Patterns implements Scene {
     cameraCfg: CamerConfiguration = {

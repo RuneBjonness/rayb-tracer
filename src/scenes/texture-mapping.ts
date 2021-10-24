@@ -26,7 +26,7 @@ import {
 } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 
 export class TextureMapping implements Scene {
     cameraCfg: CamerConfiguration = {

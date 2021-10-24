@@ -6,145 +6,266 @@ import { Group } from '../lib/shapes/group';
 import { Cube } from '../lib/shapes/primitives/cube';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Plane } from '../lib/shapes/primitives/plane';
-import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
 import {
     translation,
     scaling,
     viewTransform,
     rotationY,
-    rotationX,
     shearing,
+    radians,
 } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 
 export class CsgRb implements Scene {
     private baseMaterial = material();
 
     constructor() {
-        this.baseMaterial.color = color(1, 0, 0);
-        this.baseMaterial.reflective = 0.3;
+        this.baseMaterial.color = color(0.65, 0.35, 0.85);
     }
 
     cameraCfg: CamerConfiguration = {
-        fieldOfView: Math.PI / 3,
+        fieldOfView: 1.2,
         viewTransform: viewTransform(
-            point(0, 1.5, -5),
-            point(0, 1, 0),
+            point(0, 6, -1.5),
+            point(0, 0, 0),
             vector(0, 1, 0)
         ),
         aperture: 0.005,
-        focalLength: 2.5,
-        focalSamplingRate: 2,
+        focalLength: 2,
+        focalSamplingRate: 6,
     };
 
     configureWorld(): World {
         const world = new World();
         world.lights.push(
             new AreaLight(
-                point(-5.5, 3.5, -5),
-                vector(3, 0, 0),
-                4,
-                vector(0, 3, 0),
-                4,
+                point(-2, 2.5, -2.5),
+                vector(2, 0, 0),
+                6,
+                vector(0, 0, 2),
+                6,
                 color(1.5, 1.5, 1.5)
             )
         );
-
-        const lamp = new Sphere();
-        lamp.material.color = color(1.5, 1.5, 1.5);
-        lamp.material.diffuse = 0;
-        lamp.material.specular = 0;
-        lamp.material.ambient = 1;
-        lamp.transform = multiply(
-            translation(-4, 5, -3),
-            scaling(0.75, 0.75, 0.75)
-        );
-        world.objects.push(lamp);
 
         const f = new Plane();
         f.material.specular = 0;
         f.material.ambient = 0.025;
         f.material.diffuse = 0.67;
-        f.material.reflective = 0.2;
+        f.material.color = color(0.2, 0, 0.8);
         world.objects.push(f);
 
-        const rb = new Group();
+        const rbt = new Group();
+        const cR = this.letterCaptialR();
+        let xOffset = -9.4;
+        cR.transform = translation(xOffset, 0, 0);
+        const a = this.letterA();
+        xOffset += 2;
+        a.transform = translation(xOffset, 0, 0);
+        const y = this.letterY();
+        xOffset += 2;
+        y.transform = translation(xOffset, 0, 0);
+        const cB = this.letterCaptialB();
+        xOffset += 2;
+        cB.transform = translation(xOffset, 0, 0);
+        const cT = this.letterCaptialT();
+        xOffset += 3;
+        cT.transform = translation(xOffset, 0, 0);
         const r = this.letterR();
-        r.transform = translation(-1, 0, 0);
-        const b = this.letterB();
-        b.transform = translation(1, 0, 0);
-        rb.add(r);
-        rb.add(b);
+        xOffset += 1.5;
+        r.transform = translation(xOffset, 0, 0);
+        const a2 = this.letterA();
+        xOffset += 2;
+        a2.transform = translation(xOffset, 0, 0);
+        const c = this.letterC();
+        xOffset += 2.2;
+        c.transform = translation(xOffset, 0, 0);
+        const e = this.letterE();
+        xOffset += 2;
+        e.transform = translation(xOffset, 0, 0);
+        const r2 = this.letterR();
+        xOffset += 2;
+        r2.transform = translation(xOffset, 0, 0);
 
-        rb.transform = multiply(
-            translation(0, 1.5, 3),
-            multiply(
-                scaling(0.5, 0.5, 0.5),
-                multiply(rotationY(Math.PI / 6), rotationX(-Math.PI / 2))
-            )
-        );
-        rb.divide(2);
+        rbt.add(cR);
+        rbt.add(a);
+        rbt.add(y);
+        rbt.add(cB);
+        rbt.add(cT);
+        rbt.add(r);
+        rbt.add(a2);
+        rbt.add(c);
+        rbt.add(e);
+        rbt.add(r2);
 
-        world.objects.push(rb);
+        rbt.transform = translation(0, 0.5, 2.5);
+        rbt.divide(2);
+
+        world.objects.push(rbt);
 
         return world;
     }
 
-    private halfCircle(): Shape {
+    private circle(): Shape {
         const outerCylinder = new Cylinder();
         outerCylinder.minimum = 0;
-        outerCylinder.maximum = 0.5;
+        outerCylinder.maximum = 0.25;
         outerCylinder.closed = true;
         outerCylinder.material = this.baseMaterial;
 
         const innerCylinder = new Cylinder();
         innerCylinder.minimum = 0;
-        innerCylinder.maximum = 0.6;
+        innerCylinder.maximum = 0.3;
         innerCylinder.closed = true;
         innerCylinder.transform = scaling(0.5, 1, 0.5);
         innerCylinder.material = this.baseMaterial;
 
-        const circle = new CsgShape('difference', outerCylinder, innerCylinder);
+        return new CsgShape('difference', outerCylinder, innerCylinder);
+    }
 
+    private halfCircle(): Shape {
         const cube = new Cube();
         cube.transform = translation(-1, 0, 0);
 
-        return new CsgShape('difference', circle, cube);
+        return new CsgShape('difference', this.circle(), cube);
     }
 
-    private letterP(): Shape {
+    private letterCaptialP(): Shape {
         const leftLeg = new Cube();
         leftLeg.material = this.baseMaterial;
         leftLeg.transform = multiply(
-            translation(-0.25, 0, -1),
-            scaling(0.25, 0.5, 2)
+            translation(-0.25, 0.125, -1),
+            scaling(0.25, 0.125, 2)
         );
 
         return new CsgShape('union', leftLeg, this.halfCircle());
     }
 
-    private letterR(): Shape {
+    private letterCaptialR(): Shape {
         const rightLeg = new Cube();
         rightLeg.material = this.baseMaterial;
         rightLeg.transform = multiply(
-            translation(0.5, 0, -1.9),
-            multiply(scaling(0.25, 0.5, 1.1), shearing(0, -1, 0, 0, 0, 0))
+            translation(0.5, 0.125, -1.9),
+            multiply(scaling(0.25, 0.125, 1.1), shearing(0, -1, 0, 0, 0, 0))
         );
 
-        return new CsgShape('union', rightLeg, this.letterP());
+        return new CsgShape('union', rightLeg, this.letterCaptialP());
     }
 
-    private letterB(): Shape {
+    private letterCaptialB(): Shape {
         const lowerHalfCircle = this.halfCircle();
         lowerHalfCircle.material = this.baseMaterial;
         lowerHalfCircle.transform = multiply(
-            translation(0, 0, -1.9),
+            translation(0, 0, -1.8),
             scaling(1.3, 1, 1.2)
         );
 
-        return new CsgShape('union', lowerHalfCircle, this.letterP());
+        return new CsgShape('union', lowerHalfCircle, this.letterCaptialP());
+    }
+
+    private letterCaptialT(): Shape {
+        const leg = new Cube();
+        leg.material = this.baseMaterial;
+        leg.transform = multiply(
+            translation(0, 0.125, -1),
+            scaling(0.25, 0.125, 2)
+        );
+
+        const top = new Cube();
+        top.material = this.baseMaterial;
+        top.transform = multiply(
+            translation(0, 0.125, 0.75),
+            scaling(1, 0.125, 0.25)
+        );
+
+        return new CsgShape('union', leg, top);
+    }
+
+    private letterA(): Shape {
+        const c = this.circle();
+        c.transform = translation(0, 0, -2);
+
+        const leg = new Cube();
+        leg.material = this.baseMaterial;
+        leg.transform = multiply(
+            translation(0.75, 0.125, -2),
+            scaling(0.25, 0.125, 1)
+        );
+        return new CsgShape('union', c, leg);
+    }
+
+    private letterC(): Shape {
+        const c = this.circle();
+        c.transform = translation(0, 0, -2);
+
+        const cube = new Cube();
+        cube.material = this.baseMaterial;
+        cube.transform = multiply(
+            translation(1.5, 0, -2),
+            rotationY(radians(45))
+        );
+        return new CsgShape('difference', c, cube);
+    }
+
+    private letterE(): Shape {
+        const body = this.circle();
+        body.transform = translation(0, 0, -2);
+
+        const cube = new Cube();
+        cube.material = this.baseMaterial;
+        cube.transform = multiply(
+            translation(0.7, 0, -2.2),
+            scaling(1, 1, 0.25)
+        );
+        const openBody = new CsgShape('difference', body, cube);
+
+        const bar = new Cube();
+        bar.material = this.baseMaterial;
+        bar.transform = multiply(
+            translation(0.25, 0.125, -2),
+            scaling(0.75, 0.125, 0.25)
+        );
+        return new CsgShape('union', openBody, bar);
+    }
+
+    private letterR(): Shape {
+        const c = this.circle();
+        c.transform = translation(0.1, 0, -2);
+        const cube = new Cube();
+        cube.material = this.baseMaterial;
+        cube.transform = multiply(
+            translation(0, 0, -0.8),
+            rotationY(radians(45))
+        );
+        const top = new CsgShape('intersection', c, cube);
+
+        const leg = new Cube();
+        leg.material = this.baseMaterial;
+        leg.transform = multiply(
+            translation(-0.5, 0.125, -2),
+            scaling(0.25, 0.125, 1)
+        );
+        return new CsgShape('union', top, leg);
+    }
+
+    private letterY(): Shape {
+        const shortLeg = new Cube();
+        shortLeg.material = this.baseMaterial;
+        shortLeg.transform = multiply(
+            translation(-0.12, 0.125, -2),
+            multiply(scaling(0.25, 0.125, 1), shearing(0, -2, 0, 0, 0, 0))
+        );
+
+        const longLeg = new Cube();
+        longLeg.material = this.baseMaterial;
+        longLeg.transform = multiply(
+            translation(0.5, 0.125, -2.6),
+            multiply(scaling(0.25, 0.125, 1.6), shearing(0, 2, 0, 0, 0, 0))
+        );
+
+        return new CsgShape('union', shortLeg, longLeg);
     }
 }

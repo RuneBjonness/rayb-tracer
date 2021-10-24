@@ -7,7 +7,7 @@ import { Shape } from '../lib/shapes/shape';
 import { translation, scaling, viewTransform } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 
 export class Marbles implements Scene {
     cameraCfg: CamerConfiguration = {

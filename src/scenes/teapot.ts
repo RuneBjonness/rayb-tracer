@@ -3,7 +3,7 @@ import { multiply } from '../lib/matrices';
 import { scaling, viewTransform, rotationX } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './Scene';
+import { CamerConfiguration, Scene } from './scene';
 import { ObjParser } from '../tools/obj-parser';
 import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
 import teapotObjFile from '../resources/teapot.obj?raw';
