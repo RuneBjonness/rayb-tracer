@@ -31,6 +31,12 @@ _Photo used for skybox by [Emil Persson](http://www.humus.name)_
 
 ![Skybox](./examples/rayb-tracer-skybox.png)
 
+## Constructive Solid Geometry
+
+Constructing letters by applying union, difference or intersection on cylinders and cubes
+
+![CSG RayB-Tracer](./examples/rayb-tracer-csg.png)
+
 ## Transformations
 
 Constructing a dodecahedron by translating, scaling and rotating cylinders and spheres
