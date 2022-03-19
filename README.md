@@ -50,3 +50,9 @@ Currently only capable of image mapping. Bump mapping is next on the list
 Image by [NASA](https://svs.gsfc.nasa.gov/cgi-bin/details.cgi?aid=4720)
 
 ![Image mapping](./examples/rayb-tracer-image-mapping.png)
+
+## 3D Patterns
+
+Stripes, gradients, checkers and blended patterns
+
+![Texture mapping](./examples/rayb-tracer-patterns.png)

@@ -3,15 +3,17 @@ import {
     radians,
     rotationX,
     rotationY,
+    rotationZ,
     scaling,
     translation,
     viewTransform,
 } from '../lib/transformations';
 import { multiply } from '../lib/matrices';
 import { Shape } from '../lib/shapes/shape';
-import { AreaLight } from '../lib/lights';
+import { AreaLight, PointLight } from '../lib/lights';
 import { World } from '../lib/world';
 import {
+    BlendedPatterns,
     Checkers3dPattern,
     RadialGradientPattern,
     RingPattern,
@@ -21,6 +23,7 @@ import { material } from '../lib/materials';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { CamerConfiguration, Scene } from './scene';
+import { Group } from '../lib/shapes/group';
 
 export class Patterns implements Scene {
     cameraCfg: CamerConfiguration = {
@@ -32,7 +35,7 @@ export class Patterns implements Scene {
         ),
         aperture: 0.005,
         focalLength: 2.5,
-        focalSamplingRate: 2,
+        focalSamplingRate: 4,
     };
 
     configureWorld(): World {
@@ -41,9 +44,9 @@ export class Patterns implements Scene {
             new AreaLight(
                 point(-5.5, 3.5, -5),
                 vector(3, 0, 0),
-                8,
+                6,
                 vector(0, 3, 0),
-                8,
+                6,
                 color(1.5, 1.5, 1.5)
             )
         );
@@ -58,15 +61,16 @@ export class Patterns implements Scene {
             scaling(0.5, 0.5, 0.5)
         );
         left.material.pattern = new RingPattern(
-            color(0.1, 0.5, 1),
-            color(0.4, 0.7, 1)
+            color(0, 0.5, 0.5),
+            color(0.2, 0.9, 0.9)
         );
         left.material.pattern.transform = multiply(
             scaling(0.15, 0.15, 0.15),
             multiply(rotationY(radians(30)), rotationX(radians(105)))
         );
-        left.material.diffuse = 0.7;
-        left.material.specular = 0.3;
+        left.material.shininess = 50;
+        left.material.diffuse = 0.9;
+        left.material.specular = 0.2;
 
         const middle = new Sphere();
         middle.transform = translation(0.7, 1, 1.0);
@@ -80,9 +84,27 @@ export class Patterns implements Scene {
             translation(-1.4, 0.25, -1),
             scaling(0.25, 0.25, 0.25)
         );
-        leftSmall.material.color = color(0, 0.2, 0);
-        leftSmall.material.reflective = 0.3;
-        leftSmall.material.specular = 0.6;
+        const rotatedStripesA = new StripePattern(
+            color(0.1, 0.5, 1),
+            color(0.4, 0.7, 1)
+        );
+        rotatedStripesA.transform = multiply(
+            scaling(0.25, 0.25, 0.25),
+            rotationZ(radians(45))
+        );
+        const rotatedStripesB = new StripePattern(
+            color(0.1, 0.5, 1),
+            color(0.4, 0.7, 1)
+        );
+        rotatedStripesB.transform = multiply(
+            scaling(0.25, 0.25, 0.25),
+            rotationZ(radians(-45))
+        );
+        leftSmall.material.pattern = new BlendedPatterns(
+            rotatedStripesA,
+            rotatedStripesB
+        );
+        leftSmall.material.specular = 0.2;
         leftSmall.material.shininess = 100;
 
         const front = new Sphere();
@@ -100,7 +122,14 @@ export class Patterns implements Scene {
             translation(-1.2, 0.75, 2.5),
             scaling(0.75, 0.75, 0.75)
         );
-        middleBehind.material = front.material;
+        middleBehind.material.pattern = new Checkers3dPattern(
+            color(0.1, 0.4, 0.3),
+            color(0.7, 0.9, 0.8)
+        );
+        middleBehind.material.pattern.transform = multiply(
+            scaling(0.5, 0.5, 0.5),
+            rotationY(radians(30))
+        );
 
         const right = new Sphere();
         right.transform = multiply(
@@ -118,7 +147,16 @@ export class Patterns implements Scene {
         right.material.diffuse = 0.7;
         right.material.specular = 0.3;
 
-        world.objects.push(front, leftSmall, left, middle, middleBehind, right);
+        const spheres = new Group();
+        spheres.add(leftSmall);
+        spheres.add(left);
+        spheres.add(front);
+        spheres.add(middle);
+        spheres.add(middleBehind);
+        spheres.add(right);
+        spheres.divide(2);
+
+        world.objects.push(spheres);
 
         return world;
     }
@@ -135,10 +173,10 @@ export class Patterns implements Scene {
 
         const ceiling = new Plane();
         ceiling.transform = translation(0, 5, 0);
-        ceiling.material.color = c2;
-        ceiling.material.ambient = 0.7;
+        ceiling.material.color = c1;
+        ceiling.material.ambient = 0.5;
         ceiling.material.specular = 0.8;
-        ceiling.material.reflective = 0.1;
+        ceiling.material.reflective = 0;
 
         const wallMaterial = material();
         wallMaterial.pattern = new StripePattern(c1, c2);
