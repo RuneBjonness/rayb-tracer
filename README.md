@@ -17,6 +17,12 @@ Marbles with reflective and refractive surfaces rendered with a shallow depth of
 
 ![Marbles](./examples/rayb-tracer-marbles.png)
 
+## Teapot
+
+Basic support for the OBJ file format
+
+![Teapot](./examples/rayb-tracer-teapot.png)
+
 ## Texture mapping
 
 Planar, spherical, cylindrical and cubic texture mapping
@@ -55,4 +61,4 @@ Image by [NASA](https://svs.gsfc.nasa.gov/cgi-bin/details.cgi?aid=4720)
 
 Stripes, gradients, checkers and blended patterns
 
-![Texture mapping](./examples/rayb-tracer-patterns.png)
+![Patterns](./examples/rayb-tracer-patterns.png)
