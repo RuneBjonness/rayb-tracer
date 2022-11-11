@@ -104,15 +104,11 @@ export function cofactor(m: number[][], row: number, column: number): number {
         : -minor(m, row, column);
 }
 
-export function isInvertible(m: number[][]): boolean {
-    return determinant(m) !== 0;
-}
-
 export function inverse(m: number[][]): number[][] {
-    if (!isInvertible(m)) {
+    const d = determinant(m);
+    if(d === 0){
         return [];
     }
-    const d = determinant(m);
     let result: number[][] = new Array(m.length)
         .fill([])
         .map(() => new Array(m[0].length));

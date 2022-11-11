@@ -270,7 +270,7 @@ test('testing an invertible matrix for invertibility', () => {
     ];
 
     expect(matrices.determinant(m)).toBe(-2120);
-    expect(matrices.isInvertible(m)).toBe(true);
+    expect(matrices.inverse(m).length).not.toBe(0);
 });
 
 test('testing a noninvertible matrix for invertibility', () => {
@@ -282,7 +282,7 @@ test('testing a noninvertible matrix for invertibility', () => {
     ];
 
     expect(matrices.determinant(m)).toBe(0);
-    expect(matrices.isInvertible(m)).toBe(false);
+    expect(matrices.inverse(m).length).toBe(0);
 });
 
 test('calculating the inverse of a matrix', () => {
