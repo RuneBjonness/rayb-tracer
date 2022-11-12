@@ -1,6 +1,6 @@
-import { identityMatrix, inverse, multiply } from './matrices';
+import { identityMatrix, inverse, multiplyMatrixByTuple } from './matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
-import { point, Tuple, add, divide } from './tuples';
+import { point, Tuple, divideColor, addColors } from './tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
 
@@ -12,7 +12,7 @@ export class Camera {
     public set transform(m: number[][]) {
         this._transform = m;
         this.invTransform = inverse(m);
-        this.origin = multiply(this.invTransform, point(0, 0, 0));
+        this.origin = multiplyMatrixByTuple(this.invTransform, point(0, 0, 0));
     }
 
     public pixelSize: number;
@@ -51,7 +51,7 @@ export class Camera {
         const worldX = this.halfWidth - xOffset;
         const worldY = this.halfHeight - yOffset;
 
-        const px = multiply(this.invTransform, point(worldX, worldY, -1));
+        const px = multiplyMatrixByTuple(this.invTransform, point(worldX, worldY, -1));
         const fp = rayFocalPoint(this.origin, px, this.focalLength);
 
         const rays: Ray[] = [];
@@ -82,8 +82,8 @@ export class Camera {
                 const samples = this.raysForPixel(startX + x, startY + y).map(
                     (r) => w.colorAt(r)
                 );
-                c.pixels[x][y] = divide(
-                    samples.reduce((a, b) => add(a, b)),
+                c.pixels[x][y] = divideColor(
+                    samples.reduce((a, b) => addColors(a, b)),
                     samples.length
                 );
             }

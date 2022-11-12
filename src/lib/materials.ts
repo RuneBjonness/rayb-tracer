@@ -1,10 +1,11 @@
 import {
-    add,
+    addColors,
     color,
     Color,
-    divide,
+    divideColor,
     dot,
-    multiply,
+    multiplyColorByScalar,
+    multiplyColors,
     negate,
     normalize,
     reflect,
@@ -55,15 +56,15 @@ export function lighting(
     } else {
         mColor = shape.material.color;
     }
-    const effectiveColor = multiply(mColor, light.intensity);
-    const ambient = multiply(effectiveColor, shape.material.ambient);
+    const effectiveColor = multiplyColors(mColor, light.intensity);
+    const ambient = multiplyColorByScalar(effectiveColor, shape.material.ambient);
 
     if (lightIntensity === 0.0) {
         return ambient;
     }
 
     let sum = color(0, 0, 0);
-    const specularLight = multiply(light.intensity, shape.material.specular);
+    const specularLight = multiplyColorByScalar(light.intensity, shape.material.specular);
     const lightSamples = light.samplePoints();
 
     lightSamples.forEach((lightSample) => {
@@ -75,8 +76,8 @@ export function lighting(
             diffuse = color(0, 0, 0);
             specular = color(0, 0, 0);
         } else {
-            diffuse = multiply(
-                multiply(effectiveColor, shape.material.diffuse),
+            diffuse = multiplyColorByScalar(
+                multiplyColorByScalar(effectiveColor, shape.material.diffuse),
                 lightDotNormal
             );
 
@@ -85,17 +86,17 @@ export function lighting(
             if (reflectDotEye <= 0) {
                 specular = color(0, 0, 0);
             } else {
-                specular = multiply(
+                specular = multiplyColorByScalar(
                     specularLight,
                     Math.pow(reflectDotEye, shape.material.shininess)
                 );
             }
         }
-        sum = add(add(sum, diffuse), specular);
+        sum = addColors(addColors(sum, diffuse), specular);
     });
 
-    return add(
+    return addColors(
         ambient,
-        multiply(divide(sum, lightSamples.length), lightIntensity)
+        multiplyColorByScalar(divideColor(sum, lightSamples.length), lightIntensity)
     );
 }

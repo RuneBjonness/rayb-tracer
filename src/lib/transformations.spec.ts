@@ -1,9 +1,10 @@
 import { areEqual, point, vector } from './tuples';
 import {
     inverse,
-    multiply,
     areEqual as matricesAreEqual,
     identityMatrix,
+    multiplyMatrixByTuple,
+    multiplyMatrices,
 } from './matrices';
 import {
     translation,
@@ -18,7 +19,7 @@ import {
 
 test('multiplying by a translation matrix', () => {
     const transform = translation(5, -3, 2);
-    const result = multiply(transform, point(-3, 4, 5));
+    const result = multiplyMatrixByTuple(transform, point(-3, 4, 5));
 
     expect(areEqual(result, point(2, 1, 7))).toBe(true);
 });
@@ -26,7 +27,7 @@ test('multiplying by a translation matrix', () => {
 test('multiplying by the inverse of a translation matrix', () => {
     const transform = translation(5, -3, 2);
     const inv = inverse(transform);
-    const result = multiply(inv, point(-3, 4, 5));
+    const result = multiplyMatrixByTuple(inv, point(-3, 4, 5));
 
     expect(areEqual(result, point(-8, 7, 3))).toBe(true);
 });
@@ -34,21 +35,21 @@ test('multiplying by the inverse of a translation matrix', () => {
 test('translation does not affect vectors', () => {
     const transform = translation(5, -3, 2);
     const v = vector(-3, 4, 5);
-    const result = multiply(transform, v);
+    const result = multiplyMatrixByTuple(transform, v);
 
     expect(areEqual(result, v)).toBe(true);
 });
 
 test('scaling matrix applied to a point', () => {
     const transform = scaling(2, 3, 4);
-    const result = multiply(transform, point(-4, 6, 8));
+    const result = multiplyMatrixByTuple(transform, point(-4, 6, 8));
 
     expect(areEqual(result, point(-8, 18, 32))).toBe(true);
 });
 
 test('scaling matrix applied to a vector', () => {
     const transform = scaling(2, 3, 4);
-    const result = multiply(transform, vector(-4, 6, 8));
+    const result = multiplyMatrixByTuple(transform, vector(-4, 6, 8));
 
     expect(areEqual(result, vector(-8, 18, 32))).toBe(true);
 });
@@ -56,14 +57,14 @@ test('scaling matrix applied to a vector', () => {
 test('multiplying by the inverse of a scaling matrix', () => {
     const transform = scaling(2, 3, 4);
     const inv = inverse(transform);
-    const result = multiply(inv, vector(-4, 6, 8));
+    const result = multiplyMatrixByTuple(inv, vector(-4, 6, 8));
 
     expect(areEqual(result, vector(-2, 2, 2))).toBe(true);
 });
 
 test('reflection is scaling by a negative value', () => {
     const transform = scaling(-1, 1, 1);
-    const result = multiply(transform, point(2, 3, 4));
+    const result = multiplyMatrixByTuple(transform, point(2, 3, 4));
 
     expect(areEqual(result, point(-2, 3, 4))).toBe(true);
 });
@@ -75,11 +76,11 @@ test('rotating a point around the x axis', () => {
 
     expect(
         areEqual(
-            multiply(halfQuarter, p),
+            multiplyMatrixByTuple(halfQuarter, p),
             point(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2)
         )
     ).toBe(true);
-    expect(areEqual(multiply(fullQuarter, p), point(0, 0, 1))).toBe(true);
+    expect(areEqual(multiplyMatrixByTuple(fullQuarter, p), point(0, 0, 1))).toBe(true);
 });
 
 test('degreees to radians conversion', () => {
@@ -94,7 +95,7 @@ test('the inverse of an x-rotatition rotates in the opposite direction', () => {
 
     expect(
         areEqual(
-            multiply(inv, p),
+            multiplyMatrixByTuple(inv, p),
             point(0, Math.sqrt(2) / 2, -Math.sqrt(2) / 2)
         )
     ).toBe(true);
@@ -107,11 +108,11 @@ test('rotating a point around the y axis', () => {
 
     expect(
         areEqual(
-            multiply(halfQuarter, p),
+            multiplyMatrixByTuple(halfQuarter, p),
             point(Math.sqrt(2) / 2, 0, Math.sqrt(2) / 2)
         )
     ).toBe(true);
-    expect(areEqual(multiply(fullQuarter, p), point(1, 0, 0))).toBe(true);
+    expect(areEqual(multiplyMatrixByTuple(fullQuarter, p), point(1, 0, 0))).toBe(true);
 });
 
 test('rotating a point around the z axis', () => {
@@ -121,51 +122,51 @@ test('rotating a point around the z axis', () => {
 
     expect(
         areEqual(
-            multiply(halfQuarter, p),
+            multiplyMatrixByTuple(halfQuarter, p),
             point(-Math.sqrt(2) / 2, Math.sqrt(2) / 2, 0)
         )
     ).toBe(true);
-    expect(areEqual(multiply(fullQuarter, p), point(-1, 0, 0))).toBe(true);
+    expect(areEqual(multiplyMatrixByTuple(fullQuarter, p), point(-1, 0, 0))).toBe(true);
 });
 
 test('a shearing transformation moves x in proportion to y', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(1, 0, 0, 0, 0, 0), p);
+    const sheared = multiplyMatrixByTuple(shearing(1, 0, 0, 0, 0, 0), p);
 
     expect(areEqual(sheared, point(5, 3, 4))).toBe(true);
 });
 
 test('a shearing transformation moves x in proportion to z', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(0, 1, 0, 0, 0, 0), p);
+    const sheared = multiplyMatrixByTuple(shearing(0, 1, 0, 0, 0, 0), p);
 
     expect(areEqual(sheared, point(6, 3, 4))).toBe(true);
 });
 
 test('a shearing transformation moves y in proportion to x', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(0, 0, 1, 0, 0, 0), p);
+    const sheared = multiplyMatrixByTuple(shearing(0, 0, 1, 0, 0, 0), p);
 
     expect(areEqual(sheared, point(2, 5, 4))).toBe(true);
 });
 
 test('a shearing transformation moves y in proportion to z', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(0, 0, 0, 1, 0, 0), p);
+    const sheared = multiplyMatrixByTuple(shearing(0, 0, 0, 1, 0, 0), p);
 
     expect(areEqual(sheared, point(2, 7, 4))).toBe(true);
 });
 
 test('a shearing transformation moves z in proportion to x', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(0, 0, 0, 0, 1, 0), p);
+    const sheared = multiplyMatrixByTuple(shearing(0, 0, 0, 0, 1, 0), p);
 
     expect(areEqual(sheared, point(2, 3, 6))).toBe(true);
 });
 
 test('a shearing transformation moves z in proportion to y', () => {
     const p = point(2, 3, 4);
-    const sheared = multiply(shearing(0, 0, 0, 0, 0, 1), p);
+    const sheared = multiplyMatrixByTuple(shearing(0, 0, 0, 0, 0, 1), p);
 
     expect(areEqual(sheared, point(2, 3, 7))).toBe(true);
 });
@@ -176,13 +177,13 @@ test('individual transformations are applied in sequence', () => {
     const b = scaling(5, 5, 5);
     const c = translation(10, 5, 7);
 
-    const p2 = multiply(a, p);
+    const p2 = multiplyMatrixByTuple(a, p);
     expect(areEqual(p2, point(1, -1, 0))).toBe(true);
 
-    const p3 = multiply(b, p2);
+    const p3 = multiplyMatrixByTuple(b, p2);
     expect(areEqual(p3, point(5, -5, 0))).toBe(true);
 
-    const p4 = multiply(c, p3);
+    const p4 = multiplyMatrixByTuple(c, p3);
     expect(areEqual(p4, point(15, 0, 7))).toBe(true);
 });
 
@@ -192,8 +193,8 @@ test('chained transformations must be applied in reverse order', () => {
     const b = scaling(5, 5, 5);
     const c = translation(10, 5, 7);
 
-    const t = multiply(c, multiply(b, a));
-    const p2 = multiply(t, p);
+    const t = multiplyMatrices(c, multiplyMatrices(b, a));
+    const p2 = multiplyMatrixByTuple(t, p);
     expect(areEqual(p2, point(15, 0, 7))).toBe(true);
 });
 

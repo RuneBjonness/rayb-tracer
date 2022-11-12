@@ -1,6 +1,6 @@
 import { AreaLight } from '../lib/lights';
 import { material, Material } from '../lib/materials';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -50,7 +50,7 @@ export class Dodecahedron implements Scene {
         lamp.material.diffuse = 0;
         lamp.material.specular = 0;
         lamp.material.ambient = 1;
-        lamp.transform = multiply(
+        lamp.transform = multiplyMatrices(
             translation(-4, 5, -3),
             scaling(0.75, 0.75, 0.75)
         );
@@ -80,9 +80,9 @@ export class Dodecahedron implements Scene {
 
         const dodecahedron = new Group();
         const d1 = this.halfDodecahedron(colors.slice(0, 5));
-        d1.transform = multiply(
+        d1.transform = multiplyMatrices(
             translation(0, 1.2, 0),
-            multiply(rotationZ(Math.PI), rotationY(Math.PI / 5))
+            multiplyMatrices(rotationZ(Math.PI), rotationY(Math.PI / 5))
         );
 
         const d2 = this.halfDodecahedron(colors.slice(5, 10));
@@ -90,9 +90,9 @@ export class Dodecahedron implements Scene {
         dodecahedron.add(d1);
         dodecahedron.add(d2);
 
-        dodecahedron.transform = multiply(
+        dodecahedron.transform = multiplyMatrices(
             translation(0, 1, 1.5),
-            multiply(rotationX(-Math.PI / 6), rotationY(Math.PI / 6))
+            multiplyMatrices(rotationX(-Math.PI / 6), rotationY(Math.PI / 6))
         );
 
         world.objects.push(dodecahedron);
@@ -102,7 +102,7 @@ export class Dodecahedron implements Scene {
 
     private corner(mat: Material): Shape {
         const s = new Sphere();
-        s.transform = multiply(translation(0, 0, -1), scaling(0.2, 0.2, 0.2));
+        s.transform = multiplyMatrices(translation(0, 0, -1), scaling(0.2, 0.2, 0.2));
         s.material = mat;
         return s;
     }
@@ -111,11 +111,11 @@ export class Dodecahedron implements Scene {
         const cyl = new Cylinder();
         cyl.minimum = 0;
         cyl.maximum = 1;
-        cyl.transform = multiply(
+        cyl.transform = multiplyMatrices(
             translation(0, 0, -1),
-            multiply(
+            multiplyMatrices(
                 rotationY(-Math.PI / 5),
-                multiply(rotationZ(-Math.PI / 2), scaling(0.2, 1.2, 0.2))
+                multiplyMatrices(rotationZ(-Math.PI / 2), scaling(0.2, 1.2, 0.2))
             )
         );
         cyl.material = mat;
@@ -146,9 +146,9 @@ export class Dodecahedron implements Scene {
             mat.color = colors[i];
             mat.ambient = 0.3;
             const p = this.pentagon(mat);
-            p.transform = multiply(
+            p.transform = multiplyMatrices(
                 rotationY((i * Math.PI) / 2.5),
-                multiply(translation(0, 0, 1.2), rotationX(radians(116.565)))
+                multiplyMatrices(translation(0, 0, 1.2), rotationX(radians(116.565)))
             );
             g.add(p);
         }

@@ -1,5 +1,5 @@
 import { AreaLight, PointLight } from '../lib/lights';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import { scaling, viewTransform, rotationX } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
@@ -54,7 +54,7 @@ export class TeaPot implements Scene {
         const model = parser.parse(
             highRes ? teapotObjFile : teapotLowResObjFile
         );
-        model.transform = multiply(
+        model.transform = multiplyMatrices(
             scaling(0.1, 0.1, 0.1),
             rotationX(-Math.PI / 2)
         );

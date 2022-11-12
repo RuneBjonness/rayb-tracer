@@ -1,5 +1,5 @@
 import { AreaLight } from '../lib/lights';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
@@ -40,7 +40,7 @@ export class Marbles implements Scene {
         lamp.material.diffuse = 0;
         lamp.material.specular = 0;
         lamp.material.ambient = 1;
-        lamp.transform = multiply(
+        lamp.transform = multiplyMatrices(
             translation(-4, 5, -3),
             scaling(0.75, 0.75, 0.75)
         );
@@ -94,7 +94,7 @@ export class Marbles implements Scene {
         scale: number
     ): Shape {
         const s = new Sphere();
-        s.transform = multiply(
+        s.transform = multiplyMatrices(
             translation(x, scale, z),
             scaling(scale, scale, scale)
         );

@@ -1,4 +1,4 @@
-import { identityMatrix, multiply } from './matrices';
+import { identityMatrix, multiplyMatrices } from './matrices';
 import { cross, normalize, subtract, Tuple } from './tuples';
 
 export function translation(x: number, y: number, z: number): number[][] {
@@ -82,5 +82,5 @@ export function viewTransform(from: Tuple, to: Tuple, up: Tuple): number[][] {
         [-forward[0], -forward[1], -forward[2], 0],
         [0, 0, 0, 1],
     ];
-    return multiply(orientation, translation(-from[0], -from[1], -from[2]));
+    return multiplyMatrices(orientation, translation(-from[0], -from[1], -from[2]));
 }

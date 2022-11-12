@@ -7,7 +7,6 @@ import {
     isVector,
     areEqual,
     vector,
-    multiply,
     add,
     subtract,
     negate,
@@ -18,6 +17,11 @@ import {
     cross,
     color,
     reflect,
+    multiplyTupleByScalar,
+    multiplyColorByScalar,
+    multiplyColors,
+    subtractColors,
+    addColors,
 } from './tuples';
 
 test('a tuple with w=1.0 is a point', () => {
@@ -111,13 +115,13 @@ test('negating a tuple', () => {
 });
 
 test('multiplying a tuple by a scalar', () => {
-    const t = multiply(tuple(1, -2, 3, -4), 3.5);
+    const t = multiplyTupleByScalar(tuple(1, -2, 3, -4), 3.5);
 
     expect(areEqual(t, tuple(3.5, -7, 10.5, -14))).toBe(true);
 });
 
 test('multiplying a tuple by a fraction', () => {
-    const t = multiply(tuple(1, -2, 3, -4), 0.5);
+    const t = multiplyTupleByScalar(tuple(1, -2, 3, -4), 0.5);
 
     expect(areEqual(t, tuple(0.5, -1, 1.5, -2))).toBe(true);
 });
@@ -214,25 +218,25 @@ test('two tuples are not equal if any value has a difference greater than 0.0000
 });
 
 test('adding colors', () => {
-    const c = add([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
+    const c = addColors([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
 
     expect(areEqual(c, [1.6, 0.7, 1])).toBe(true);
 });
 
 test('subtracting colors', () => {
-    const c = subtract([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
+    const c = subtractColors([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
 
     expect(areEqual(c, [0.2, 0.5, 0.5])).toBe(true);
 });
 
 test('multiplying a color by a scalar', () => {
-    const c = multiply([0.2, 0.3, 0.4], 2);
+    const c = multiplyColorByScalar([0.2, 0.3, 0.4], 2);
 
     expect(areEqual(c, [0.4, 0.6, 0.8])).toBe(true);
 });
 
 test('multiplying colors', () => {
-    const c = multiply([1, 0.2, 0.4], [0.9, 1, 0.1]);
+    const c = multiplyColors([1, 0.2, 0.4], [0.9, 1, 0.1]);
 
     expect(areEqual(c, [0.9, 0.2, 0.04])).toBe(true);
 });

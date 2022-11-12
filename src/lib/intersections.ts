@@ -1,6 +1,6 @@
 import { position, Ray } from './rays';
 import { Shape } from './shapes/shape';
-import { add, dot, multiply, negate, reflect, subtract, Tuple } from './tuples';
+import { add, dot, multiplyTupleByScalar, negate, reflect, subtract, Tuple } from './tuples';
 
 export type Intersection = {
     time: number;
@@ -64,7 +64,7 @@ export function prepareComputations(
         comps.inside = true;
         comps.normalv = negate(comps.normalv);
     }
-    const adjustv = multiply(comps.normalv, 0.0001);
+    const adjustv = multiplyTupleByScalar(comps.normalv, 0.0001);
     comps.overPoint = add(comps.point, adjustv);
     comps.underPoint = subtract(comps.point, adjustv);
     comps.reflectv = reflect(r.direction, comps.normalv);

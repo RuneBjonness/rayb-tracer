@@ -1,6 +1,6 @@
 import { PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { translation, scaling, viewTransform } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
@@ -55,18 +55,18 @@ export class Skybox implements Scene {
         m.shininess = 30;
 
         const s1 = new Sphere();
-        s1.transform = multiply(translation(2.5, 0, 7), scaling(0.8, 0.8, 0.8));
+        s1.transform = multiplyMatrices(translation(2.5, 0, 7), scaling(0.8, 0.8, 0.8));
         s1.material = m;
 
         const s2 = new Sphere();
-        s2.transform = multiply(
+        s2.transform = multiplyMatrices(
             translation(-2.5, 0, 7),
             scaling(0.8, 0.8, 0.8)
         );
         s2.material = m;
 
         const s3 = new Sphere();
-        s3.transform = multiply(translation(0, 0, 7), scaling(0.8, 0.8, 0.8));
+        s3.transform = multiplyMatrices(translation(0, 0, 7), scaling(0.8, 0.8, 0.8));
         s3.material = m;
 
         world.objects.push(skybox, s1, s2, s3);

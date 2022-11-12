@@ -1,5 +1,5 @@
 import { material } from '../materials';
-import { areEqual, identityMatrix, multiply } from '../matrices';
+import { areEqual, identityMatrix, multiplyMatrices } from '../matrices';
 import { ray } from '../rays';
 import { rotationY, rotationZ, scaling, translation } from '../transformations';
 import { point, vector, areEqual as tuplesAreEqual } from '../tuples';
@@ -74,7 +74,7 @@ describe('Common shape features', () => {
 
     test('computing the normal on a transformed shape', () => {
         const s = new TestShape();
-        s.transform = multiply(scaling(1, 0.5, 1), rotationZ(Math.PI / 5));
+        s.transform = multiplyMatrices(scaling(1, 0.5, 1), rotationZ(Math.PI / 5));
         const n = s.normalAt(point(0, Math.sqrt(2) / 2, -(Math.sqrt(2) / 2)));
         expect(tuplesAreEqual(n, vector(0, 0.97014, -0.24254))).toBe(true);
     });

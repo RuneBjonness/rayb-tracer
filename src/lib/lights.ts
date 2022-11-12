@@ -1,4 +1,4 @@
-import { add, Color, divide, multiply, point, Tuple } from './tuples';
+import { add, Color, divide, multiplyTupleByScalar, Tuple } from './tuples';
 import { World } from './world';
 
 export interface Light {
@@ -61,8 +61,8 @@ export class AreaLight implements Light {
         return add(
             this.corner,
             add(
-                multiply(this.uVec, u + Math.random()),
-                multiply(this.vVec, v + Math.random())
+                multiplyTupleByScalar(this.uVec, u + Math.random()),
+                multiplyTupleByScalar(this.vVec, v + Math.random())
             )
         );
     }

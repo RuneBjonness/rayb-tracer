@@ -1,4 +1,4 @@
-import { multiply } from '../matrices';
+import { multiplyMatrixByTuple } from '../matrices';
 import { Ray } from '../rays';
 import { point, Tuple, vector } from '../tuples';
 import { Shape } from './shape';
@@ -33,7 +33,7 @@ export function transformBoundsCorners(b: Bounds, m: number[][]): Tuple[] {
         point(sMax[0], sMax[1], sMin[2]),
     ];
 
-    return corners.map((t) => multiply(m, t));
+    return corners.map((t) => multiplyMatrixByTuple(m, t));
 }
 
 export function transformGroupBounds(shapes: Shape[]): Bounds {

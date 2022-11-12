@@ -1,5 +1,5 @@
 import { AreaLight } from '../lib/lights';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import {
     TextureMap,
     CubeMap,
@@ -59,7 +59,7 @@ export class TextureMapping implements Scene {
         lamp.material.diffuse = 0;
         lamp.material.specular = 0;
         lamp.material.ambient = 1;
-        lamp.transform = multiply(
+        lamp.transform = multiplyMatrices(
             translation(-4, 5, -5.1),
             scaling(1, 1, 0.01)
         );
@@ -90,7 +90,7 @@ export class TextureMapping implements Scene {
             ),
             new PlanarMapper()
         );
-        f.material.pattern.transform = multiply(
+        f.material.pattern.transform = multiplyMatrices(
             translation(0, 0.5, 0),
             rotationY(radians(-45))
         );
@@ -114,7 +114,7 @@ export class TextureMapping implements Scene {
         const cyl = new Cylinder();
         cyl.minimum = 0;
         cyl.maximum = 1;
-        cyl.transform = multiply(
+        cyl.transform = multiplyMatrices(
             translation(-1.5, -0.5, 2),
             scaling(1, 3.1415, 1)
         );
@@ -178,7 +178,7 @@ export class TextureMapping implements Scene {
         ]);
 
         const cube = new Cube();
-        cube.transform = multiply(
+        cube.transform = multiplyMatrices(
             translation(1.5, 1, 2),
             rotationY(radians(45))
         );

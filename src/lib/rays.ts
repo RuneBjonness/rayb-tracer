@@ -1,4 +1,4 @@
-import { add, subtract, multiply, Tuple, normalize } from './tuples';
+import { add, subtract, Tuple, normalize, multiplyTupleByScalar } from './tuples';
 import * as matrices from './matrices';
 
 export type Ray = {
@@ -24,12 +24,12 @@ export function rayFocalPoint(
 }
 
 export function position(ray: Ray, time: number): Tuple {
-    return add(multiply(ray.direction, time), ray.origin);
+    return add(multiplyTupleByScalar(ray.direction, time), ray.origin);
 }
 
 export function transform(ray: Ray, m: number[][]): Ray {
     return {
-        origin: matrices.multiply(m, ray.origin),
-        direction: matrices.multiply(m, ray.direction),
+        origin: matrices.multiplyMatrixByTuple(m, ray.origin),
+        direction: matrices.multiplyMatrixByTuple(m, ray.direction),
     };
 }

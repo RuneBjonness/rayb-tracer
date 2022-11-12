@@ -2,7 +2,7 @@ import { Camera } from './camera';
 import {
     areEqual as matricesAreEqual,
     identityMatrix,
-    multiply,
+    multiplyMatrices,
 } from './matrices';
 import { rotationY, translation, viewTransform } from './transformations';
 import { areEqual, color, point, vector } from './tuples';
@@ -47,7 +47,7 @@ test('constructing a ray through a corner of the canvas', () => {
 
 test('constructing a ray when the camera is transformed', () => {
     const c = new Camera(201, 101, Math.PI / 2);
-    c.transform = multiply(rotationY(Math.PI / 4), translation(0, -2, 5));
+    c.transform = multiplyMatrices(rotationY(Math.PI / 4), translation(0, -2, 5));
     const r = c.raysForPixel(100, 50)[0];
 
     expect(areEqual(r.origin, point(0, 2, -5))).toBe(true);

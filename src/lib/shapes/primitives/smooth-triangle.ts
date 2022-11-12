@@ -7,8 +7,8 @@ import {
     subtract,
     Tuple,
     vector,
-    multiply as multiplyTuples,
     add,
+    multiplyTupleByScalar,
 } from '../../tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
@@ -85,8 +85,8 @@ export class SmoothTriangle extends Shape {
         }
 
         return add(
-            add(multiplyTuples(this.n2, i.u), multiplyTuples(this.n3, i.v)),
-            multiplyTuples(this.n1, 1 - i.u - i.v)
+            add(multiplyTupleByScalar(this.n2, i.u), multiplyTupleByScalar(this.n3, i.v)),
+            multiplyTupleByScalar(this.n1, 1 - i.u - i.v)
         );
     }
 }

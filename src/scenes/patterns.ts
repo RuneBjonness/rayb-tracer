@@ -8,7 +8,7 @@ import {
     translation,
     viewTransform,
 } from '../lib/transformations';
-import { multiply } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/matrices';
 import { Shape } from '../lib/shapes/shape';
 import { AreaLight, PointLight } from '../lib/lights';
 import { World } from '../lib/world';
@@ -56,7 +56,7 @@ export class Patterns implements Scene {
         );
 
         const left = new Sphere();
-        left.transform = multiply(
+        left.transform = multiplyMatrices(
             translation(-1.3, 0.5, 0.1),
             scaling(0.5, 0.5, 0.5)
         );
@@ -64,9 +64,9 @@ export class Patterns implements Scene {
             color(0, 0.5, 0.5),
             color(0.2, 0.9, 0.9)
         );
-        left.material.pattern.transform = multiply(
+        left.material.pattern.transform = multiplyMatrices(
             scaling(0.15, 0.15, 0.15),
-            multiply(rotationY(radians(30)), rotationX(radians(105)))
+            multiplyMatrices(rotationY(radians(30)), rotationX(radians(105)))
         );
         left.material.shininess = 50;
         left.material.diffuse = 0.9;
@@ -80,7 +80,7 @@ export class Patterns implements Scene {
         middle.material.shininess = 400;
 
         const leftSmall = new Sphere();
-        leftSmall.transform = multiply(
+        leftSmall.transform = multiplyMatrices(
             translation(-1.4, 0.25, -1),
             scaling(0.25, 0.25, 0.25)
         );
@@ -88,7 +88,7 @@ export class Patterns implements Scene {
             color(0.1, 0.5, 1),
             color(0.4, 0.7, 1)
         );
-        rotatedStripesA.transform = multiply(
+        rotatedStripesA.transform = multiplyMatrices(
             scaling(0.25, 0.25, 0.25),
             rotationZ(radians(45))
         );
@@ -96,7 +96,7 @@ export class Patterns implements Scene {
             color(0.1, 0.5, 1),
             color(0.4, 0.7, 1)
         );
-        rotatedStripesB.transform = multiply(
+        rotatedStripesB.transform = multiplyMatrices(
             scaling(0.25, 0.25, 0.25),
             rotationZ(radians(-45))
         );
@@ -108,7 +108,7 @@ export class Patterns implements Scene {
         leftSmall.material.shininess = 100;
 
         const front = new Sphere();
-        front.transform = multiply(
+        front.transform = multiplyMatrices(
             translation(-0.3, 0.5, -1.2),
             scaling(0.5, 0.5, 0.5)
         );
@@ -118,7 +118,7 @@ export class Patterns implements Scene {
         front.material.refractiveIndex = 1.5;
 
         const middleBehind = new Sphere();
-        middleBehind.transform = multiply(
+        middleBehind.transform = multiplyMatrices(
             translation(-1.2, 0.75, 2.5),
             scaling(0.75, 0.75, 0.75)
         );
@@ -126,13 +126,13 @@ export class Patterns implements Scene {
             color(0.1, 0.4, 0.3),
             color(0.7, 0.9, 0.8)
         );
-        middleBehind.material.pattern.transform = multiply(
+        middleBehind.material.pattern.transform = multiplyMatrices(
             scaling(0.5, 0.5, 0.5),
             rotationY(radians(30))
         );
 
         const right = new Sphere();
-        right.transform = multiply(
+        right.transform = multiplyMatrices(
             translation(1.5, 0.5, -0.5),
             scaling(0.5, 0.5, 0.5)
         );
@@ -140,9 +140,9 @@ export class Patterns implements Scene {
             color(1, 1, 0),
             color(0, 1, 0)
         );
-        right.material.pattern.transform = multiply(
+        right.material.pattern.transform = multiplyMatrices(
             scaling(0.2, 0.2, 0.2),
-            multiply(rotationY(radians(-10)), rotationX(radians(80)))
+            multiplyMatrices(rotationY(radians(-10)), rotationX(radians(80)))
         );
         right.material.diffuse = 0.7;
         right.material.specular = 0.3;
@@ -164,7 +164,7 @@ export class Patterns implements Scene {
     private checkeredRoom(c1: Color, c2: Color): Shape[] {
         const floor = new Plane();
         floor.material.pattern = new Checkers3dPattern(c1, c2);
-        floor.material.pattern.transform = multiply(
+        floor.material.pattern.transform = multiplyMatrices(
             translation(0, 0.5, 0),
             rotationY(radians(-45))
         );
@@ -183,30 +183,30 @@ export class Patterns implements Scene {
         wallMaterial.reflective = 0.1;
 
         const leftWall = new Plane();
-        leftWall.transform = multiply(
+        leftWall.transform = multiplyMatrices(
             translation(0, 0, 10),
-            multiply(rotationY(radians(-45)), rotationX(radians(90)))
+            multiplyMatrices(rotationY(radians(-45)), rotationX(radians(90)))
         );
         leftWall.material = wallMaterial;
 
         const leftHiddenWall = new Plane();
-        leftHiddenWall.transform = multiply(
+        leftHiddenWall.transform = multiplyMatrices(
             translation(0, 0, -10),
-            multiply(rotationY(radians(45)), rotationX(radians(90)))
+            multiplyMatrices(rotationY(radians(45)), rotationX(radians(90)))
         );
         leftHiddenWall.material = wallMaterial;
 
         const rightWall = new Plane();
-        rightWall.transform = multiply(
+        rightWall.transform = multiplyMatrices(
             translation(0, 0, 10),
-            multiply(rotationY(radians(45)), rotationX(radians(90)))
+            multiplyMatrices(rotationY(radians(45)), rotationX(radians(90)))
         );
         rightWall.material = wallMaterial;
 
         const rightHiddenWall = new Plane();
-        rightHiddenWall.transform = multiply(
+        rightHiddenWall.transform = multiplyMatrices(
             translation(0, 0, -10),
-            multiply(rotationY(radians(-45)), rotationX(radians(90)))
+            multiplyMatrices(rotationY(radians(-45)), rotationX(radians(90)))
         );
         rightHiddenWall.material = wallMaterial;
 

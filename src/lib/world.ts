@@ -10,12 +10,13 @@ import { ray, Ray } from './rays';
 import { Shape } from './shapes/shape';
 import { Sphere } from './shapes/primitives/sphere';
 import {
-    add,
+    addColors,
     Color,
     color,
     dot,
     magnitude,
-    multiply,
+    multiplyColorByScalar,
+    multiplyTupleByScalar,
     normalize,
     point,
     subtract,
@@ -63,12 +64,12 @@ export class World {
             comps.object.material.transparancy > 0
         ) {
             const r = reflectance(comps);
-            shades.push(multiply(reflected, r), multiply(refracted, 1 - r));
+            shades.push(multiplyColorByScalar(reflected, r), multiplyColorByScalar(refracted, 1 - r));
         } else {
             shades.push(reflected, refracted);
         }
 
-        return shades.reduce((a, b) => add(a, b));
+        return shades.reduce((a, b) => addColors(a, b));
     }
 
     colorAt(r: Ray, maxDepth: number = 4): Color {
@@ -99,7 +100,7 @@ export class World {
             ray(comps.overPoint, comps.reflectv),
             maxDepth - 1
         );
-        return multiply(c, comps.object.material.reflective);
+        return multiplyColorByScalar(c, comps.object.material.reflective);
     }
 
     refractedColor(
@@ -120,11 +121,11 @@ export class World {
 
         const cosT = Math.sqrt(1 - sin2T);
         const dir = subtract(
-            multiply(comps.normalv, nRatio * cosI - cosT),
-            multiply(comps.eyev, nRatio)
+            multiplyTupleByScalar(comps.normalv, nRatio * cosI - cosT),
+            multiplyTupleByScalar(comps.eyev, nRatio)
         );
         const c = this.colorAt(ray(comps.underPoint, dir), maxDepth - 1);
-        return multiply(c, comps.object.material.transparancy);
+        return multiplyColorByScalar(c, comps.object.material.transparancy);
     }
 }
 

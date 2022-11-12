@@ -97,7 +97,7 @@ test('multiplying two matrices', () => {
         [16, 26, 46, 42],
     ];
 
-    const result = matrices.multiply(m1, m2);
+    const result = matrices.multiplyMatrices(m1, m2);
 
     expect(matrices.areEqual(expected, result)).toBe(true);
 });
@@ -111,7 +111,7 @@ test('multiplying a matrix with a tuple', () => {
     ];
     const b = tuples.tuple(1, 2, 3, 1);
 
-    const result = matrices.multiply(m, b);
+    const result = matrices.multiplyMatrixByTuple(m, b);
 
     expect(tuples.areEqual(result, tuples.tuple(18, 24, 33, 1))).toBe(true);
 });
@@ -123,7 +123,7 @@ test('multiplying a matrix by the identity matrix', () => {
         [2, 4, 8, 16],
         [4, 8, 16, 32],
     ];
-    const result = matrices.multiply(m, matrices.identityMatrix());
+    const result = matrices.multiplyMatrices(m, matrices.identityMatrix());
 
     expect(matrices.areEqual(m, result)).toBe(true);
 });
@@ -131,7 +131,7 @@ test('multiplying a matrix by the identity matrix', () => {
 test('multiplying the identity matrix by a tuple', () => {
     const a = tuples.tuple(1, 2, 3, 4);
 
-    const result = matrices.multiply(matrices.identityMatrix(), a);
+    const result = matrices.multiplyMatrixByTuple(matrices.identityMatrix(), a);
 
     expect(tuples.areEqual(result, a)).toBe(true);
 });
@@ -363,8 +363,8 @@ test('multiplying a product by its inverse', () => {
         [1, 2, 7, 8],
     ];
 
-    const prod = matrices.multiply(m1, m2);
-    const result = matrices.multiply(prod, matrices.inverse(m2));
+    const prod = matrices.multiplyMatrices(m1, m2);
+    const result = matrices.multiplyMatrices(prod, matrices.inverse(m2));
 
     expect(matrices.areEqual(m1, result)).toBe(true);
 });

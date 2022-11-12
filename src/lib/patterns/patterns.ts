@@ -1,11 +1,11 @@
-import { identityMatrix, inverse, multiply } from '../matrices';
+import { identityMatrix, inverse, multiplyMatrixByTuple } from '../matrices';
 import {
-    add,
     color,
     Color,
-    subtract,
     Tuple,
-    multiply as tupleMultiply,
+    multiplyColorByScalar,
+    subtractColors,
+    addColors,
 } from '../tuples';
 import { Shape } from '../shapes/shape';
 
@@ -27,7 +27,7 @@ export abstract class Pattern {
 
     colorAt(shape: Shape, p: Tuple): Color {
         const objectPoint = shape.worldToObject(p);
-        const patternPoint = multiply(this.invTransform, objectPoint);
+        const patternPoint = multiplyMatrixByTuple(this.invTransform, objectPoint);
         return this.localColorAt(patternPoint);
     }
     protected abstract localColorAt(p: Tuple): Color;
@@ -59,9 +59,9 @@ export class GradientPattern extends Pattern {
     }
 
     protected localColorAt(p: Tuple): Color {
-        const distance = subtract(this.b, this.a);
+        const distance = subtractColors(this.b, this.a);
         const fraction = p[0] - Math.floor(p[0]);
-        return add(this.a, tupleMultiply(distance, fraction));
+        return addColors(this.a, multiplyColorByScalar(distance, fraction));
     }
 }
 
@@ -96,10 +96,10 @@ export class RadialGradientPattern extends Pattern {
     }
 
     protected localColorAt(p: Tuple): Color {
-        const distance = subtract(this.b, this.a);
+        const distance = subtractColors(this.b, this.a);
         const r = Math.sqrt(p[0] ** 2 + p[2] ** 2);
         const fraction = r - Math.floor(r);
-        return add(this.a, tupleMultiply(distance, fraction));
+        return addColors(this.a, multiplyColorByScalar(distance, fraction));
     }
 }
 
@@ -119,7 +119,7 @@ export class BlendedPatterns extends Pattern {
     }
 
     colorAt(shape: Shape, p: Tuple): Color {
-        return add(this.a.colorAt(shape, p), this.b.colorAt(shape, p));
+        return addColors(this.a.colorAt(shape, p), this.b.colorAt(shape, p));
     }
     protected localColorAt(p: Tuple): Color {
         // Not used in overriden colorAt()

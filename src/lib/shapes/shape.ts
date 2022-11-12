@@ -1,5 +1,5 @@
 import { Intersection } from '../intersections';
-import { identityMatrix, inverse, multiply, transpose } from '../matrices';
+import { identityMatrix, inverse, multiplyMatrixByTuple, transpose } from '../matrices';
 import { Ray, transform } from '../rays';
 import { normalize, point, Tuple, vector } from '../tuples';
 import { material, Material } from '../materials';
@@ -15,12 +15,14 @@ export abstract class Shape {
     public set transform(m: number[][]) {
         this._transform = m;
         this.invTransform = inverse(m);
+        this.invTransformTransposed = transpose(this.invTransform)
     }
 
     material: Material;
     parent: Group | CsgShape | null = null;
 
     private invTransform: number[][] = [];
+    private invTransformTransposed: number[][] = [];
 
     constructor() {
         this.transform = identityMatrix();
@@ -40,14 +42,14 @@ export abstract class Shape {
     protected abstract localNormalAt(p: Tuple, i: Intersection | null): Tuple;
 
     worldToObject(p: Tuple): Tuple {
-        return multiply(
+        return multiplyMatrixByTuple(
             this.invTransform,
             this.parent ? this.parent.worldToObject(p) : p
         );
     }
 
     normalToWorld(n: Tuple): Tuple {
-        let normal = multiply(transpose(this.invTransform), n);
+        let normal = multiplyMatrixByTuple(this.invTransformTransposed, n);
         normal[3] = 0;
         normal = normalize(normal);
         return this.parent ? this.parent.normalToWorld(normal) : normal;

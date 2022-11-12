@@ -45,24 +45,20 @@ export function areEqual(t1: Tuple | Color, t2: Tuple | Color): boolean {
     return true;
 }
 
-export function add(t1: Tuple, t2: Tuple): Tuple;
-export function add(c1: Color, c2: Color): Color;
-export function add(a1: number[], a2: number[]): number[] {
-    const sum = a1.map((v, i) => v + a2[i]);
-    if (sum.length === 4) {
-        return sum as Tuple;
-    }
-    return sum as Color;
+export function add(t1: Tuple, t2: Tuple): Tuple {
+    return t1.map((v, i) => v + t2[i]) as Tuple;
 }
 
-export function subtract(t1: Tuple, t2: Tuple): Tuple;
-export function subtract(c1: Color, c2: Color): Color;
-export function subtract(a1: number[], a2: number[]): number[] {
-    const diff = a1.map((v, i) => v - a2[i]);
-    if (diff.length === 4) {
-        return diff as Tuple;
-    }
-    return diff as Color;
+export function addColors(c1: Color, c2: Color): Color {
+    return c1.map((v, i) => v + c2[i]) as Color;
+}
+
+export function subtract(t1: Tuple, t2: Tuple): Tuple {
+    return t1.map((v, i) => v - t2[i]) as Tuple;
+}
+
+export function subtractColors(c1: Color, c2: Color): Color {
+    return c1.map((v, i) => v - c2[i]) as Color;
 }
 
 export function negate(t: Tuple): Tuple {
@@ -70,35 +66,28 @@ export function negate(t: Tuple): Tuple {
     return [-x, -y, -z, -w];
 }
 
-export function multiply(t1: Tuple, scalar: number): Tuple;
-export function multiply(t1: Tuple, t2: Tuple): Tuple;
-export function multiply(c1: Color, scalar: number): Color;
-export function multiply(c1: Color, c2: Color): Color;
-export function multiply(
-    a1: number[],
-    scalarOrC2: number | number[]
-): number[] {
-    let res: number[];
-    if (Array.isArray(scalarOrC2)) {
-        res = a1.map((v, i) => v * scalarOrC2[i]);
-    } else {
-        res = a1.map((v) => v * scalarOrC2);
-    }
-
-    if (res.length === 4) {
-        return res as Tuple;
-    }
-    return res as Color;
+export function multiplyTupleByScalar(t: Tuple, scalar: number): Tuple {
+    return t.map((v) => v * scalar) as Tuple;
 }
 
-export function divide(t1: Tuple, scalar: number): Tuple;
-export function divide(c1: Color, scalar: number): Color;
-export function divide(a1: number[], scalar: number): number[] {
-    const res = a1.map((v) => v / scalar);
-    if (res.length === 4) {
-        return res as Tuple;
-    }
-    return res as Color;
+export function multiplyTuples(a: Tuple, b: Tuple): Tuple {
+    return a.map((v, i) => v * b[i]) as Tuple;
+}
+
+export function multiplyColorByScalar(c: Color, scalar: number): Color {
+    return c.map((v) => v * scalar) as Color;
+}
+
+export function multiplyColors(a: Color, b: Color): Color {
+    return a.map((v, i) => v * b[i]) as Color;
+}
+
+export function divide(t: Tuple, scalar: number): Tuple{
+    return t.map((v) => v / scalar) as Tuple;
+}
+
+export function divideColor(c: Color, scalar: number): Color {
+    return c.map((v) => v / scalar) as Color;
 }
 
 export function magnitude(t: Tuple): number {
@@ -112,7 +101,7 @@ export function normalize(t: Tuple): Tuple {
 }
 
 export function dot(t1: Tuple, t2: Tuple): number {
-    return t1.map((v, i) => v * t2[i]).reduce((a, b) => a + b, 0);
+    return (t1[0]*t2[0] + t1[1]*t2[1] + t1[2]*t2[2] + t1[3]*t2[3]);
 }
 
 export function cross(t1: Tuple, t2: Tuple): Tuple {
@@ -127,6 +116,6 @@ export function cross(t1: Tuple, t2: Tuple): Tuple {
 export function reflect(vectorIn: Tuple, normal: Tuple): Tuple {
     return subtract(
         vectorIn,
-        multiply(multiply(normal, 2), dot(vectorIn, normal))
+        multiplyTupleByScalar(multiplyTupleByScalar(normal, 2), dot(vectorIn, normal))
     );
 }

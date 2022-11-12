@@ -31,34 +31,21 @@ export function areEqual(m1: number[][], m2: number[][]): boolean {
     return true;
 }
 
-export function multiply(m1: number[][], m2: number[][]): number[][];
-export function multiply(m1: number[][], t: Tuple): Tuple;
-export function multiply(
-    m1: number[][],
-    m2OrTuple: number[][] | Tuple
-): number[][] | Tuple {
-    let m2: number[][];
-    let returnAsTuple = false;
-    if (Array.isArray(m2OrTuple[0])) {
-        m2 = m2OrTuple as number[][];
-    } else {
-        m2 = (m2OrTuple as number[]).map((v) => [v]);
-        returnAsTuple = true;
-    }
-
-    let result: number[][] = new Array(m1.length);
+export function multiplyMatrices(a: number[][], b: number[][]): number[][] {
+    let result: number[][] = new Array(a.length);
     for (let r = 0; r < result.length; r++) {
-        result[r] = new Array(m2[0].length);
+        result[r] = new Array(b[0].length);
         for (let c = 0; c < result[r].length; c++) {
-            result[r][c] = m1[r]
-                .map((v, i) => v * m2[i][c])
+            result[r][c] = a[r]
+                .map((v, i) => v * b[i][c])
                 .reduce((a, b) => a + b, 0);
         }
     }
-    if (returnAsTuple) {
-        return result.map((v) => v[0]) as Tuple;
-    }
     return result;
+}
+
+export function multiplyMatrixByTuple(m: number[][], t: Tuple): Tuple {
+    return multiplyMatrices(m, t.map((v) => [v])).map((v) => v[0]) as Tuple;
 }
 
 export function transpose(m: number[][]): number[][] {
