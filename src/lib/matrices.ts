@@ -32,15 +32,22 @@ export function areEqual(m1: number[][], m2: number[][]): boolean {
 }
 
 export function multiplyMatrices(a: number[][], b: number[][]): number[][] {
-    let result: number[][] = new Array(a.length);
-    for (let r = 0; r < result.length; r++) {
-        result[r] = new Array(b[0].length);
-        for (let c = 0; c < result[r].length; c++) {
-            result[r][c] = a[r]
-                .map((v, i) => v * b[i][c])
-                .reduce((a, b) => a + b, 0);
-        }
+    const x = a.length;
+    const y = b[0].length;
+    const z = a[0].length;
+
+    const result = new Array(x);
+    for (let r = 0; r < x; r++) {
+        result[r] = new Array(y).fill(0);
     }
+
+    for (let i = 0; i < x; i++) {
+        for (let j = 0; j < y; j++) {
+            for (let k = 0; k < z; k++) {
+                result[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }    
     return result;
 }
 
