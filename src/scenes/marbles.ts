@@ -1,4 +1,5 @@
-import { AreaLight } from '../lib/lights';
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { AreaLight, PointLight } from '../lib/lights';
 import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -7,10 +8,10 @@ import { Shape } from '../lib/shapes/shape';
 import { translation, scaling, viewTransform } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 
 export class Marbles implements Scene {
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: 1.2,
         viewTransform: viewTransform(
             point(0, 1.3, -5),
@@ -19,20 +20,21 @@ export class Marbles implements Scene {
         ),
         aperture: 0.08,
         focalLength: 5,
-        focalSamplingRate: 8,
     };
 
-    configureWorld(): World {
+    configureWorld(renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
-            new AreaLight(
-                point(-4, 5, -3),
-                vector(3, 0, 0),
-                6,
-                vector(0, 3, 0),
-                6,
-                color(1.5, 1.5, 1.5)
-            )
+            renderCfg.enableAreaLights ?
+                new AreaLight(
+                    point(-4, 4, -3),
+                    vector(2, 0, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    vector(0, 2, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    color(1.5, 1.5, 1.5)
+                ) :
+                new PointLight(point(-3.5, 4.5, -2.5), color(1.5, 1.5, 1.5))
         );
 
         const lamp = new Sphere();
@@ -41,7 +43,7 @@ export class Marbles implements Scene {
         lamp.material.specular = 0;
         lamp.material.ambient = 1;
         lamp.transform = multiplyMatrices(
-            translation(-4, 5, -3),
+            translation(-5, 6, -3),
             scaling(0.75, 0.75, 0.75)
         );
         world.objects.push(lamp);

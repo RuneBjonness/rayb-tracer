@@ -21,6 +21,8 @@ export class Camera {
     public focalLength: number = 1;
     public focalSamplingRate: number = 2;
 
+    public raysMaxRecursiveDepth: number = 4;
+
     private halfWidth: number;
     private halfHeight: number;
     private invTransform: number[][] = [];
@@ -52,10 +54,10 @@ export class Camera {
         const worldY = this.halfHeight - yOffset;
 
         const px = multiplyMatrixByTuple(this.invTransform, point(worldX, worldY, -1));
-        const fp = rayFocalPoint(this.origin, px, this.focalLength);
 
         const rays: Ray[] = [];
         if (this.aperture > 0) {
+            const fp = rayFocalPoint(this.origin, px, this.focalLength);
             this.sampleApertureOrigins().forEach((o) =>
                 rays.push(rayToTarget(o, fp))
             );
@@ -80,7 +82,7 @@ export class Camera {
         for (let y = 0; y < lengthY; y++) {
             for (let x = 0; x < lengthX; x++) {
                 const samples = this.raysForPixel(startX + x, startY + y).map(
-                    (r) => w.colorAt(r)
+                    (r) => w.colorAt(r, this.raysMaxRecursiveDepth)
                 );
                 c.pixels[x][y] = divideColor(
                     samples.reduce((a, b) => addColors(a, b)),
@@ -100,12 +102,8 @@ export class Camera {
             for (let u = 0; u < this.focalSamplingRate; u++) {
                 pts.push(
                     point(
-                        this.origin[0] +
-                            baseOffset +
-                            (u + Math.random()) * uvStep,
-                        this.origin[1] +
-                            baseOffset +
-                            (v + Math.random()) * uvStep,
+                        this.origin[0] + baseOffset + (u + Math.random()) * uvStep,
+                        this.origin[1] + baseOffset + (v + Math.random()) * uvStep,
                         this.origin[2]
                     )
                 );

@@ -1,3 +1,4 @@
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
 import { PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';
@@ -12,10 +13,10 @@ import { World } from '../lib/world';
 // import posYImgMapFile from '../resources/skybox/posy.ppm?raw';
 // import posZImgMapFile from '../resources/skybox/posz.ppm?raw';
 import { parsePPM } from '../tools/ppm-parser';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 
 export class Skybox implements Scene {
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: Math.PI / 3,
         viewTransform: viewTransform(
             point(0, 1.5, -5),
@@ -24,10 +25,9 @@ export class Skybox implements Scene {
         ),
         aperture: 0,
         focalLength: 0,
-        focalSamplingRate: 0,
     };
 
-    configureWorld(): World {
+    configureWorld(_renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
             new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),

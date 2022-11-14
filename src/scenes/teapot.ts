@@ -3,15 +3,16 @@ import { multiplyMatrices } from '../lib/matrices';
 import { scaling, viewTransform, rotationX } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 import { ObjParser } from '../tools/obj-parser';
 import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
 import teapotObjFile from '../resources/teapot.obj?raw';
 import { Shape } from '../lib/shapes/shape';
 import { Plane } from '../lib/shapes/primitives/plane';
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
 
 export class TeaPot implements Scene {
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: Math.PI / 3,
         viewTransform: viewTransform(
             point(0, 1.9, -4),
@@ -20,20 +21,21 @@ export class TeaPot implements Scene {
         ),
         aperture: 0.006,
         focalLength: 2,
-        focalSamplingRate: 6,
     };
 
-    configureWorld(): World {
+    configureWorld(renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
-            new AreaLight(
-                point(-2.5, 3.5, -2.5),
-                vector(2, 0, 0),
-                6,
-                vector(0, 2, 0),
-                6,
-                color(1, 1, 1)
-            )
+            renderCfg.enableAreaLights ?
+                new AreaLight(
+                    point(-2.5, 3.5, -2.5),
+                    vector(2, 0, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    vector(0, 2, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    color(1, 1, 1)
+                ) :
+                new PointLight(point(-2.5, 3.5, -2.5), color(1.5, 1.5, 1.5))
         );
 
         const f = new Plane();

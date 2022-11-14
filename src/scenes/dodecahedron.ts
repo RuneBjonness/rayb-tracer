@@ -1,4 +1,5 @@
-import { AreaLight } from '../lib/lights';
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { AreaLight, PointLight } from '../lib/lights';
 import { material, Material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
@@ -17,10 +18,10 @@ import {
 } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 
 export class Dodecahedron implements Scene {
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: Math.PI / 3,
         viewTransform: viewTransform(
             point(0, 1.5, -5),
@@ -29,20 +30,21 @@ export class Dodecahedron implements Scene {
         ),
         aperture: 0.005,
         focalLength: 2.5,
-        focalSamplingRate: 2,
     };
 
-    configureWorld(): World {
+    configureWorld(renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
-            new AreaLight(
-                point(-5.5, 3.5, -5),
-                vector(3, 0, 0),
-                8,
-                vector(0, 3, 0),
-                8,
-                color(1.5, 1.5, 1.5)
-            )
+            renderCfg.enableAreaLights ?
+                new AreaLight(
+                    point(-5.5, 3.5, -5),
+                    vector(3, 0, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    vector(0, 3, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    color(1.5, 1.5, 1.5)
+                ) :
+                new PointLight(point(-5.5, 3.5, -5), color(1.5, 1.5, 1.5))
         );
 
         const lamp = new Sphere();

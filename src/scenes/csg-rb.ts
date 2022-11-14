@@ -1,4 +1,5 @@
-import { AreaLight } from '../lib/lights';
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { AreaLight, PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';
 import { CsgShape } from '../lib/shapes/csg-shape';
@@ -17,7 +18,7 @@ import {
 } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 
 export class CsgRb implements Scene {
     private baseMaterial = material();
@@ -26,7 +27,7 @@ export class CsgRb implements Scene {
         this.baseMaterial.color = color(0.65, 0.35, 0.85);
     }
 
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: 1.2,
         viewTransform: viewTransform(
             point(0, 6, -1.5),
@@ -35,20 +36,21 @@ export class CsgRb implements Scene {
         ),
         aperture: 0.005,
         focalLength: 2,
-        focalSamplingRate: 6,
     };
 
-    configureWorld(): World {
+    configureWorld(renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
-            new AreaLight(
-                point(-2, 2.5, -2.5),
-                vector(2, 0, 0),
-                6,
-                vector(0, 0, 2),
-                6,
-                color(1.5, 1.5, 1.5)
-            )
+            renderCfg.enableAreaLights ?
+                new AreaLight(
+                    point(-2, 2.5, -2.5),
+                    vector(2, 0, 0),
+                    renderCfg.maxAreaLightUvSteps,
+                    vector(0, 0, 2),
+                    renderCfg.maxAreaLightUvSteps,
+                    color(1.5, 1.5, 1.5)
+                ) :
+                new PointLight(point(-2, 2.5, -2.5), color(1.5, 1.5, 1.5))
         );
 
         const f = new Plane();

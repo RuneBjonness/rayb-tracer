@@ -23,9 +23,10 @@ export class Sphere extends Shape {
         if (discriminant < 0) {
             return [];
         }
+        const sqrtDiscriminant = Math.sqrt(discriminant);
         return [
-            intersection((-b - Math.sqrt(discriminant)) / (2 * a), this),
-            intersection((-b + Math.sqrt(discriminant)) / (2 * a), this),
+            intersection((-b - sqrtDiscriminant) / (2 * a), this),
+            intersection((-b + sqrtDiscriminant) / (2 * a), this),
         ];
     }
 

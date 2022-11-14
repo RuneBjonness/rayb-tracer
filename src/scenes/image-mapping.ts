@@ -7,12 +7,13 @@ import { World } from '../lib/world';
 import { SphericalMapper } from '../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../resources/moon.ppm?raw';
 import { parsePPM } from '../tools/ppm-parser';
-import { CamerConfiguration, Scene } from './scene';
+import { Scene } from './scene';
 import { TextureMap } from '../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
+import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
 
 export class ImageMapping implements Scene {
-    cameraCfg: CamerConfiguration = {
+    cameraCfg: CameraConfiguration = {
         fieldOfView: Math.PI / 3,
         viewTransform: viewTransform(
             point(0, 1.5, -5),
@@ -21,10 +22,9 @@ export class ImageMapping implements Scene {
         ),
         aperture: 0,
         focalLength: 0,
-        focalSamplingRate: 0,
     };
 
-    configureWorld(): World {
+    configureWorld(_renderCfg: RenderConfiguration): World {
         const world = new World();
         world.lights.push(
             new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9))
@@ -38,6 +38,8 @@ export class ImageMapping implements Scene {
             new ImageUvPattern(img.pixels),
             new SphericalMapper()
         );
+        s.material.specular = 0;
+        s.material.ambient = 0.05
 
         world.objects.push(s);
 
