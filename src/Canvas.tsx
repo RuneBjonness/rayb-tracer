@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react'
-import './Canvas.css'
 import { Canvas } from './lib/canvas'
 import RenderWorker from './render-worker?worker'
 
