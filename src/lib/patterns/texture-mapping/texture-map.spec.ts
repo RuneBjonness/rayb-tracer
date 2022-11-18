@@ -7,15 +7,15 @@ import { SphericalMapper } from './uv-mappers';
 import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';
 
 describe('Texture maps', () => {
-    const black = color(0, 0, 0);
-    const white = color(1, 1, 1);
+  const black = color(0, 0, 0);
+  const white = color(1, 1, 1);
 
-    const uvCheckers = new CheckersUvPattern(16, 8, black, white);
-    const uvMapper = new SphericalMapper();
-    const tm = new TextureMap(uvCheckers, uvMapper);
-    const s = new Sphere();
+  const uvCheckers = new CheckersUvPattern(16, 8, black, white);
+  const uvMapper = new SphericalMapper();
+  const tm = new TextureMap(uvCheckers, uvMapper);
+  const s = new Sphere();
 
-    each`
+  each`
         p                                   | result
         ${point(0.4315, 0.467, 0.7719)}     | ${white}
         ${point(-0.9654, 0.2552, -0.0534)}  | ${black}
@@ -28,35 +28,35 @@ describe('Texture maps', () => {
         ${point(0.7688, -0.147, 0.6223)}    | ${black}
         ${point(-0.7652, 0.2175, 0.606)}    | ${black}
     `.test(
-        'Using a texture map pattern with a spherical map',
-        ({ p, result }) => {
-            expect(tm.colorAt(s, p)).toEqual(result);
-        }
-    );
+    'Using a texture map pattern with a spherical map',
+    ({ p, result }) => {
+      expect(tm.colorAt(s, p)).toEqual(result);
+    }
+  );
 });
 
 describe('Cube maps', () => {
-    const red = color(1, 0, 0);
-    const yellow = color(1, 1, 0);
-    const brown = color(1, 0.5, 0);
-    const green = color(0, 1, 0);
-    const cyan = color(0, 1, 1);
-    const blue = color(0, 0, 1);
-    const purple = color(1, 0, 1);
-    const white = color(1, 1, 1);
+  const red = color(1, 0, 0);
+  const yellow = color(1, 1, 0);
+  const brown = color(1, 0.5, 0);
+  const green = color(0, 1, 0);
+  const cyan = color(0, 1, 1);
+  const blue = color(0, 0, 1);
+  const purple = color(1, 0, 1);
+  const white = color(1, 1, 1);
 
-    const cubeMap = new CubeMap([
-        new UvAlignTestPattern(yellow, cyan, red, blue, brown),
-        new UvAlignTestPattern(cyan, red, yellow, brown, green),
-        new UvAlignTestPattern(red, yellow, purple, green, white),
-        new UvAlignTestPattern(green, purple, cyan, white, blue),
-        new UvAlignTestPattern(brown, cyan, purple, red, yellow),
-        new UvAlignTestPattern(purple, brown, green, blue, white),
-    ]);
+  const cubeMap = new CubeMap([
+    new UvAlignTestPattern(yellow, cyan, red, blue, brown),
+    new UvAlignTestPattern(cyan, red, yellow, brown, green),
+    new UvAlignTestPattern(red, yellow, purple, green, white),
+    new UvAlignTestPattern(green, purple, cyan, white, blue),
+    new UvAlignTestPattern(brown, cyan, purple, red, yellow),
+    new UvAlignTestPattern(purple, brown, green, blue, white),
+  ]);
 
-    const cube = new Cube();
+  const cube = new Cube();
 
-    each`
+  each`
         case      | p                  | result
         ${'L m'}  | ${point(-1, 0, 0)} | ${yellow}
         ${'L ul'} | ${point(-1, 0.9, -0.9)}  | ${cyan}
@@ -89,6 +89,6 @@ describe('Cube maps', () => {
         ${'D bl'} | ${point(-0.9, -1, -0.9)} | ${blue}
         ${'D br'} | ${point(0.9, -1, -0.9)}  | ${white}
     `.test('face alignment at $case', ({ p, result }) => {
-        expect(cubeMap.colorAt(cube, p)).toEqual(result);
-    });
+    expect(cubeMap.colorAt(cube, p)).toEqual(result);
+  });
 });

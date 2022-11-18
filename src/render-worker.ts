@@ -19,26 +19,26 @@ const scene = new Marbles();
 //const scene = new TeaPot();
 //const scene = new TextureMapping();
 
-
 const renderCfg = getRenderConfiguration(800, 600, 'preview');
 
-const workerCreateTime = performance.now()
+const workerCreateTime = performance.now();
 const world = scene.configureWorld(renderCfg);
 console.log(
-    `     --Worker inited in ${(performance.now() - workerCreateTime).toFixed(0)
-    } ms`,
+  `     --Worker inited in ${(performance.now() - workerCreateTime).toFixed(
+    0
+  )} ms`
 );
 
 onmessage = function (e) {
-    const cfg: {
-        x: number;
-        y: number;
-        w: number;
-        h: number;
-    } = e.data[0];
+  const cfg: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  } = e.data[0];
 
-    const camera = createCamera(scene.cameraCfg, renderCfg)
-    const result = camera.renderPart(world, cfg.x, cfg.y, cfg.w, cfg.h);
+  const camera = createCamera(scene.cameraCfg, renderCfg);
+  const result = camera.renderPart(world, cfg.x, cfg.y, cfg.w, cfg.h);
 
-    postMessage([cfg, result]);
+  postMessage([cfg, result]);
 };

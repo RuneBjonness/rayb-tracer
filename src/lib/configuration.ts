@@ -1,4 +1,3 @@
-
 export type CameraConfiguration = {
   fieldOfView: number;
   viewTransform: number[][];
@@ -19,8 +18,12 @@ export type RenderConfiguration = {
   focalSamplingRate: number;
 };
 
-export function getRenderConfiguration(width: number, height: number, quality: 'preview' | 'low' | 'standard' | 'high' | 'ultra'): RenderConfiguration {
-  if (quality === "preview") {
+export function getRenderConfiguration(
+  width: number,
+  height: number,
+  quality: 'preview' | 'low' | 'standard' | 'high' | 'ultra'
+): RenderConfiguration {
+  if (quality === 'preview') {
     return {
       width: width,
       height: height,
@@ -28,10 +31,9 @@ export function getRenderConfiguration(width: number, height: number, quality: '
       enableAreaLights: false,
       maxAreaLightUvSteps: 0,
       forceZeroAperture: true,
-      focalSamplingRate: 0
-    }
-  }
-  else if (quality === "low") {
+      focalSamplingRate: 0,
+    };
+  } else if (quality === 'low') {
     return {
       width: width,
       height: height,
@@ -39,10 +41,9 @@ export function getRenderConfiguration(width: number, height: number, quality: '
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
       forceZeroAperture: true,
-      focalSamplingRate: 0
-    }
-  }
-  else if (quality === "standard") {
+      focalSamplingRate: 0,
+    };
+  } else if (quality === 'standard') {
     return {
       width: width,
       height: height,
@@ -50,10 +51,9 @@ export function getRenderConfiguration(width: number, height: number, quality: '
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
       forceZeroAperture: false,
-      focalSamplingRate: 2
-    }
-  }
-  else if (quality === "high") {
+      focalSamplingRate: 2,
+    };
+  } else if (quality === 'high') {
     return {
       width: width,
       height: height,
@@ -61,10 +61,9 @@ export function getRenderConfiguration(width: number, height: number, quality: '
       enableAreaLights: true,
       maxAreaLightUvSteps: 3,
       forceZeroAperture: false,
-      focalSamplingRate: 4
-    }
-  }
-  else {
+      focalSamplingRate: 4,
+    };
+  } else {
     return {
       width: width,
       height: height,
@@ -72,8 +71,7 @@ export function getRenderConfiguration(width: number, height: number, quality: '
       enableAreaLights: true,
       maxAreaLightUvSteps: 4,
       forceZeroAperture: false,
-      focalSamplingRate: 8
-    }
+      focalSamplingRate: 8,
+    };
   }
 }
-
