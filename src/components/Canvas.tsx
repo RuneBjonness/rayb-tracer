@@ -27,20 +27,20 @@ const RtCanvas = ({ width, height }: RtCanvasProps) => {
         h: number;
       };
       const canvasParts: CanvasPart[] = [];
-      const chunkWidth = width / 16;
-      const chunkHeight = height / 12;
-      for (let x = 0; x < 16; x++) {
-        for (let y = 0; y < 12; y++) {
-          canvasParts.push({
-            x: x * chunkWidth,
-            y: y * chunkHeight,
-            w: chunkWidth,
-            h: chunkHeight,
-          });
-        }
+      for (let i = 0; i < height; i++) {
+        canvasParts.push({
+          x: 0,
+          y: i,
+          w: width,
+          h: 1,
+        });
       }
 
-      // let workerChunkStartTime: number[] = [];
+      for (let i = canvasParts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [canvasParts[i], canvasParts[j]] = [canvasParts[j], canvasParts[i]];
+      }
+
       for (let i = 0; i < 12; i++) {
         const worker = new RenderWorker();
         worker.postMessage([
@@ -50,19 +50,12 @@ const RtCanvas = ({ width, height }: RtCanvasProps) => {
 
         worker.onmessage = function (e) {
           const cfg: CanvasPart = e.data[0];
-          const c = new Canvas(chunkWidth, chunkHeight);
+          const c = new Canvas(width, 1);
           c.pixels = (e.data[1] as Canvas).pixels;
           ctx!.putImageData(c.getImageData(), cfg.x, cfg.y);
 
-          // console.log(
-          //   `     --Worker #${i} rendered chunk in ${(
-          //     performance.now() - workerChunkStartTime[i]
-          //   ).toFixed()} ms`
-          // );
-
           const cp = canvasParts.pop();
           if (cp) {
-            // workerChunkStartTime[i] = performance.now();
             worker.postMessage(['render', cp]);
           } else {
             worker.terminate();
@@ -77,7 +70,6 @@ const RtCanvas = ({ width, height }: RtCanvasProps) => {
 
         const cp = canvasParts.pop();
         if (cp) {
-          // workerChunkStartTime[i] = performance.now();
           worker.postMessage(['render', cp]);
         }
       }
