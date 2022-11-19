@@ -1,9 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
-import RtCanvas from './Canvas'
-import { AppBar, Box, Container, createTheme, CssBaseline, Drawer, IconButton, ThemeProvider, Toolbar, Tooltip, Typography } from '@mui/material';
+import RtCanvas from './Canvas';
+import {
+  AppBar,
+  Box,
+  Container,
+  createTheme,
+  CssBaseline,
+  Drawer,
+  IconButton,
+  ThemeProvider,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import RenderSettingsEditor from './RenderSettingsEditor';
+import useRayTracerStore from '../store';
 
 function App() {
+  const width = useRayTracerStore((state) => state.width);
+  const height = useRayTracerStore((state) => state.height);
+
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const toggleSettingsDrawer = (newOpen: boolean) => () => {
@@ -11,27 +28,27 @@ function App() {
   };
 
   const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1e4745',
-      contrastText: '#dbefef'
+    palette: {
+      primary: {
+        main: '#1e4745',
+        contrastText: '#dbefef',
+      },
+      secondary: {
+        main: '#435061',
+      },
+      background: {
+        default: '#02211f',
+        paper: '#113533',
+      },
+      text: {
+        primary: '#b9d3cf',
+        secondary: '#e1efff',
+      },
+      action: {
+        active: '#b9d3cf',
+      },
     },
-    secondary: {
-      main: '#435061',
-    },
-    background: {
-      default: '#02211f',
-      paper: '#113533',
-    },
-    text: {
-      primary: '#b9d3cf',
-      secondary: '#e1efff',
-    },
-    action: {
-      active: '#b9d3cf'
-    }
-  },
-});
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -58,9 +75,13 @@ function App() {
 
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Settings">
-                <IconButton size="large" onClick={toggleSettingsDrawer(true)} sx={{ p: 0 }}>
+                <IconButton
+                  size="large"
+                  onClick={toggleSettingsDrawer(true)}
+                  sx={{ p: 0 }}
+                >
                   <TuneIcon fontSize="inherit" />
-                </IconButton>      
+                </IconButton>
               </Tooltip>
             </Box>
           </Toolbar>
@@ -70,14 +91,14 @@ function App() {
           open={settingsOpen}
           onClose={toggleSettingsDrawer(false)}
         >
-          Render Settings
+          <RenderSettingsEditor />
         </Drawer>
       </AppBar>
-      <Box sx={{padding: 2}}>
-        <RtCanvas/>
-      </Box>  
+      <Box sx={{ padding: 2 }}>
+        <RtCanvas width={width} height={height} />
+      </Box>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

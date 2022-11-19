@@ -1,10 +1,14 @@
 import React, { useRef, useEffect } from 'react';
-import { Canvas } from './lib/canvas';
-import RenderWorker from './render-worker?worker';
+import { Canvas } from '../lib/canvas';
+import { getRenderConfiguration } from '../lib/configuration';
+import RenderWorker from '../render-worker?worker';
 
-const RtCanvas: React.FC<{}> = () => {
-  let width = 800;
-  let height = 600;
+type RtCanvasProps = {
+  width: number;
+  height: number;
+};
+
+const RtCanvas = ({ width, height }: RtCanvasProps) => {
   let canvasRef = useRef<HTMLCanvasElement | null>(null);
   let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
@@ -36,9 +40,13 @@ const RtCanvas: React.FC<{}> = () => {
         }
       }
 
-      let workerChunkStartTime: number[] = [];
+      // let workerChunkStartTime: number[] = [];
       for (let i = 0; i < 12; i++) {
         const worker = new RenderWorker();
+        worker.postMessage([
+          'init',
+          getRenderConfiguration(width, height, 'preview'),
+        ]);
 
         worker.onmessage = function (e) {
           const cfg: CanvasPart = e.data[0];
@@ -46,16 +54,16 @@ const RtCanvas: React.FC<{}> = () => {
           c.pixels = (e.data[1] as Canvas).pixels;
           ctx!.putImageData(c.getImageData(), cfg.x, cfg.y);
 
-          console.log(
-            `     --Worker #${i} rendered chunk in ${(
-              performance.now() - workerChunkStartTime[i]
-            ).toFixed()} ms`
-          );
+          // console.log(
+          //   `     --Worker #${i} rendered chunk in ${(
+          //     performance.now() - workerChunkStartTime[i]
+          //   ).toFixed()} ms`
+          // );
 
           const cp = canvasParts.pop();
           if (cp) {
-            workerChunkStartTime[i] = performance.now();
-            worker.postMessage([cp]);
+            // workerChunkStartTime[i] = performance.now();
+            worker.postMessage(['render', cp]);
           } else {
             worker.terminate();
             console.log(
@@ -69,12 +77,12 @@ const RtCanvas: React.FC<{}> = () => {
 
         const cp = canvasParts.pop();
         if (cp) {
-          workerChunkStartTime[i] = performance.now();
-          worker.postMessage([cp]);
+          // workerChunkStartTime[i] = performance.now();
+          worker.postMessage(['render', cp]);
         }
       }
     }
-  }, []);
+  }, [width, height]);
 
   return <canvas ref={canvasRef} width={width} height={height}></canvas>;
 };
