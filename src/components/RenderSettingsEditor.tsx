@@ -1,6 +1,7 @@
 import React from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
-import { Stack, TextField } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
+import { Stack, TextField, Typography } from '@mui/material';
 import useRayTracerStore from '../store';
 
 function RenderSettingsEditor() {
@@ -24,25 +25,36 @@ function RenderSettingsEditor() {
   };
 
   return (
-    <Stack spacing={1} minWidth={480}>
-      <h4>
-        Render Settings <TuneIcon />
-      </h4>
-      <TextField
-        id="input-width"
-        label="Width"
-        value={width}
-        onChange={handleWidthChange}
-        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-      />
-      <TextField
-        id="input-height"
-        label="Height"
-        defaultValue={height}
-        onChange={handleHeightChange}
-        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-      />
-    </Stack>
+    <Grid container spacing={1}>
+      <Grid xs={12} mb={1}>
+        <Typography variant="h6">
+          <TuneIcon
+            sx={{ verticalAlign: 'middle', paddingBottom: '3px', mr: 1 }}
+          />
+          Render Settings
+        </Typography>{' '}
+      </Grid>
+      <Grid xs={6}>
+        <TextField
+          id="input-width"
+          label="Width"
+          size="small"
+          value={width}
+          onChange={handleWidthChange}
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+        />
+      </Grid>
+      <Grid xs={6}>
+        <TextField
+          id="input-height"
+          label="Height"
+          size="small"
+          value={height}
+          onChange={handleHeightChange}
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+        />
+      </Grid>
+    </Grid>
   );
 }
 

@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
-import TuneIcon from '@mui/icons-material/Tune';
+import React from 'react';
 import RtCanvas from './Canvas';
 import {
-  AppBar,
   Box,
-  Container,
+  Button,
   createTheme,
   CssBaseline,
   Drawer,
-  IconButton,
+  Stack,
   ThemeProvider,
-  Toolbar,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import RenderSettingsEditor from './RenderSettingsEditor';
@@ -20,12 +16,6 @@ import useRayTracerStore from '../store';
 function App() {
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
-
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
-  const toggleSettingsDrawer = (newOpen: boolean) => () => {
-    setSettingsOpen(newOpen);
-  };
 
   const theme = createTheme({
     palette: {
@@ -53,49 +43,33 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="static">
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: 'flex',
-                flexGrow: 1,
-                fontWeight: 700,
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
+      <Box sx={{ display: 'flex' }}>
+        <Drawer
+          sx={{
+            width: 360,
+            flexShrink: 0,
+            p: 2,
+            '& .MuiDrawer-paper': {
+              width: 360,
+              boxSizing: 'border-box',
+              p: 2,
+            },
+          }}
+          variant="permanent"
+          anchor="left"
+        >
+          <Stack spacing={2}>
+            <Typography variant="h3" noWrap fontStyle={'italic'} mb={1}>
               RayB Tracer
             </Typography>
+            <RenderSettingsEditor />
 
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Settings">
-                <IconButton
-                  size="large"
-                  onClick={toggleSettingsDrawer(true)}
-                  sx={{ p: 0 }}
-                >
-                  <TuneIcon fontSize="inherit" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Toolbar>
-        </Container>
-        <Drawer
-          anchor={'right'}
-          open={settingsOpen}
-          onClose={toggleSettingsDrawer(false)}
-        >
-          <RenderSettingsEditor />
+            <Button variant="contained">Render</Button>
+          </Stack>
         </Drawer>
-      </AppBar>
-      <Box sx={{ padding: 2 }}>
-        <RtCanvas width={width} height={height} />
+        <Box sx={{ flexGrow: 1, p: 2 }}>
+          <RtCanvas width={width} height={height} />
+        </Box>
       </Box>
     </ThemeProvider>
   );
