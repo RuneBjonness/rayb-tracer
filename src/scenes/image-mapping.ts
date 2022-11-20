@@ -10,7 +10,8 @@ import { parsePPM } from '../tools/ppm-parser';
 import { Scene } from './scene';
 import { TextureMap } from '../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { CameraConfiguration } from './configuration';
+import { RenderConfiguration } from '../renderer/configuration';
 
 export class ImageMapping implements Scene {
   cameraCfg: CameraConfiguration = {

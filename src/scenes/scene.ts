@@ -1,5 +1,6 @@
 import { Camera } from '../lib/camera';
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { CameraConfiguration } from './configuration';
+import { RenderConfiguration } from '../renderer/configuration';
 import { World } from '../lib/world';
 
 export interface Scene {

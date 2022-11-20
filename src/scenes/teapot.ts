@@ -9,7 +9,8 @@ import teapotLowResObjFile from '../resources/teapot-lowres.obj?raw';
 import teapotObjFile from '../resources/teapot.obj?raw';
 import { Shape } from '../lib/shapes/shape';
 import { Plane } from '../lib/shapes/primitives/plane';
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { CameraConfiguration } from './configuration';
+import { RenderConfiguration } from '../renderer/configuration';
 
 export class TeaPot implements Scene {
   cameraCfg: CameraConfiguration = {
@@ -28,13 +29,13 @@ export class TeaPot implements Scene {
     world.lights.push(
       renderCfg.enableAreaLights
         ? new AreaLight(
-            point(-2.5, 3.5, -2.5),
-            vector(2, 0, 0),
-            renderCfg.maxAreaLightUvSteps,
-            vector(0, 2, 0),
-            renderCfg.maxAreaLightUvSteps,
-            color(1, 1, 1)
-          )
+          point(-2.5, 3.5, -2.5),
+          vector(2, 0, 0),
+          renderCfg.maxAreaLightUvSteps,
+          vector(0, 2, 0),
+          renderCfg.maxAreaLightUvSteps,
+          color(1, 1, 1)
+        )
         : new PointLight(point(-2.5, 3.5, -2.5), color(1.5, 1.5, 1.5))
     );
 

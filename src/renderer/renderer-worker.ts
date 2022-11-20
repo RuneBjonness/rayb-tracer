@@ -1,16 +1,16 @@
-import { RenderConfiguration } from './lib/configuration';
-import { World } from './lib/world';
-import { Camera } from './lib/camera';
-import { createCamera, Scene } from './scenes/scene';
+import { RenderConfiguration } from './configuration';
+import { World } from '../lib/world';
+import { Camera } from '../lib/camera';
+import { createCamera, Scene } from '../scenes/scene';
 
-import { CsgRb } from './scenes/csg-rb';
-import { Dodecahedron } from './scenes/dodecahedron';
-import { ImageMapping } from './scenes/image-mapping';
-import { Marbles } from './scenes/marbles';
-import { Patterns } from './scenes/patterns';
-import { Skybox } from './scenes/skybox';
-import { TeaPot } from './scenes/teapot';
-import { TextureMapping } from './scenes/texture-mapping';
+import { CsgRb } from '../scenes/csg-rb';
+import { Dodecahedron } from '../scenes/dodecahedron';
+import { ImageMapping } from '../scenes/image-mapping';
+import { Marbles } from '../scenes/marbles';
+import { Patterns } from '../scenes/patterns';
+import { Skybox } from '../scenes/skybox';
+import { TeaPot } from '../scenes/teapot';
+import { TextureMapping } from '../scenes/texture-mapping';
 
 
 let scene: Scene;
@@ -18,10 +18,10 @@ let world: World;
 let camera: Camera;
 
 const init = (renderCfg: RenderConfiguration) => {
-  scene = new CsgRb();
+  //scene = new CsgRb();
   //scene = new Dodecahedron();
   //scene = new ImageMapping();
-  //scene = new Marbles();
+  scene = new Marbles();
   //scene = new Patterns();
   //scene = new Skybox();
   //scene = new TeaPot();

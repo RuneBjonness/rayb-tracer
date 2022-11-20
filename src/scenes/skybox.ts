@@ -1,4 +1,5 @@
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { RenderConfiguration } from '../renderer/configuration';
+import { CameraConfiguration } from './configuration';
 import { PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';

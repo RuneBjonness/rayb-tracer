@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RtCanvas from './Canvas';
 import {
   Box,
@@ -12,10 +12,15 @@ import {
 } from '@mui/material';
 import RenderSettingsEditor from './RenderSettingsEditor';
 import useRayTracerStore from '../store';
+import { getRenderConfiguration } from '../renderer/configuration';
 
 function App() {
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
+
+  const [renderConfig, setRenderConfig] = useState(
+    getRenderConfiguration(width, height, 'preview')
+  );
 
   const theme = createTheme({
     palette: {
@@ -59,16 +64,31 @@ function App() {
           anchor="left"
         >
           <Stack spacing={2}>
-            <Typography variant="h3" noWrap fontStyle={'italic'} mb={1}>
+            <Typography
+              variant="h3"
+              noWrap
+              fontStyle={'italic'}
+              color={theme.palette.secondary.contrastText}
+              mb={1}
+            >
               RayB Tracer
             </Typography>
             <RenderSettingsEditor />
 
-            <Button variant="contained">Render</Button>
+            <Button
+              variant="contained"
+              onClick={() =>
+                setRenderConfig(
+                  getRenderConfiguration(width, height, 'preview')
+                )
+              }
+            >
+              Render
+            </Button>
           </Stack>
         </Drawer>
         <Box sx={{ flexGrow: 1, p: 2 }}>
-          <RtCanvas width={width} height={height} />
+          <RtCanvas cfg={renderConfig} />
         </Box>
       </Box>
     </ThemeProvider>

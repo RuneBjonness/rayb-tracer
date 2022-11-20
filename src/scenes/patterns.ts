@@ -24,7 +24,8 @@ import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Scene } from './scene';
 import { Group } from '../lib/shapes/group';
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { CameraConfiguration } from './configuration';
+import { RenderConfiguration } from '../renderer/configuration';
 
 export class Patterns implements Scene {
   cameraCfg: CameraConfiguration = {
@@ -43,13 +44,13 @@ export class Patterns implements Scene {
     world.lights.push(
       renderCfg.enableAreaLights
         ? new AreaLight(
-            point(-5.5, 3, -4),
-            vector(2, 0, 0),
-            renderCfg.maxAreaLightUvSteps,
-            vector(0, 2, 0),
-            renderCfg.maxAreaLightUvSteps,
-            color(1.5, 1.5, 1.5)
-          )
+          point(-5.5, 3, -4),
+          vector(2, 0, 0),
+          renderCfg.maxAreaLightUvSteps,
+          vector(0, 2, 0),
+          renderCfg.maxAreaLightUvSteps,
+          color(1.5, 1.5, 1.5)
+        )
         : new PointLight(point(-5.5, 3.5, -5), color(1.5, 1.5, 1.5))
     );
 

@@ -13,13 +13,13 @@ function RenderSettingsEditor() {
 
   const handleWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(event.target.value);
-    if (val) {
+    if (val >= 0) {
       setWidth(val);
     }
   };
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(event.target.value);
-    if (val) {
+    if (val >= 0) {
       setHeight(val);
     }
   };

@@ -1,4 +1,4 @@
-import { CameraConfiguration, RenderConfiguration } from '../lib/configuration';
+import { CameraConfiguration } from './configuration';
 import { AreaLight, PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';
@@ -18,6 +18,7 @@ import {
 } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
+import { RenderConfiguration } from '../renderer/configuration';
 import { Scene } from './scene';
 
 export class CsgRb implements Scene {
@@ -43,13 +44,13 @@ export class CsgRb implements Scene {
     world.lights.push(
       renderCfg.enableAreaLights
         ? new AreaLight(
-            point(-2, 2.5, -2.5),
-            vector(2, 0, 0),
-            renderCfg.maxAreaLightUvSteps,
-            vector(0, 0, 2),
-            renderCfg.maxAreaLightUvSteps,
-            color(1.5, 1.5, 1.5)
-          )
+          point(-2, 2.5, -2.5),
+          vector(2, 0, 0),
+          renderCfg.maxAreaLightUvSteps,
+          vector(0, 0, 2),
+          renderCfg.maxAreaLightUvSteps,
+          color(1.5, 1.5, 1.5)
+        )
         : new PointLight(point(-2, 2.5, -2.5), color(1.5, 1.5, 1.5))
     );
 
