@@ -11,12 +11,20 @@ export type RenderConfiguration = {
   focalSamplingRate: number;
 };
 
+export enum RenderQuality {
+  preview = 'preview',
+  low = 'low',
+  standard = 'standard',
+  high = 'high',
+  ultra = 'ultra'
+};
+
 export function getRenderConfiguration(
   width: number,
   height: number,
-  quality: 'preview' | 'low' | 'standard' | 'high' | 'ultra'
+  quality: RenderQuality
 ): RenderConfiguration {
-  if (quality === 'preview') {
+  if (quality === RenderQuality.preview) {
     return {
       width: width,
       height: height,
@@ -26,7 +34,7 @@ export function getRenderConfiguration(
       forceZeroAperture: true,
       focalSamplingRate: 0,
     };
-  } else if (quality === 'low') {
+  } else if (quality === RenderQuality.low) {
     return {
       width: width,
       height: height,
@@ -36,7 +44,7 @@ export function getRenderConfiguration(
       forceZeroAperture: true,
       focalSamplingRate: 0,
     };
-  } else if (quality === 'standard') {
+  } else if (quality === RenderQuality.standard) {
     return {
       width: width,
       height: height,
@@ -46,7 +54,7 @@ export function getRenderConfiguration(
       forceZeroAperture: false,
       focalSamplingRate: 2,
     };
-  } else if (quality === 'high') {
+  } else if (quality === RenderQuality.high) {
     return {
       width: width,
       height: height,

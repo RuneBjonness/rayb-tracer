@@ -17,9 +17,10 @@ import { getRenderConfiguration } from '../renderer/configuration';
 function App() {
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
+  const quality = useRayTracerStore((state) => state.quality);
 
   const [renderConfig, setRenderConfig] = useState(
-    getRenderConfiguration(width, height, 'preview')
+    getRenderConfiguration(width, height, quality)
   );
 
   const theme = createTheme({
@@ -78,9 +79,7 @@ function App() {
             <Button
               variant="contained"
               onClick={() =>
-                setRenderConfig(
-                  getRenderConfiguration(width, height, 'preview')
-                )
+                setRenderConfig(getRenderConfiguration(width, height, quality))
               }
             >
               Render

@@ -1,8 +1,17 @@
 import React from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Stack, TextField, Typography } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from '@mui/material';
 import useRayTracerStore from '../store';
+import { RenderQuality } from '../renderer/configuration';
 
 function RenderSettingsEditor() {
   const width = useRayTracerStore((state) => state.width);
@@ -10,6 +19,9 @@ function RenderSettingsEditor() {
 
   const height = useRayTracerStore((state) => state.height);
   const setHeight = useRayTracerStore((state) => state.setHeight);
+
+  const quality = useRayTracerStore((state) => state.quality);
+  const setQuality = useRayTracerStore((state) => state.setQuality);
 
   const handleWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(event.target.value);
@@ -21,6 +33,12 @@ function RenderSettingsEditor() {
     const val = Number(event.target.value);
     if (val >= 0) {
       setHeight(val);
+    }
+  };
+  const handleQualityChange = (event: SelectChangeEvent) => {
+    const val = event.target.value as RenderQuality;
+    if (val in RenderQuality) {
+      setQuality(val as RenderQuality);
     }
   };
 
@@ -53,6 +71,24 @@ function RenderSettingsEditor() {
           onChange={handleHeightChange}
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
+      </Grid>
+      <Grid xs={12}>
+        <FormControl fullWidth>
+          <InputLabel id="quality-label">Render Quality</InputLabel>
+          <Select
+            labelId="quality-label"
+            id="quality-select"
+            value={quality}
+            label="Render Quality"
+            onChange={handleQualityChange}
+          >
+            {Object.keys(RenderQuality).map((q) => (
+              <MenuItem value={q} key={q}>
+                {q}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Grid>
     </Grid>
   );
