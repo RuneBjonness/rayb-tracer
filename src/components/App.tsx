@@ -6,6 +6,7 @@ import {
   createTheme,
   CssBaseline,
   Drawer,
+  LinearProgress,
   Stack,
   ThemeProvider,
   Typography,
@@ -18,6 +19,7 @@ function App() {
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
   const quality = useRayTracerStore((state) => state.quality);
+  const renderProgress = useRayTracerStore((state) => state.renderProgress);
 
   const [renderConfig, setRenderConfig] = useState(
     getRenderConfiguration(width, height, quality)
@@ -75,7 +77,6 @@ function App() {
               RayB Tracer
             </Typography>
             <RenderSettingsEditor />
-
             <Button
               variant="contained"
               onClick={() =>
@@ -84,6 +85,14 @@ function App() {
             >
               Render
             </Button>
+            <LinearProgress
+              variant="determinate"
+              color="success"
+              value={(renderProgress * 100) / (width * height)}
+            />
+            <Typography variant="caption" textAlign={'center'}>
+              [{renderProgress} / {width * height} pixels]
+            </Typography>
           </Stack>
         </Drawer>
         <Box sx={{ flexGrow: 1, p: 2 }}>

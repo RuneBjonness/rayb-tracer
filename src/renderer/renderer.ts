@@ -2,7 +2,7 @@ import { Canvas } from '../lib/canvas';
 import { RenderConfiguration } from '../renderer/configuration';
 import RenderWorker from './renderer-worker?worker';
 
-const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration) => {
+const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
   const startTime = performance.now();
   console.log(`renderScene(${cfg.width}X${cfg.height}) started..`);
 
@@ -38,6 +38,7 @@ const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration) => {
       const c = new Canvas(cp.w, 1);
       c.pixels = (e.data[1] as Canvas).pixels;
       ctx!.putImageData(c.getImageData(), cp.x, cp.y);
+      onProgress(cp.w);
 
       const next = canvasParts.pop();
       if (next) {

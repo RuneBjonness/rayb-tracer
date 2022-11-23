@@ -15,9 +15,14 @@ interface RayTracerStore {
   // forceZeroAperture: boolean;
   // focalSamplingRate: number;
 
+  renderProgress: number;
+
   setWidth: (width: number) => void
   setHeight: (height: number) => void
   setQuality: (quality: RenderQuality) => void
+
+  resetRenderProgress: () => void
+  incrementRenderProgress: (pixels: number) => void
 }
 
 const useRayTracerStore = create<RayTracerStore>()(
@@ -27,9 +32,12 @@ const useRayTracerStore = create<RayTracerStore>()(
         width: 800,
         height: 600,
         quality: RenderQuality.preview,
+        renderProgress: 0,
         setWidth: (width: number) => set({ width: width }),
         setHeight: (height: number) => set({ height: height }),
-        setQuality: (quality: RenderQuality) => set({ quality: quality })
+        setQuality: (quality: RenderQuality) => set({ quality: quality }),
+        resetRenderProgress: () => set({ renderProgress: 0 }),
+        incrementRenderProgress: (pixels: number) => set((state) => ({ renderProgress: state.renderProgress + pixels }))
       }),
       {
         name: 'rayb-tracer-storage',

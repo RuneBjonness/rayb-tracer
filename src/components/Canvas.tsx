@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { RenderConfiguration } from '../renderer/configuration';
 import render from '../renderer/renderer';
+import useRayTracerStore from '../store';
 
 type RtCanvasProps = {
   cfg: RenderConfiguration;
@@ -9,11 +10,18 @@ type RtCanvasProps = {
 const RtCanvas = ({ cfg }: RtCanvasProps) => {
   let canvasRef = useRef<HTMLCanvasElement | null>(null);
   let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
+  const resetRenderProgress = useRayTracerStore(
+    (state) => state.resetRenderProgress
+  );
+  const incrementRenderProgress = useRayTracerStore(
+    (state) => state.incrementRenderProgress
+  );
 
   useEffect(() => {
     if (canvasRef.current) {
       canvasCtxRef.current = canvasRef.current.getContext('2d');
-      render(canvasCtxRef.current!, cfg);
+      resetRenderProgress();
+      render(canvasCtxRef.current!, cfg, incrementRenderProgress);
     }
   }, [cfg]);
 
