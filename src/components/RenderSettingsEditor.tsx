@@ -20,6 +20,11 @@ function RenderSettingsEditor() {
   const height = useRayTracerStore((state) => state.height);
   const setHeight = useRayTracerStore((state) => state.setHeight);
 
+  const numberOfWorkers = useRayTracerStore((state) => state.numberOfWorkers);
+  const setNumberOfWorkers = useRayTracerStore(
+    (state) => state.setNumberOfWorkers
+  );
+
   const quality = useRayTracerStore((state) => state.quality);
   const setQuality = useRayTracerStore((state) => state.setQuality);
 
@@ -29,12 +34,23 @@ function RenderSettingsEditor() {
       setWidth(val);
     }
   };
+
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(event.target.value);
     if (val >= 0) {
       setHeight(val);
     }
   };
+
+  const handleNumberOfWorkersChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const val = Number(event.target.value);
+    if (val >= 0) {
+      setNumberOfWorkers(val);
+    }
+  };
+
   const handleQualityChange = (event: SelectChangeEvent) => {
     const val = event.target.value as RenderQuality;
     if (val in RenderQuality) {
@@ -52,7 +68,7 @@ function RenderSettingsEditor() {
           Render Settings
         </Typography>{' '}
       </Grid>
-      <Grid xs={6}>
+      <Grid xs={4}>
         <TextField
           id="input-width"
           label="Width"
@@ -62,7 +78,7 @@ function RenderSettingsEditor() {
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
       </Grid>
-      <Grid xs={6}>
+      <Grid xs={4}>
         <TextField
           id="input-height"
           label="Height"
@@ -72,14 +88,25 @@ function RenderSettingsEditor() {
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
       </Grid>
+      <Grid xs={4}>
+        <TextField
+          id="input-number-of-workers"
+          label="Workers"
+          size="small"
+          value={numberOfWorkers}
+          onChange={handleNumberOfWorkersChange}
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+        />
+      </Grid>
       <Grid xs={12}>
         <FormControl fullWidth>
           <InputLabel id="quality-label">Render Quality</InputLabel>
           <Select
             labelId="quality-label"
             id="quality-select"
-            value={quality}
             label="Render Quality"
+            size="small"
+            value={quality}
             onChange={handleQualityChange}
           >
             {Object.keys(RenderQuality).map((q) => (

@@ -27,7 +27,7 @@ const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration, onProgr
     [canvasParts[i], canvasParts[j]] = [canvasParts[j], canvasParts[i]];
   }
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < cfg.numberOfWorkers; i++) {
     const worker = new RenderWorker();
     worker.postMessage([
       'init', cfg

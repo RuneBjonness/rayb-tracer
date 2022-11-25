@@ -2,6 +2,8 @@ export type RenderConfiguration = {
   width: number;
   height: number;
 
+  numberOfWorkers: number;
+
   raysMaxRecursiveDepth: number;
 
   enableAreaLights: boolean;
@@ -22,12 +24,14 @@ export enum RenderQuality {
 export function getRenderConfiguration(
   width: number,
   height: number,
+  numberOfWorkers: number,
   quality: RenderQuality
 ): RenderConfiguration {
   if (quality === RenderQuality.preview) {
     return {
       width: width,
       height: height,
+      numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 2,
       enableAreaLights: false,
       maxAreaLightUvSteps: 0,
@@ -38,6 +42,7 @@ export function getRenderConfiguration(
     return {
       width: width,
       height: height,
+      numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 3,
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
@@ -48,6 +53,7 @@ export function getRenderConfiguration(
     return {
       width: width,
       height: height,
+      numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 4,
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
@@ -58,6 +64,7 @@ export function getRenderConfiguration(
     return {
       width: width,
       height: height,
+      numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 4,
       enableAreaLights: true,
       maxAreaLightUvSteps: 3,
@@ -68,6 +75,7 @@ export function getRenderConfiguration(
     return {
       width: width,
       height: height,
+      numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 6,
       enableAreaLights: true,
       maxAreaLightUvSteps: 4,
