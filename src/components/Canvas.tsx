@@ -1,13 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import { RenderConfiguration } from '../renderer/configuration';
 import render from '../renderer/renderer';
+import { ScenePreset } from '../scenes/scene';
 import useRayTracerStore from '../store';
 
 type RtCanvasProps = {
+  scene: ScenePreset;
   cfg: RenderConfiguration;
 };
 
-const RtCanvas = ({ cfg }: RtCanvasProps) => {
+const RtCanvas = ({ scene, cfg }: RtCanvasProps) => {
   let canvasRef = useRef<HTMLCanvasElement | null>(null);
   let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
   const resetRenderProgress = useRayTracerStore(
@@ -21,9 +23,9 @@ const RtCanvas = ({ cfg }: RtCanvasProps) => {
     if (canvasRef.current) {
       canvasCtxRef.current = canvasRef.current.getContext('2d');
       resetRenderProgress();
-      render(canvasCtxRef.current!, cfg, incrementRenderProgress);
+      render(canvasCtxRef.current!, scene, cfg, incrementRenderProgress);
     }
-  }, [cfg]);
+  }, [scene, cfg]);
 
   return (
     <canvas ref={canvasRef} width={cfg.width} height={cfg.height}></canvas>

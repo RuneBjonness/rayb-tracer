@@ -13,6 +13,8 @@ import { CameraConfiguration } from './configuration';
 import { RenderConfiguration } from '../renderer/configuration';
 
 export class TeaPot implements Scene {
+  highRes: boolean;
+
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
@@ -23,6 +25,10 @@ export class TeaPot implements Scene {
     aperture: 0.006,
     focalLength: 2,
   };
+
+  constructor(highRes: boolean) {
+    this.highRes = highRes;
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
@@ -46,15 +52,15 @@ export class TeaPot implements Scene {
     f.material.diffuse = 0.67;
     f.material.reflective = 0.3;
 
-    world.objects.push(f, this.teapotObj(true));
+    world.objects.push(f, this.teapotObj());
 
     return world;
   }
 
-  private teapotObj(highRes: boolean): Shape {
+  private teapotObj(): Shape {
     const parser = new ObjParser();
     parser.currentMaterial.color = color(0.3, 0.73, 0.78);
-    const model = parser.parse(highRes ? teapotObjFile : teapotLowResObjFile);
+    const model = parser.parse(this.highRes ? teapotObjFile : teapotLowResObjFile);
     model.transform = multiplyMatrices(
       scaling(0.1, 0.1, 0.1),
       rotationX(-Math.PI / 2)

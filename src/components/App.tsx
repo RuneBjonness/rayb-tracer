@@ -14,8 +14,10 @@ import {
 import RenderSettingsEditor from './RenderSettingsEditor';
 import useRayTracerStore from '../store';
 import { getRenderConfiguration } from '../renderer/configuration';
+import SceneSelector from './SceneSelector';
 
 function App() {
+  const scenePreset = useRayTracerStore((state) => state.scenePreset);
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
   const numberOfWorkers = useRayTracerStore((state) => state.numberOfWorkers);
@@ -77,6 +79,7 @@ function App() {
             >
               RayB Tracer
             </Typography>
+            <SceneSelector />
             <RenderSettingsEditor />
             <Button
               variant="contained"
@@ -104,7 +107,7 @@ function App() {
           </Stack>
         </Drawer>
         <Box sx={{ flexGrow: 1, p: 2 }}>
-          <RtCanvas cfg={renderConfig} />
+          <RtCanvas scene={scenePreset} cfg={renderConfig} />
         </Box>
       </Box>
     </ThemeProvider>

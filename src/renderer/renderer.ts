@@ -1,8 +1,9 @@
 import { Canvas } from '../lib/canvas';
 import { RenderConfiguration } from '../renderer/configuration';
+import { ScenePreset } from '../scenes/scene';
 import RenderWorker from './renderer-worker?worker';
 
-const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
+const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
   const startTime = performance.now();
   console.log(`renderScene(${cfg.width}X${cfg.height}) started..`);
 
@@ -30,7 +31,7 @@ const render = (ctx: CanvasRenderingContext2D, cfg: RenderConfiguration, onProgr
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
     const worker = new RenderWorker();
     worker.postMessage([
-      'init', cfg
+      'init', scenePreset, cfg
     ]);
 
     worker.onmessage = function (e) {

@@ -1,38 +1,21 @@
 import { RenderConfiguration } from './configuration';
 import { World } from '../lib/world';
 import { Camera } from '../lib/camera';
-import { createCamera, Scene } from '../scenes/scene';
-
-import { CsgRb } from '../scenes/csg-rb';
-import { Dodecahedron } from '../scenes/dodecahedron';
-import { ImageMapping } from '../scenes/image-mapping';
-import { Marbles } from '../scenes/marbles';
-import { Patterns } from '../scenes/patterns';
-import { Skybox } from '../scenes/skybox';
-import { TeaPot } from '../scenes/teapot';
-import { TextureMapping } from '../scenes/texture-mapping';
-
+import { createCamera, loadScene, Scene, ScenePreset } from '../scenes/scene';
 
 let scene: Scene;
 let world: World;
 let camera: Camera;
 
-const init = (renderCfg: RenderConfiguration) => {
-  //scene = new CsgRb();
-  //scene = new Dodecahedron();
-  //scene = new ImageMapping();
-  scene = new Marbles();
-  //scene = new Patterns();
-  //scene = new Skybox();
-  //scene = new TeaPot();
-  //scene = new TextureMapping();
+const init = (scenePreset: ScenePreset, renderCfg: RenderConfiguration) => {
+  scene = loadScene(scenePreset);
   world = scene.configureWorld(renderCfg);
   camera = createCamera(scene.cameraCfg, renderCfg);
 }
 
 onmessage = function (e) {
   if (e.data[0] === 'init') {
-    init(e.data[1]);
+    init(e.data[1], e.data[2]);
   }
   else if (e.data[0] === 'render') {
     const cfg: {
