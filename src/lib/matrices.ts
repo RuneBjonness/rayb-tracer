@@ -52,10 +52,13 @@ export function multiplyMatrices(a: number[][], b: number[][]): number[][] {
 }
 
 export function multiplyMatrixByTuple(m: number[][], t: Tuple): Tuple {
-  return multiplyMatrices(
-    m,
-    t.map((v) => [v])
-  ).map((v) => v[0]) as Tuple;
+  const result = [0, 0, 0, t[3]];
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 4; j++) {
+      result[i] += m[i][j] * t[j];
+    }
+  }
+  return result as Tuple;
 }
 
 export function transpose(m: number[][]): number[][] {
