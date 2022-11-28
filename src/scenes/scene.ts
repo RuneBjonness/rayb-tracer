@@ -68,7 +68,7 @@ export function createCamera(
   cameraCfg: CameraConfiguration,
   renderCfg: RenderConfiguration
 ): Camera {
-  const camera = new Camera(renderCfg.width, renderCfg.height, Math.PI / 3);
+  const camera = new Camera(renderCfg.width, renderCfg.height, cameraCfg.fieldOfView);
   camera.aperture = renderCfg.forceZeroAperture ? 0 : cameraCfg.aperture;
   camera.focalLength = cameraCfg.focalLength;
   camera.focalSamplingRate = renderCfg.focalSamplingRate;

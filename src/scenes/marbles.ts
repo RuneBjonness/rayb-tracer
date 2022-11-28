@@ -13,7 +13,7 @@ import { Scene } from './scene';
 
 export class Marbles implements Scene {
   cameraCfg: CameraConfiguration = {
-    fieldOfView: 1.2,
+    fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
       point(0, 1.3, -5),
       point(0, 1, 0),

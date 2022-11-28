@@ -29,7 +29,7 @@ export class CsgRb implements Scene {
   }
 
   cameraCfg: CameraConfiguration = {
-    fieldOfView: 1.2,
+    fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
       point(0, 6, -1.5),
       point(0, 0, 0),
