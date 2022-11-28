@@ -3,7 +3,12 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { ScenePreset } from '../scenes/scene';
 import RenderWorker from './renderer-worker?worker';
 
-const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
+const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
+  if (scenePreset == null) {
+    ctx!.clearRect(0, 0, cfg.width, cfg.height);
+    return;
+  }
+
   const startTime = performance.now();
   console.log(`renderScene(${cfg.width}X${cfg.height}) started..`);
 

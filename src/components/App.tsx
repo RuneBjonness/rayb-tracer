@@ -15,6 +15,7 @@ import RenderSettingsEditor from './RenderSettingsEditor';
 import useRayTracerStore from '../store';
 import { getRenderConfiguration } from '../renderer/configuration';
 import SceneSelector from './SceneSelector';
+import { ScenePreset } from '../scenes/scene';
 
 function App() {
   const scenePreset = useRayTracerStore((state) => state.scenePreset);
@@ -27,6 +28,14 @@ function App() {
   const [renderConfig, setRenderConfig] = useState(
     getRenderConfiguration(width, height, numberOfWorkers, quality)
   );
+  const [renderScene, setRenderScene] = useState<ScenePreset | null>(null);
+
+  const handleRenderClick = () => {
+    setRenderConfig(
+      getRenderConfiguration(width, height, numberOfWorkers, quality)
+    );
+    setRenderScene(scenePreset);
+  };
 
   const theme = createTheme({
     palette: {
@@ -81,19 +90,7 @@ function App() {
             </Typography>
             <SceneSelector />
             <RenderSettingsEditor />
-            <Button
-              variant="contained"
-              onClick={() =>
-                setRenderConfig(
-                  getRenderConfiguration(
-                    width,
-                    height,
-                    numberOfWorkers,
-                    quality
-                  )
-                )
-              }
-            >
+            <Button variant="contained" onClick={handleRenderClick}>
               Render
             </Button>
             <LinearProgress
@@ -107,7 +104,7 @@ function App() {
           </Stack>
         </Drawer>
         <Box sx={{ flexGrow: 1, p: 2 }}>
-          <RtCanvas scene={scenePreset} cfg={renderConfig} />
+          <RtCanvas scene={renderScene} cfg={renderConfig} />
         </Box>
       </Box>
     </ThemeProvider>

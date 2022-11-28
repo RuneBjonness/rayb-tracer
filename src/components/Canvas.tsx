@@ -5,7 +5,7 @@ import { ScenePreset } from '../scenes/scene';
 import useRayTracerStore from '../store';
 
 type RtCanvasProps = {
-  scene: ScenePreset;
+  scene: ScenePreset | null;
   cfg: RenderConfiguration;
 };
 
