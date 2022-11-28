@@ -40,12 +40,6 @@ const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, 
     ]);
 
     worker.onmessage = function (e) {
-      const cp: CanvasPart = e.data[0];
-      const c = new Canvas(cp.w, 1);
-      c.pixels = (e.data[1] as Canvas).pixels;
-      ctx!.putImageData(c.getImageData(), cp.x, cp.y);
-      onProgress(cp.w);
-
       const next = canvasParts.pop();
       if (next) {
         worker.postMessage(['render', next]);
@@ -58,6 +52,12 @@ const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, 
           ).toFixed(2)} s`
         );
       }
+
+      const cp: CanvasPart = e.data[0];
+      const c = new Canvas(cp.w, cp.h);
+      c.pixels = (e.data[1] as Canvas).pixels;
+      ctx!.putImageData(c.getImageData(), cp.x, cp.y);
+      onProgress(cp.w);
     };
 
     const cp = canvasParts.pop();
