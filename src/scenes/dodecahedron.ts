@@ -25,8 +25,8 @@ export class Dodecahedron implements Scene {
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
-      point(0, 1.5, -5),
-      point(0, 1, 0),
+      point(1, 2.5, -5),
+      point(1, 1.8, 1),
       vector(0, 1, 0)
     ),
     aperture: 0.005,
@@ -38,32 +38,21 @@ export class Dodecahedron implements Scene {
     world.lights.push(
       renderCfg.enableAreaLights
         ? new AreaLight(
-          point(-5.5, 3.5, -5),
-          vector(3, 0, 0),
-          renderCfg.maxAreaLightUvSteps,
-          vector(0, 3, 0),
-          renderCfg.maxAreaLightUvSteps,
-          color(1.5, 1.5, 1.5)
-        )
+            point(-5.5, 3.5, -5),
+            vector(2, 0, 0),
+            renderCfg.maxAreaLightUvSteps,
+            vector(0, 2, 0),
+            renderCfg.maxAreaLightUvSteps,
+            color(1.5, 1.5, 1.5)
+          )
         : new PointLight(point(-5.5, 3.5, -5), color(1.5, 1.5, 1.5))
     );
-
-    const lamp = new Sphere();
-    lamp.material.color = color(1.5, 1.5, 1.5);
-    lamp.material.diffuse = 0;
-    lamp.material.specular = 0;
-    lamp.material.ambient = 1;
-    lamp.transform = multiplyMatrices(
-      translation(-4, 5, -3),
-      scaling(0.75, 0.75, 0.75)
-    );
-    world.objects.push(lamp);
 
     const f = new Plane();
     f.material.specular = 0;
     f.material.ambient = 0.025;
     f.material.diffuse = 0.67;
-    f.material.reflective = 0.2;
+    f.material.reflective = 0.05;
     world.objects.push(f);
 
     const colors = [
@@ -94,7 +83,7 @@ export class Dodecahedron implements Scene {
     dodecahedron.add(d2);
 
     dodecahedron.transform = multiplyMatrices(
-      translation(0, 1, 1.5),
+      translation(0, 1.2, 3.5),
       multiplyMatrices(rotationX(-Math.PI / 6), rotationY(Math.PI / 6))
     );
 

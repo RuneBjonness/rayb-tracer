@@ -25,13 +25,13 @@ export class CsgRb implements Scene {
   private baseMaterial = material();
 
   constructor() {
-    this.baseMaterial.color = color(0.65, 0.35, 0.85);
+    this.baseMaterial.color = color(0.66, 0.35, 0.85);
   }
 
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
-      point(0, 6, -1.5),
+      point(0, 6.2, -1.75),
       point(0, 0, 0),
       vector(0, 1, 0)
     ),
@@ -104,8 +104,8 @@ export class CsgRb implements Scene {
     rbt.add(e);
     rbt.add(r2);
 
-    rbt.transform = translation(0, 0.5, 2.5);
-    rbt.divide(2);
+    rbt.transform = translation(0, 0.25, 1);
+    rbt.divide(4);
 
     world.objects.push(rbt);
 

@@ -15,6 +15,8 @@ import { World } from '../lib/world';
 // import posZImgMapFile from '../resources/skybox/posz.ppm?raw';
 import { parsePPM } from '../tools/ppm-parser';
 import { Scene } from './scene';
+import { CubeMap } from '../lib/patterns/texture-mapping/texture-map';
+import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
 
 export class Skybox implements Scene {
   cameraCfg: CameraConfiguration = {
@@ -31,8 +33,8 @@ export class Skybox implements Scene {
   configureWorld(_renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9)),
-      new PointLight(point(2.5, 4.99, -2.5), color(0.3, 0.3, 0.3))
+      new PointLight(point(-4.4, 3.5, 6.4), color(0.9, 0.9, 0.9)),
+      new PointLight(point(4.5, 4.99, 6.5), color(0.3, 0.3, 0.3))
     );
 
     const skybox = new Sphere();
@@ -41,12 +43,12 @@ export class Skybox implements Scene {
     skybox.material.specular = 0;
     skybox.material.ambient = 1;
     // skybox.material.pattern = new CubeMap([
-    //     new ImageUvPattern(parsePPM(negXImgMapFile).pixels),
-    //     new ImageUvPattern(parsePPM(posZImgMapFile).pixels),
-    //     new ImageUvPattern(parsePPM(posXImgMapFile).pixels),
-    //     new ImageUvPattern(parsePPM(negZImgMapFile).pixels),
-    //     new ImageUvPattern(parsePPM(posYImgMapFile).pixels),
-    //     new ImageUvPattern(parsePPM(negYImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(negXImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(posZImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(posXImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(negZImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(posYImgMapFile).pixels),
+    //   new ImageUvPattern(parsePPM(negYImgMapFile).pixels),
     // ]);
 
     const m = material();
@@ -57,21 +59,21 @@ export class Skybox implements Scene {
 
     const s1 = new Sphere();
     s1.transform = multiplyMatrices(
-      translation(2.5, 0, 7),
+      translation(2.5, 1, 4),
       scaling(0.8, 0.8, 0.8)
     );
     s1.material = m;
 
     const s2 = new Sphere();
     s2.transform = multiplyMatrices(
-      translation(-2.5, 0, 7),
+      translation(-2.5, 1, 4),
       scaling(0.8, 0.8, 0.8)
     );
     s2.material = m;
 
     const s3 = new Sphere();
     s3.transform = multiplyMatrices(
-      translation(0, 0, 7),
+      translation(0, 0, 4),
       scaling(0.8, 0.8, 0.8)
     );
     s3.material = m;

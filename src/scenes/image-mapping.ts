@@ -21,8 +21,8 @@ export class ImageMapping implements Scene {
       point(0, 1, 0),
       vector(0, 1, 0)
     ),
-    aperture: 0,
-    focalLength: 0,
+    aperture: 0.005,
+    focalLength: 2,
   };
 
   configureWorld(_renderCfg: RenderConfiguration): World {
@@ -36,14 +36,14 @@ export class ImageMapping implements Scene {
     const s = new Sphere();
     s.transform = multiplyMatrices(
       translation(0, 1, 0),
-      scaling(1.8, 1.8, 1.8)
+      scaling(1.4, 1.4, 1.4)
     );
     s.material.pattern = new TextureMap(
       new ImageUvPattern(img.pixels),
       new SphericalMapper()
     );
     s.material.specular = 0;
-    s.material.ambient = 0.05;
+    s.material.ambient = 0.02;
 
     world.objects.push(s);
 

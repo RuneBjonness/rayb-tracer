@@ -31,7 +31,7 @@ export class Patterns implements Scene {
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
-      point(0, 1.5, -5),
+      point(0, 1.6, -5),
       point(0, 1, 0),
       vector(0, 1, 0)
     ),
@@ -51,7 +51,7 @@ export class Patterns implements Scene {
           renderCfg.maxAreaLightUvSteps,
           color(1.5, 1.5, 1.5)
         )
-        : new PointLight(point(-5.5, 3.5, -5), color(1.5, 1.5, 1.5))
+        : new PointLight(point(-5.5, 3.5, -4), color(1.5, 1.5, 1.5))
     );
 
     world.objects.push(

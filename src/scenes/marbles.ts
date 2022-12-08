@@ -16,10 +16,10 @@ export class Marbles implements Scene {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
       point(0, 1.3, -5),
-      point(0, 1, 0),
+      point(0, 0.5, 0),
       vector(0, 1, 0)
     ),
-    aperture: 0.08,
+    aperture: 0.04,
     focalLength: 5,
   };
 

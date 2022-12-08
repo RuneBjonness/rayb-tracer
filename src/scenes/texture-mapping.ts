@@ -34,8 +34,8 @@ export class TextureMapping implements Scene {
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
-      point(0, 1.5, -5),
-      point(0, 1, 0),
+      point(0, 1.75, -5),
+      point(0, 1.25, 0),
       vector(0, 1, 0)
     ),
     aperture: 0.005,
@@ -67,21 +67,6 @@ export class TextureMapping implements Scene {
       scaling(1, 1, 0.01)
     );
     world.objects.push(lamp);
-
-    const rainbow = [
-      color(1, 0, 0),
-      color(0.8, 0, 0.6),
-      color(0.6, 0, 0.6),
-      color(0.4, 0, 0.6),
-      color(0, 0.32, 0.83),
-      color(0.04, 0.7, 0.76),
-      color(0, 0.6, 0),
-      color(0.4, 0.8, 0),
-      color(1, 1, 0),
-      color(1, 0.8, 0),
-      color(1, 0.6, 0),
-      color(1, 0.4, 0),
-    ];
 
     const f = new Plane();
     f.material.pattern = new TextureMap(
@@ -116,10 +101,10 @@ export class TextureMapping implements Scene {
 
     const cyl = new Cylinder();
     cyl.minimum = 0;
-    cyl.maximum = 1;
+    cyl.maximum = 0.625;
     cyl.transform = multiplyMatrices(
-      translation(-1.5, -0.5, 2),
-      scaling(1, 3.1415, 1)
+      translation(-1.75, 0, 2.5),
+      scaling(1.25, 1.25 * 3.1415, 1.25)
     );
     cyl.material.pattern = new TextureMap(
       new CheckersUvPattern(
@@ -135,55 +120,26 @@ export class TextureMapping implements Scene {
     cyl.material.ambient = 0.1;
     cyl.material.reflective = 0.3;
 
+    const cubeSidePattern = new CheckersUvPattern(
+      5,
+      5,
+      color(0.98, 0.86, 0.95),
+      color(0.68, 0.06, 0.57)
+    );
+
     const cubeMap = new CubeMap([
-      new UvAlignTestPattern(
-        rainbow[0],
-        rainbow[1],
-        rainbow[2],
-        rainbow[3],
-        rainbow[4]
-      ),
-      new UvAlignTestPattern(
-        rainbow[1],
-        rainbow[2],
-        rainbow[0],
-        rainbow[4],
-        rainbow[5]
-      ),
-      new UvAlignTestPattern(
-        rainbow[2],
-        rainbow[0],
-        rainbow[6],
-        rainbow[5],
-        rainbow[7]
-      ),
-      new UvAlignTestPattern(
-        rainbow[5],
-        rainbow[6],
-        rainbow[1],
-        rainbow[7],
-        rainbow[3]
-      ),
-      new UvAlignTestPattern(
-        rainbow[4],
-        rainbow[1],
-        rainbow[6],
-        rainbow[2],
-        rainbow[0]
-      ),
-      new UvAlignTestPattern(
-        rainbow[6],
-        rainbow[4],
-        rainbow[5],
-        rainbow[3],
-        rainbow[7]
-      ),
+      cubeSidePattern,
+      cubeSidePattern,
+      cubeSidePattern,
+      cubeSidePattern,
+      cubeSidePattern,
+      cubeSidePattern,
     ]);
 
     const cube = new Cube();
     cube.transform = multiplyMatrices(
-      translation(1.5, 1, 2),
-      rotationY(radians(45))
+      translation(1.75, 1.25, 2.8),
+      multiplyMatrices(rotationY(radians(45)), scaling(1.25, 1.25, 1.25))
     );
     cube.material.pattern = cubeMap;
     cube.material.diffuse = 0.6;

@@ -18,8 +18,8 @@ export class TeaPot implements Scene {
   cameraCfg: CameraConfiguration = {
     fieldOfView: Math.PI / 3,
     viewTransform: viewTransform(
-      point(0, 1.9, -4),
-      point(0, 1, 0),
+      point(0, 1.5, -4),
+      point(0, 0.6, 0),
       vector(0, 1, 0)
     ),
     aperture: 0.006,
