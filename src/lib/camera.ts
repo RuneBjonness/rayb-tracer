@@ -19,7 +19,8 @@ export class Camera {
 
   public aperture: number = 0;
   public focalLength: number = 1;
-  public focalSamplingRate: number = 2;
+  public maxFocalSamples: number = 1;
+  public adaptiveSamplingColorSensitivity: number = 1;
 
   public raysMaxRecursiveDepth: number = 4;
 
@@ -27,6 +28,8 @@ export class Camera {
   private halfHeight: number;
   private invTransform: number[][] = [];
   private origin: Tuple = point(0, 0, 0);
+
+  private uvSampleConfig = this.initUvSampleConfig();
 
   constructor(
     public width: number,
@@ -81,37 +84,106 @@ export class Camera {
     lengthX: number,
     lengthY: number
   ): Canvas {
+    // const debugStats = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     const c = new Canvas(lengthX, lengthY);
     for (let y = 0; y < lengthY; y++) {
       for (let x = 0; x < lengthX; x++) {
-        const samples = this.raysForPixel(startX + x, startY + y).map((r) =>
-          w.colorAt(r, this.raysMaxRecursiveDepth)
-        );
-        c.pixels[x][y] = divideColor(
-          samples.reduce((a, b) => addColors(a, b)),
-          samples.length
-        );
+        const rays = this.raysForPixel(startX + x, startY + y);
+        if (rays.length === 1) {
+          c.pixels[x][y] = w.colorAt(rays[0], this.raysMaxRecursiveDepth);
+        } else {
+          let sumSamples = w.colorAt(rays[0], this.raysMaxRecursiveDepth);
+          let avgSampleColor = sumSamples;
+          let rayPassStartingIndex = 1;
+          for (let p = 1; p < 9; p++) {
+            const currentPassSampleCount = Math.min(
+              this.uvSampleConfig.filter((cfg) => cfg.pass === p).length,
+              rays.length - rayPassStartingIndex
+            );
+
+            for (
+              let r = rayPassStartingIndex;
+              r < rayPassStartingIndex + currentPassSampleCount;
+              r++
+            ) {
+              sumSamples = addColors(
+                sumSamples,
+                w.colorAt(rays[r], this.raysMaxRecursiveDepth)
+              );
+            }
+            const newAvgSampleColor = divideColor(
+              sumSamples,
+              rayPassStartingIndex + currentPassSampleCount
+            );
+
+            if (
+              Math.abs(avgSampleColor[0] - newAvgSampleColor[0]) <
+                this.adaptiveSamplingColorSensitivity &&
+              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <
+                this.adaptiveSamplingColorSensitivity &&
+              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <
+                this.adaptiveSamplingColorSensitivity
+            ) {
+              avgSampleColor = newAvgSampleColor;
+              // debugStats[p]++;
+              break;
+            }
+            avgSampleColor = newAvgSampleColor;
+            rayPassStartingIndex += currentPassSampleCount;
+
+            if (rayPassStartingIndex >= rays.length) {
+              // debugStats[p]++;
+              break;
+            }
+          }
+
+          c.pixels[x][y] = avgSampleColor;
+        }
       }
     }
+    // console.log(debugStats);
     return c;
   }
 
   private sampleApertureOrigins(): Tuple[] {
     const pts: Tuple[] = [];
     const baseOffset = -this.aperture / 2.0;
-    const uvStep = this.aperture / this.focalSamplingRate;
+    const uvStep = this.aperture / 9;
 
-    for (let v = 0; v < this.focalSamplingRate; v++) {
-      for (let u = 0; u < this.focalSamplingRate; u++) {
-        pts.push(
-          point(
-            this.origin[0] + baseOffset + (u + Math.random()) * uvStep,
-            this.origin[1] + baseOffset + (v + Math.random()) * uvStep,
-            this.origin[2]
-          )
-        );
-      }
-    }
-    return pts;
+    return this.uvSampleConfig
+      .slice(0, this.maxFocalSamples)
+      .map((s) => this.getSemiRandomPoint(s.u, s.v, uvStep, baseOffset));
+  }
+
+  private getSemiRandomPoint(
+    u: number,
+    v: number,
+    uvStep: number,
+    baseOffset: number
+  ): Tuple {
+    return point(
+      this.origin[0] + baseOffset + (u + Math.random()) * uvStep,
+      this.origin[1] + baseOffset + (v + Math.random()) * uvStep,
+      this.origin[2]
+    );
+  }
+
+  private initUvSampleConfig() {
+    // prettier-ignore
+    return [
+      0, 7, 4, 8, 2, 8, 4, 7, 1,
+      7, 5, 9, 6, 7, 6, 9, 5, 7,
+      4, 9, 3, 8, 5, 8, 3, 9, 4,
+      8, 6, 8, 6, 7, 6, 8, 6, 8,
+      2, 7, 5, 7, 2, 7, 5, 7, 2,
+      8, 6, 8, 6, 7, 6, 8, 6, 8,
+      4, 9, 3, 8, 5, 8, 3, 9, 4,
+      7, 5, 9, 6, 7, 6, 9, 5, 7,
+      1, 7, 4, 8, 2, 8, 4, 7, 1,
+    ]
+      .map((val, idx) => {
+        return { pass: val, u: Math.floor(idx / 9), v: idx % 9 };
+      })
+      .sort((a, b) => a.pass - b.pass);
   }
 }

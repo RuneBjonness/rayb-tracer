@@ -23,11 +23,10 @@ export enum ScenePreset {
   textureMapping = 'Texture mapping',
   skybox = 'Skybox',
   csgRayBTracer = 'Constructive Solid Geometry',
-  dodecahedron = "Dodecahedron",
-  imageMapping = "Image mapping",
-  patterns = "3D Patterns"
-};
-
+  dodecahedron = 'Dodecahedron',
+  imageMapping = 'Image mapping',
+  patterns = '3D Patterns',
+}
 
 export function loadScene(preset: ScenePreset): Scene {
   switch (preset) {
@@ -61,17 +60,22 @@ export function loadScene(preset: ScenePreset): Scene {
     default:
       return new CsgRb();
   }
-
 }
 
 export function createCamera(
   cameraCfg: CameraConfiguration,
   renderCfg: RenderConfiguration
 ): Camera {
-  const camera = new Camera(renderCfg.width, renderCfg.height, cameraCfg.fieldOfView);
+  const camera = new Camera(
+    renderCfg.width,
+    renderCfg.height,
+    cameraCfg.fieldOfView
+  );
   camera.aperture = renderCfg.forceZeroAperture ? 0 : cameraCfg.aperture;
   camera.focalLength = cameraCfg.focalLength;
-  camera.focalSamplingRate = renderCfg.focalSamplingRate;
+  camera.maxFocalSamples = renderCfg.maxFocalSamples;
+  camera.adaptiveSamplingColorSensitivity =
+    renderCfg.adaptiveFocalSamplingSensitivity;
   camera.transform = cameraCfg.viewTransform;
   camera.raysMaxRecursiveDepth = renderCfg.raysMaxRecursiveDepth;
   return camera;

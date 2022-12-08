@@ -10,7 +10,8 @@ export type RenderConfiguration = {
   maxAreaLightUvSteps: number;
 
   forceZeroAperture: boolean;
-  focalSamplingRate: number;
+  maxFocalSamples: number;
+  adaptiveFocalSamplingSensitivity: number;
 };
 
 export enum RenderQuality {
@@ -18,8 +19,8 @@ export enum RenderQuality {
   low = 'low',
   standard = 'standard',
   high = 'high',
-  ultra = 'ultra'
-};
+  ultra = 'ultra',
+}
 
 export function getRenderConfiguration(
   width: number,
@@ -36,7 +37,8 @@ export function getRenderConfiguration(
       enableAreaLights: false,
       maxAreaLightUvSteps: 0,
       forceZeroAperture: true,
-      focalSamplingRate: 0,
+      maxFocalSamples: 1,
+      adaptiveFocalSamplingSensitivity: 1,
     };
   } else if (quality === RenderQuality.low) {
     return {
@@ -46,8 +48,9 @@ export function getRenderConfiguration(
       raysMaxRecursiveDepth: 3,
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
-      forceZeroAperture: true,
-      focalSamplingRate: 0,
+      forceZeroAperture: false,
+      maxFocalSamples: 4,
+      adaptiveFocalSamplingSensitivity: 1,
     };
   } else if (quality === RenderQuality.standard) {
     return {
@@ -58,7 +61,8 @@ export function getRenderConfiguration(
       enableAreaLights: true,
       maxAreaLightUvSteps: 2,
       forceZeroAperture: false,
-      focalSamplingRate: 2,
+      maxFocalSamples: 21,
+      adaptiveFocalSamplingSensitivity: 0.01,
     };
   } else if (quality === RenderQuality.high) {
     return {
@@ -69,7 +73,8 @@ export function getRenderConfiguration(
       enableAreaLights: true,
       maxAreaLightUvSteps: 3,
       forceZeroAperture: false,
-      focalSamplingRate: 4,
+      maxFocalSamples: 41,
+      adaptiveFocalSamplingSensitivity: 0.01,
     };
   } else {
     return {
@@ -80,7 +85,8 @@ export function getRenderConfiguration(
       enableAreaLights: true,
       maxAreaLightUvSteps: 4,
       forceZeroAperture: false,
-      focalSamplingRate: 8,
+      maxFocalSamples: 64,
+      adaptiveFocalSamplingSensitivity: 0.001,
     };
   }
 }
