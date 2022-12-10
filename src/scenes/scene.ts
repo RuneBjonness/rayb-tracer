@@ -10,6 +10,7 @@ import { Patterns } from './patterns';
 import { Skybox } from './skybox';
 import { TeaPot } from './teapot';
 import { TextureMapping } from './texture-mapping';
+import { MarbleMadness } from './marble-madness';
 
 export interface Scene {
   configureWorld(renderCfg: RenderConfiguration): World;
@@ -26,6 +27,7 @@ export enum ScenePreset {
   dodecahedron = 'Dodecahedron',
   imageMapping = 'Image mapping',
   patterns = '3D Patterns',
+  marbleMadness = 'Marble madness',
 }
 
 export function loadScene(preset: ScenePreset): Scene {
@@ -56,6 +58,9 @@ export function loadScene(preset: ScenePreset): Scene {
 
     case ScenePreset.textureMapping:
       return new TextureMapping();
+
+    case ScenePreset.marbleMadness:
+      return new MarbleMadness();
 
     default:
       return new CsgRb();
