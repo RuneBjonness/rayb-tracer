@@ -11,6 +11,10 @@ import { Skybox } from './skybox';
 import { TeaPot } from './teapot';
 import { TextureMapping } from './texture-mapping';
 import { MarbleMadness } from './marble-madness';
+import {
+  CornellBoxMatteDiffuse,
+  CornellBoxTransparency,
+} from './cornell-box-scenes';
 
 export interface Scene {
   configureWorld(renderCfg: RenderConfiguration): World;
@@ -28,6 +32,8 @@ export enum ScenePreset {
   imageMapping = 'Image mapping',
   patterns = '3D Patterns',
   marbleMadness = 'Marble madness',
+  cornellBoxTransparency = 'Cornell Box: Transparency',
+  cornellBoxMatteDiffuse = 'Cornell Box: Matte Diffuse',
 }
 
 export function loadScene(preset: ScenePreset): Scene {
@@ -61,6 +67,12 @@ export function loadScene(preset: ScenePreset): Scene {
 
     case ScenePreset.marbleMadness:
       return new MarbleMadness();
+
+    case ScenePreset.cornellBoxTransparency:
+      return new CornellBoxTransparency();
+
+    case ScenePreset.cornellBoxMatteDiffuse:
+      return new CornellBoxMatteDiffuse();
 
     default:
       return new CsgRb();
