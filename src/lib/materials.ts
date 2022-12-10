@@ -50,12 +50,9 @@ export function lighting(
   normalv: Tuple,
   lightIntensity: number
 ): Color {
-  let mColor: Color;
-  if (shape.material.pattern) {
-    mColor = shape.material.pattern.colorAt(shape, point);
-  } else {
-    mColor = shape.material.color;
-  }
+  const mColor = shape.material.pattern
+    ? shape.material.pattern.colorAt(shape, point)
+    : shape.material.color;
   const effectiveColor = multiplyColors(mColor, light.intensity);
   const ambient = multiplyColorByScalar(effectiveColor, shape.material.ambient);
 
@@ -63,43 +60,110 @@ export function lighting(
     return ambient;
   }
 
-  let sum = color(0, 0, 0);
   const specularLight = multiplyColorByScalar(
     light.intensity,
     shape.material.specular
   );
   const lightSamples = light.samplePoints();
 
-  lightSamples.forEach((lightSample) => {
-    const lightv = normalize(subtract(lightSample, point));
-    let diffuse: Color, specular: Color;
-    const lightDotNormal = dot(lightv, normalv);
+  let sumSamples = lightingSample(
+    lightSamples[0],
+    point,
+    eyev,
+    normalv,
+    shape.material,
+    effectiveColor,
+    specularLight
+  );
+  let avgSample = sumSamples;
 
-    if (lightDotNormal < 0) {
-      diffuse = color(0, 0, 0);
-      specular = color(0, 0, 0);
-    } else {
-      diffuse = multiplyColorByScalar(
-        multiplyColorByScalar(effectiveColor, shape.material.diffuse),
-        lightDotNormal
+  if (light.maxSamples > 1) {
+    let passStartingIndex = 1;
+
+    for (let p = 1; p < 7; p++) {
+      const currentPassSampleCount = Math.min(
+        light.samplePassCounts[p],
+        lightSamples.length - passStartingIndex
       );
 
-      const reflectv = reflect(negate(lightv), normalv);
-      const reflectDotEye = dot(reflectv, eyev);
-      if (reflectDotEye <= 0) {
-        specular = color(0, 0, 0);
-      } else {
-        specular = multiplyColorByScalar(
-          specularLight,
-          Math.pow(reflectDotEye, shape.material.shininess)
+      for (
+        let i = passStartingIndex;
+        i < passStartingIndex + currentPassSampleCount;
+        i++
+      ) {
+        sumSamples = addColors(
+          sumSamples,
+          lightingSample(
+            lightSamples[i],
+            point,
+            eyev,
+            normalv,
+            shape.material,
+            effectiveColor,
+            specularLight
+          )
         );
       }
-    }
-    sum = addColors(addColors(sum, diffuse), specular);
-  });
+      const newAvgSampleColor = divideColor(
+        sumSamples,
+        passStartingIndex + currentPassSampleCount
+      );
 
-  return addColors(
-    ambient,
-    multiplyColorByScalar(divideColor(sum, lightSamples.length), lightIntensity)
-  );
+      if (
+        Math.abs(avgSample[0] - newAvgSampleColor[0]) <=
+          light.adaptiveSampleSensitivity &&
+        Math.abs(avgSample[1] - newAvgSampleColor[1]) <=
+          light.adaptiveSampleSensitivity &&
+        Math.abs(avgSample[1] - newAvgSampleColor[1]) <=
+          light.adaptiveSampleSensitivity
+      ) {
+        avgSample = newAvgSampleColor;
+        break;
+      }
+      avgSample = newAvgSampleColor;
+      passStartingIndex += currentPassSampleCount;
+
+      if (passStartingIndex >= lightSamples.length) {
+        break;
+      }
+    }
+  }
+
+  return addColors(ambient, multiplyColorByScalar(avgSample, lightIntensity));
+}
+
+function lightingSample(
+  lightSample: Tuple,
+  point: Tuple,
+  eyev: Tuple,
+  normalv: Tuple,
+  material: Material,
+  effectiveColor: Color,
+  specularLight: Color
+): Color {
+  const lightv = normalize(subtract(lightSample, point));
+  let diffuse: Color, specular: Color;
+  const lightDotNormal = dot(lightv, normalv);
+
+  if (lightDotNormal < 0) {
+    diffuse = color(0, 0, 0);
+    specular = color(0, 0, 0);
+  } else {
+    diffuse = multiplyColorByScalar(
+      multiplyColorByScalar(effectiveColor, material.diffuse),
+      lightDotNormal
+    );
+
+    const reflectv = reflect(negate(lightv), normalv);
+    const reflectDotEye = dot(reflectv, eyev);
+    if (reflectDotEye <= 0) {
+      specular = color(0, 0, 0);
+    } else {
+      specular = multiplyColorByScalar(
+        specularLight,
+        Math.pow(reflectDotEye, material.shininess)
+      );
+    }
+  }
+  return addColors(diffuse, specular);
 }

@@ -117,11 +117,11 @@ export class Camera {
             );
 
             if (
-              Math.abs(avgSampleColor[0] - newAvgSampleColor[0]) <
+              Math.abs(avgSampleColor[0] - newAvgSampleColor[0]) <=
                 this.adaptiveSamplingColorSensitivity &&
-              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <
+              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <=
                 this.adaptiveSamplingColorSensitivity &&
-              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <
+              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <=
                 this.adaptiveSamplingColorSensitivity
             ) {
               avgSampleColor = newAvgSampleColor;
@@ -146,7 +146,6 @@ export class Camera {
   }
 
   private sampleApertureOrigins(): Tuple[] {
-    const pts: Tuple[] = [];
     const baseOffset = -this.aperture / 2.0;
     const uvStep = this.aperture / 9;
 
@@ -171,11 +170,11 @@ export class Camera {
   private initUvSampleConfig() {
     // prettier-ignore
     return [
-      0, 7, 4, 8, 2, 8, 4, 7, 1,
+      1, 7, 4, 8, 2, 8, 4, 7, 1,
       7, 5, 9, 6, 7, 6, 9, 5, 7,
       4, 9, 3, 8, 5, 8, 3, 9, 4,
       8, 6, 8, 6, 7, 6, 8, 6, 8,
-      2, 7, 5, 7, 2, 7, 5, 7, 2,
+      2, 7, 5, 7, 0, 7, 5, 7, 2,
       8, 6, 8, 6, 7, 6, 8, 6, 8,
       4, 9, 3, 8, 5, 8, 3, 9, 4,
       7, 5, 9, 6, 7, 6, 9, 5, 7,

@@ -1,6 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
-import { AreaLight, PointLight } from '../lib/lights';
+import { AreaLight } from '../lib/lights';
 import { multiplyMatrices } from '../lib/matrices';
 import {
   TextureMap,
@@ -11,10 +11,7 @@ import {
   SphericalMapper,
   CylindricalMapper,
 } from '../lib/patterns/texture-mapping/uv-mappers';
-import {
-  CheckersUvPattern,
-  UvAlignTestPattern,
-} from '../lib/patterns/texture-mapping/uv-patterns';
+import { CheckersUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
 import { Cube } from '../lib/shapes/primitives/cube';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -45,16 +42,14 @@ export class TextureMapping implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      renderCfg.enableAreaLights
-        ? new AreaLight(
-          point(-5.5, 3.5, -5),
-          vector(3, 0, 0),
-          renderCfg.maxAreaLightUvSteps,
-          vector(0, 3, 0),
-          renderCfg.maxAreaLightUvSteps,
-          color(1.5, 1.5, 1.5)
-        )
-        : new PointLight(point(-5.5, 3.5, -5), color(1.5, 1.5, 1.5))
+      new AreaLight(
+        point(-5.5, 3.5, -5),
+        vector(3, 0, 0),
+        vector(0, 3, 0),
+        color(1.5, 1.5, 1.5),
+        renderCfg.maxLightSamples,
+        renderCfg.adaptiveLightSamplingSensitivity
+      )
     );
 
     const lamp = new Cube();

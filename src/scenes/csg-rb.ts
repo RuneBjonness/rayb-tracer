@@ -1,5 +1,5 @@
 import { CameraConfiguration } from './configuration';
-import { AreaLight, PointLight } from '../lib/lights';
+import { AreaLight } from '../lib/lights';
 import { material } from '../lib/materials';
 import { multiplyMatrices } from '../lib/matrices';
 import { CsgShape } from '../lib/shapes/csg-shape';
@@ -42,16 +42,14 @@ export class CsgRb implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      renderCfg.enableAreaLights
-        ? new AreaLight(
-          point(-2, 2.5, -2.5),
-          vector(2, 0, 0),
-          renderCfg.maxAreaLightUvSteps,
-          vector(0, 0, 2),
-          renderCfg.maxAreaLightUvSteps,
-          color(1.5, 1.5, 1.5)
-        )
-        : new PointLight(point(-2, 2.5, -2.5), color(1.5, 1.5, 1.5))
+      new AreaLight(
+        point(-2, 2.5, -2.5),
+        vector(2, 0, 0),
+        vector(0, 0, 2),
+        color(1.5, 1.5, 1.5),
+        renderCfg.maxLightSamples,
+        renderCfg.adaptiveLightSamplingSensitivity
+      )
     );
 
     const f = new Plane();

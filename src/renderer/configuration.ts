@@ -6,8 +6,8 @@ export type RenderConfiguration = {
 
   raysMaxRecursiveDepth: number;
 
-  enableAreaLights: boolean;
-  maxAreaLightUvSteps: number;
+  maxLightSamples: number;
+  adaptiveLightSamplingSensitivity: number;
 
   forceZeroAperture: boolean;
   maxFocalSamples: number;
@@ -20,6 +20,7 @@ export enum RenderQuality {
   standard = 'standard',
   high = 'high',
   ultra = 'ultra',
+  extreme = 'extreme',
 }
 
 export function getRenderConfiguration(
@@ -34,8 +35,8 @@ export function getRenderConfiguration(
       height: height,
       numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 2,
-      enableAreaLights: false,
-      maxAreaLightUvSteps: 0,
+      maxLightSamples: 1,
+      adaptiveLightSamplingSensitivity: 1,
       forceZeroAperture: true,
       maxFocalSamples: 1,
       adaptiveFocalSamplingSensitivity: 1,
@@ -46,8 +47,8 @@ export function getRenderConfiguration(
       height: height,
       numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 3,
-      enableAreaLights: true,
-      maxAreaLightUvSteps: 2,
+      maxLightSamples: 4,
+      adaptiveLightSamplingSensitivity: 1,
       forceZeroAperture: false,
       maxFocalSamples: 4,
       adaptiveFocalSamplingSensitivity: 1,
@@ -58,8 +59,8 @@ export function getRenderConfiguration(
       height: height,
       numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 4,
-      enableAreaLights: true,
-      maxAreaLightUvSteps: 2,
+      maxLightSamples: 17,
+      adaptiveLightSamplingSensitivity: 0.05,
       forceZeroAperture: false,
       maxFocalSamples: 21,
       adaptiveFocalSamplingSensitivity: 0.01,
@@ -70,23 +71,35 @@ export function getRenderConfiguration(
       height: height,
       numberOfWorkers: numberOfWorkers,
       raysMaxRecursiveDepth: 4,
-      enableAreaLights: true,
-      maxAreaLightUvSteps: 3,
+      maxLightSamples: 29,
+      adaptiveLightSamplingSensitivity: 0.02,
       forceZeroAperture: false,
       maxFocalSamples: 41,
       adaptiveFocalSamplingSensitivity: 0.01,
+    };
+  } else if (quality === RenderQuality.ultra) {
+    return {
+      width: width,
+      height: height,
+      numberOfWorkers: numberOfWorkers,
+      raysMaxRecursiveDepth: 6,
+      maxLightSamples: 41,
+      adaptiveLightSamplingSensitivity: 0.001,
+      forceZeroAperture: false,
+      maxFocalSamples: 73,
+      adaptiveFocalSamplingSensitivity: 0.001,
     };
   } else {
     return {
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
-      raysMaxRecursiveDepth: 6,
-      enableAreaLights: true,
-      maxAreaLightUvSteps: 4,
+      raysMaxRecursiveDepth: 8,
+      maxLightSamples: 49,
+      adaptiveLightSamplingSensitivity: -1,
       forceZeroAperture: false,
-      maxFocalSamples: 64,
-      adaptiveFocalSamplingSensitivity: 0.001,
+      maxFocalSamples: 81,
+      adaptiveFocalSamplingSensitivity: -1,
     };
   }
 }

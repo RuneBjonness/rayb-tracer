@@ -1,6 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
-import { AreaLight, PointLight } from '../lib/lights';
+import { AreaLight } from '../lib/lights';
 import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -26,16 +26,14 @@ export class Marbles implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      renderCfg.enableAreaLights
-        ? new AreaLight(
-          point(-4, 4, -3),
-          vector(2, 0, 0),
-          renderCfg.maxAreaLightUvSteps,
-          vector(0, 2, 0),
-          renderCfg.maxAreaLightUvSteps,
-          color(1.5, 1.5, 1.5)
-        )
-        : new PointLight(point(-3.5, 4.5, -2.5), color(1.5, 1.5, 1.5))
+      new AreaLight(
+        point(-4, 4, -3),
+        vector(2, 0, 0),
+        vector(0, 2, 0),
+        color(1.5, 1.5, 1.5),
+        renderCfg.maxLightSamples,
+        renderCfg.adaptiveLightSamplingSensitivity
+      )
     );
 
     const lamp = new Sphere();

@@ -1,4 +1,4 @@
-import { AreaLight, PointLight } from '../lib/lights';
+import { AreaLight } from '../lib/lights';
 import { multiplyMatrices } from '../lib/matrices';
 import { scaling, viewTransform, rotationX } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
@@ -33,16 +33,14 @@ export class TeaPot implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      renderCfg.enableAreaLights
-        ? new AreaLight(
-          point(-2.5, 3.5, -2.5),
-          vector(2, 0, 0),
-          renderCfg.maxAreaLightUvSteps,
-          vector(0, 2, 0),
-          renderCfg.maxAreaLightUvSteps,
-          color(1, 1, 1)
-        )
-        : new PointLight(point(-2.5, 3.5, -2.5), color(1.5, 1.5, 1.5))
+      new AreaLight(
+        point(-2.5, 3.5, -2.5),
+        vector(2, 0, 0),
+        vector(0, 2, 0),
+        color(1, 1, 1),
+        renderCfg.maxLightSamples,
+        renderCfg.adaptiveLightSamplingSensitivity
+      )
     );
 
     const f = new Plane();
@@ -60,7 +58,9 @@ export class TeaPot implements Scene {
   private teapotObj(): Shape {
     const parser = new ObjParser();
     parser.currentMaterial.color = color(0.3, 0.73, 0.78);
-    const model = parser.parse(this.highRes ? teapotObjFile : teapotLowResObjFile);
+    const model = parser.parse(
+      this.highRes ? teapotObjFile : teapotLowResObjFile
+    );
     model.transform = multiplyMatrices(
       scaling(0.1, 0.1, 0.1),
       rotationX(-Math.PI / 2)

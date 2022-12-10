@@ -5,9 +5,16 @@ export interface Light {
   intensity: Color;
   intensityAt(p: Tuple, w: World): number;
   samplePoints(): Tuple[];
+  samplePassCounts: number[];
+  maxSamples: number;
+  adaptiveSampleSensitivity: number;
 }
 
 export class PointLight implements Light {
+  public samplePassCounts = [1];
+  public maxSamples = 1;
+  public adaptiveSampleSensitivity = 1;
+
   constructor(private position: Tuple, public intensity: Color) {}
 
   samplePoints(): Tuple[] {
@@ -20,50 +27,112 @@ export class PointLight implements Light {
 }
 
 export class AreaLight implements Light {
+  public samplePassCounts = new Array<number>(7);
+
   private uVec: Tuple;
   private vVec: Tuple;
-  private samples: number;
+  private uvSampleConfig = this.initUvSampleConfig();
 
   constructor(
     private corner: Tuple,
     fullUvec: Tuple,
-    private uSteps: number,
     fullVvec: Tuple,
-    private vSteps: number,
-    public intensity: Color
+    public intensity: Color,
+    public maxSamples: number,
+    public adaptiveSampleSensitivity: number
   ) {
-    this.samples = uSteps * vSteps;
-    this.uVec = divide(fullUvec, uSteps);
-    this.vVec = divide(fullVvec, vSteps);
+    this.uVec = divide(fullUvec, 7);
+    this.vVec = divide(fullVvec, 7);
+
+    for (let i = 0; i < this.samplePassCounts.length; i++) {
+      this.samplePassCounts[i] = this.uvSampleConfig.filter(
+        (cfg) => cfg.pass === i
+      ).length;
+    }
   }
 
   samplePoints(): Tuple[] {
-    const pts: Tuple[] = [];
-    for (let v = 0; v < this.vSteps; v++) {
-      for (let u = 0; u < this.uSteps; u++) {
-        pts.push(this.pointOnLight(u, v));
-      }
+    if (this.maxSamples === 1) {
+      return [this.pointOnLight(3, 3, false)];
     }
-    return pts;
+
+    return this.uvSampleConfig
+      .slice(0, this.maxSamples)
+      .map((s) => this.pointOnLight(s.u, s.v));
   }
 
   intensityAt(p: Tuple, w: World): number {
-    let total = 0.0;
-    this.samplePoints().forEach((sp) => {
-      if (!w.isShadowed(p, sp)) {
-        total += 1.0;
+    if (this.maxSamples === 1) {
+      return w.isShadowed(p, this.pointOnLight(3, 3, false)) ? 0.0 : 1.0;
+    }
+
+    const samples = this.samplePoints();
+    let sumSampleIntensity = w.isShadowed(p, samples[0]) ? 0.0 : 1.0;
+    let avgSampleIntensity = sumSampleIntensity;
+    let passStartingIndex = 1;
+
+    for (let pass = 1; pass < 7; pass++) {
+      const currentPassSampleCount = Math.min(
+        this.samplePassCounts[pass],
+        samples.length - passStartingIndex
+      );
+
+      for (
+        let pi = passStartingIndex;
+        pi < passStartingIndex + currentPassSampleCount;
+        pi++
+      ) {
+        if (!w.isShadowed(p, samples[pi])) {
+          sumSampleIntensity += 1.0;
+        }
       }
-    });
-    return total / this.samples;
+      const newAvgSampleIntensity =
+        sumSampleIntensity / (passStartingIndex + currentPassSampleCount);
+
+      if (
+        Math.abs(avgSampleIntensity - newAvgSampleIntensity) <=
+        this.adaptiveSampleSensitivity
+      ) {
+        avgSampleIntensity = newAvgSampleIntensity;
+        break;
+      }
+      avgSampleIntensity = newAvgSampleIntensity;
+      passStartingIndex += currentPassSampleCount;
+
+      if (passStartingIndex >= samples.length) {
+        break;
+      }
+    }
+    return avgSampleIntensity;
   }
 
-  private pointOnLight(u: number, v: number): Tuple {
+  private pointOnLight(u: number, v: number, applyNoise = true): Tuple {
     return add(
       this.corner,
       add(
-        multiplyTupleByScalar(this.uVec, u + Math.random()),
-        multiplyTupleByScalar(this.vVec, v + Math.random())
+        multiplyTupleByScalar(
+          this.uVec,
+          u + (applyNoise ? Math.random() : 0.5)
+        ),
+        multiplyTupleByScalar(this.vVec, v + (applyNoise ? Math.random() : 0.5))
       )
     );
+  }
+
+  private initUvSampleConfig() {
+    // prettier-ignore
+    return [
+      1, 4, 5, 2, 5, 4, 1,
+      4, 3, 6, 3, 6, 3, 4,
+      5, 6, 4, 5, 4, 6, 5,
+      2, 3, 5, 0, 5, 3, 2,
+      5, 6, 4, 5, 4, 6, 5,
+      4, 3, 6, 3, 6, 3, 4,
+      1, 4, 5, 2, 5, 4, 1,
+    ]
+      .map((val, idx) => {
+        return { pass: val, u: Math.floor(idx / 7), v: idx % 7 };
+      })
+      .sort((a, b) => a.pass - b.pass);
   }
 }
