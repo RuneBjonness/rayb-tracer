@@ -11,6 +11,7 @@ import { Skybox } from './skybox';
 import { TeaPot } from './teapot';
 import { TextureMapping } from './texture-mapping';
 import { MarbleMadness } from './marble-madness';
+import { MarbleMadness2 } from './marble-madness-2';
 import {
   CornellBoxMatteDiffuse,
   CornellBoxTransparency,
@@ -32,6 +33,7 @@ export enum ScenePreset {
   imageMapping = 'Image mapping',
   patterns = '3D Patterns',
   marbleMadness = 'Marble madness',
+  marbleMadness2 = 'Marble madness 2',
   cornellBoxTransparency = 'Cornell Box: Transparency',
   cornellBoxMatteDiffuse = 'Cornell Box: Matte Diffuse',
 }
@@ -67,6 +69,9 @@ export function loadScene(preset: ScenePreset): Scene {
 
     case ScenePreset.marbleMadness:
       return new MarbleMadness();
+
+    case ScenePreset.marbleMadness2:
+      return new MarbleMadness2();
 
     case ScenePreset.cornellBoxTransparency:
       return new CornellBoxTransparency();
