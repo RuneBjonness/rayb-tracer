@@ -58,7 +58,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
   const world = new World();
   world.lights.push(
     new AreaLight(
-      point(-1, 4.95, 1),
+      point(-1, 4.999, 1),
       vector(2, 0, 0),
       vector(0, 0, 2),
       color(1, 1, 1),
@@ -72,11 +72,15 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
   lamp.material.diffuse = 0;
   lamp.material.specular = 0;
   lamp.material.ambient = 1;
-  lamp.transform = multiplyMatrices(translation(0, 5, 2), scaling(1, 0.01, 1));
+  lamp.transform = multiplyMatrices(
+    translation(0, 5, 2),
+    scaling(1, 0.0001, 1)
+  );
   world.objects.push(lamp);
 
   const floor = new Plane();
   floor.material = wallMaterial(color(1, 1, 1));
+  floor.transform = translation(0, -0.001, 0);
 
   const ceiling = new Plane();
   ceiling.material = wallMaterial(color(1, 1, 1));
