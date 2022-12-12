@@ -31,9 +31,9 @@ export class World {
 
   intersects(r: Ray): Intersection[] {
     const intersections: Intersection[] = [];
-    this.objects.forEach((obj) => {
-      intersections.push(...obj.intersects(r));
-    });
+    for (let i = 0; i < this.objects.length; i++) {
+      intersections.push(...this.objects[i].intersects(r));
+    };
 
     return intersections.sort((a, b) => a.time - b.time);
   }

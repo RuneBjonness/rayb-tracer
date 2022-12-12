@@ -1,12 +1,20 @@
-import { Canvas } from '../lib/canvas';
 import { RenderConfiguration } from '../renderer/configuration';
 import { ScenePreset } from '../scenes/scene';
 import RenderWorker from './renderer-worker?worker';
 
-const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, cfg: RenderConfiguration, onProgress: (pixels: number) => void) => {
+const render = (
+  ctx: CanvasRenderingContext2D,
+  scenePreset: ScenePreset | null,
+  cfg: RenderConfiguration,
+  onProgress: (pixels: number) => void
+) => {
   if (scenePreset == null) {
-    ctx!.clearRect(0, 0, cfg.width, cfg.height);
+    ctx!.fillRect(0, 0, cfg.width, cfg.height);
     return;
+  } else {
+    ctx!.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx!.fillRect(0, 0, cfg.width, cfg.height);
+    ctx!.fillStyle = 'black';
   }
 
   const startTime = performance.now();
@@ -18,15 +26,21 @@ const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, 
     w: number;
     h: number;
   };
+  const chunkHeight = Math.min(
+    16,
+    Math.floor(cfg.height / cfg.numberOfWorkers)
+  );
   const canvasParts: CanvasPart[] = [];
-  for (let i = 0; i < cfg.height; i++) {
+  for (let i = 0; i < cfg.height / chunkHeight; i++) {
     canvasParts.push({
       x: 0,
-      y: i,
+      y: i * chunkHeight,
       w: cfg.width,
-      h: 1,
+      h: chunkHeight,
     });
   }
+  canvasParts[canvasParts.length - 1].h =
+    cfg.height - canvasParts[canvasParts.length - 1].y;
 
   for (let i = canvasParts.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -35,34 +49,30 @@ const render = (ctx: CanvasRenderingContext2D, scenePreset: ScenePreset | null, 
 
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
     const worker = new RenderWorker();
-    worker.postMessage([
-      'init', scenePreset, cfg
-    ]);
+    worker.postMessage({ command: 'init', scenePreset, renderCfg: cfg });
 
     worker.onmessage = function (e) {
       const next = canvasParts.pop();
       if (next) {
-        worker.postMessage(['render', next]);
+        worker.postMessage({ command: 'render', cp: next });
       } else {
-        worker.terminate();
         console.log(
           `   --Worker #${i} terminated after ${(
             (performance.now() - startTime) /
             1000
-          ).toFixed(2)} s`
+          ).toFixed(3)} s`
         );
+        worker.terminate();
       }
 
-      const cp: CanvasPart = e.data[0];
-      const c = new Canvas(cp.w, cp.h);
-      c.pixels = (e.data[1] as Canvas).pixels;
-      ctx!.putImageData(c.getImageData(), cp.x, cp.y);
-      onProgress(cp.w);
+      const cp: CanvasPart = e.data.cp;
+      ctx!.putImageData(e.data.imageData, cp.x, cp.y);
+      onProgress(cp.w * cp.h);
     };
 
     const cp = canvasParts.pop();
     if (cp) {
-      worker.postMessage(['render', cp]);
+      worker.postMessage({ command: 'render', cp });
     }
   }
 };
