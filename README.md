@@ -21,7 +21,7 @@ Marbles with reflective and refractive surfaces rendered with a shallow depth of
 
 Basic support for the OBJ file format
 
-![Teapot](./examples/rayb-tracer-teapot.png)
+![Teapot](./examples/rayb-tracer-teapot_2560x1440.png)
 
 ## Texture mapping
 
