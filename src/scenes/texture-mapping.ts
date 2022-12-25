@@ -22,6 +22,7 @@ import {
   viewTransform,
   rotationY,
   radians,
+  rotationZ,
 } from '../lib/transformations';
 import { point, vector, color } from '../lib/tuples';
 import { World } from '../lib/world';
@@ -41,26 +42,16 @@ export class TextureMapping implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(-5.5, 3.5, -5),
-        vector(3, 0, 0),
-        vector(0, 3, 0),
-        color(1.5, 1.5, 1.5),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const lamp = new AreaLight(
+      color(1.5, 1.5, 1.5),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
     );
-
-    const lamp = new Cube();
-    lamp.material.color = color(1.5, 1.5, 1.5);
-    lamp.material.diffuse = 0;
-    lamp.material.specular = 0;
-    lamp.material.ambient = 1;
     lamp.transform = multiplyMatrices(
-      translation(-4, 5, -5.1),
-      scaling(1, 1, 0.01)
+      translation(-4, 5, -4),
+      multiplyMatrices(rotationY(radians(-45)), rotationZ(radians(90)))
     );
+    world.lights.push(lamp);
     world.objects.push(lamp);
 
     const f = new Plane();

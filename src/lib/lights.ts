@@ -1,13 +1,28 @@
-import { add, Color, divide, multiplyTupleByScalar, Tuple } from './tuples';
+import { identityMatrix, multiplyMatrices } from './matrices';
+import { Photon } from './photon-mapper';
+import { Cube } from './shapes/primitives/cube';
+import { scaling } from './transformations';
+import {
+  add,
+  Color,
+  divide,
+  multiplyColorByScalar,
+  multiplyTupleByScalar,
+  point,
+  Tuple,
+  vector,
+} from './tuples';
 import { World } from './world';
 
 export interface Light {
   intensity: Color;
-  intensityAt(p: Tuple, w: World): number;
-  samplePoints(): Tuple[];
   samplePassCounts: number[];
   maxSamples: number;
   adaptiveSampleSensitivity: number;
+
+  intensityAt(p: Tuple, w: World): number;
+  samplePoints(): Tuple[];
+  emitPhotons(count: number, powerFactor: number): Photon[];
 }
 
 export class PointLight implements Light {
@@ -24,25 +39,56 @@ export class PointLight implements Light {
   intensityAt(p: Tuple, w: World): number {
     return w.isShadowed(p, this.samplePoints()[0]) ? 0.0 : 1.0;
   }
+
+  emitPhotons(count: number, powerFactor: number): Photon[] {
+    const photons = new Array<Photon>(count);
+    for (let i = 0; i < count; i++) {
+      photons[i] = {
+        position: this.position,
+        direction: vector(
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1
+        ),
+        interactedWithSpecular: false,
+        power: multiplyColorByScalar(this.intensity, powerFactor),
+      };
+    }
+    return photons;
+  }
 }
 
-export class AreaLight implements Light {
+export class AreaLight extends Cube implements Light {
+  public get transform() {
+    return super.transform;
+  }
+  public set transform(m: number[][]) {
+    super.transform = multiplyMatrices(m, scaling(1, 0.0001, 1));
+  }
+
   public samplePassCounts = new Array<number>(7);
 
+  private corner: Tuple;
   private uVec: Tuple;
   private vVec: Tuple;
   private uvSampleConfig = this.initUvSampleConfig();
 
   constructor(
-    private corner: Tuple,
-    fullUvec: Tuple,
-    fullVvec: Tuple,
     public intensity: Color,
     public maxSamples: number,
     public adaptiveSampleSensitivity: number
   ) {
-    this.uVec = divide(fullUvec, 7);
-    this.vVec = divide(fullVvec, 7);
+    super();
+    this.transform = identityMatrix();
+
+    this.material.color = intensity;
+    this.material.diffuse = 0;
+    this.material.specular = 0;
+    this.material.ambient = 1;
+
+    this.corner = point(-1, -1.001, -1);
+    this.uVec = divide(vector(2, 0, 0), 7);
+    this.vVec = divide(vector(0, 0, 2), 7);
 
     for (let i = 0; i < this.samplePassCounts.length; i++) {
       this.samplePassCounts[i] = this.uvSampleConfig.filter(
@@ -106,15 +152,38 @@ export class AreaLight implements Light {
     return avgSampleIntensity;
   }
 
-  private pointOnLight(u: number, v: number, applyNoise = true): Tuple {
-    return add(
-      this.corner,
-      add(
-        multiplyTupleByScalar(
-          this.uVec,
-          u + (applyNoise ? Math.random() : 0.5)
+  emitPhotons(count: number, powerFactor: number): Photon[] {
+    const photons = new Array<Photon>(count);
+    for (let i = 0; i < count; i++) {
+      let samplePos = this.uvSampleConfig[i % this.uvSampleConfig.length];
+      photons[i] = {
+        position: this.pointOnLight(samplePos.u, samplePos.v),
+        direction: vector(
+          Math.random() * 2 - 1,
+          -Math.random(),
+          Math.random() * 2 - 1
         ),
-        multiplyTupleByScalar(this.vVec, v + (applyNoise ? Math.random() : 0.5))
+        interactedWithSpecular: false,
+        power: multiplyColorByScalar(this.intensity, powerFactor),
+      };
+    }
+    return photons;
+  }
+
+  private pointOnLight(u: number, v: number, applyNoise = true): Tuple {
+    return this.pointToWorld(
+      add(
+        this.corner,
+        add(
+          multiplyTupleByScalar(
+            this.uVec,
+            u + (applyNoise ? Math.random() : 0.5)
+          ),
+          multiplyTupleByScalar(
+            this.vVec,
+            v + (applyNoise ? Math.random() : 0.5)
+          )
+        )
       )
     );
   }

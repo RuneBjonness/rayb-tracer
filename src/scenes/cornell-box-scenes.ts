@@ -56,26 +56,15 @@ function cornellBoxCameraConfiguration(): CameraConfiguration {
 
 function emptyCornellBox(renderCfg: RenderConfiguration): World {
   const world = new World();
-  world.lights.push(
-    new AreaLight(
-      point(-1, 4.999, 1),
-      vector(2, 0, 0),
-      vector(0, 0, 2),
-      color(1, 1, 1),
-      renderCfg.maxLightSamples,
-      renderCfg.adaptiveLightSamplingSensitivity
-    )
-  );
 
-  const lamp = new Cube();
-  lamp.material.color = color(1.5, 1.5, 1.5);
-  lamp.material.diffuse = 0;
-  lamp.material.specular = 0;
-  lamp.material.ambient = 1;
-  lamp.transform = multiplyMatrices(
-    translation(0, 5, 2),
-    scaling(1, 0.0001, 1)
+  const lamp = new AreaLight(
+    color(1, 1, 1),
+    renderCfg.maxLightSamples,
+    renderCfg.adaptiveLightSamplingSensitivity
   );
+  lamp.transform = translation(0, 5, 2);
+
+  world.lights.push(lamp);
   world.objects.push(lamp);
 
   const floor = new Plane();

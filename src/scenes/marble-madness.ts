@@ -12,6 +12,7 @@ import {
   viewTransform,
   radians,
   rotationY,
+  rotationZ,
 } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
@@ -32,26 +33,17 @@ export class MarbleMadness implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(-4, 4, -3),
-        vector(2, 0, 0),
-        vector(0, 2, 0),
-        color(1.5, 1.5, 1.5),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const lamp = new AreaLight(
+      color(1.5, 1.5, 1.5),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
+    );
+    lamp.transform = multiplyMatrices(
+      translation(-7, 6, -3),
+      rotationZ(radians(30))
     );
 
-    const lamp = new Sphere();
-    lamp.material.color = color(1.5, 1.5, 1.5);
-    lamp.material.diffuse = 0;
-    lamp.material.specular = 0;
-    lamp.material.ambient = 1;
-    lamp.transform = multiplyMatrices(
-      translation(-5, 6, -3),
-      scaling(0.75, 0.75, 0.75)
-    );
+    world.lights.push(lamp);
     world.objects.push(lamp);
 
     const floor = new Plane();

@@ -60,6 +60,11 @@ export abstract class Shape {
     return this.parent ? this.parent.normalToWorld(normal) : normal;
   }
 
+  pointToWorld(p: Tuple): Tuple {
+    let point = multiplyMatrixByTuple(this.transform, p);
+    return this.parent ? this.parent.pointToWorld(point) : point;
+  }
+
   divide(threshold: number): void {
     return;
   }

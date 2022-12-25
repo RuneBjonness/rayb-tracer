@@ -6,7 +6,14 @@ import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
-import { translation, scaling, viewTransform } from '../lib/transformations';
+import {
+  translation,
+  scaling,
+  viewTransform,
+  rotationZ,
+  radians,
+  rotationX,
+} from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
@@ -25,27 +32,28 @@ export class Marbles implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(-4, 4, -3),
-        vector(2, 0, 0),
-        vector(0, 2, 0),
-        color(1.5, 1.5, 1.5),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const light = new AreaLight(
+      color(1.5, 1.5, 1.5),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
     );
-
-    const lamp = new Sphere();
-    lamp.material.color = color(1.5, 1.5, 1.5);
-    lamp.material.diffuse = 0;
-    lamp.material.specular = 0;
-    lamp.material.ambient = 1;
-    lamp.transform = multiplyMatrices(
+    light.transform = multiplyMatrices(
       translation(-5, 6, -3),
-      scaling(0.75, 0.75, 0.75)
+      scaling(2, 2, 2)
     );
-    world.objects.push(lamp);
+    world.lights.push(light);
+    world.objects.push(light);
+
+    // const lamp = new Sphere();
+    // lamp.material.color = color(1.5, 1.5, 1.5);
+    // lamp.material.diffuse = 0;
+    // lamp.material.specular = 0;
+    // lamp.material.ambient = 1;
+    // lamp.transform = multiplyMatrices(
+    //   translation(-5, 6, -3),
+    //   scaling(0.75, 0.75, 0.75)
+    // );
+    // world.objects.push(lamp);
 
     const f = new Plane();
     f.material.specular = 0;

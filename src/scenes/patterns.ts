@@ -41,16 +41,16 @@ export class Patterns implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(-5.5, 3, -4),
-        vector(2, 0, 0),
-        vector(0, 2, 0),
-        color(1.5, 1.5, 1.5),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const lamp = new AreaLight(
+      color(1.5, 1.5, 1.5),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
     );
+    lamp.transform = multiplyMatrices(
+      translation(-5, 4, -4),
+      rotationZ(radians(90))
+    );
+    world.lights.push(lamp);
 
     world.objects.push(
       ...this.checkeredRoom(color(0.9, 1, 0.9), color(0.1, 0.4, 0.1))

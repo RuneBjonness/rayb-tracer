@@ -113,9 +113,6 @@ export function cross(t1: Tuple, t2: Tuple): Tuple {
 export function reflect(vectorIn: Tuple, normal: Tuple): Tuple {
   return subtract(
     vectorIn,
-    multiplyTupleByScalar(
-      multiplyTupleByScalar(normal, 2),
-      dot(vectorIn, normal)
-    )
+    multiplyTupleByScalar(normal, 2 * dot(vectorIn, normal))
   );
 }

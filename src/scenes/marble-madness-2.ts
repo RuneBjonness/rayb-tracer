@@ -5,7 +5,13 @@ import { multiplyMatrices } from '../lib/matrices';
 import { Group } from '../lib/shapes/group';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
-import { translation, scaling, viewTransform } from '../lib/transformations';
+import {
+  translation,
+  scaling,
+  viewTransform,
+  radians,
+  rotationZ,
+} from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
@@ -25,16 +31,17 @@ export class MarbleMadness2 implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const size = 70;
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(size * 2, size * 2, -size),
-        vector(2, 0, 0),
-        vector(0, 2, 0),
-        color(1.2, 1.2, 1.2),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const lamp = new AreaLight(
+      color(1.2, 1.2, 1.2),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
     );
+    lamp.transform = multiplyMatrices(
+      translation(size * 2, size * 2, -size),
+      rotationZ(radians(90))
+    );
+
+    world.lights.push(lamp);
 
     const marbles = new Group();
     for (let x = 0; x < size; x++) {

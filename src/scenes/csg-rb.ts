@@ -41,16 +41,14 @@ export class CsgRb implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
-    world.lights.push(
-      new AreaLight(
-        point(-2, 2.5, -2.5),
-        vector(2, 0, 0),
-        vector(0, 0, 2),
-        color(1.5, 1.5, 1.5),
-        renderCfg.maxLightSamples,
-        renderCfg.adaptiveLightSamplingSensitivity
-      )
+    const lamp = new AreaLight(
+      color(1.5, 1.5, 1.5),
+      renderCfg.maxLightSamples,
+      renderCfg.adaptiveLightSamplingSensitivity
     );
+    lamp.transform = translation(-2, 2.5, -2.5);
+
+    world.lights.push(lamp);
 
     const f = new Plane();
     f.material.specular = 0;
