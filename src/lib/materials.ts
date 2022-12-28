@@ -50,10 +50,10 @@ export function lighting(
   normalv: Tuple,
   lightIntensity: number
 ): Color {
-  const mColor = shape.material.pattern
-    ? shape.material.pattern.colorAt(shape, point)
-    : shape.material.color;
-  const effectiveColor = multiplyColors(mColor, light.intensity);
+  const effectiveColor = multiplyColors(
+    materialColorAt(shape, point),
+    light.intensity
+  );
   const ambient = multiplyColorByScalar(effectiveColor, shape.material.ambient);
 
   if (lightIntensity === 0.0) {
@@ -130,6 +130,12 @@ export function lighting(
   }
 
   return addColors(ambient, multiplyColorByScalar(avgSample, lightIntensity));
+}
+
+export function materialColorAt(shape: Shape, point: Tuple): Color {
+  return shape.material.pattern
+    ? shape.material.pattern.colorAt(shape, point)
+    : shape.material.color;
 }
 
 function lightingSample(
