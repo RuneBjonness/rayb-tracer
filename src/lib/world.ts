@@ -4,6 +4,7 @@ import {
   IntersectionComputations,
   prepareComputations,
   reflectance,
+  refractedDirection,
 } from './intersections';
 import { Light, PointLight } from './lights';
 import { ray, Ray } from './rays';
@@ -33,7 +34,7 @@ export class World {
     const intersections: Intersection[] = [];
     for (let i = 0; i < this.objects.length; i++) {
       intersections.push(...this.objects[i].intersects(r));
-    };
+    }
 
     return intersections.sort((a, b) => a.time - b.time);
   }
@@ -104,20 +105,10 @@ export class World {
     if (maxDepth <= 0 || comps.object.material.transparancy < 0.001) {
       return [0, 0, 0];
     }
-
-    // check for total internal refraction
-    const nRatio = comps.n1 / comps.n2;
-    const cosI = dot(comps.eyev, comps.normalv);
-    const sin2T = nRatio ** 2 * (1 - cosI ** 2);
-    if (sin2T > 1) {
+    const dir = refractedDirection(comps);
+    if (dir === null) {
       return [0, 0, 0];
     }
-
-    const cosT = Math.sqrt(1 - sin2T);
-    const dir = subtract(
-      multiplyTupleByScalar(comps.normalv, nRatio * cosI - cosT),
-      multiplyTupleByScalar(comps.eyev, nRatio)
-    );
     const c = this.colorAt(ray(comps.underPoint, dir), maxDepth - 1);
     return multiplyColorByScalar(c, comps.object.material.transparancy);
   }

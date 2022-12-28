@@ -121,3 +121,26 @@ export function reflectance(comps: IntersectionComputations): number {
   const r0 = ((comps.n1 - comps.n2) / (comps.n1 + comps.n2)) ** 2;
   return r0 + (1 - r0) * (1 - cos) ** 5;
 }
+
+export function refractedDirection(
+  comps: IntersectionComputations
+): Tuple | null {
+  if (comps.object.material.transparancy < 0.001) {
+    return null;
+  }
+
+  // check for total internal refraction
+  const nRatio = comps.n1 / comps.n2;
+  const cosI = dot(comps.eyev, comps.normalv);
+  const sin2T = nRatio ** 2 * (1 - cosI ** 2);
+  if (sin2T > 1) {
+    return null;
+  }
+
+  const cosT = Math.sqrt(1 - sin2T);
+  const dir = subtract(
+    multiplyTupleByScalar(comps.normalv, nRatio * cosI - cosT),
+    multiplyTupleByScalar(comps.eyev, nRatio)
+  );
+  return dir;
+}
