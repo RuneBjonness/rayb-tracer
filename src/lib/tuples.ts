@@ -88,6 +88,10 @@ export function divideColor(c: Color, scalar: number): Color {
   return [c[0] / scalar, c[1] / scalar, c[2] / scalar];
 }
 
+export function blendColors(c1: Color, c2: Color): Color {
+  return [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, (c1[2] + c2[2]) / 2];
+}
+
 export function magnitude(t: Tuple): number {
   return Math.sqrt(t[0] ** 2 + t[1] ** 2 + t[2] ** 2 + t[3] ** 2);
 }
