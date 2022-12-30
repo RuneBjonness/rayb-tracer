@@ -35,8 +35,9 @@ export class CornellBoxMatteDiffuse implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
-    world.objects.push(basicCube(color(1, 1, 1), -1.1, 1.4, 1, 1.8));
-    world.objects.push(basicSphere(color(1, 1, 1), 1.4, 0, 1.1));
+    world.objects.push(basicSphere(color(1, 1, 1), -2.5, 1, 1));
+    world.objects.push(basicSphere(color(0.2, 0.2, 1), 0, 1, 1));
+    world.objects.push(basicSphere(color(1, 1, 1), 2.5, 1, 1));
     return world;
   }
 }
@@ -62,7 +63,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
     renderCfg.maxLightSamples,
     renderCfg.adaptiveLightSamplingSensitivity
   );
-  lamp.transform = translation(0, 5, 2);
+  lamp.transform = translation(0, 5, 1);
 
   world.lights.push(lamp);
   world.objects.push(lamp);
@@ -96,7 +97,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
     multiplyMatrices(rotationY(radians(90)), rotationX(radians(90)))
   );
 
-  world.objects.push(floor, backWall, leftWall, rightWall);
+  world.objects.push(floor, ceiling, backWall, leftWall, rightWall);
 
   return world;
 }
@@ -108,10 +109,9 @@ function basicSphere(color: Color, x: number, z: number, scale: number): Shape {
     scaling(scale, scale, scale)
   );
   s.material.color = color;
-  s.material.diffuse = 0.6;
+  s.material.diffuse = 0.8;
   s.material.specular = 0;
-  s.material.ambient = 0.1;
-  //s.material.reflective = 0.3;
+  s.material.ambient = 0.025;
   return s;
 }
 
@@ -120,8 +120,8 @@ function glassSphere(color: Color, x: number, z: number, scale: number): Shape {
   s.material.reflective = 0.9;
   s.material.transparancy = 1;
   s.material.refractiveIndex = 1.5;
-  s.material.diffuse = 0.9;
-  s.material.specular = 0;
+  s.material.diffuse = 0.1;
+  s.material.specular = 0.9;
   s.material.shininess = 200.0;
 
   return s;
@@ -143,9 +143,9 @@ function basicCube(
     )
   );
   s.material.color = color;
-  s.material.diffuse = 0.6;
+  s.material.diffuse = 0.8;
   s.material.specular = 0;
-  s.material.ambient = 0.1;
+  s.material.ambient = 0.025;
   return s;
 }
 
@@ -160,7 +160,7 @@ function diamondCube(
   s.material.reflective = 0.9;
   s.material.transparancy = 1;
   s.material.refractiveIndex = 2.5;
-  s.material.diffuse = 0.9;
+  s.material.diffuse = 0.1;
   s.material.specular = 0;
   s.material.shininess = 200.0;
 
@@ -171,8 +171,8 @@ function wallMaterial(c: Color): Material {
   const m = material();
   m.specular = 0;
   m.ambient = 0.025;
-  m.diffuse = 0.67;
-  m.reflective = 0.1;
+  m.diffuse = 0.8;
+  m.reflective = 0;
   m.color = c;
   return m;
 }

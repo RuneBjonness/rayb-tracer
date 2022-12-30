@@ -48,13 +48,27 @@ export function lighting(
   point: Tuple,
   eyev: Tuple,
   normalv: Tuple,
-  lightIntensity: number
+  lightIntensity: number,
+  indirectLightning: Color | null = null
 ): Color {
   const effectiveColor = multiplyColors(
     materialColorAt(shape, point),
     light.intensity
   );
-  const ambient = multiplyColorByScalar(effectiveColor, shape.material.ambient);
+  let ambient: Color;
+
+  if (indirectLightning) {
+    ambient = multiplyColors(
+      effectiveColor,
+      color(
+        Math.max(shape.material.ambient, indirectLightning[0]),
+        Math.max(shape.material.ambient, indirectLightning[1]),
+        Math.max(shape.material.ambient, indirectLightning[2])
+      )
+    );
+  } else {
+    ambient = multiplyColorByScalar(effectiveColor, shape.material.ambient);
+  }
 
   if (lightIntensity === 0.0) {
     return ambient;

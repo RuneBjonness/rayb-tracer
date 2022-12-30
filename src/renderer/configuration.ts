@@ -4,7 +4,11 @@ export type RenderConfiguration = {
 
   numberOfWorkers: number;
 
+  numberOfPhotons: number;
+
   raysMaxRecursiveDepth: number;
+
+  maxIndirectLightSamples: number;
 
   maxLightSamples: number;
   adaptiveLightSamplingSensitivity: number;
@@ -34,7 +38,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 2,
+      maxIndirectLightSamples: 0,
       maxLightSamples: 1,
       adaptiveLightSamplingSensitivity: 1,
       forceZeroAperture: true,
@@ -46,7 +52,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 3,
+      maxIndirectLightSamples: 2,
       maxLightSamples: 5,
       adaptiveLightSamplingSensitivity: 1,
       forceZeroAperture: false,
@@ -58,7 +66,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 4,
+      maxIndirectLightSamples: 4,
       maxLightSamples: 17,
       adaptiveLightSamplingSensitivity: 0.05,
       forceZeroAperture: false,
@@ -70,7 +80,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 6,
+      maxIndirectLightSamples: 6,
       maxLightSamples: 29,
       adaptiveLightSamplingSensitivity: 0.02,
       forceZeroAperture: false,
@@ -82,7 +94,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 8,
+      maxIndirectLightSamples: 10,
       maxLightSamples: 41,
       adaptiveLightSamplingSensitivity: 0.001,
       forceZeroAperture: false,
@@ -94,7 +108,9 @@ export function getRenderConfiguration(
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
+      numberOfPhotons: 0,
       raysMaxRecursiveDepth: 10,
+      maxIndirectLightSamples: 16,
       maxLightSamples: 49,
       adaptiveLightSamplingSensitivity: -1,
       forceZeroAperture: false,

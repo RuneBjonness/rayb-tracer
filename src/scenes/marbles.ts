@@ -6,14 +6,7 @@ import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
-import {
-  translation,
-  scaling,
-  viewTransform,
-  rotationZ,
-  radians,
-  rotationX,
-} from '../lib/transformations';
+import { translation, scaling, viewTransform } from '../lib/transformations';
 import { point, vector, color, Color } from '../lib/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
@@ -107,7 +100,7 @@ export class Marbles implements Scene {
     s.material.color = color;
     s.material.diffuse = 0.6;
     s.material.specular = 0;
-    s.material.ambient = 0.1;
+    s.material.ambient = 0.025;
     s.material.reflective = 0.3;
     return s;
   }
@@ -122,7 +115,7 @@ export class Marbles implements Scene {
     s.material.reflective = 0.9;
     s.material.transparancy = 1;
     s.material.refractiveIndex = 1.5;
-    s.material.diffuse = 0.9;
+    s.material.diffuse = 0;
     s.material.specular = 0.9;
     s.material.shininess = 200.0;
 

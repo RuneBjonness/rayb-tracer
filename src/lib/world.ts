@@ -14,14 +14,16 @@ import {
   addColors,
   Color,
   color,
+  divideColor,
   dot,
   magnitude,
   multiplyColorByScalar,
-  multiplyTupleByScalar,
+  negate,
   normalize,
   point,
   subtract,
   Tuple,
+  vector,
 } from './tuples';
 import { scaling } from './transformations';
 import { lighting } from './materials';
@@ -39,7 +41,22 @@ export class World {
     return intersections.sort((a, b) => a.time - b.time);
   }
 
-  shadeHit(comps: IntersectionComputations, maxDepth: number = 4): Color {
+  shadeHit(
+    comps: IntersectionComputations,
+    maxDepth: number = 4,
+    indirectLightningSamples: number = 0
+  ): Color {
+    let samples: Color[] = [];
+    for (let i = 0; i < indirectLightningSamples; i++) {
+      samples.push(this.indirectLightningSample(comps, maxDepth));
+    }
+    const indirectLightning = samples.length
+      ? divideColor(
+          samples.reduce((a, b) => addColors(a, b)),
+          samples.length
+        )
+      : null;
+
     let shades: Color[] = [];
     this.lights.forEach((l) => {
       shades.push(
@@ -49,7 +66,8 @@ export class World {
           comps.point,
           comps.eyev,
           comps.normalv,
-          l.intensityAt(comps.overPoint, this)
+          l.intensityAt(comps.overPoint, this),
+          indirectLightning
         )
       );
     });
@@ -72,15 +90,22 @@ export class World {
     } else {
       shades.push(reflected, refracted);
     }
-
     return shades.reduce((a, b) => addColors(a, b));
   }
 
-  colorAt(r: Ray, maxDepth: number = 4): Color {
+  colorAt(
+    r: Ray,
+    maxDepth: number = 4,
+    maxIndirectLightSamples: number = 0
+  ): Color {
     const xs = this.intersects(r);
     const i = hit(xs);
     return i
-      ? this.shadeHit(prepareComputations(i, r, xs), maxDepth)
+      ? this.shadeHit(
+          prepareComputations(i, r, xs),
+          maxDepth,
+          maxIndirectLightSamples
+        )
       : [0, 0, 0];
   }
 
@@ -111,6 +136,55 @@ export class World {
     }
     const c = this.colorAt(ray(comps.underPoint, dir), maxDepth - 1);
     return multiplyColorByScalar(c, comps.object.material.transparancy);
+  }
+
+  indirectLightningSample(
+    comps: IntersectionComputations,
+    maxDepth: number
+  ): Color {
+    if (maxDepth <= 0) {
+      return [0, 0, 0];
+    }
+
+    let sampleDir = vector(
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1
+    );
+
+    if (dot(sampleDir, comps.normalv) < 0) {
+      sampleDir = negate(sampleDir);
+    }
+
+    const r = ray(comps.overPoint, sampleDir);
+
+    const xs = this.intersects(r);
+    const i = hit(xs);
+    if (i == null) {
+      return [0, 0, 0];
+    }
+
+    const ic = prepareComputations(i, r, xs);
+    if (
+      ic.object.material.reflective > 0.01 ||
+      ic.object.material.transparancy > 0.01 ||
+      ic.object.material.specular > 0.01 ||
+      ic.object.material.ambient === 1
+    ) {
+      return [0, 0, 0];
+    }
+    const c = this.shadeHit(ic, maxDepth - 1);
+
+    const diff = subtract(comps.normalv, sampleDir);
+    const maxNormalDiff = Math.max(
+      Math.abs(diff[0]),
+      Math.abs(diff[1]),
+      Math.abs(diff[2])
+    );
+    return multiplyColorByScalar(
+      c,
+      ic.object.material.diffuse * (1 - maxNormalDiff * 0.2)
+    );
   }
 }
 

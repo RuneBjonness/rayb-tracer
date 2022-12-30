@@ -100,5 +100,6 @@ export function createCamera(
     renderCfg.adaptiveFocalSamplingSensitivity;
   camera.transform = cameraCfg.viewTransform;
   camera.raysMaxRecursiveDepth = renderCfg.raysMaxRecursiveDepth;
+  camera.maxIndirectLightSamples = renderCfg.maxIndirectLightSamples;
   return camera;
 }
