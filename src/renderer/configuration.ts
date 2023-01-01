@@ -2,11 +2,10 @@ export type RenderConfiguration = {
   width: number;
   height: number;
 
+  renderMode: RenderMode;
+
   numberOfWorkers: number;
-
-  numberOfPhotons: number;
-
-  raysMaxRecursiveDepth: number;
+  maxDepth: number;
 
   maxIndirectLightSamples: number;
 
@@ -16,6 +15,9 @@ export type RenderConfiguration = {
   forceZeroAperture: boolean;
   maxFocalSamples: number;
   adaptiveFocalSamplingSensitivity: number;
+
+  iterations: number;
+  photonsPerIteration: number;
 };
 
 export enum RenderMode {
@@ -23,6 +25,30 @@ export enum RenderMode {
   dynamicSamplingPreview = 'Dynamic Sampling (preview)',
   dynamicSampling = 'Dynamic Sampling',
   fixedSampling = 'Fixed sampling',
+  progressivePhotonMapping = 'Progressive photon mapping',
+}
+
+function renderConfiguration(
+  width: number,
+  height: number,
+  numberOfWorkers: number,
+  mode: RenderMode
+): RenderConfiguration {
+  return {
+    width: width,
+    height: height,
+    renderMode: mode,
+    numberOfWorkers: numberOfWorkers,
+    maxDepth: 3,
+    maxIndirectLightSamples: 0,
+    maxLightSamples: 49,
+    adaptiveLightSamplingSensitivity: 1,
+    forceZeroAperture: false,
+    maxFocalSamples: 81,
+    adaptiveFocalSamplingSensitivity: 1,
+    iterations: 0,
+    photonsPerIteration: 0,
+  };
 }
 
 export function getRenderConfiguration(
@@ -31,61 +57,26 @@ export function getRenderConfiguration(
   numberOfWorkers: number,
   mode: RenderMode
 ): RenderConfiguration {
+  const cfg = renderConfiguration(width, height, numberOfWorkers, mode);
   if (mode === RenderMode.preview) {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 2,
-      maxIndirectLightSamples: 0,
-      maxLightSamples: 1,
-      adaptiveLightSamplingSensitivity: 1,
-      forceZeroAperture: true,
-      maxFocalSamples: 1,
-      adaptiveFocalSamplingSensitivity: 1,
-    };
+    cfg.forceZeroAperture = true;
+    cfg.maxLightSamples = 1;
+    cfg.maxFocalSamples = 1;
   } else if (mode === RenderMode.dynamicSamplingPreview) {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 3,
-      maxIndirectLightSamples: 1,
-      maxLightSamples: 49,
-      adaptiveLightSamplingSensitivity: 1,
-      forceZeroAperture: false,
-      maxFocalSamples: 81,
-      adaptiveFocalSamplingSensitivity: 1,
-    };
+    cfg.maxIndirectLightSamples = 1;
   } else if (mode === RenderMode.dynamicSampling) {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 8,
-      maxIndirectLightSamples: 10,
-      maxLightSamples: 49,
-      adaptiveLightSamplingSensitivity: 0.001,
-      forceZeroAperture: false,
-      maxFocalSamples: 81,
-      adaptiveFocalSamplingSensitivity: 0.001,
-    };
-  } else {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 10,
-      maxIndirectLightSamples: 16,
-      maxLightSamples: 49,
-      adaptiveLightSamplingSensitivity: -1,
-      forceZeroAperture: false,
-      maxFocalSamples: 81,
-      adaptiveFocalSamplingSensitivity: -1,
-    };
+    cfg.maxDepth = 8;
+    cfg.maxIndirectLightSamples = 10;
+    cfg.adaptiveLightSamplingSensitivity = 0.001;
+    cfg.adaptiveFocalSamplingSensitivity = 0.001;
+  } else if (mode === RenderMode.fixedSampling) {
+    cfg.maxDepth = 10;
+    cfg.maxIndirectLightSamples = 16;
+    cfg.adaptiveLightSamplingSensitivity = -1;
+    cfg.adaptiveFocalSamplingSensitivity = -1;
+  } else if (mode === RenderMode.progressivePhotonMapping) {
+    cfg.iterations = numberOfWorkers * 8;
+    cfg.photonsPerIteration = width * height;
   }
+  return cfg;
 }

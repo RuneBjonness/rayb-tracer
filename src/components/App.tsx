@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import RenderSettingsEditor from './RenderSettingsEditor';
 import useRayTracerStore from '../store';
-import { getRenderConfiguration } from '../renderer/configuration';
+import { getRenderConfiguration, RenderMode } from '../renderer/configuration';
 import SceneSelector from './SceneSelector';
 import { ScenePreset } from '../scenes/scene';
 
@@ -96,10 +96,19 @@ function App() {
             <LinearProgress
               variant="determinate"
               color="success"
-              value={(renderProgress * 100) / (width * height)}
+              value={
+                (renderProgress * 100) /
+                (renderMode === RenderMode.progressivePhotonMapping
+                  ? renderConfig.iterations
+                  : width * height)
+              }
             />
             <Typography variant="caption" textAlign={'center'}>
-              [{renderProgress} / {width * height} pixels]
+              [{renderProgress}
+              {renderMode === RenderMode.progressivePhotonMapping
+                ? ` / ${renderConfig.iterations} iterations`
+                : ` / ${width * height} pixels`}
+              ]
             </Typography>
           </Stack>
         </Drawer>

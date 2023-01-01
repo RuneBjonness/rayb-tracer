@@ -16,7 +16,7 @@ const init = (scenePreset: ScenePreset, renderCfg: RenderConfiguration) => {
 onmessage = function (e) {
   if (e.data.command === 'init') {
     init(e.data.scenePreset, e.data.renderCfg);
-  } else if (e.data.command === 'render') {
+  } else if (e.data.command === 'rtRenderTile') {
     const cp: {
       x: number;
       y: number;
@@ -27,6 +27,14 @@ onmessage = function (e) {
     const imageData = camera
       .renderPart(world, cp.x, cp.y, cp.w, cp.h)
       .getImageData();
-    postMessage({ cp, imageData }, [imageData.data.buffer]);
+    postMessage({ command: 'rtRenderTile', cp, imageData }, [
+      imageData.data.buffer,
+    ]);
+  } else if (e.data.command === 'photonMapperIteration') {
+    console.log(
+      'Worker photonMapperIteration - number of photons: ',
+      e.data.photons
+    );
+    postMessage({ command: 'photonMapperIteration' });
   }
 };

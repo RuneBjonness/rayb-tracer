@@ -22,7 +22,7 @@ export class Camera {
   public maxFocalSamples: number = 1;
   public adaptiveSamplingColorSensitivity: number = 1;
 
-  public raysMaxRecursiveDepth: number = 4;
+  public maxDepth: number = 4;
   public maxIndirectLightSamples: number = 0;
 
   private halfWidth: number;
@@ -93,13 +93,13 @@ export class Camera {
         if (rays.length === 1) {
           c.pixels[x][y] = w.colorAt(
             rays[0],
-            this.raysMaxRecursiveDepth,
+            this.maxDepth,
             this.maxIndirectLightSamples
           );
         } else {
           let sumSamples = w.colorAt(
             rays[0],
-            this.raysMaxRecursiveDepth,
+            this.maxDepth,
             this.maxIndirectLightSamples
           );
           let avgSampleColor = sumSamples;
@@ -117,11 +117,7 @@ export class Camera {
             ) {
               sumSamples = addColors(
                 sumSamples,
-                w.colorAt(
-                  rays[r],
-                  this.raysMaxRecursiveDepth,
-                  this.maxIndirectLightSamples
-                )
+                w.colorAt(rays[r], this.maxDepth, this.maxIndirectLightSamples)
               );
             }
             const newAvgSampleColor = divideColor(
