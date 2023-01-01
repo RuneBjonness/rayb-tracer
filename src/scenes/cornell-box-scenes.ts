@@ -35,9 +35,9 @@ export class CornellBoxMatteDiffuse implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
-    world.objects.push(basicSphere(color(1, 1, 1), -2.5, 1, 1));
-    world.objects.push(basicSphere(color(0.2, 0.2, 1), 0, 1, 1));
-    world.objects.push(basicSphere(color(1, 1, 1), 2.5, 1, 1));
+    world.objects.push(basicSphere(color(1, 1, 1), -2.5, 2.5, 1.1));
+    world.objects.push(basicSphere(color(0.2, 0.2, 1), 0, 2.5, 1.1));
+    world.objects.push(basicSphere(color(1, 1, 1), 2.5, 2.5, 1.1));
     return world;
   }
 }
@@ -63,7 +63,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
     renderCfg.maxLightSamples,
     renderCfg.adaptiveLightSamplingSensitivity
   );
-  lamp.transform = translation(0, 5, 1);
+  lamp.transform = translation(0, 5, 0);
 
   world.lights.push(lamp);
   world.objects.push(lamp);
@@ -110,7 +110,8 @@ function basicSphere(color: Color, x: number, z: number, scale: number): Shape {
   );
   s.material.color = color;
   s.material.diffuse = 0.8;
-  s.material.specular = 0;
+  s.material.specular = 0.1;
+  s.material.shininess = 1;
   s.material.ambient = 0.025;
   return s;
 }
@@ -122,7 +123,7 @@ function glassSphere(color: Color, x: number, z: number, scale: number): Shape {
   s.material.refractiveIndex = 1.5;
   s.material.diffuse = 0.1;
   s.material.specular = 0.9;
-  s.material.shininess = 200.0;
+  s.material.shininess = 400.0;
 
   return s;
 }
@@ -144,7 +145,8 @@ function basicCube(
   );
   s.material.color = color;
   s.material.diffuse = 0.8;
-  s.material.specular = 0;
+  s.material.specular = 0.2;
+  s.material.shininess = 1;
   s.material.ambient = 0.025;
   return s;
 }
@@ -161,17 +163,18 @@ function diamondCube(
   s.material.transparancy = 1;
   s.material.refractiveIndex = 2.5;
   s.material.diffuse = 0.1;
-  s.material.specular = 0;
-  s.material.shininess = 200.0;
+  s.material.specular = 0.9;
+  s.material.shininess = 400.0;
 
   return s;
 }
 
 function wallMaterial(c: Color): Material {
   const m = material();
-  m.specular = 0;
   m.ambient = 0.025;
   m.diffuse = 0.8;
+  m.specular = 0.2;
+  m.shininess = 1;
   m.reflective = 0;
   m.color = c;
   return m;

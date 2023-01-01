@@ -18,22 +18,20 @@ export type RenderConfiguration = {
   adaptiveFocalSamplingSensitivity: number;
 };
 
-export enum RenderQuality {
-  preview = 'preview',
-  low = 'low',
-  standard = 'standard',
-  high = 'high',
-  ultra = 'ultra',
-  extreme = 'extreme',
+export enum RenderMode {
+  preview = 'Scene preview',
+  dynamicSamplingPreview = 'Dynamic Sampling (preview)',
+  dynamicSampling = 'Dynamic Sampling',
+  fixedSampling = 'Fixed sampling',
 }
 
 export function getRenderConfiguration(
   width: number,
   height: number,
   numberOfWorkers: number,
-  quality: RenderQuality
+  mode: RenderMode
 ): RenderConfiguration {
-  if (quality === RenderQuality.preview) {
+  if (mode === RenderMode.preview) {
     return {
       width: width,
       height: height,
@@ -47,49 +45,21 @@ export function getRenderConfiguration(
       maxFocalSamples: 1,
       adaptiveFocalSamplingSensitivity: 1,
     };
-  } else if (quality === RenderQuality.low) {
+  } else if (mode === RenderMode.dynamicSamplingPreview) {
     return {
       width: width,
       height: height,
       numberOfWorkers: numberOfWorkers,
       numberOfPhotons: 0,
       raysMaxRecursiveDepth: 3,
-      maxIndirectLightSamples: 2,
-      maxLightSamples: 5,
+      maxIndirectLightSamples: 1,
+      maxLightSamples: 49,
       adaptiveLightSamplingSensitivity: 1,
       forceZeroAperture: false,
-      maxFocalSamples: 5,
+      maxFocalSamples: 81,
       adaptiveFocalSamplingSensitivity: 1,
     };
-  } else if (quality === RenderQuality.standard) {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 4,
-      maxIndirectLightSamples: 4,
-      maxLightSamples: 17,
-      adaptiveLightSamplingSensitivity: 0.05,
-      forceZeroAperture: false,
-      maxFocalSamples: 21,
-      adaptiveFocalSamplingSensitivity: 0.01,
-    };
-  } else if (quality === RenderQuality.high) {
-    return {
-      width: width,
-      height: height,
-      numberOfWorkers: numberOfWorkers,
-      numberOfPhotons: 0,
-      raysMaxRecursiveDepth: 6,
-      maxIndirectLightSamples: 6,
-      maxLightSamples: 29,
-      adaptiveLightSamplingSensitivity: 0.02,
-      forceZeroAperture: false,
-      maxFocalSamples: 41,
-      adaptiveFocalSamplingSensitivity: 0.01,
-    };
-  } else if (quality === RenderQuality.ultra) {
+  } else if (mode === RenderMode.dynamicSampling) {
     return {
       width: width,
       height: height,
@@ -97,10 +67,10 @@ export function getRenderConfiguration(
       numberOfPhotons: 0,
       raysMaxRecursiveDepth: 8,
       maxIndirectLightSamples: 10,
-      maxLightSamples: 41,
+      maxLightSamples: 49,
       adaptiveLightSamplingSensitivity: 0.001,
       forceZeroAperture: false,
-      maxFocalSamples: 73,
+      maxFocalSamples: 81,
       adaptiveFocalSamplingSensitivity: 0.001,
     };
   } else {

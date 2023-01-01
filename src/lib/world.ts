@@ -48,7 +48,10 @@ export class World {
   ): Color {
     let samples: Color[] = [];
     for (let i = 0; i < indirectLightningSamples; i++) {
-      samples.push(this.indirectLightningSample(comps, maxDepth));
+      const s = this.indirectLightningSample(comps, maxDepth);
+      if (s) {
+        samples.push(s);
+      }
     }
     const indirectLightning = samples.length
       ? divideColor(
@@ -141,19 +144,23 @@ export class World {
   indirectLightningSample(
     comps: IntersectionComputations,
     maxDepth: number
-  ): Color {
+  ): Color | null {
     if (maxDepth <= 0) {
-      return [0, 0, 0];
+      return null;
     }
 
-    let sampleDir = vector(
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1
+    let sampleDir = normalize(
+      vector(
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1
+      )
     );
 
-    if (dot(sampleDir, comps.normalv) < 0) {
+    let normalDiff = dot(sampleDir, comps.normalv);
+    if (normalDiff < 0) {
       sampleDir = negate(sampleDir);
+      normalDiff = normalDiff * -1;
     }
 
     const r = ray(comps.overPoint, sampleDir);
@@ -168,22 +175,18 @@ export class World {
     if (
       ic.object.material.reflective > 0.01 ||
       ic.object.material.transparancy > 0.01 ||
-      ic.object.material.specular > 0.01 ||
+      (ic.object.material.specular > 0.01 &&
+        ic.object.material.shininess > 5) ||
       ic.object.material.ambient === 1
     ) {
-      return [0, 0, 0];
+      return null;
     }
     const c = this.shadeHit(ic, maxDepth - 1);
 
-    const diff = subtract(comps.normalv, sampleDir);
-    const maxNormalDiff = Math.max(
-      Math.abs(diff[0]),
-      Math.abs(diff[1]),
-      Math.abs(diff[2])
-    );
     return multiplyColorByScalar(
       c,
-      ic.object.material.diffuse * (1 - maxNormalDiff * 0.2)
+      ic.object.material.diffuse * 0.5 +
+        normalDiff * (1 - ic.object.material.diffuse * 0.5)
     );
   }
 }

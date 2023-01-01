@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import useRayTracerStore from '../store';
-import { RenderQuality } from '../renderer/configuration';
+import { RenderMode } from '../renderer/configuration';
 
 function RenderSettingsEditor() {
   const width = useRayTracerStore((state) => state.width);
@@ -25,8 +25,8 @@ function RenderSettingsEditor() {
     (state) => state.setNumberOfWorkers
   );
 
-  const quality = useRayTracerStore((state) => state.quality);
-  const setQuality = useRayTracerStore((state) => state.setQuality);
+  const renderMode = useRayTracerStore((state) => state.renderMode);
+  const setRenderMode = useRayTracerStore((state) => state.setRenderMode);
 
   const handleWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(event.target.value);
@@ -51,11 +51,9 @@ function RenderSettingsEditor() {
     }
   };
 
-  const handleQualityChange = (event: SelectChangeEvent) => {
-    const val = event.target.value as RenderQuality;
-    if (val in RenderQuality) {
-      setQuality(val as RenderQuality);
-    }
+  const handleRenderModeChange = (event: SelectChangeEvent) => {
+    const val = event.target.value as RenderMode;
+    setRenderMode(val as RenderMode);
   };
 
   return (
@@ -100,20 +98,22 @@ function RenderSettingsEditor() {
       </Grid>
       <Grid xs={12}>
         <FormControl fullWidth>
-          <InputLabel id="quality-label">Render Quality</InputLabel>
+          <InputLabel id="render-mode-label">Render Mode</InputLabel>
           <Select
-            labelId="quality-label"
-            id="quality-select"
-            label="Render Quality"
+            labelId="render-mode-label"
+            id="render-mode-select"
+            label="Render Mode"
             size="small"
-            value={quality}
-            onChange={handleQualityChange}
+            value={renderMode}
+            onChange={handleRenderModeChange}
           >
-            {Object.keys(RenderQuality).map((q) => (
-              <MenuItem value={q} key={q}>
-                {q}
-              </MenuItem>
-            ))}
+            {(Object.keys(RenderMode) as Array<keyof typeof RenderMode>).map(
+              (key) => (
+                <MenuItem value={RenderMode[key]} key={key}>
+                  {RenderMode[key]}
+                </MenuItem>
+              )
+            )}
           </Select>
         </FormControl>
       </Grid>

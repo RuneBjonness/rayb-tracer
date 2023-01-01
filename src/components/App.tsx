@@ -22,17 +22,17 @@ function App() {
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
   const numberOfWorkers = useRayTracerStore((state) => state.numberOfWorkers);
-  const quality = useRayTracerStore((state) => state.quality);
+  const renderMode = useRayTracerStore((state) => state.renderMode);
   const renderProgress = useRayTracerStore((state) => state.renderProgress);
 
   const [renderConfig, setRenderConfig] = useState(
-    getRenderConfiguration(width, height, numberOfWorkers, quality)
+    getRenderConfiguration(width, height, numberOfWorkers, renderMode)
   );
   const [renderScene, setRenderScene] = useState<ScenePreset | null>(null);
 
   const handleRenderClick = () => {
     setRenderConfig(
-      getRenderConfiguration(width, height, numberOfWorkers, quality)
+      getRenderConfiguration(width, height, numberOfWorkers, renderMode)
     );
     setRenderScene(scenePreset);
   };
