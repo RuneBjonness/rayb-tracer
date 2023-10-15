@@ -73,15 +73,15 @@ export function multiplyColors(a: Color, b: Color): Color {
 }
 
 export function divide(t: Tuple, scalar: number): Tuple {
-  return [t[0] / scalar, t[1] / scalar, t[2] / scalar, t[3] / scalar];
+  return  multiplyTupleByScalar(t, 1 / scalar);
 }
 
 export function divideColor(c: Color, scalar: number): Color {
-  return [c[0] / scalar, c[1] / scalar, c[2] / scalar];
+  return multiplyColorByScalar(c, 1 / scalar);
 }
 
 export function blendColors(c1: Color, c2: Color): Color {
-  return [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, (c1[2] + c2[2]) / 2];
+  return [(c1[0] + c2[0]) * 0.5, (c1[1] + c2[1]) * 0.5, (c1[2] + c2[2]) * 0.5];
 }
 
 export function magnitude(t: Tuple): number {
@@ -89,8 +89,8 @@ export function magnitude(t: Tuple): number {
 }
 
 export function normalize(t: Tuple): Tuple {
-  const m = magnitude(t);
-  return [t[0] / m, t[1] / m, t[2] / m, t[3] / m];
+  const m = 1 / magnitude(t);
+  return [t[0] * m, t[1] * m, t[2] * m, t[3] * m];
 }
 
 export function dot(t1: Tuple, t2: Tuple): number {
