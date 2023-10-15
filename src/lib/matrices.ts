@@ -9,8 +9,8 @@ export type Matrix4 = [
 ];
 
 export function identityMatrix(): Matrix4 {
-// prettier-ignore
-return [
+  // prettier-ignore
+  return [
     1, 0, 0, 0,
     0, 1, 0, 0,
     0, 0, 1, 0,
@@ -32,32 +32,37 @@ export function areEqual(m1: Matrix4, m2: Matrix4): boolean {
 }
 
 export function multiplyMatrices(a: Matrix4, b: Matrix4): Matrix4 {
-// prettier-ignore
-const result: Matrix4 = [
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-  ];
+  // prettier-ignore
+  return [
+    a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
+    a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
+    a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14],
+    a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + a[3] * b[15],
 
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      for (let k = 0; k < 4; k++) {
-        result[i*4+j] += a[i*4+k] * b[k*4+j];
-      }
-    }
-  }
-  return result;
+    a[4] * b[0] + a[5] * b[4] + a[6] * b[8] + a[7] * b[12],
+    a[4] * b[1] + a[5] * b[5] + a[6] * b[9] + a[7] * b[13],
+    a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14],
+    a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15],
+
+    a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12],
+    a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13],
+    a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14],
+    a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15],
+
+    a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
+    a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
+    a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
+    a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15],
+  ];
 }
 
 export function multiplyMatrixByTuple(m: Matrix4, t: Tuple): Tuple {
-  const result = [0, 0, 0, t[3]];
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 4; j++) {
-      result[i] += m[i*4+j] * t[j];
-    }
-  }
-  return result as Tuple;
+  return [
+    m[0] * t[0] + m[1] * t[1] + m[2] * t[2] + m[3] * t[3],
+    m[4] * t[0] + m[5] * t[1] + m[6] * t[2] + m[7] * t[3],
+    m[8] * t[0] + m[9] * t[1] + m[10] * t[2] + m[11] * t[3],
+    t[3],
+  ];
 }
 
 export function transpose(m: Matrix4): Matrix4 {
@@ -71,22 +76,23 @@ export function transpose(m: Matrix4): Matrix4 {
 }
 
 export function inverse(m: Matrix4): Matrix4 {
-  let x00 = m[0] * m[5] - m[1] * m[4];
-  let x01 = m[0] * m[6] - m[2] * m[4];
-  let x02 = m[0] * m[7] - m[3] * m[4];
-  let x03 = m[1] * m[6] - m[2] * m[5];
-  let x04 = m[1] * m[7] - m[3] * m[5];
-  let x05 = m[2] * m[7] - m[3] * m[6];
-  let x06 = m[8] * m[13] - m[9] * m[12];
-  let x07 = m[8] * m[14] - m[10] * m[12];
-  let x08 = m[8] * m[15] - m[11] * m[12];
-  let x09 = m[9] * m[14] - m[10] * m[13];
-  let x10 = m[9] * m[15] - m[11] * m[13];
-  let x11 = m[10] * m[15] - m[11] * m[14];
+  const x00 = m[0] * m[5] - m[1] * m[4];
+  const x01 = m[0] * m[6] - m[2] * m[4];
+  const x02 = m[0] * m[7] - m[3] * m[4];
+  const x03 = m[1] * m[6] - m[2] * m[5];
+  const x04 = m[1] * m[7] - m[3] * m[5];
+  const x05 = m[2] * m[7] - m[3] * m[6];
+  const x06 = m[8] * m[13] - m[9] * m[12];
+  const x07 = m[8] * m[14] - m[10] * m[12];
+  const x08 = m[8] * m[15] - m[11] * m[12];
+  const x09 = m[9] * m[14] - m[10] * m[13];
+  const x10 = m[9] * m[15] - m[11] * m[13];
+  const x11 = m[10] * m[15] - m[11] * m[14];
 
-  let determinant = x00 * x11 - x01 * x10 + x02 * x09 + x03 * x08 - x04 * x07 + x05 * x06;
+  let determinant =
+    x00 * x11 - x01 * x10 + x02 * x09 + x03 * x08 - x04 * x07 + x05 * x06;
   if (determinant === 0) {
-  // prettier-ignore
+    // prettier-ignore
     return [
       0, 0, 0, 0,
       0, 0, 0, 0,
@@ -113,5 +119,5 @@ export function inverse(m: Matrix4): Matrix4 {
     (m[0] * x09 - m[1] * x07 + m[2] * x06) * determinant,
     (m[13] * x01 - m[12] * x03 - m[14] * x00) * determinant,
     (m[8] * x03 - m[9] * x01 + m[10] * x00) * determinant,
-  ]; 
+  ];
 }
