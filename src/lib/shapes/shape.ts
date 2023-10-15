@@ -1,5 +1,6 @@
 import { Intersection } from '../intersections';
 import {
+  Matrix4,
   identityMatrix,
   inverse,
   multiplyMatrixByTuple,
@@ -13,11 +14,11 @@ import { Group } from './group';
 import { CsgShape } from './csg-shape';
 
 export abstract class Shape {
-  private _transform: number[][] = [];
+  private _transform: Matrix4;
   public get transform() {
     return this._transform;
   }
-  public set transform(m: number[][]) {
+  public set transform(m: Matrix4) {
     this._transform = m;
     this.invTransform = inverse(m);
     this.invTransformTransposed = transpose(this.invTransform);
@@ -26,11 +27,13 @@ export abstract class Shape {
   material: Material;
   parent: Group | CsgShape | null = null;
 
-  private invTransform: number[][] = [];
-  private invTransformTransposed: number[][] = [];
+  private invTransform: Matrix4;
+  private invTransformTransposed: Matrix4;
 
   constructor() {
-    this.transform = identityMatrix();
+    this._transform = identityMatrix();
+    this.invTransform = inverse(this._transform);
+    this.invTransformTransposed = transpose(this.invTransform);
     this.material = material();
   }
 

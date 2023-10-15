@@ -1,4 +1,4 @@
-import { multiplyMatrixByTuple } from '../matrices';
+import { Matrix4, multiplyMatrixByTuple } from '../matrices';
 import { Ray } from '../rays';
 import { point, Tuple, vector } from '../tuples';
 import { Shape } from './shape';
@@ -20,7 +20,7 @@ export function boundsContainsBounds(b1: Bounds, b2: Bounds): boolean {
   return boundsContainsPoint(b1, b2[0]) && boundsContainsPoint(b1, b2[1]);
 }
 
-export function transformBoundsCorners(b: Bounds, m: number[][]): Tuple[] {
+export function transformBoundsCorners(b: Bounds, m: Matrix4): Tuple[] {
   const [sMin, sMax] = b;
   let corners = [
     point(sMin[0], sMin[1], sMin[2]),

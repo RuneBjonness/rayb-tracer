@@ -1,15 +1,15 @@
-import { identityMatrix, inverse, multiplyMatrixByTuple } from './matrices';
+import { Matrix4, identityMatrix, inverse, multiplyMatrixByTuple } from './matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
 import { point, Tuple, divideColor, addColors } from './tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
 
 export class Camera {
-  private _transform: number[][] = [];
+  private _transform: Matrix4;
   public get transform() {
     return this._transform;
   }
-  public set transform(m: number[][]) {
+  public set transform(m: Matrix4) {
     this._transform = m;
     this.invTransform = inverse(m);
     this.origin = multiplyMatrixByTuple(this.invTransform, point(0, 0, 0));
@@ -27,7 +27,7 @@ export class Camera {
 
   private halfWidth: number;
   private halfHeight: number;
-  private invTransform: number[][] = [];
+  private invTransform: Matrix4;
   private origin: Tuple = point(0, 0, 0);
 
   private uvSampleConfig = this.initUvSampleConfig();
@@ -37,7 +37,9 @@ export class Camera {
     public height: number,
     public fieldOfView: number
   ) {
-    this.transform = identityMatrix();
+    this._transform = identityMatrix();
+    this.invTransform = inverse(this._transform);
+    this.origin = multiplyMatrixByTuple(this.invTransform, point(0, 0, 0));
 
     const halfView = Math.tan(fieldOfView / 2);
     const aspect = width / height;

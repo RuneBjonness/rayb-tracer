@@ -5,6 +5,7 @@ import {
   identityMatrix,
   multiplyMatrixByTuple,
   multiplyMatrices,
+  Matrix4,
 } from './matrices';
 import {
   translation,
@@ -237,7 +238,7 @@ test('an arbitrary view tranformation', () => {
   const up = vector(1, 1, 0);
   const t = viewTransform(from, to, up);
 
-  const expected = [
+  const expected: Matrix4 = [
     [-0.50709, 0.50709, 0.67612, -2.36643],
     [0.76772, 0.60609, 0.12122, -2.82843],
     [-0.35857, 0.59761, -0.71714, 0.0],

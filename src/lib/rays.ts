@@ -6,6 +6,7 @@ import {
   multiplyTupleByScalar,
 } from './tuples';
 import * as matrices from './matrices';
+import { Matrix4 } from './matrices';
 
 export type Ray = {
   origin: Tuple;
@@ -33,7 +34,7 @@ export function position(ray: Ray, time: number): Tuple {
   return add(multiplyTupleByScalar(ray.direction, time), ray.origin);
 }
 
-export function transform(ray: Ray, m: number[][]): Ray {
+export function transform(ray: Ray, m: Matrix4): Ray {
   return {
     origin: matrices.multiplyMatrixByTuple(m, ray.origin),
     direction: matrices.multiplyMatrixByTuple(m, ray.direction),

@@ -1,4 +1,4 @@
-import { identityMatrix, multiplyMatrices } from './matrices';
+import { Matrix4, identityMatrix, multiplyMatrices } from './matrices';
 import { Photon } from './photon-mapper';
 import { Cube } from './shapes/primitives/cube';
 import { scaling } from './transformations';
@@ -62,7 +62,7 @@ export class AreaLight extends Cube implements Light {
   public get transform() {
     return super.transform;
   }
-  public set transform(m: number[][]) {
+  public set transform(m: Matrix4) {
     super.transform = multiplyMatrices(m, scaling(1, 0.0001, 1));
   }
 

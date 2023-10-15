@@ -1,4 +1,4 @@
-import { identityMatrix, inverse, multiplyMatrixByTuple } from '../matrices';
+import { Matrix4, identityMatrix, inverse, multiplyMatrixByTuple } from '../matrices';
 import {
   color,
   Color,
@@ -10,19 +10,20 @@ import {
 import { Shape } from '../shapes/shape';
 
 export abstract class Pattern {
-  private _transform: number[][] = [];
+  private _transform: Matrix4;
   public get transform() {
     return this._transform;
   }
-  public set transform(m: number[][]) {
+  public set transform(m: Matrix4) {
     this._transform = m;
     this.invTransform = inverse(m);
   }
 
-  private invTransform: number[][] = [];
+  private invTransform: Matrix4;
 
   constructor() {
-    this.transform = identityMatrix();
+    this._transform = identityMatrix();
+    this.invTransform = inverse(this._transform);
   }
 
   colorAt(shape: Shape, p: Tuple): Color {
