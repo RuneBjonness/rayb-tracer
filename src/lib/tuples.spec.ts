@@ -3,8 +3,6 @@ import {
   Color,
   tuple,
   point,
-  isPoint,
-  isVector,
   areEqual,
   vector,
   add,
@@ -23,32 +21,6 @@ import {
   subtractColors,
   addColors,
 } from './tuples';
-
-test('a tuple with w=1.0 is a point', () => {
-  const t = tuple(4.3, -4.2, 3.1, 1.0);
-  const [x, y, z, w] = t;
-
-  expect(x).toBe(4.3);
-  expect(y).toBe(-4.2);
-  expect(z).toBe(3.1);
-  expect(w).toBe(1.0);
-
-  expect(isPoint(t)).toBe(true);
-  expect(isVector(t)).toBe(false);
-});
-
-test('a tuple with w=0.0 is a vector', () => {
-  const t = tuple(4.3, -4.2, 3.1, 0.0);
-  const [x, y, z, w] = t;
-
-  expect(x).toBe(4.3);
-  expect(y).toBe(-4.2);
-  expect(z).toBe(3.1);
-  expect(w).toBe(0.0);
-
-  expect(isPoint(t)).toBe(false);
-  expect(isVector(t)).toBe(true);
-});
 
 test('two tuples are equal if no values have a difference greater than 0.00001 ', () => {
   const t1: Tuple = [1, -1.00001, 0, 1];

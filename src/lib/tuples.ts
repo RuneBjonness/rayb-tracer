@@ -18,14 +18,6 @@ export function color(r: number, g: number, b: number): Color {
   return [r, g, b];
 }
 
-export function isPoint(t: Tuple): boolean {
-  return t[3] === 1;
-}
-
-export function isVector(t: Tuple): boolean {
-  return t[3] !== 1;
-}
-
 export function areEqual(t1: Tuple | Color, t2: Tuple | Color): boolean {
   const equal = function (a: number, b: number): boolean {
     return Math.abs(a - b) < 0.00001 || (Number.isNaN(a) && Number.isNaN(b));
