@@ -1,3 +1,5 @@
+import { Matrix4 } from './matrices';
+
 export class Vector4 {
   constructor(
     public x: number,
@@ -89,6 +91,14 @@ export class Vector4 {
   public reflect(normal: Vector4): Vector4 {
     const n = normal.clone();
     return this.subtract(n.scale(2 * this.dot(n)));
+  }
+
+  public applyMatrix(m: Matrix4): Vector4 {
+    const [x, y, z] = [this.x, this.y, this.z];
+    this.x = m[0] * x + m[1] * y + m[2] * z + m[3] * this.w;
+    this.y = m[4] * x + m[5] * y + m[6] * z + m[7] * this.w;
+    this.z = m[8] * x + m[9] * y + m[10] * z + m[11] * this.w;
+    return this;
   }
 }
 

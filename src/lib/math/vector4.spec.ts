@@ -1,3 +1,4 @@
+import { Matrix4, identityMatrix } from './matrices';
 import { Vector4, point, vector } from './vector4';
 
 test('two vectors are equal if no values have a difference greater than 0.00001 ', () => {
@@ -126,52 +127,6 @@ test('cross product of two vectors', () => {
   expect(b2.cross(a2).equals(vector(1, -2, 1))).toBe(true);
 });
 
-// test('colors are (red, green, blue) tuples', () => {
-//   const [r, g, b] = color(-0.5, 0.4, 1.7);
-
-//   expect(r).toBe(-0.5);
-//   expect(g).toBe(0.4);
-//   expect(b).toBe(1.7);
-// });
-
-// test('two colors are equal if no values have a difference greater than 0.00001 ', () => {
-//   const c1: Color = [1, 0.00001, 0];
-//   const c2: Color = [1, 0.000019, 0];
-
-//   expect(areEqual(c1, c2)).toBe(true);
-// });
-
-// test('two tuples are not equal if any value has a difference greater than 0.00001 ', () => {
-//   const c1: Color = [1, 0.00001, 0];
-//   const c2: Color = [1, 0.00003, 0];
-
-//   expect(areEqual(c1, c2)).toBe(false);
-// });
-
-// test('adding colors', () => {
-//   const c = addColors([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
-
-//   expect(areEqual(c, [1.6, 0.7, 1])).toBe(true);
-// });
-
-// test('subtracting colors', () => {
-//   const c = subtractColors([0.9, 0.6, 0.75], [0.7, 0.1, 0.25]);
-
-//   expect(areEqual(c, [0.2, 0.5, 0.5])).toBe(true);
-// });
-
-// test('multiplying a color by a scalar', () => {
-//   const c = multiplyColorByScalar([0.2, 0.3, 0.4], 2);
-
-//   expect(areEqual(c, [0.4, 0.6, 0.8])).toBe(true);
-// });
-
-// test('multiplying colors', () => {
-//   const c = multiplyColors([1, 0.2, 0.4], [0.9, 1, 0.1]);
-
-//   expect(areEqual(c, [0.9, 0.2, 0.04])).toBe(true);
-// });
-
 test('reflecting a vector approching at 45deg', () => {
   const v = vector(1, -1, 0);
   const n = vector(0, 1, 0);
@@ -182,4 +137,25 @@ test('reflecting a vector off a slanted surface', () => {
   const v = vector(0, -1, 0);
   const n = vector(Math.sqrt(2) / 2, Math.sqrt(2) / 2, 0);
   expect(v.reflect(n).equals(vector(1, 0, 0))).toBe(true);
+});
+
+test('applying a matrix', () => {
+  // prettier-ignore
+  const m: Matrix4 = [
+    1, 2, 3, 4,
+    2, 4, 4, 2,
+    8, 6, 4, 1,
+    0, 0, 0, 1,
+  ];
+  const v = point(1, 2, 3);
+  const result = v.applyMatrix(m);
+
+  expect(result.equals(point(18, 24, 33))).toBe(true);
+});
+
+test('applying the identity matrix is not changing the Vector4', () => {
+  const a = new Vector4(1, 2, 3, 4);
+  const result = a.applyMatrix(identityMatrix());
+
+  expect(result.equals(new Vector4(1, 2, 3, 4))).toBe(true);
 });
