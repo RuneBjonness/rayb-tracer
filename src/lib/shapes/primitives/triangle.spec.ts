@@ -1,5 +1,5 @@
 import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../tuples';
+import { areEqual, point, vector } from '../../math/tuples';
 import { Triangle } from './triangle';
 
 describe('Triangles', () => {

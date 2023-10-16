@@ -24,7 +24,7 @@ import {
   subtract,
   Tuple,
   vector,
-} from './tuples';
+} from './math/tuples';
 import { scaling } from './transformations';
 import { lighting } from './materials';
 

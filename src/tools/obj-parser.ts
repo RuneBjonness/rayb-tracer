@@ -2,7 +2,7 @@ import { Material, material } from '../lib/materials';
 import { Group } from '../lib/shapes/group';
 import { SmoothTriangle } from '../lib/shapes/primitives/smooth-triangle';
 import { Triangle } from '../lib/shapes/primitives/triangle';
-import { point, Tuple, vector } from '../lib/tuples';
+import { point, Tuple, vector } from '../lib/math/tuples';
 
 export class ObjParser {
   ignoredLines = 0;

@@ -9,7 +9,7 @@ import {
   vector,
   add,
   multiplyTupleByScalar,
-} from '../../tuples';
+} from '../../math/tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 

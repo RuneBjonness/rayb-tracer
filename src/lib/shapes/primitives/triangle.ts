@@ -1,6 +1,13 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
-import { Tuple, subtract, normalize, cross, point, dot } from '../../tuples';
+import {
+  Tuple,
+  subtract,
+  normalize,
+  cross,
+  point,
+  dot,
+} from '../../math/tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 

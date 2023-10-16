@@ -1,6 +1,6 @@
 import each from 'jest-each';
 import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../tuples';
+import { areEqual, point, vector } from '../../math/tuples';
 import { Cube } from './cube';
 
 describe('Cubes', () => {

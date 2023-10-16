@@ -5,9 +5,9 @@ import {
   inverse,
   multiplyMatrixByTuple,
   transpose,
-} from '../matrices';
+} from '../math/matrices';
 import { Ray, transform } from '../rays';
-import { normalize, point, Tuple, vector } from '../tuples';
+import { normalize, point, Tuple, vector } from '../math/tuples';
 import { material, Material } from '../materials';
 import { Bounds } from './bounds';
 import { Group } from './group';

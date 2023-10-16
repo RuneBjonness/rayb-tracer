@@ -3,9 +3,9 @@ import {
   areEqual as matricesAreEqual,
   identityMatrix,
   multiplyMatrices,
-} from './matrices';
+} from './math/matrices';
 import { rotationY, translation, viewTransform } from './transformations';
-import { areEqual, color, point, vector } from './tuples';
+import { areEqual, color, point, vector } from './math/tuples';
 import { defaultWorld } from './world';
 
 test('creating a Camera', () => {

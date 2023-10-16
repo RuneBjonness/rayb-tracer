@@ -1,4 +1,4 @@
-import { magnitude, Tuple, vector } from '../../tuples';
+import { magnitude, Tuple, vector } from '../../math/tuples';
 
 export interface UvMapper {
   map(p: Tuple): [u: number, v: number];

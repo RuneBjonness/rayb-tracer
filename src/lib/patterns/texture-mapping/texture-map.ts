@@ -1,4 +1,4 @@
-import { Color, Tuple } from '../../tuples';
+import { Color, Tuple } from '../../math/tuples';
 import { Pattern } from '../patterns';
 import { UvPattern } from './uv-patterns';
 import {

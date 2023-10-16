@@ -1,6 +1,6 @@
 import { Intersection } from '../intersections';
 import { Ray } from '../rays';
-import { Tuple } from '../tuples';
+import { Tuple } from '../math/tuples';
 import { Bounds, intersectsBounds, transformGroupBounds } from './bounds';
 import { Group } from './group';
 import { Shape } from './shape';

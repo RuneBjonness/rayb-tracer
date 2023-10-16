@@ -1,5 +1,5 @@
-import { Matrix4, identityMatrix, multiplyMatrices } from './matrices';
-import { cross, normalize, subtract, Tuple } from './tuples';
+import { Matrix4, identityMatrix, multiplyMatrices } from './math/matrices';
+import { cross, normalize, subtract, Tuple } from './math/tuples';
 
 export function translation(x: number, y: number, z: number): Matrix4 {
   let t = identityMatrix();

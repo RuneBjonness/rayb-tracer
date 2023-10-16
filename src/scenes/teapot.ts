@@ -1,5 +1,5 @@
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import {
   scaling,
   viewTransform,
@@ -8,7 +8,7 @@ import {
   rotationZ,
   translation,
 } from '../lib/transformations';
-import { point, vector, color } from '../lib/tuples';
+import { point, vector, color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { ObjParser } from '../tools/obj-parser';

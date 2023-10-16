@@ -1,4 +1,4 @@
-import { point, vector, color, Color } from '../lib/tuples';
+import { point, vector, color, Color } from '../lib/math/tuples';
 import {
   radians,
   rotationX,
@@ -8,7 +8,7 @@ import {
   translation,
   viewTransform,
 } from '../lib/transformations';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import { Shape } from '../lib/shapes/shape';
 import { AreaLight } from '../lib/lights';
 import { World } from '../lib/world';

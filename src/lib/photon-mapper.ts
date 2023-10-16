@@ -6,7 +6,7 @@ import {
 } from './intersections';
 import { materialColorAt } from './materials';
 import { ray } from './rays';
-import { addColors, blendColors, Color, Tuple, vector } from './tuples';
+import { addColors, blendColors, Color, Tuple, vector } from './math/tuples';
 import { World } from './world';
 
 export type Photon = {

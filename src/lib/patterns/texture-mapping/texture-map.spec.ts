@@ -1,7 +1,7 @@
 import each from 'jest-each';
 import { Cube } from '../../shapes/primitives/cube';
 import { Sphere } from '../../shapes/primitives/sphere';
-import { color, point } from '../../tuples';
+import { color, point } from '../../math/tuples';
 import { CubeMap, TextureMap } from './texture-map';
 import { SphericalMapper } from './uv-mappers';
 import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';

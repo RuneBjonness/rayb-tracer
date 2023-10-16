@@ -1,7 +1,7 @@
 import { ObjParser } from './obj-parser';
 import { SmoothTriangle } from '../lib/shapes/primitives/smooth-triangle';
 import { Triangle } from '../lib/shapes/primitives/triangle';
-import { point, vector } from '../lib/tuples';
+import { point, vector } from '../lib/math/tuples';
 
 test('ignoring unrecognized lines', () => {
   const parser = new ObjParser();

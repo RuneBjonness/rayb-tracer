@@ -1,4 +1,4 @@
-import { Color } from './tuples';
+import { Color } from './math/tuples';
 import { Canvas } from './canvas';
 
 test('creating a Canvas', () => {

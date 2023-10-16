@@ -1,4 +1,4 @@
-import { areEqual, identityMatrix } from '../matrices';
+import { areEqual, identityMatrix } from '../math/matrices';
 import {
   Checkers3dPattern,
   GradientPattern,
@@ -10,7 +10,7 @@ import {
 } from './patterns';
 import { Sphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../transformations';
-import { point, areEqual as tuplesAreEqual, color } from '../tuples';
+import { point, areEqual as tuplesAreEqual, color } from '../math/tuples';
 
 describe('Common pattern features', () => {
   test('the default transformation', () => {

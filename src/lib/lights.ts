@@ -1,4 +1,4 @@
-import { Matrix4, identityMatrix, multiplyMatrices } from './matrices';
+import { Matrix4, identityMatrix, multiplyMatrices } from './math/matrices';
 import { Photon } from './photon-mapper';
 import { Cube } from './shapes/primitives/cube';
 import { scaling } from './transformations';
@@ -11,7 +11,7 @@ import {
   point,
   Tuple,
   vector,
-} from './tuples';
+} from './math/tuples';
 import { World } from './world';
 
 export interface Light {

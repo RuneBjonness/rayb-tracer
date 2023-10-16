@@ -1,4 +1,9 @@
-import { Matrix4, identityMatrix, inverse, multiplyMatrixByTuple } from '../matrices';
+import {
+  Matrix4,
+  identityMatrix,
+  inverse,
+  multiplyMatrixByTuple,
+} from '../math/matrices';
 import {
   color,
   Color,
@@ -6,7 +11,7 @@ import {
   multiplyColorByScalar,
   subtractColors,
   addColors,
-} from '../tuples';
+} from '../math/tuples';
 import { Shape } from '../shapes/shape';
 
 export abstract class Pattern {

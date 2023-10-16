@@ -1,6 +1,6 @@
 import { intersection, Intersection } from '../../intersections';
 import { Ray } from '../../rays';
-import { dot, point, Tuple, vector } from '../../tuples';
+import { dot, point, Tuple, vector } from '../../math/tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 

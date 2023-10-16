@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { point } from '../../tuples';
+import { point } from '../../math/tuples';
 import {
   CubeBackMapper,
   CubeBottomMapper,

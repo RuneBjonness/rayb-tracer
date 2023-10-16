@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { color } from '../../tuples';
+import { color } from '../../math/tuples';
 import { CheckersUvPattern, ImageUvPattern } from './uv-patterns';
 
 describe('uv-patterns', () => {

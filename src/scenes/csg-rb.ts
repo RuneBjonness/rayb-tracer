@@ -1,7 +1,7 @@
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
 import { material } from '../lib/materials';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import { CsgShape } from '../lib/shapes/csg-shape';
 import { Group } from '../lib/shapes/group';
 import { Cube } from '../lib/shapes/primitives/cube';
@@ -16,7 +16,7 @@ import {
   shearing,
   radians,
 } from '../lib/transformations';
-import { point, vector, color } from '../lib/tuples';
+import { point, vector, color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { RenderConfiguration } from '../renderer/configuration';
 import { Scene } from './scene';

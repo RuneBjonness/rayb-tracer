@@ -1,6 +1,6 @@
-import { identityMatrix } from '../../matrices';
+import { identityMatrix } from '../../math/matrices';
 import { ray } from '../../rays';
-import { point, vector, normalize, areEqual } from '../../tuples';
+import { point, vector, normalize, areEqual } from '../../math/tuples';
 import { Sphere, glassSphere } from './sphere';
 
 describe('Spheres', () => {

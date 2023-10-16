@@ -1,7 +1,7 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import {
   TextureMap,
   CubeMap,
@@ -24,7 +24,7 @@ import {
   radians,
   rotationZ,
 } from '../lib/transformations';
-import { point, vector, color } from '../lib/tuples';
+import { point, vector, color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 

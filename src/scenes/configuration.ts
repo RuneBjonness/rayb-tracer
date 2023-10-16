@@ -1,4 +1,4 @@
-import { Matrix4 } from "../lib/matrices";
+import { Matrix4 } from '../lib/math/matrices';
 
 export type CameraConfiguration = {
   fieldOfView: number;

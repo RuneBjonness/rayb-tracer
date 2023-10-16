@@ -1,6 +1,6 @@
 import { intersection, prepareComputations } from '../../intersections';
 import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../tuples';
+import { areEqual, point, vector } from '../../math/tuples';
 import { SmoothTriangle } from './smooth-triangle';
 
 describe('Smooth Triangles', () => {

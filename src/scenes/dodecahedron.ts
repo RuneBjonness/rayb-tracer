@@ -2,7 +2,7 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
 import { material, Material } from '../lib/materials';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import { Group } from '../lib/shapes/group';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -17,7 +17,7 @@ import {
   rotationX,
   rotationZ,
 } from '../lib/transformations';
-import { point, vector, color, Color } from '../lib/tuples';
+import { point, vector, color, Color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 

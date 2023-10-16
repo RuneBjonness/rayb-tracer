@@ -1,6 +1,11 @@
-import { Matrix4, identityMatrix, inverse, multiplyMatrixByTuple } from './matrices';
+import {
+  Matrix4,
+  identityMatrix,
+  inverse,
+  multiplyMatrixByTuple,
+} from './math/matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
-import { point, Tuple, divideColor, addColors } from './tuples';
+import { point, Tuple, divideColor, addColors } from './math/tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
 

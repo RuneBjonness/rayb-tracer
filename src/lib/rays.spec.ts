@@ -1,5 +1,5 @@
 import { position, ray, transform } from './rays';
-import { point, vector, areEqual } from './tuples';
+import { point, vector, areEqual } from './math/tuples';
 import { scaling, translation } from './transformations';
 
 test('creating and accessing a ray', () => {

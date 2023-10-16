@@ -4,9 +4,9 @@ import {
   Tuple,
   normalize,
   multiplyTupleByScalar,
-} from './tuples';
-import * as matrices from './matrices';
-import { Matrix4 } from './matrices';
+} from './math/tuples';
+import * as matrices from './math/matrices';
+import { Matrix4 } from './math/matrices';
 
 export type Ray = {
   origin: Tuple;

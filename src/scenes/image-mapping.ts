@@ -1,8 +1,8 @@
 import { PointLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/matrices';
+import { multiplyMatrices } from '../lib/math/matrices';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { translation, scaling, viewTransform } from '../lib/transformations';
-import { point, vector, color } from '../lib/tuples';
+import { point, vector, color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { SphericalMapper } from '../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../resources/moon.ppm?raw';

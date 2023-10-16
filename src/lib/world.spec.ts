@@ -1,6 +1,6 @@
 import { World, defaultWorld } from './world';
 import { PointLight } from './lights';
-import { areEqual, color, point, vector } from './tuples';
+import { areEqual, color, point, vector } from './math/tuples';
 import { scaling, translation } from './transformations';
 import { ray } from './rays';
 import { intersection, prepareComputations } from './intersections';

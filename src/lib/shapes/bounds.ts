@@ -1,6 +1,6 @@
-import { Matrix4, multiplyMatrixByTuple } from '../matrices';
+import { Matrix4, multiplyMatrixByTuple } from '../math/matrices';
 import { Ray } from '../rays';
-import { point, Tuple, vector } from '../tuples';
+import { point, Tuple, vector } from '../math/tuples';
 import { Shape } from './shape';
 
 export type Bounds = [min: Tuple, max: Tuple];

@@ -1,8 +1,8 @@
 import each from 'jest-each';
 import { AreaLight, PointLight } from './lights';
-import { multiplyMatrices } from './matrices';
+import { multiplyMatrices } from './math/matrices';
 import { radians, rotationX, rotationZ, translation } from './transformations';
-import { addColors, areEqual, color, point, vector } from './tuples';
+import { addColors, areEqual, color, point, vector } from './math/tuples';
 import { defaultWorld } from './world';
 
 describe('point-light', () => {

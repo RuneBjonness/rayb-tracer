@@ -1,7 +1,7 @@
-import { areEqual, identityMatrix } from '../matrices';
+import { areEqual, identityMatrix } from '../math/matrices';
 import { ray } from '../rays';
 import { translation, scaling, rotationY } from '../transformations';
-import { point, vector, areEqual as tuplesAreEqual } from '../tuples';
+import { point, vector, areEqual as tuplesAreEqual } from '../math/tuples';
 import { Group } from './group';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';

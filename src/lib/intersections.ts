@@ -8,7 +8,7 @@ import {
   reflect,
   subtract,
   Tuple,
-} from './tuples';
+} from './math/tuples';
 
 export type Intersection = {
   time: number;

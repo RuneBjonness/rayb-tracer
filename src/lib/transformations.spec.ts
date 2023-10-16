@@ -1,4 +1,4 @@
-import { areEqual, point, vector } from './tuples';
+import { areEqual, point, vector } from './math/tuples';
 import {
   inverse,
   areEqual as matricesAreEqual,
@@ -6,7 +6,7 @@ import {
   multiplyMatrixByTuple,
   multiplyMatrices,
   Matrix4,
-} from './matrices';
+} from './math/matrices';
 import {
   translation,
   scaling,

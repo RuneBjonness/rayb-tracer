@@ -2,7 +2,7 @@ import { AreaLight, PointLight } from './lights';
 import { PhotonMapper } from './photon-mapper';
 import { Sphere } from './shapes/primitives/sphere';
 import { scaling } from './transformations';
-import { point, color } from './tuples';
+import { point, color } from './math/tuples';
 import { World } from './world';
 
 describe('photon-mapping', () => {

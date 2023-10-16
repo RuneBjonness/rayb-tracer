@@ -11,7 +11,7 @@ import {
   reflect,
   subtract,
   Tuple,
-} from './tuples';
+} from './math/tuples';
 import { Light } from './lights';
 import { Pattern } from './patterns/patterns';
 import { Shape } from './shapes/shape';

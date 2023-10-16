@@ -1,4 +1,4 @@
-import { Color } from './tuples';
+import { Color } from './math/tuples';
 
 export class Canvas {
   public pixels: Color[][];

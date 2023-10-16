@@ -2,7 +2,7 @@ import each from 'jest-each';
 import { intersection } from '../intersections';
 import { ray } from '../rays';
 import { translation, scaling } from '../transformations';
-import { point, vector } from '../tuples';
+import { point, vector } from '../math/tuples';
 import { CsgShape } from './csg-shape';
 import { Group } from './group';
 import { Cube } from './primitives/cube';
