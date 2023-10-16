@@ -9,7 +9,7 @@ import { ray } from './rays';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere, glassSphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
-import { scaling, translation } from './transformations';
+import { scaling, translation } from './math/transformations';
 import { areEqual, point, vector } from './math/tuples';
 
 test('an intersection encapsulates time and object', () => {

@@ -25,7 +25,7 @@ import {
   Tuple,
   vector,
 } from './math/tuples';
-import { scaling } from './transformations';
+import { scaling } from './math/transformations';
 import { lighting } from './materials';
 
 export class World {

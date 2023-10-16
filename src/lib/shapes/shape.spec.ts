@@ -1,7 +1,12 @@
 import { material } from '../materials';
 import { areEqual, identityMatrix, multiplyMatrices } from '../math/matrices';
 import { ray } from '../rays';
-import { rotationY, rotationZ, scaling, translation } from '../transformations';
+import {
+  rotationY,
+  rotationZ,
+  scaling,
+  translation,
+} from '../math/transformations';
 import { point, vector, areEqual as tuplesAreEqual } from '../math/tuples';
 import { Group } from './group';
 import { Sphere } from './primitives/sphere';

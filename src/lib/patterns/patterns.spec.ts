@@ -9,7 +9,7 @@ import {
   TestPattern,
 } from './patterns';
 import { Sphere } from '../shapes/primitives/sphere';
-import { scaling, translation } from '../transformations';
+import { scaling, translation } from '../math/transformations';
 import { point, areEqual as tuplesAreEqual, color } from '../math/tuples';
 
 describe('Common pattern features', () => {

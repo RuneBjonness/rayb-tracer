@@ -7,7 +7,7 @@ import {
   scaling,
   translation,
   viewTransform,
-} from '../lib/transformations';
+} from '../lib/math/transformations';
 import { multiplyMatrices } from '../lib/math/matrices';
 import { Shape } from '../lib/shapes/shape';
 import { AreaLight } from '../lib/lights';

@@ -11,7 +11,7 @@ import {
   viewTransform,
   radians,
   rotationZ,
-} from '../lib/transformations';
+} from '../lib/math/transformations';
 import { point, vector, color, Color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';

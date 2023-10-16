@@ -1,6 +1,6 @@
 import { position, ray, transform } from './rays';
 import { point, vector, areEqual } from './math/tuples';
-import { scaling, translation } from './transformations';
+import { scaling, translation } from './math/transformations';
 
 test('creating and accessing a ray', () => {
   const origin = point(1, 2, 3);

@@ -1,6 +1,6 @@
 import { areEqual, identityMatrix } from '../math/matrices';
 import { ray } from '../rays';
-import { translation, scaling, rotationY } from '../transformations';
+import { translation, scaling, rotationY } from '../math/transformations';
 import { point, vector, areEqual as tuplesAreEqual } from '../math/tuples';
 import { Group } from './group';
 import { Cylinder } from './primitives/cylinder';

@@ -1,7 +1,7 @@
 import each from 'jest-each';
 import { intersection } from '../intersections';
 import { ray } from '../rays';
-import { translation, scaling } from '../transformations';
+import { translation, scaling } from '../math/transformations';
 import { point, vector } from '../math/tuples';
 import { CsgShape } from './csg-shape';
 import { Group } from './group';

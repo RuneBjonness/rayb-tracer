@@ -4,7 +4,7 @@ import {
   identityMatrix,
   multiplyMatrices,
 } from './math/matrices';
-import { rotationY, translation, viewTransform } from './transformations';
+import { rotationY, translation, viewTransform } from './math/transformations';
 import { areEqual, color, point, vector } from './math/tuples';
 import { defaultWorld } from './world';
 
