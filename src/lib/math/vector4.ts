@@ -67,7 +67,9 @@ export class Vector4 {
   }
 
   public magnitude(): number {
-    return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2 + this.w ** 2);
+    return Math.sqrt(
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
+    );
   }
 
   public normalize(): Vector4 {
@@ -80,9 +82,11 @@ export class Vector4 {
   }
 
   public cross(v: Vector4): Vector4 {
-    const [x, y, z] = [this.x, this.y, this.z];
-    this.x = y * v.z - z * v.y;
-    this.y = z * v.x - x * v.z;
+    const x = this.x;
+    const y = this.y;
+
+    this.x = y * v.z - this.z * v.y;
+    this.y = this.z * v.x - x * v.z;
     this.z = x * v.y - y * v.x;
     this.w = 0;
     return this;
@@ -94,10 +98,12 @@ export class Vector4 {
   }
 
   public applyMatrix(m: Matrix4): Vector4 {
-    const [x, y, z] = [this.x, this.y, this.z];
-    this.x = m[0] * x + m[1] * y + m[2] * z + m[3] * this.w;
-    this.y = m[4] * x + m[5] * y + m[6] * z + m[7] * this.w;
-    this.z = m[8] * x + m[9] * y + m[10] * z + m[11] * this.w;
+    const x = this.x;
+    const y = this.y;
+
+    this.x = m[0] * x + m[1] * y + m[2] * this.z + m[3] * this.w;
+    this.y = m[4] * x + m[5] * y + m[6] * this.z + m[7] * this.w;
+    this.z = m[8] * x + m[9] * y + m[10] * this.z + m[11] * this.w;
     return this;
   }
 }
