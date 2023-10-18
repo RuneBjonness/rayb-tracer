@@ -2,17 +2,9 @@ import { Matrix4, identityMatrix, multiplyMatrices } from './math/matrices';
 import { Photon } from './photon-mapper';
 import { Cube } from './shapes/primitives/cube';
 import { scaling } from './math/transformations';
-import {
-  add,
-  Color,
-  divide,
-  multiplyColorByScalar,
-  multiplyTupleByScalar,
-  point,
-  Tuple,
-  vector,
-} from './math/tuples';
 import { World } from './world';
+import { Color, multiplyColorByScalar } from './math/tuples';
+import { Vector4, point, vector } from './math/vector4';
 
 export interface Light {
   intensity: Color;
@@ -20,8 +12,8 @@ export interface Light {
   maxSamples: number;
   adaptiveSampleSensitivity: number;
 
-  intensityAt(p: Tuple, w: World): number;
-  samplePoints(): Tuple[];
+  intensityAt(p: Vector4, w: World): number;
+  samplePoints(): Vector4[];
   emitPhotons(count: number, powerFactor: number): Photon[];
 }
 
@@ -30,13 +22,13 @@ export class PointLight implements Light {
   public maxSamples = 1;
   public adaptiveSampleSensitivity = 1;
 
-  constructor(private position: Tuple, public intensity: Color) {}
+  constructor(private position: Vector4, public intensity: Color) {}
 
-  samplePoints(): Tuple[] {
+  samplePoints(): Vector4[] {
     return [this.position];
   }
 
-  intensityAt(p: Tuple, w: World): number {
+  intensityAt(p: Vector4, w: World): number {
     return w.isShadowed(p, this.samplePoints()[0]) ? 0.0 : 1.0;
   }
 
@@ -68,9 +60,9 @@ export class AreaLight extends Cube implements Light {
 
   public samplePassCounts = new Array<number>(7);
 
-  private corner: Tuple;
-  private uVec: Tuple;
-  private vVec: Tuple;
+  private corner: Vector4;
+  private uVec: Vector4;
+  private vVec: Vector4;
   private uvSampleConfig = this.initUvSampleConfig();
 
   constructor(
@@ -87,8 +79,8 @@ export class AreaLight extends Cube implements Light {
     this.material.ambient = 1;
 
     this.corner = point(-1, -1.001, -1);
-    this.uVec = divide(vector(2, 0, 0), 7);
-    this.vVec = divide(vector(0, 0, 2), 7);
+    this.uVec = vector(2, 0, 0).divide(7);
+    this.vVec = vector(0, 0, 2).divide(7);
 
     for (let i = 0; i < this.samplePassCounts.length; i++) {
       this.samplePassCounts[i] = this.uvSampleConfig.filter(
@@ -97,7 +89,7 @@ export class AreaLight extends Cube implements Light {
     }
   }
 
-  samplePoints(): Tuple[] {
+  samplePoints(): Vector4[] {
     if (this.maxSamples === 1) {
       return [this.pointOnLight(3, 3, false)];
     }
@@ -107,7 +99,7 @@ export class AreaLight extends Cube implements Light {
       .map((s) => this.pointOnLight(s.u, s.v));
   }
 
-  intensityAt(p: Tuple, w: World): number {
+  intensityAt(p: Vector4, w: World): number {
     if (this.maxSamples === 1) {
       return w.isShadowed(p, this.pointOnLight(3, 3, false)) ? 0.0 : 1.0;
     }
@@ -170,21 +162,12 @@ export class AreaLight extends Cube implements Light {
     return photons;
   }
 
-  private pointOnLight(u: number, v: number, applyNoise = true): Tuple {
+  private pointOnLight(u: number, v: number, applyNoise = true): Vector4 {
     return this.pointToWorld(
-      add(
-        this.corner,
-        add(
-          multiplyTupleByScalar(
-            this.uVec,
-            u + (applyNoise ? Math.random() : 0.5)
-          ),
-          multiplyTupleByScalar(
-            this.vVec,
-            v + (applyNoise ? Math.random() : 0.5)
-          )
-        )
-      )
+      this.corner
+        .clone()
+        .add(this.uVec.clone().scale(u + (applyNoise ? Math.random() : 0.5)))
+        .add(this.vVec.clone().scale(v + (applyNoise ? Math.random() : 0.5)))
     );
   }
 

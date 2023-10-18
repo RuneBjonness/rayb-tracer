@@ -5,7 +5,8 @@ import {
   multiplyMatrices,
 } from './math/matrices';
 import { rotationY, translation, viewTransform } from './math/transformations';
-import { areEqual, color, point, vector } from './math/tuples';
+import { areEqual, color } from './math/tuples';
+import { point, vector } from './math/vector4';
 import { defaultWorld } from './world';
 
 test('creating a Camera', () => {
@@ -31,16 +32,16 @@ test('constructing a ray through the center of the canvas', () => {
   const c = new Camera(201, 101, Math.PI / 2);
   const r = c.raysForPixel(100, 50)[0];
 
-  expect(areEqual(r.origin, point(0, 0, 0))).toBe(true);
-  expect(areEqual(r.direction, vector(0, 0, -1))).toBe(true);
+  expect(r.origin.equals(point(0, 0, 0))).toBe(true);
+  expect(r.direction.equals(vector(0, 0, -1))).toBe(true);
 });
 
 test('constructing a ray through a corner of the canvas', () => {
   const c = new Camera(201, 101, Math.PI / 2);
   const r = c.raysForPixel(0, 0)[0];
 
-  expect(areEqual(r.origin, point(0, 0, 0))).toBe(true);
-  expect(areEqual(r.direction, vector(0.66519, 0.33259, -0.66851))).toBe(true);
+  expect(r.origin.equals(point(0, 0, 0))).toBe(true);
+  expect(r.direction.equals(vector(0.66519, 0.33259, -0.66851))).toBe(true);
 });
 
 test('constructing a ray when the camera is transformed', () => {
@@ -48,9 +49,9 @@ test('constructing a ray when the camera is transformed', () => {
   c.transform = multiplyMatrices(rotationY(Math.PI / 4), translation(0, -2, 5));
   const r = c.raysForPixel(100, 50)[0];
 
-  expect(areEqual(r.origin, point(0, 2, -5))).toBe(true);
+  expect(r.origin.equals(point(0, 2, -5))).toBe(true);
   expect(
-    areEqual(r.direction, vector(Math.sqrt(2) / 2, 0, -Math.sqrt(2) / 2))
+    r.direction.equals(vector(Math.sqrt(2) / 2, 0, -Math.sqrt(2) / 2))
   ).toBe(true);
 });
 

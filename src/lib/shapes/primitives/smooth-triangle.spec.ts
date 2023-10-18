@@ -1,6 +1,6 @@
 import { intersection, prepareComputations } from '../../intersections';
-import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../math/tuples';
+import { point, vector } from '../../math/vector4';
+import { Ray } from '../../rays';
 import { SmoothTriangle } from './smooth-triangle';
 
 describe('Smooth Triangles', () => {
@@ -29,7 +29,7 @@ describe('Smooth Triangles', () => {
   });
 
   test('an intersection with a smooth triangle stores u/v', () => {
-    const r = ray(point(-0.2, 0.3, -2), vector(0, 0, 1));
+    const r = new Ray(point(-0.2, 0.3, -2), vector(0, 0, 1));
     const xs = tri.intersects(r);
 
     expect(xs[0].u).toBeCloseTo(0.45);
@@ -40,14 +40,14 @@ describe('Smooth Triangles', () => {
     const i = intersection(1, tri, 0.45, 0.25);
     const n = tri.normalAt(point(0, 0, 0), i);
 
-    expect(areEqual(n, vector(-0.5547, 0.83205, 0))).toBe(true);
+    expect(n.equals(vector(-0.5547, 0.83205, 0))).toBe(true);
   });
 
   test('preparing the normal on a smooth triangle', () => {
     const i = intersection(1, tri, 0.45, 0.25);
-    const r = ray(point(-0.2, 0.3, -2), vector(0, 0, 1));
+    const r = new Ray(point(-0.2, 0.3, -2), vector(0, 0, 1));
     const comps = prepareComputations(i, r);
 
-    expect(areEqual(comps.normalv, vector(-0.5547, 0.83205, 0))).toBe(true);
+    expect(comps.normalv.equals(vector(-0.5547, 0.83205, 0))).toBe(true);
   });
 });

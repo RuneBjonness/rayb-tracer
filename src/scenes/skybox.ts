@@ -9,7 +9,7 @@ import {
   scaling,
   viewTransform,
 } from '../lib/math/transformations';
-import { point, vector, color, Color } from '../lib/math/tuples';
+import { color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 // import negXImgMapFile from '../resources/skybox/negx.ppm?raw';
 // import negYImgMapFile from '../resources/skybox/negy.ppm?raw';
@@ -21,6 +21,7 @@ import { parsePPM } from '../tools/ppm-parser';
 import { Scene } from './scene';
 import { CubeMap } from '../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
+import { point, vector } from '../lib/math/vector4';
 
 export class Skybox implements Scene {
   cameraCfg: CameraConfiguration = {

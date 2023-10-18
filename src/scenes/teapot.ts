@@ -8,7 +8,7 @@ import {
   rotationZ,
   translation,
 } from '../lib/math/transformations';
-import { point, vector, color } from '../lib/math/tuples';
+import { color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { ObjParser } from '../tools/obj-parser';
@@ -18,6 +18,7 @@ import { Shape } from '../lib/shapes/shape';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { CameraConfiguration } from './configuration';
 import { RenderConfiguration } from '../renderer/configuration';
+import { point, vector } from '../lib/math/vector4';
 
 export class TeaPot implements Scene {
   highRes: boolean;

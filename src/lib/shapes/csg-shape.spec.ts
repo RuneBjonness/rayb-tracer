@@ -1,14 +1,14 @@
 import each from 'jest-each';
 import { intersection } from '../intersections';
-import { ray } from '../rays';
+import { Ray } from '../rays';
 import { translation, scaling } from '../math/transformations';
-import { point, vector } from '../math/tuples';
 import { CsgShape } from './csg-shape';
 import { Group } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
+import { point, vector } from '../math/vector4';
 
 describe('CSG Shapes', () => {
   test('CSG is created with an operation and two shapes', () => {
@@ -86,7 +86,7 @@ describe('CSG Shapes', () => {
     const c = new Cube();
     const csg = new CsgShape('union', s, c);
 
-    const r = ray(point(0, 2, -5), vector(0, 0, 1));
+    const r = new Ray(point(0, 2, -5), vector(0, 0, 1));
     const xs = csg.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -98,7 +98,7 @@ describe('CSG Shapes', () => {
     s2.transform = translation(0, 0, 0.5);
     const csg = new CsgShape('union', s1, s2);
 
-    const r = ray(point(0, 0, -5), vector(0, 0, 1));
+    const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const xs = csg.intersects(r);
 
     expect(xs.length).toBe(2);

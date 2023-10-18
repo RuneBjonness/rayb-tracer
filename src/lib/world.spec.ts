@@ -1,13 +1,14 @@
 import { World, defaultWorld } from './world';
 import { PointLight } from './lights';
-import { areEqual, color, point, vector } from './math/tuples';
+import { areEqual, color } from './math/tuples';
 import { scaling, translation } from './math/transformations';
-import { ray } from './rays';
+import { Ray } from './rays';
 import { intersection, prepareComputations } from './intersections';
 import { TestPattern } from './patterns/patterns';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere } from './shapes/primitives/sphere';
 import each from 'jest-each';
+import { point, vector } from './math/vector4';
 
 test('creating a world', () => {
   const w = new World();
@@ -36,7 +37,7 @@ test('the default world', () => {
 
 test('creating a world', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const xs = w.intersects(r);
 
   expect(xs.length).toBe(4);
@@ -48,7 +49,7 @@ test('creating a world', () => {
 
 test('shading an intersection', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const shape = w.objects[0];
   const i = intersection(4, shape);
 
@@ -60,7 +61,7 @@ test('shading an intersection', () => {
 test('shading an intersection from the inside', () => {
   const w = defaultWorld();
   w.lights[0] = new PointLight(point(0, 0.25, 0), color(1, 1, 1));
-  const r = ray(point(0, 0, 0), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
   const shape = w.objects[1];
   const i = intersection(0.5, shape);
 
@@ -71,7 +72,7 @@ test('shading an intersection from the inside', () => {
 
 test('the color when a ray misses', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, -5), vector(0, 1, 0));
+  const r = new Ray(point(0, 0, -5), vector(0, 1, 0));
   const c = w.colorAt(r);
 
   expect(areEqual(c, color(0.0, 0.0, 0.0))).toBe(true);
@@ -79,7 +80,7 @@ test('the color when a ray misses', () => {
 
 test('the color when a ray hits', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const c = w.colorAt(r);
 
   expect(areEqual(c, color(0.38066, 0.47583, 0.2855))).toBe(true);
@@ -93,34 +94,19 @@ test('the color with an intersection behind the ray', () => {
   const inner = w.objects[1];
   inner.material.ambient = 1;
 
-  const r = ray(point(0, 0, 0.75), vector(0, 0, -1));
+  const r = new Ray(point(0, 0, 0.75), vector(0, 0, -1));
   const c = w.colorAt(r);
 
   expect(areEqual(c, inner.material.color)).toBe(true);
 });
 
+// prettier-ignore
 each`
     case                                                | p                      | result
-    ${'nothing is collinear with point and light'}      | ${point(
-  0,
-  10,
-  0
-)}     | ${false}
-    ${'an object is between the point and the light'}   | ${point(
-  10,
-  -10,
-  10
-)}  | ${true}
-    ${'an object is behind the light'}                  | ${point(
-  -20,
-  20,
-  -20
-)} | ${false}
-    ${'an object is behind the point'}                  | ${point(
-  -2,
-  2,
-  -2
-)}    | ${false}
+    ${'nothing is collinear with point and light'}      | ${point(0, 10, 0)}     | ${false}
+    ${'an object is between the point and the light'}   | ${point(10, -10, 10)}  | ${true}
+    ${'an object is behind the light'}                  | ${point(-20, 20, -20)} | ${false}
+    ${'an object is behind the point'}                  | ${point(-2, 2, -2)}    | ${false}
 `.test('isShadowed() when $case', ({ p, result }) => {
   const w = defaultWorld();
   const lightPos = point(-10, 10, -10);
@@ -134,7 +120,7 @@ test('shading an intersection in shadow', () => {
   s.transform = translation(0, 0, 10);
   w.objects.push(new Sphere(), s);
 
-  const r = ray(point(0, 0, 5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, 5), vector(0, 0, 1));
   const i = intersection(4, s);
 
   const c = w.shadeHit(prepareComputations(i, r));
@@ -144,7 +130,7 @@ test('shading an intersection in shadow', () => {
 
 test('the reflected color for a nonreflective material', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, 0), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
   w.objects[1].material.ambient = 1;
   const i = intersection(1, w.objects[1]);
 
@@ -161,7 +147,7 @@ test('the reflected color for a reflective material', () => {
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
-  const r = ray(
+  const r = new Ray(
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
@@ -180,7 +166,7 @@ test('shadeHit() with a reflective material', () => {
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
-  const r = ray(
+  const r = new Ray(
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
@@ -206,7 +192,7 @@ test('colorAt() with mutually reflective surfaces', () => {
   upper.transform = translation(0, 1, 0);
   w.objects.push(upper);
 
-  const r = ray(point(0, 0, 0), vector(0, 1, 1));
+  const r = new Ray(point(0, 0, 0), vector(0, 1, 1));
   const c = w.colorAt(r);
 
   expect(c).toBeTruthy();
@@ -219,7 +205,7 @@ test('the reflected color at maximum recursive depth', () => {
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
-  const r = ray(
+  const r = new Ray(
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
@@ -233,7 +219,7 @@ test('the reflected color at maximum recursive depth', () => {
 
 test('the refracted color with an opaque surface', () => {
   const w = defaultWorld();
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const xs = [intersection(4, w.objects[0]), intersection(6, w.objects[0])];
 
   const comps = prepareComputations(xs[0], r, xs);
@@ -247,7 +233,7 @@ test('the refracted color at maximum recursive depth', () => {
   w.objects[0].material.transparancy = 1.0;
   w.objects[0].material.refractiveIndex = 1.5;
 
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const xs = [intersection(4, w.objects[0]), intersection(6, w.objects[0])];
 
   const comps = prepareComputations(xs[0], r, xs);
@@ -261,7 +247,7 @@ test('the refracted color at under total internal reflection', () => {
   w.objects[0].material.transparancy = 1.0;
   w.objects[0].material.refractiveIndex = 1.5;
 
-  const r = ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
+  const r = new Ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
   const xs = [
     intersection(-Math.sqrt(2) / 2, w.objects[0]),
     intersection(Math.sqrt(2) / 2, w.objects[0]),
@@ -281,7 +267,7 @@ test('the refracted color with a refracted ray', () => {
   w.objects[1].material.transparancy = 1.0;
   w.objects[1].material.refractiveIndex = 1.5;
 
-  const r = ray(point(0, 0, 0.1), vector(0, 1, 0));
+  const r = new Ray(point(0, 0, 0.1), vector(0, 1, 0));
   const xs = [
     intersection(-0.9899, w.objects[0]),
     intersection(-0.4899, w.objects[1]),
@@ -309,7 +295,7 @@ test('shadeHit() with a transparent material', () => {
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
 
-  const r = ray(
+  const r = new Ray(
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
@@ -336,7 +322,7 @@ test('shadeHit() with a reflective and transparent material', () => {
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
 
-  const r = ray(
+  const r = new Ray(
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );

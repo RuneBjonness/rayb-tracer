@@ -6,7 +6,7 @@ import {
   scaling,
   viewTransform,
 } from '../lib/math/transformations';
-import { point, vector, color } from '../lib/math/tuples';
+import { color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { SphericalMapper } from '../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../resources/moon.ppm?raw';
@@ -16,6 +16,7 @@ import { TextureMap } from '../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
 import { CameraConfiguration } from './configuration';
 import { RenderConfiguration } from '../renderer/configuration';
+import { point, vector } from '../lib/math/vector4';
 
 export class ImageMapping implements Scene {
   cameraCfg: CameraConfiguration = {

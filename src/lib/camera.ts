@@ -1,13 +1,9 @@
-import {
-  Matrix4,
-  identityMatrix,
-  inverse,
-  multiplyMatrixByTuple,
-} from './math/matrices';
+import { Matrix4, identityMatrix, inverse } from './math/matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
-import { point, Tuple, divideColor, addColors } from './math/tuples';
+import { divideColor, addColors } from './math/tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
+import { Vector4, point } from './math/vector4';
 
 export class Camera {
   private _transform: Matrix4;
@@ -17,7 +13,7 @@ export class Camera {
   public set transform(m: Matrix4) {
     this._transform = m;
     this.invTransform = inverse(m);
-    this.origin = multiplyMatrixByTuple(this.invTransform, point(0, 0, 0));
+    this.origin = point(0, 0, 0).applyMatrix(this.invTransform);
   }
 
   public pixelSize: number;
@@ -33,7 +29,7 @@ export class Camera {
   private halfWidth: number;
   private halfHeight: number;
   private invTransform: Matrix4;
-  private origin: Tuple = point(0, 0, 0);
+  private origin: Vector4 = point(0, 0, 0);
 
   private uvSampleConfig = this.initUvSampleConfig();
 
@@ -44,7 +40,7 @@ export class Camera {
   ) {
     this._transform = identityMatrix();
     this.invTransform = inverse(this._transform);
-    this.origin = multiplyMatrixByTuple(this.invTransform, point(0, 0, 0));
+    this.origin = point(0, 0, 0).applyMatrix(this.invTransform);
 
     const halfView = Math.tan(fieldOfView / 2);
     const aspect = width / height;
@@ -64,10 +60,7 @@ export class Camera {
     const worldX = this.halfWidth - xOffset;
     const worldY = this.halfHeight - yOffset;
 
-    const px = multiplyMatrixByTuple(
-      this.invTransform,
-      point(worldX, worldY, -1)
-    );
+    const px = point(worldX, worldY, -1).applyMatrix(this.invTransform);
 
     const rays: Ray[] = [];
     if (this.aperture > 0) {
@@ -161,7 +154,7 @@ export class Camera {
     return c;
   }
 
-  private sampleApertureOrigins(): Tuple[] {
+  private sampleApertureOrigins(): Vector4[] {
     const baseOffset = -this.aperture / 2.0;
     const uvStep = this.aperture / 9;
 
@@ -175,11 +168,11 @@ export class Camera {
     v: number,
     uvStep: number,
     baseOffset: number
-  ): Tuple {
+  ): Vector4 {
     return point(
-      this.origin[0] + baseOffset + (u + Math.random()) * uvStep,
-      this.origin[1] + baseOffset + (v + Math.random()) * uvStep,
-      this.origin[2]
+      this.origin.x + baseOffset + (u + Math.random()) * uvStep,
+      this.origin.y + baseOffset + (v + Math.random()) * uvStep,
+      this.origin.z
     );
   }
 

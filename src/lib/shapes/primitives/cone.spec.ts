@@ -1,7 +1,7 @@
 import each from 'jest-each';
-import { ray } from '../../rays';
-import { point, vector, normalize, areEqual } from '../../math/tuples';
+import { Ray } from '../../rays';
 import { Cone } from './cone';
+import { point, vector } from '../../math/vector4';
 
 describe('Cones', () => {
   each`
@@ -13,7 +13,7 @@ describe('Cones', () => {
     'intersecting a cone with a ray',
     ({ origin, direction, t0, t1 }) => {
       const c = new Cone();
-      const xs = c.intersects(ray(origin, normalize(direction)));
+      const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(2);
       expect(xs[0].time).toBeCloseTo(t0);
@@ -23,7 +23,9 @@ describe('Cones', () => {
 
   test('intersecting a cone with a ray parallel to one of its halves', () => {
     const c = new Cone();
-    const xs = c.intersects(ray(point(0, 0, -1), normalize(vector(0, 1, 1))));
+    const xs = c.intersects(
+      new Ray(point(0, 0, -1), vector(0, 1, 1).normalize())
+    );
 
     expect(xs.length).toEqual(1);
     expect(xs[0].time).toBeCloseTo(0.35355);
@@ -41,7 +43,7 @@ describe('Cones', () => {
       c.minimum = -0.5;
       c.maximum = 0.5;
       c.closed = true;
-      const xs = c.intersects(ray(origin, normalize(direction)));
+      const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
     }
@@ -49,14 +51,14 @@ describe('Cones', () => {
 
   each`
         point               | normal          
-        ${point(0, 0, 0)}   | ${normalize(vector(0, 0, 0))}
-        ${point(1, 1, 1)}   | ${normalize(vector(1, -Math.sqrt(2), 1))}
-        ${point(-1, -1, 0)} | ${normalize(vector(-1, 1, 0))} 
+        ${point(0, 0, 0)}   | ${vector(0, 0, 0).normalize()}
+        ${point(1, 1, 1)}   | ${vector(1, -Math.sqrt(2), 1).normalize()}
+        ${point(-1, -1, 0)} | ${vector(-1, 1, 0).normalize()} 
     `.test('the normal on a cone', ({ point, normal }) => {
     const c = new Cone();
     const n = c.normalAt(point);
 
-    expect(areEqual(n, normal)).toBe(true);
+    expect(n.equals(normal)).toBe(true);
   });
 
   test('the bounds of a unbounded cone', () => {

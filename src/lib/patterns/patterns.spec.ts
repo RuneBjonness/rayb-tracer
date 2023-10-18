@@ -10,7 +10,8 @@ import {
 } from './patterns';
 import { Sphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../math/transformations';
-import { point, areEqual as tuplesAreEqual, color } from '../math/tuples';
+import { areEqual as tuplesAreEqual, color } from '../math/tuples';
+import { point } from '../math/vector4';
 
 describe('Common pattern features', () => {
   test('the default transformation', () => {

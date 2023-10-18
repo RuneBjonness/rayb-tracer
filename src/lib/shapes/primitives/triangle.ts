@@ -1,28 +1,21 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
-import {
-  Tuple,
-  subtract,
-  normalize,
-  cross,
-  point,
-  dot,
-} from '../../math/tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
+import { Vector4, point } from '../../math/vector4';
 
 export class Triangle extends Shape {
-  e1: Tuple;
-  e2: Tuple;
-  normal: Tuple;
+  e1: Vector4;
+  e2: Vector4;
+  normal: Vector4;
 
   private calculatedBounds: Bounds | null = null;
 
-  constructor(public p1: Tuple, public p2: Tuple, public p3: Tuple) {
+  constructor(public p1: Vector4, public p2: Vector4, public p3: Vector4) {
     super();
-    this.e1 = subtract(p2, p1);
-    this.e2 = subtract(p3, p1);
-    this.normal = normalize(cross(this.e2, this.e1));
+    this.e1 = p2.clone().subtract(p1);
+    this.e2 = p3.clone().subtract(p1);
+    this.normal = this.e2.clone().cross(this.e1).normalize();
   }
 
   bounds(): Bounds {
@@ -32,47 +25,47 @@ export class Triangle extends Shape {
 
     this.calculatedBounds = [
       point(
-        Math.min(this.p1[0], this.p2[0], this.p3[0]),
-        Math.min(this.p1[1], this.p2[1], this.p3[1]),
-        Math.min(this.p1[2], this.p2[2], this.p3[2])
+        Math.min(this.p1.x, this.p2.x, this.p3.x),
+        Math.min(this.p1.y, this.p2.y, this.p3.y),
+        Math.min(this.p1.z, this.p2.z, this.p3.z)
       ),
       point(
-        Math.max(this.p1[0], this.p2[0], this.p3[0]),
-        Math.max(this.p1[1], this.p2[1], this.p3[1]),
-        Math.max(this.p1[2], this.p2[2], this.p3[2])
+        Math.max(this.p1.x, this.p2.x, this.p3.x),
+        Math.max(this.p1.y, this.p2.y, this.p3.y),
+        Math.max(this.p1.z, this.p2.z, this.p3.z)
       ),
     ];
     return this.calculatedBounds;
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    const dirCrossE2 = cross(r.direction, this.e2);
-    const det = dot(this.e1, dirCrossE2);
+    const dirCrossE2 = r.direction.clone().cross(this.e2);
+    const det = this.e1.dot(dirCrossE2);
 
     if (Math.abs(det) < 0.00001) {
       return [];
     }
 
     const f = 1 / det;
-    const p1ToOrigin = subtract(r.origin, this.p1);
-    const u = f * dot(p1ToOrigin, dirCrossE2);
+    const p1ToOrigin = r.origin.clone().subtract(this.p1);
+    const u = f * p1ToOrigin.dot(dirCrossE2);
 
     if (u < 0 || u > 1) {
       return [];
     }
 
-    const originCrossE1 = cross(p1ToOrigin, this.e1);
-    const v = f * dot(r.direction, originCrossE1);
+    const originCrossE1 = p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(originCrossE1);
 
     if (v < 0 || u + v > 1) {
       return [];
     }
 
-    const t = f * dot(this.e2, originCrossE1);
+    const t = f * this.e2.dot(originCrossE1);
     return [intersection(t, this)];
   }
 
-  protected localNormalAt(_p: Tuple): Tuple {
+  protected localNormalAt(_p: Vector4): Vector4 {
     return this.normal;
   }
 }

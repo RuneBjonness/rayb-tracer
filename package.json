@@ -4,7 +4,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "test": "jest src",
+    "test": "jest src --verbose",
     "test-photon-mapping": "jest -t photon-mapping --runInBand --verbose"
   },
   "dependencies": {

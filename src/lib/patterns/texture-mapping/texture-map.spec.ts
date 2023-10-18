@@ -1,10 +1,11 @@
 import each from 'jest-each';
 import { Cube } from '../../shapes/primitives/cube';
 import { Sphere } from '../../shapes/primitives/sphere';
-import { color, point } from '../../math/tuples';
+import { color } from '../../math/tuples';
 import { CubeMap, TextureMap } from './texture-map';
 import { SphericalMapper } from './uv-mappers';
 import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';
+import { point } from '../../math/vector4';
 
 describe('Texture maps', () => {
   const black = color(0, 0, 0);
@@ -57,8 +58,8 @@ describe('Cube maps', () => {
   const cube = new Cube();
 
   each`
-        case      | p                  | result
-        ${'L m'}  | ${point(-1, 0, 0)} | ${yellow}
+        case      | p                        | result
+        ${'L m'}  | ${point(-1, 0, 0)}       | ${yellow}
         ${'L ul'} | ${point(-1, 0.9, -0.9)}  | ${cyan}
         ${'L ur'} | ${point(-1, 0.9, 0.9)}   | ${red}
         ${'L bl'} | ${point(-1, -0.9, -0.9)} | ${blue}

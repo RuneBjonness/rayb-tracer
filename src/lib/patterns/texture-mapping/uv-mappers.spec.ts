@@ -1,5 +1,4 @@
 import each from 'jest-each';
-import { point } from '../../math/tuples';
 import {
   CubeBackMapper,
   CubeBottomMapper,
@@ -11,6 +10,7 @@ import {
   PlanarMapper,
   SphericalMapper,
 } from './uv-mappers';
+import { point } from '../../math/vector4';
 
 each`
     p                                       | uRes    | vRes

@@ -1,6 +1,6 @@
 import { Intersection } from '../intersections';
+import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { Tuple } from '../math/tuples';
 import { Bounds, intersectsBounds, transformGroupBounds } from './bounds';
 import { Group } from './group';
 import { Shape } from './shape';
@@ -76,7 +76,7 @@ export class CsgShape extends Shape {
       : [];
   }
 
-  protected localNormalAt(p: Tuple): Tuple {
+  protected localNormalAt(p: Vector4): Vector4 {
     throw new Error(
       "CSG Shapes don't have normal vectors, and if this is called we have done something wrong somewhere.."
     );

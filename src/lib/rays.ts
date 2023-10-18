@@ -1,42 +1,33 @@
-import {
-  add,
-  subtract,
-  Tuple,
-  normalize,
-  multiplyTupleByScalar,
-} from './math/tuples';
-import * as matrices from './math/matrices';
 import { Matrix4 } from './math/matrices';
+import { Vector4 } from './math/vector4';
 
-export type Ray = {
-  origin: Tuple;
-  direction: Tuple;
-};
+export class Ray {
+  constructor(public origin: Vector4, public direction: Vector4) {}
 
-export function ray(origin: Tuple, direction: Tuple): Ray {
-  return { origin, direction };
+  public clone(): Ray {
+    return new Ray(this.origin.clone(), this.direction.clone());
+  }
+
+  public position(time: number): Vector4 {
+    return this.direction.clone().scale(time).add(this.origin);
+  }
+
+  public transform(m: Matrix4): Ray {
+    this.origin.applyMatrix(m);
+    this.direction.applyMatrix(m);
+    return this;
+  }
 }
 
-export function rayToTarget(origin: Tuple, target: Tuple): Ray {
-  const direction = normalize(subtract(target, origin));
-  return { origin, direction };
+export function rayToTarget(origin: Vector4, target: Vector4): Ray {
+  const direction = target.clone().subtract(origin).normalize();
+  return new Ray(origin, direction);
 }
 
 export function rayFocalPoint(
-  origin: Tuple,
-  target: Tuple,
+  origin: Vector4,
+  target: Vector4,
   focalLength: number
-): Tuple {
-  return position(rayToTarget(origin, target), focalLength);
-}
-
-export function position(ray: Ray, time: number): Tuple {
-  return add(multiplyTupleByScalar(ray.direction, time), ray.origin);
-}
-
-export function transform(ray: Ray, m: Matrix4): Ray {
-  return {
-    origin: matrices.multiplyMatrixByTuple(m, ray.origin),
-    direction: matrices.multiplyMatrixByTuple(m, ray.direction),
-  };
+): Vector4 {
+  return rayToTarget(origin, target).position(focalLength);
 }

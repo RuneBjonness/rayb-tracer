@@ -5,13 +5,14 @@ import {
   refractedDirection,
 } from './intersections';
 import { materialColorAt } from './materials';
-import { ray } from './rays';
-import { addColors, blendColors, Color, Tuple, vector } from './math/tuples';
+import { Ray } from './rays';
+import { addColors, blendColors, Color } from './math/tuples';
 import { World } from './world';
+import { Vector4, vector } from './math/vector4';
 
 export type Photon = {
-  position: Tuple;
-  direction: Tuple;
+  position: Vector4;
+  direction: Vector4;
   power: Color;
   interactedWithSpecular: boolean;
 };
@@ -63,7 +64,7 @@ export class PhotonMapper {
       return;
     }
 
-    const r = ray(photon.position, photon.direction);
+    const r = new Ray(photon.position, photon.direction);
     const xs = this.world.intersects(r);
     const i = hit(xs);
 
@@ -101,9 +102,9 @@ export class PhotonMapper {
         {
           position: ic.point,
           direction: vector(
-            ic.normalv[0] * Math.random(),
-            ic.normalv[1] * Math.random(),
-            ic.normalv[2] * Math.random()
+            ic.normalv.x * Math.random(),
+            ic.normalv.y * Math.random(),
+            ic.normalv.z * Math.random()
           ),
           power: blendColors(
             photon.power,

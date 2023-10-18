@@ -1,13 +1,13 @@
 import { Material, material } from '../lib/materials';
+import { Vector4, point, vector } from '../lib/math/vector4';
 import { Group } from '../lib/shapes/group';
 import { SmoothTriangle } from '../lib/shapes/primitives/smooth-triangle';
 import { Triangle } from '../lib/shapes/primitives/triangle';
-import { point, Tuple, vector } from '../lib/math/tuples';
 
 export class ObjParser {
   ignoredLines = 0;
-  vertices: Tuple[] = [];
-  normals: Tuple[] = [];
+  vertices: Vector4[] = [];
+  normals: Vector4[] = [];
   groups: { [groupName: string]: Group } = {};
   model: Group = new Group();
   currentMaterial: Material = material();

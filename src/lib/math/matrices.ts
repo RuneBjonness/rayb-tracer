@@ -1,5 +1,3 @@
-import { Tuple } from './tuples';
-
 // prettier-ignore
 export type Matrix4 = [
   number, number, number, number,
@@ -53,15 +51,6 @@ export function multiplyMatrices(a: Matrix4, b: Matrix4): Matrix4 {
     a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
     a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
     a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15],
-  ];
-}
-
-export function multiplyMatrixByTuple(m: Matrix4, t: Tuple): Tuple {
-  return [
-    m[0] * t[0] + m[1] * t[1] + m[2] * t[2] + m[3] * t[3],
-    m[4] * t[0] + m[5] * t[1] + m[6] * t[2] + m[7] * t[3],
-    m[8] * t[0] + m[9] * t[1] + m[10] * t[2] + m[11] * t[3],
-    t[3],
   ];
 }
 

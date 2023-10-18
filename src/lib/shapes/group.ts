@@ -1,6 +1,6 @@
 import { Intersection } from '../intersections';
+import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { Tuple } from '../math/tuples';
 import {
   Bounds,
   boundsContainsBounds,
@@ -69,7 +69,7 @@ export class Group extends Shape {
       : [];
   }
 
-  protected localNormalAt(p: Tuple): Tuple {
+  protected localNormalAt(p: Vector4): Vector4 {
     throw new Error(
       "Groups don't have normal vectors, and if this is called we have done something wrong somewhere.."
     );

@@ -7,8 +7,9 @@ import {
   rotationZ,
   translation,
 } from './math/transformations';
-import { addColors, areEqual, color, point, vector } from './math/tuples';
+import { addColors, areEqual, color } from './math/tuples';
 import { defaultWorld } from './world';
+import { point } from './math/vector4';
 
 describe('point-light', () => {
   test('a point light has a single sample position and intensity', () => {
@@ -17,7 +18,7 @@ describe('point-light', () => {
 
     const light = new PointLight(position, intensity);
 
-    expect(areEqual(light.samplePoints()[0], position)).toBe(true);
+    expect(light.samplePoints()[0].equals(position)).toBe(true);
     expect(areEqual(light.intensity, intensity)).toBe(true);
   });
 
@@ -47,10 +48,10 @@ describe('area-light', () => {
     const light = new AreaLight(intensity, 50, 1);
     const samples = light.samplePoints();
 
-    const minXpos = Math.min(...samples.map((s) => s[0]));
-    const maxXpos = Math.max(...samples.map((s) => s[0]));
-    const minZpos = Math.min(...samples.map((s) => s[2]));
-    const maxZpos = Math.max(...samples.map((s) => s[2]));
+    const minXpos = Math.min(...samples.map((s) => s.x));
+    const maxXpos = Math.max(...samples.map((s) => s.x));
+    const minZpos = Math.min(...samples.map((s) => s.z));
+    const maxZpos = Math.max(...samples.map((s) => s.z));
 
     expect(minXpos).toBeGreaterThanOrEqual(-1);
     expect(minXpos).toBeLessThanOrEqual(-0.5);
@@ -62,7 +63,7 @@ describe('area-light', () => {
     expect(maxZpos).toBeGreaterThanOrEqual(0.5);
     expect(maxZpos).toBeLessThanOrEqual(1);
 
-    expect(samples.every((s) => s[1] < 0.01 && s[1] > -0.01)).toBe(true);
+    expect(samples.every((s) => s.y < 0.01 && s.y > -0.01)).toBe(true);
     expect(areEqual(light.intensity, intensity)).toBe(true);
   });
 
@@ -75,10 +76,10 @@ describe('area-light', () => {
 
     const samples = light.samplePoints();
 
-    const minYpos = Math.min(...samples.map((s) => s[1]));
-    const maxYpos = Math.max(...samples.map((s) => s[1]));
-    const minZpos = Math.min(...samples.map((s) => s[2]));
-    const maxZpos = Math.max(...samples.map((s) => s[2]));
+    const minYpos = Math.min(...samples.map((s) => s.y));
+    const maxYpos = Math.max(...samples.map((s) => s.y));
+    const minZpos = Math.min(...samples.map((s) => s.z));
+    const maxZpos = Math.max(...samples.map((s) => s.z));
 
     expect(minYpos).toBeGreaterThanOrEqual(-1);
     expect(minYpos).toBeLessThanOrEqual(-0.5);
@@ -90,7 +91,7 @@ describe('area-light', () => {
     expect(maxZpos).toBeGreaterThanOrEqual(0.5);
     expect(maxZpos).toBeLessThanOrEqual(1);
 
-    expect(samples.every((s) => s[0] < -4.99 && s[0] > -5.01)).toBe(true);
+    expect(samples.every((s) => s.x < -4.99 && s.x > -5.01)).toBe(true);
   });
 
   test('an area light has a single intensity', () => {
@@ -156,13 +157,13 @@ describe('photon-mapping: point-light', () => {
 
   test('a point light emits all photons from its own position', () => {
     expect(photons.length).toEqual(100);
-    expect(areEqual(photons[0].position, position)).toBe(true);
-    expect(areEqual(photons[15].position, position)).toBe(true);
+    expect(photons[0].position.equals(position)).toBe(true);
+    expect(photons[15].position.equals(position)).toBe(true);
   });
 
   test('a point light emits photons randomly in every direction', () => {
-    expect(areEqual(photons[1].direction, photons[2].direction)).not.toBe(true);
-    expect(areEqual(photons[3].direction, photons[4].direction)).not.toBe(true);
+    expect(photons[1].direction.equals(photons[2].direction)).not.toBe(true);
+    expect(photons[3].direction.equals(photons[4].direction)).not.toBe(true);
   });
 
   test('the intesity of a point light is evenly distributed on all emitted photons ', () => {
@@ -183,10 +184,10 @@ describe('photon-mapping: area-light', () => {
 
   test('an area light emits photons from its entire area', () => {
     expect(photons.length).toEqual(100);
-    const minXpos = Math.min(...photons.map((p) => p.position[0]));
-    const maxXpos = Math.max(...photons.map((p) => p.position[0]));
-    const minZpos = Math.min(...photons.map((p) => p.position[2]));
-    const maxZpos = Math.max(...photons.map((p) => p.position[2]));
+    const minXpos = Math.min(...photons.map((p) => p.position.x));
+    const maxXpos = Math.max(...photons.map((p) => p.position.x));
+    const minZpos = Math.min(...photons.map((p) => p.position.z));
+    const maxZpos = Math.max(...photons.map((p) => p.position.z));
 
     expect(minXpos).toBeGreaterThanOrEqual(-1);
     expect(minXpos).toBeLessThanOrEqual(-0.5);
@@ -200,10 +201,10 @@ describe('photon-mapping: area-light', () => {
   });
 
   test('an area light emits photons in random directions limited to a hemisphere on the active side', () => {
-    expect(areEqual(photons[1].direction, photons[2].direction)).not.toBe(true);
-    expect(areEqual(photons[3].direction, photons[4].direction)).not.toBe(true);
+    expect(photons[1].direction.equals(photons[2].direction)).not.toBe(true);
+    expect(photons[3].direction.equals(photons[4].direction)).not.toBe(true);
 
-    expect(photons.map((x) => x.direction[1]).every((y) => y < 0)).toBe(true);
+    expect(photons.map((x) => x.direction.y).every((y) => y < 0)).toBe(true);
   });
 
   test('the intesity of an area light is evenly distributed on all emitted photons ', () => {

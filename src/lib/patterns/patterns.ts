@@ -1,17 +1,12 @@
-import {
-  Matrix4,
-  identityMatrix,
-  inverse,
-  multiplyMatrixByTuple,
-} from '../math/matrices';
+import { Matrix4, identityMatrix, inverse } from '../math/matrices';
 import {
   color,
   Color,
-  Tuple,
   multiplyColorByScalar,
   subtractColors,
   addColors,
 } from '../math/tuples';
+import { Vector4 } from '../math/vector4';
 import { Shape } from '../shapes/shape';
 
 export abstract class Pattern {
@@ -31,12 +26,12 @@ export abstract class Pattern {
     this.invTransform = inverse(this._transform);
   }
 
-  colorAt(shape: Shape, p: Tuple): Color {
+  colorAt(shape: Shape, p: Vector4): Color {
     const objectPoint = shape.worldToObject(p);
-    const patternPoint = multiplyMatrixByTuple(this.invTransform, objectPoint);
+    const patternPoint = objectPoint.applyMatrix(this.invTransform);
     return this.localColorAt(patternPoint);
   }
-  protected abstract localColorAt(p: Tuple): Color;
+  protected abstract localColorAt(p: Vector4): Color;
 }
 
 export class TestPattern extends Pattern {
@@ -44,8 +39,8 @@ export class TestPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
-    return color(p[0], p[1], p[2]);
+  protected localColorAt(p: Vector4): Color {
+    return color(p.x, p.y, p.z);
   }
 }
 
@@ -54,8 +49,8 @@ export class StripePattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
-    return Math.floor(p[0]) % 2 === 0 ? this.a : this.b;
+  protected localColorAt(p: Vector4): Color {
+    return Math.floor(p.x) % 2 === 0 ? this.a : this.b;
   }
 }
 
@@ -64,9 +59,9 @@ export class GradientPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
+  protected localColorAt(p: Vector4): Color {
     const distance = subtractColors(this.b, this.a);
-    const fraction = p[0] - Math.floor(p[0]);
+    const fraction = p.x - Math.floor(p.x);
     return addColors(this.a, multiplyColorByScalar(distance, fraction));
   }
 }
@@ -76,8 +71,8 @@ export class RingPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
-    return Math.floor(Math.sqrt(p[0] ** 2 + p[2] ** 2)) % 2 === 0
+  protected localColorAt(p: Vector4): Color {
+    return Math.floor(Math.sqrt(p.x ** 2 + p.z ** 2)) % 2 === 0
       ? this.a
       : this.b;
   }
@@ -88,8 +83,8 @@ export class Checkers3dPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
-    return (Math.floor(p[0]) + Math.floor(p[1]) + Math.floor(p[2])) % 2 === 0
+  protected localColorAt(p: Vector4): Color {
+    return (Math.floor(p.x) + Math.floor(p.y) + Math.floor(p.z)) % 2 === 0
       ? this.a
       : this.b;
   }
@@ -100,9 +95,9 @@ export class RadialGradientPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
+  protected localColorAt(p: Vector4): Color {
     const distance = subtractColors(this.b, this.a);
-    const r = Math.sqrt(p[0] ** 2 + p[2] ** 2);
+    const r = Math.sqrt(p.x ** 2 + p.z ** 2);
     const fraction = r - Math.floor(r);
     return addColors(this.a, multiplyColorByScalar(distance, fraction));
   }
@@ -113,7 +108,7 @@ export class SolidPattern extends Pattern {
     super();
   }
 
-  protected localColorAt(_p: Tuple): Color {
+  protected localColorAt(_p: Vector4): Color {
     return this.c;
   }
 }
@@ -123,10 +118,10 @@ export class BlendedPatterns extends Pattern {
     super();
   }
 
-  colorAt(shape: Shape, p: Tuple): Color {
+  colorAt(shape: Shape, p: Vector4): Color {
     return addColors(this.a.colorAt(shape, p), this.b.colorAt(shape, p));
   }
-  protected localColorAt(p: Tuple): Color {
+  protected localColorAt(p: Vector4): Color {
     // Not used in overriden colorAt()
     return [0, 0, 0];
   }

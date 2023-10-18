@@ -1,7 +1,7 @@
 import each from 'jest-each';
-import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../math/tuples';
+import { Ray } from '../../rays';
 import { Cube } from './cube';
+import { point, vector } from '../../math/vector4';
 
 describe('Cubes', () => {
   each`
@@ -17,7 +17,7 @@ describe('Cubes', () => {
     'a ray intersects a cube from $case',
     ({ origin, direction, t1, t2 }) => {
       const c = new Cube();
-      const xs = c.intersects(ray(origin, direction));
+      const xs = c.intersects(new Ray(origin, direction));
 
       expect(xs.length).toEqual(2);
       expect(xs[0].time).toEqual(t1);
@@ -35,7 +35,7 @@ describe('Cubes', () => {
         ${point(2, 2, 0)}  | ${vector(-1, 0, 0)} 
     `.test('a ray misses a cube', ({ origin, direction }) => {
     const c = new Cube();
-    const xs = c.intersects(ray(origin, direction));
+    const xs = c.intersects(new Ray(origin, direction));
 
     expect(xs.length).toEqual(0);
   });
@@ -54,7 +54,7 @@ describe('Cubes', () => {
     const c = new Cube();
     const n = c.normalAt(point);
 
-    expect(areEqual(n, normal)).toBe(true);
+    expect(n.equals(normal)).toBe(true);
   });
 
   test('the bounds of a cube', () => {

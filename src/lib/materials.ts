@@ -3,18 +3,13 @@ import {
   color,
   Color,
   divideColor,
-  dot,
   multiplyColorByScalar,
   multiplyColors,
-  negate,
-  normalize,
-  reflect,
-  subtract,
-  Tuple,
 } from './math/tuples';
 import { Light } from './lights';
 import { Pattern } from './patterns/patterns';
 import { Shape } from './shapes/shape';
+import { Vector4 } from './math/vector4';
 
 export type Material = {
   color: Color;
@@ -45,9 +40,9 @@ export function material(): Material {
 export function lighting(
   shape: Shape,
   light: Light,
-  point: Tuple,
-  eyev: Tuple,
-  normalv: Tuple,
+  point: Vector4,
+  eyev: Vector4,
+  normalv: Vector4,
   lightIntensity: number,
   indirectLightning: Color | null = null
 ): Color {
@@ -146,24 +141,24 @@ export function lighting(
   return addColors(ambient, multiplyColorByScalar(avgSample, lightIntensity));
 }
 
-export function materialColorAt(shape: Shape, point: Tuple): Color {
+export function materialColorAt(shape: Shape, point: Vector4): Color {
   return shape.material.pattern
     ? shape.material.pattern.colorAt(shape, point)
     : shape.material.color;
 }
 
 function lightingSample(
-  lightSample: Tuple,
-  point: Tuple,
-  eyev: Tuple,
-  normalv: Tuple,
+  lightSample: Vector4,
+  point: Vector4,
+  eyev: Vector4,
+  normalv: Vector4,
   material: Material,
   effectiveColor: Color,
   specularLight: Color
 ): Color {
-  const lightv = normalize(subtract(lightSample, point));
+  const lightv = lightSample.clone().subtract(point).normalize();
   let diffuse: Color, specular: Color;
-  const lightDotNormal = dot(lightv, normalv);
+  const lightDotNormal = lightv.dot(normalv);
 
   if (lightDotNormal < 0) {
     diffuse = color(0, 0, 0);
@@ -174,8 +169,8 @@ function lightingSample(
       lightDotNormal
     );
 
-    const reflectv = reflect(negate(lightv), normalv);
-    const reflectDotEye = dot(reflectv, eyev);
+    const reflectv = lightv.negate().reflect(normalv);
+    const reflectDotEye = reflectv.dot(eyev);
     if (reflectDotEye <= 0) {
       specular = color(0, 0, 0);
     } else {

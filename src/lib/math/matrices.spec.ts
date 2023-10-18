@@ -1,6 +1,12 @@
-import * as tuples from './tuples';
-import * as matrices from './matrices';
-import { Matrix4 } from './matrices';
+import {
+  Matrix4,
+  areEqual,
+  identityMatrix,
+  inverse,
+  multiplyMatrices,
+  transpose,
+} from './matrices';
+import { Vector4, point } from './vector4';
 
 test('constructing and inspecting a 4x4 matrix', () => {
   // prettier-ignore
@@ -36,7 +42,7 @@ test('two matrices are equal if no values have a difference greater than 0.00001
     13.5, 14.5, 15.5, 16.5,
   ];
 
-  expect(matrices.areEqual(m1, m2)).toBe(true);
+  expect(areEqual(m1, m2)).toBe(true);
 });
 
 test('two matrices are not equal if any value has a difference greater than 0.00001 ', () => {
@@ -55,7 +61,7 @@ test('two matrices are not equal if any value has a difference greater than 0.00
     13.5, 14.5, 15.5, 16.5,
   ];
 
-  expect(matrices.areEqual(m1, m2)).toBe(false);
+  expect(areEqual(m1, m2)).toBe(false);
 });
 
 test('multiplying two matrices', () => {
@@ -81,9 +87,9 @@ test('multiplying two matrices', () => {
     16, 26, 46, 42,
   ];
 
-  const result = matrices.multiplyMatrices(m1, m2);
+  const result = multiplyMatrices(m1, m2);
 
-  expect(matrices.areEqual(expected, result)).toBe(true);
+  expect(areEqual(expected, result)).toBe(true);
 });
 
 test('multiplying a matrix with a tuple', () => {
@@ -94,11 +100,11 @@ test('multiplying a matrix with a tuple', () => {
     8, 6, 4, 1,
     0, 0, 0, 1,
   ];
-  const b = tuples.tuple(1, 2, 3, 1);
+  const b = point(1, 2, 3);
 
-  const result = matrices.multiplyMatrixByTuple(m, b);
+  const result = b.applyMatrix(m);
 
-  expect(tuples.areEqual(result, tuples.tuple(18, 24, 33, 1))).toBe(true);
+  expect(result.equals(point(18, 24, 33))).toBe(true);
 });
 
 test('multiplying a matrix by the identity matrix', () => {
@@ -109,17 +115,17 @@ test('multiplying a matrix by the identity matrix', () => {
     2, 4, 8, 16,
     4, 8, 16, 32,
   ];
-  const result = matrices.multiplyMatrices(m, matrices.identityMatrix());
+  const result = multiplyMatrices(m, identityMatrix());
 
-  expect(matrices.areEqual(m, result)).toBe(true);
+  expect(areEqual(m, result)).toBe(true);
 });
 
 test('multiplying the identity matrix by a tuple', () => {
-  const a = tuples.tuple(1, 2, 3, 4);
+  const a = new Vector4(1, 2, 3, 4);
 
-  const result = matrices.multiplyMatrixByTuple(matrices.identityMatrix(), a);
+  const result = a.applyMatrix(identityMatrix());
 
-  expect(tuples.areEqual(result, a)).toBe(true);
+  expect(result.equals(a)).toBe(true);
 });
 
 test('transposing a matrix', () => {
@@ -139,15 +145,15 @@ test('transposing a matrix', () => {
     4, 8, 6, 2,
   ];
 
-  const result = matrices.transpose(m);
+  const result = transpose(m);
 
-  expect(matrices.areEqual(expected, result)).toBe(true);
+  expect(areEqual(expected, result)).toBe(true);
 });
 
 test('transposing the identity matrix', () => {
-  const result = matrices.transpose(matrices.identityMatrix());
+  const result = transpose(identityMatrix());
 
-  expect(matrices.areEqual(matrices.identityMatrix(), result)).toBe(true);
+  expect(areEqual(identityMatrix(), result)).toBe(true);
 });
 
 describe('matrix invertibility', () => {
@@ -168,7 +174,7 @@ describe('matrix invertibility', () => {
       9, 1, 7, -6,
     ];
 
-    expect(matrices.areEqual(nullMatrix, matrices.inverse(m))).toBe(false);
+    expect(areEqual(nullMatrix, inverse(m))).toBe(false);
   });
 
   test('testing a noninvertible matrix for invertibility', () => {
@@ -180,7 +186,7 @@ describe('matrix invertibility', () => {
       0, 0, 0, 0,
     ];
 
-    expect(matrices.areEqual(nullMatrix, matrices.inverse(m))).toBe(true);
+    expect(areEqual(nullMatrix, inverse(m))).toBe(true);
   });
 });
 
@@ -193,7 +199,7 @@ test('calculating the inverse of a matrix', () => {
     1, -3, 7, 4,
   ];
 
-  const m2 = matrices.inverse(m1);
+  const m2 = inverse(m1);
 
   // prettier-ignore
   const m1inverted: Matrix4 = [
@@ -205,7 +211,7 @@ test('calculating the inverse of a matrix', () => {
 
   expect(m2[14]).toEqual(-160 / 532);
   expect(m2[11]).toEqual(105 / 532);
-  expect(matrices.areEqual(m1inverted, m2)).toBe(true);
+  expect(areEqual(m1inverted, m2)).toBe(true);
 });
 
 test('calculating the inverse of another matrix', () => {
@@ -223,9 +229,9 @@ test('calculating the inverse of another matrix', () => {
     0.35897, 0.35897, 0.4359, 0.92308,
     -0.69231, -0.69231, -0.76923, -1.92308,
   ];
-  const m2 = matrices.inverse(m1);
+  const m2 = inverse(m1);
 
-  expect(matrices.areEqual(m1inverted, m2)).toBe(true);
+  expect(areEqual(m1inverted, m2)).toBe(true);
 });
 
 test('calculating the inverse of yet another matrix', () => {
@@ -243,9 +249,9 @@ test('calculating the inverse of yet another matrix', () => {
     -0.02901, -0.1463, -0.10926, 0.12963,
     0.17778, 0.06667, -0.26667, 0.33333,
   ];
-  const m2 = matrices.inverse(m1);
+  const m2 = inverse(m1);
 
-  expect(matrices.areEqual(m1inverted, m2)).toBe(true);
+  expect(areEqual(m1inverted, m2)).toBe(true);
 });
 
 test('multiplying a product by its inverse', () => {
@@ -265,8 +271,8 @@ test('multiplying a product by its inverse', () => {
     1, 2, 7, 8,
   ];
 
-  const prod = matrices.multiplyMatrices(m1, m2);
-  const result = matrices.multiplyMatrices(prod, matrices.inverse(m2));
+  const prod = multiplyMatrices(m1, m2);
+  const result = multiplyMatrices(prod, inverse(m2));
 
-  expect(matrices.areEqual(m1, result)).toBe(true);
+  expect(areEqual(m1, result)).toBe(true);
 });

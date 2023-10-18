@@ -13,11 +13,12 @@ import {
   rotationX,
   rotationY,
 } from '../lib/math/transformations';
-import { point, vector, color, Color } from '../lib/math/tuples';
+import { color, Color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { Cube } from '../lib/shapes/primitives/cube';
 import { Material, material } from '../lib/materials';
+import { point, vector } from '../lib/math/vector4';
 
 export class CornellBoxTransparency implements Scene {
   cameraCfg = cornellBoxCameraConfiguration();

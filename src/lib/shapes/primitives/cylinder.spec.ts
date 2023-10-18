@@ -1,7 +1,7 @@
 import each from 'jest-each';
-import { ray } from '../../rays';
-import { point, vector, normalize, areEqual } from '../../math/tuples';
+import { Ray } from '../../rays';
 import { Cylinder } from './cylinder';
+import { point, vector } from '../../math/vector4';
 
 describe('Cylinders', () => {
   test('the default properties for a cylinder', () => {
@@ -19,7 +19,7 @@ describe('Cylinders', () => {
         ${point(0, 0, -5)} | ${vector(1, 1, 1)}
     `.test('a ray misses a cylinder', ({ origin, direction }) => {
     const c = new Cylinder();
-    const xs = c.intersects(ray(origin, normalize(direction)));
+    const xs = c.intersects(new Ray(origin, direction.normalize()));
 
     expect(xs.length).toEqual(0);
   });
@@ -31,7 +31,7 @@ describe('Cylinders', () => {
         ${point(0.5, 0, -5)} | ${vector(0.1, 1, 1)} | ${6.80798} | ${7.08872}
     `.test('a ray strikes a cylinder', ({ origin, direction, t0, t1 }) => {
     const c = new Cylinder();
-    const xs = c.intersects(ray(origin, normalize(direction)));
+    const xs = c.intersects(new Ray(origin, direction.normalize()));
 
     expect(xs.length).toEqual(2);
     expect(xs[0].time).toBeCloseTo(t0);
@@ -48,7 +48,7 @@ describe('Cylinders', () => {
     const c = new Cylinder();
     const n = c.normalAt(point);
 
-    expect(areEqual(n, normal)).toBe(true);
+    expect(n.equals(normal)).toBe(true);
   });
 
   each`
@@ -65,7 +65,7 @@ describe('Cylinders', () => {
       const c = new Cylinder();
       c.minimum = 1;
       c.maximum = 2;
-      const xs = c.intersects(ray(origin, normalize(direction)));
+      const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
     }
@@ -85,7 +85,7 @@ describe('Cylinders', () => {
       c.minimum = 1;
       c.maximum = 2;
       c.closed = true;
-      const xs = c.intersects(ray(origin, normalize(direction)));
+      const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
     }
@@ -108,7 +108,7 @@ describe('Cylinders', () => {
       c.closed = true;
       const n = c.normalAt(point);
 
-      expect(areEqual(n, normal)).toBe(true);
+      expect(n.equals(normal)).toBe(true);
     }
   );
 

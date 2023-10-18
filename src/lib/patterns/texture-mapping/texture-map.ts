@@ -1,4 +1,4 @@
-import { Color, Tuple } from '../../math/tuples';
+import { Color } from '../../math/tuples';
 import { Pattern } from '../patterns';
 import { UvPattern } from './uv-patterns';
 import {
@@ -10,13 +10,14 @@ import {
   CubeTopMapper,
   UvMapper,
 } from './uv-mappers';
+import { Vector4 } from '../../math/vector4';
 
 export class TextureMap extends Pattern {
   constructor(private uvPattern: UvPattern, private uvMapper: UvMapper) {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
+  protected localColorAt(p: Vector4): Color {
     const [u, v] = this.uvMapper.map(p);
     return this.uvPattern.colorAt(u, v);
   }
@@ -45,32 +46,32 @@ export class CubeMap extends Pattern {
     super();
   }
 
-  protected localColorAt(p: Tuple): Color {
+  protected localColorAt(p: Vector4): Color {
     const faceIdx = this.getFaceIndex(p);
     const [u, v] = this.mappers[faceIdx].map(p);
     return this.faces[faceIdx].colorAt(u, v);
   }
 
-  private getFaceIndex(p: Tuple): number {
-    const absX = Math.abs(p[0]);
-    const absY = Math.abs(p[1]);
-    const absZ = Math.abs(p[2]);
+  private getFaceIndex(p: Vector4): number {
+    const absX = Math.abs(p.x);
+    const absY = Math.abs(p.y);
+    const absZ = Math.abs(p.z);
     const coord = Math.max(absX, absY, absZ);
 
     switch (coord) {
-      case -p[0]: {
+      case -p.x: {
         return 0; // left
       }
-      case p[2]: {
+      case p.z: {
         return 1; // front
       }
-      case p[0]: {
+      case p.x: {
         return 2; // right
       }
-      case -p[2]: {
+      case -p.z: {
         return 3; // back
       }
-      case p[1]: {
+      case p.y: {
         return 4; // top
       }
     }

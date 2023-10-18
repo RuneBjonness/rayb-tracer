@@ -2,8 +2,9 @@ import { AreaLight, PointLight } from './lights';
 import { PhotonMapper } from './photon-mapper';
 import { Sphere } from './shapes/primitives/sphere';
 import { scaling } from './math/transformations';
-import { point, color } from './math/tuples';
+import { color } from './math/tuples';
 import { World } from './world';
+import { point } from './math/vector4';
 
 describe('photon-mapping', () => {
   test('a photon mapper calculates total light intensity from all light sources in the world', () => {

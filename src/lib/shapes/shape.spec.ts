@@ -1,16 +1,16 @@
 import { material } from '../materials';
 import { areEqual, identityMatrix, multiplyMatrices } from '../math/matrices';
-import { ray } from '../rays';
+import { Ray } from '../rays';
 import {
   rotationY,
   rotationZ,
   scaling,
   translation,
 } from '../math/transformations';
-import { point, vector, areEqual as tuplesAreEqual } from '../math/tuples';
 import { Group } from './group';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
+import { point, vector } from '../math/vector4';
 
 describe('Common shape features', () => {
   test('the default transformation', () => {
@@ -41,47 +41,39 @@ describe('Common shape features', () => {
   });
 
   test('intersecting a scaled shape with a ray', () => {
-    const r = ray(point(0, 0, -5), vector(0, 0, 1));
+    const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const s = new TestShape();
     s.transform = scaling(2, 2, 2);
     const xs = s.intersects(r);
 
     expect(s.localRayFromBase).not.toBeNull();
-    expect(tuplesAreEqual(s.localRayFromBase!.origin, point(0, 0, -2.5))).toBe(
-      true
-    );
-    expect(
-      tuplesAreEqual(s.localRayFromBase!.direction, vector(0, 0, 0.5))
-    ).toBe(true);
+    expect(s.localRayFromBase!.origin.equals(point(0, 0, -2.5))).toBe(true);
+    expect(s.localRayFromBase!.direction.equals(vector(0, 0, 0.5))).toBe(true);
   });
 
   test('intersecting a translated shape with a ray', () => {
-    const r = ray(point(0, 0, -5), vector(0, 0, 1));
+    const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const s = new TestShape();
     s.transform = translation(5, 0, 0);
     const xs = s.intersects(r);
 
     expect(s.localRayFromBase).not.toBeNull();
-    expect(tuplesAreEqual(s.localRayFromBase!.origin, point(-5, 0, -5))).toBe(
-      true
-    );
-    expect(tuplesAreEqual(s.localRayFromBase!.direction, vector(0, 0, 1))).toBe(
-      true
-    );
+    expect(s.localRayFromBase!.origin.equals(point(-5, 0, -5))).toBe(true);
+    expect(s.localRayFromBase!.direction.equals(vector(0, 0, 1))).toBe(true);
   });
 
   test('computing the normal on a translated shape', () => {
     const s = new TestShape();
     s.transform = translation(0, 1, 0);
     const n = s.normalAt(point(0, 1.70711, -0.70711));
-    expect(tuplesAreEqual(n, vector(0, 0.70711, -0.70711))).toBe(true);
+    expect(n.equals(vector(0, 0.70711, -0.70711))).toBe(true);
   });
 
   test('computing the normal on a transformed shape', () => {
     const s = new TestShape();
     s.transform = multiplyMatrices(scaling(1, 0.5, 1), rotationZ(Math.PI / 5));
     const n = s.normalAt(point(0, Math.sqrt(2) / 2, -(Math.sqrt(2) / 2)));
-    expect(tuplesAreEqual(n, vector(0, 0.97014, -0.24254))).toBe(true);
+    expect(n.equals(vector(0, 0.97014, -0.24254))).toBe(true);
   });
 
   test('the default parent is null', () => {
@@ -101,7 +93,7 @@ describe('Common shape features', () => {
 
     const p = s.worldToObject(point(-2, 0, -10));
 
-    expect(tuplesAreEqual(p, point(0, 0, -1))).toBe(true);
+    expect(p.equals(point(0, 0, -1))).toBe(true);
   });
 
   test('converting a normal from object to world space', () => {
@@ -118,7 +110,7 @@ describe('Common shape features', () => {
       vector(Math.sqrt(3) / 3, Math.sqrt(3) / 3, Math.sqrt(3) / 3)
     );
 
-    expect(tuplesAreEqual(n, vector(0.28571, 0.42857, -0.85714))).toBe(true);
+    expect(n.equals(vector(0.28571, 0.42857, -0.85714))).toBe(true);
   });
 
   test('dividing a primitive does nothing', () => {

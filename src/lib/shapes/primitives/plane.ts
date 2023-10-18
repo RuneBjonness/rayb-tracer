@@ -1,6 +1,6 @@
 import { intersection, Intersection } from '../../intersections';
+import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
-import { point, Tuple, vector } from '../../math/tuples';
 import { Bounds } from '../bounds';
 import { Shape } from '../shape';
 
@@ -17,13 +17,13 @@ export class Plane extends Shape {
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    if (Math.abs(r.direction[1]) < 0.00001) {
+    if (Math.abs(r.direction.y) < 0.00001) {
       return [];
     }
-    return [intersection(-r.origin[1] / r.direction[1], this)];
+    return [intersection(-r.origin.y / r.direction.y, this)];
   }
 
-  protected localNormalAt(_p: Tuple): Tuple {
+  protected localNormalAt(_p: Vector4): Vector4 {
     return vector(0, 1, 0);
   }
 }

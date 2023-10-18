@@ -1,17 +1,11 @@
 import { Intersection } from '../intersections';
-import {
-  Matrix4,
-  identityMatrix,
-  inverse,
-  multiplyMatrixByTuple,
-  transpose,
-} from '../math/matrices';
-import { Ray, transform } from '../rays';
-import { normalize, point, Tuple, vector } from '../math/tuples';
+import { Matrix4, identityMatrix, inverse, transpose } from '../math/matrices';
+import { Ray } from '../rays';
 import { material, Material } from '../materials';
 import { Bounds } from './bounds';
 import { Group } from './group';
 import { CsgShape } from './csg-shape';
+import { Vector4, point, vector } from '../math/vector4';
 
 export abstract class Shape {
   private _transform: Matrix4;
@@ -40,31 +34,29 @@ export abstract class Shape {
   abstract bounds(): Bounds;
 
   intersects(r: Ray): Intersection[] {
-    return this.localIntersects(transform(r, this.invTransform));
+    return this.localIntersects(r.clone().transform(this.invTransform));
   }
   protected abstract localIntersects(r: Ray): Intersection[];
 
-  normalAt(p: Tuple, i: Intersection | null = null): Tuple {
+  normalAt(p: Vector4, i: Intersection | null = null): Vector4 {
     return this.normalToWorld(this.localNormalAt(this.worldToObject(p), i));
   }
-  protected abstract localNormalAt(p: Tuple, i: Intersection | null): Tuple;
+  protected abstract localNormalAt(p: Vector4, i: Intersection | null): Vector4;
 
-  worldToObject(p: Tuple): Tuple {
-    return multiplyMatrixByTuple(
-      this.invTransform,
-      this.parent ? this.parent.worldToObject(p) : p
-    );
+  worldToObject(p: Vector4): Vector4 {
+    const point = this.parent ? this.parent.worldToObject(p) : p.clone();
+    return point.applyMatrix(this.invTransform);
   }
 
-  normalToWorld(n: Tuple): Tuple {
-    let normal = multiplyMatrixByTuple(this.invTransformTransposed, n);
-    normal[3] = 0;
-    normal = normalize(normal);
+  normalToWorld(n: Vector4): Vector4 {
+    let normal = n.clone().applyMatrix(this.invTransformTransposed);
+    normal.w = 0;
+    normal.normalize();
     return this.parent ? this.parent.normalToWorld(normal) : normal;
   }
 
-  pointToWorld(p: Tuple): Tuple {
-    let point = multiplyMatrixByTuple(this.transform, p);
+  pointToWorld(p: Vector4): Vector4 {
+    let point = p.clone().applyMatrix(this.transform);
     return this.parent ? this.parent.pointToWorld(point) : point;
   }
 
@@ -89,7 +81,7 @@ export class TestShape extends Shape {
     return [];
   }
 
-  protected localNormalAt(p: Tuple): Tuple {
-    return vector(p[0], p[1], p[2]);
+  protected localNormalAt(p: Vector4): Vector4 {
+    return vector(p.x, p.y, p.z);
   }
 }

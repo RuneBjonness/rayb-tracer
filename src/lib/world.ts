@@ -7,7 +7,7 @@ import {
   refractedDirection,
 } from './intersections';
 import { Light, PointLight } from './lights';
-import { ray, Ray } from './rays';
+import { Ray } from './rays';
 import { Shape } from './shapes/shape';
 import { Sphere } from './shapes/primitives/sphere';
 import {
@@ -15,18 +15,11 @@ import {
   Color,
   color,
   divideColor,
-  dot,
-  magnitude,
   multiplyColorByScalar,
-  negate,
-  normalize,
-  point,
-  subtract,
-  Tuple,
-  vector,
 } from './math/tuples';
 import { scaling } from './math/transformations';
 import { lighting } from './materials';
+import { point, vector, Vector4 } from './math/vector4';
 
 export class World {
   objects: Shape[] = [];
@@ -112,11 +105,11 @@ export class World {
       : [0, 0, 0];
   }
 
-  isShadowed(p: Tuple, lightPosition: Tuple): boolean {
-    const v = subtract(lightPosition, p);
-    const distance = magnitude(v);
-    const direction = normalize(v);
-    const r = ray(p, direction);
+  isShadowed(p: Vector4, lightPosition: Vector4): boolean {
+    const v = lightPosition.clone().subtract(p);
+    const distance = v.magnitude();
+    const direction = v.normalize();
+    const r = new Ray(p, direction);
     const h = hit(this.intersects(r));
     return h != null && h.time < distance;
   }
@@ -125,7 +118,10 @@ export class World {
     if (maxDepth <= 0 || comps.object.material.reflective < 0.001) {
       return [0, 0, 0];
     }
-    const c = this.colorAt(ray(comps.overPoint, comps.reflectv), maxDepth - 1);
+    const c = this.colorAt(
+      new Ray(comps.overPoint, comps.reflectv),
+      maxDepth - 1
+    );
     return multiplyColorByScalar(c, comps.object.material.reflective);
   }
 
@@ -137,7 +133,7 @@ export class World {
     if (dir === null) {
       return [0, 0, 0];
     }
-    const c = this.colorAt(ray(comps.underPoint, dir), maxDepth - 1);
+    const c = this.colorAt(new Ray(comps.underPoint, dir), maxDepth - 1);
     return multiplyColorByScalar(c, comps.object.material.transparancy);
   }
 
@@ -149,21 +145,19 @@ export class World {
       return null;
     }
 
-    let sampleDir = normalize(
-      vector(
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1
-      )
-    );
+    let sampleDir = vector(
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1
+    ).normalize();
 
-    let normalDiff = dot(sampleDir, comps.normalv);
+    let normalDiff = sampleDir.dot(comps.normalv);
     if (normalDiff < 0) {
-      sampleDir = negate(sampleDir);
+      sampleDir = sampleDir.negate();
       normalDiff = normalDiff * -1;
     }
 
-    const r = ray(comps.overPoint, sampleDir);
+    const r = new Ray(comps.overPoint, sampleDir);
 
     const xs = this.intersects(r);
     const i = hit(xs);

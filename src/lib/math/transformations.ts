@@ -1,5 +1,5 @@
 import { Matrix4, identityMatrix, multiplyMatrices } from './matrices';
-import { cross, normalize, subtract, Tuple } from './tuples';
+import { Vector4 } from './vector4';
 
 export function translation(x: number, y: number, z: number): Matrix4 {
   let t = identityMatrix();
@@ -74,21 +74,22 @@ export function shearing(
   ];
 }
 
-export function viewTransform(from: Tuple, to: Tuple, up: Tuple): Matrix4 {
-  const forward = normalize(subtract(to, from));
-  const upn = normalize(up);
-  const left = cross(forward, upn);
-  const trueUp = cross(left, forward);
+export function viewTransform(
+  from: Vector4,
+  to: Vector4,
+  up: Vector4
+): Matrix4 {
+  const forward = to.clone().subtract(from).normalize();
+  const upn = up.clone().normalize();
+  const left = forward.clone().cross(upn);
+  const trueUp = left.clone().cross(forward);
 
   // prettier-ignore
   const orientation: Matrix4 = [
-    left[0], left[1], left[2], 0,
-    trueUp[0], trueUp[1], trueUp[2], 0,
-    -forward[0], -forward[1], -forward[2], 0,
+    left.x, left.y, left.z, 0,
+    trueUp.x, trueUp.y, trueUp.z, 0,
+    -forward.x, -forward.y, -forward.z, 0,
     0, 0, 0, 1,
   ];
-  return multiplyMatrices(
-    orientation,
-    translation(-from[0], -from[1], -from[2])
-  );
+  return multiplyMatrices(orientation, translation(-from.x, -from.y, -from.z));
 }

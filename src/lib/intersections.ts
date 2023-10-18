@@ -1,14 +1,6 @@
-import { position, Ray } from './rays';
+import { Vector4 } from './math/vector4';
+import { Ray } from './rays';
 import { Shape } from './shapes/shape';
-import {
-  add,
-  dot,
-  multiplyTupleByScalar,
-  negate,
-  reflect,
-  subtract,
-  Tuple,
-} from './math/tuples';
 
 export type Intersection = {
   time: number;
@@ -20,13 +12,13 @@ export type Intersection = {
 export type IntersectionComputations = {
   t: number;
   object: Shape;
-  point: Tuple;
-  overPoint: Tuple;
-  underPoint: Tuple;
-  eyev: Tuple;
-  normalv: Tuple;
+  point: Vector4;
+  overPoint: Vector4;
+  underPoint: Vector4;
+  eyev: Vector4;
+  normalv: Vector4;
   inside: boolean;
-  reflectv: Tuple;
+  reflectv: Vector4;
   n1: number;
   n2: number;
 };
@@ -54,28 +46,28 @@ export function prepareComputations(
   r: Ray,
   xs: Intersection[] = [i]
 ): IntersectionComputations {
-  const p = position(r, i.time);
+  const p = r.position(i.time);
   const comps = {
     t: i.time,
     object: i.object,
     point: p,
-    eyev: negate(r.direction),
+    eyev: r.direction.clone().negate(),
     normalv: i.object.normalAt(p, i),
     inside: false,
-    overPoint: p,
-    underPoint: p,
-    reflectv: p,
+    overPoint: p.clone(),
+    underPoint: p.clone(),
+    reflectv: r.direction.clone(),
     n1: 0,
     n2: 0,
   };
-  if (dot(comps.normalv, comps.eyev) < 0) {
+  if (comps.normalv.dot(comps.eyev) < 0) {
     comps.inside = true;
-    comps.normalv = negate(comps.normalv);
+    comps.normalv.negate();
   }
-  const adjustv = multiplyTupleByScalar(comps.normalv, 0.0001);
-  comps.overPoint = add(comps.point, adjustv);
-  comps.underPoint = subtract(comps.point, adjustv);
-  comps.reflectv = reflect(r.direction, comps.normalv);
+  const adjustv = comps.normalv.clone().scale(0.0001);
+  comps.overPoint.add(adjustv);
+  comps.underPoint.subtract(adjustv);
+  comps.reflectv.reflect(comps.normalv);
 
   const containers: Shape[] = [];
   xs.forEach((inter) => {
@@ -106,7 +98,7 @@ export function prepareComputations(
 }
 
 export function reflectance(comps: IntersectionComputations): number {
-  let cos = dot(comps.eyev, comps.normalv);
+  let cos = comps.eyev.dot(comps.normalv);
 
   if (comps.n1 > comps.n2) {
     const n = comps.n1 / comps.n2;
@@ -124,23 +116,23 @@ export function reflectance(comps: IntersectionComputations): number {
 
 export function refractedDirection(
   comps: IntersectionComputations
-): Tuple | null {
+): Vector4 | null {
   if (comps.object.material.transparancy < 0.001) {
     return null;
   }
 
   // check for total internal refraction
   const nRatio = comps.n1 / comps.n2;
-  const cosI = dot(comps.eyev, comps.normalv);
+  const cosI = comps.eyev.dot(comps.normalv);
   const sin2T = nRatio ** 2 * (1 - cosI ** 2);
   if (sin2T > 1) {
     return null;
   }
 
   const cosT = Math.sqrt(1 - sin2T);
-  const dir = subtract(
-    multiplyTupleByScalar(comps.normalv, nRatio * cosI - cosT),
-    multiplyTupleByScalar(comps.eyev, nRatio)
-  );
+  const dir = comps.normalv
+    .clone()
+    .scale(nRatio * cosI - cosT)
+    .subtract(comps.eyev.clone().scale(nRatio));
   return dir;
 }

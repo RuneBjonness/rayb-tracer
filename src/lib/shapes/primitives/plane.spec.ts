@@ -1,5 +1,5 @@
-import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../math/tuples';
+import { point, vector } from '../../math/vector4';
+import { Ray } from '../../rays';
 import { Plane } from './plane';
 
 describe('Planes', () => {
@@ -9,14 +9,14 @@ describe('Planes', () => {
     const n2 = p.normalAt(point(10, 0, -10));
     const n3 = p.normalAt(point(-5, 0, 150));
 
-    expect(areEqual(n1, vector(0, 1, 0))).toBe(true);
-    expect(areEqual(n2, vector(0, 1, 0))).toBe(true);
-    expect(areEqual(n3, vector(0, 1, 0))).toBe(true);
+    expect(n1.equals(vector(0, 1, 0))).toBe(true);
+    expect(n2.equals(vector(0, 1, 0))).toBe(true);
+    expect(n3.equals(vector(0, 1, 0))).toBe(true);
   });
 
   test('a ray parallel with the plane will not intersect', () => {
     const p = new Plane();
-    const r = ray(point(0, 10, 0), vector(0, 0, 1));
+    const r = new Ray(point(0, 10, 0), vector(0, 0, 1));
     const xs = p.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -24,7 +24,7 @@ describe('Planes', () => {
 
   test('a coplanar ray will not intersect', () => {
     const p = new Plane();
-    const r = ray(point(0, 0, 0), vector(0, 0, 1));
+    const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
     const xs = p.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -32,7 +32,7 @@ describe('Planes', () => {
 
   test('a ray intersecting the plane from above', () => {
     const p = new Plane();
-    const r = ray(point(0, 1, 0), vector(0, -1, 0));
+    const r = new Ray(point(0, 1, 0), vector(0, -1, 0));
     const xs = p.intersects(r);
 
     expect(xs.length).toBe(1);
@@ -42,7 +42,7 @@ describe('Planes', () => {
 
   test('a ray intersecting the plane from below', () => {
     const p = new Plane();
-    const r = ray(point(0, -1, 0), vector(0, 1, 0));
+    const r = new Ray(point(0, -1, 0), vector(0, 1, 0));
     const xs = p.intersects(r);
 
     expect(xs.length).toBe(1);

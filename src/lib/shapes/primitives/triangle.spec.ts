@@ -1,5 +1,5 @@
-import { ray } from '../../rays';
-import { areEqual, point, vector } from '../../math/tuples';
+import { point, vector } from '../../math/vector4';
+import { Ray } from '../../rays';
 import { Triangle } from './triangle';
 
 describe('Triangles', () => {
@@ -13,9 +13,9 @@ describe('Triangles', () => {
     expect(t.p2).toEqual(p2);
     expect(t.p3).toEqual(p3);
 
-    expect(areEqual(t.e1, vector(-1, -1, 0))).toBe(true);
-    expect(areEqual(t.e2, vector(1, -1, 0))).toBe(true);
-    expect(areEqual(t.normal, vector(0, 0, -1))).toBe(true);
+    expect(t.e1.equals(vector(-1, -1, 0))).toBe(true);
+    expect(t.e2.equals(vector(1, -1, 0))).toBe(true);
+    expect(t.normal.equals(vector(0, 0, -1))).toBe(true);
   });
 
   test('the normal of a triangle is constant everywhere', () => {
@@ -25,14 +25,14 @@ describe('Triangles', () => {
     const n2 = t.normalAt(point(10, 0, -10));
     const n3 = t.normalAt(point(-5, 0, 150));
 
-    expect(areEqual(n1, t.normal)).toBe(true);
-    expect(areEqual(n2, t.normal)).toBe(true);
-    expect(areEqual(n3, t.normal)).toBe(true);
+    expect(n1.equals(t.normal)).toBe(true);
+    expect(n2.equals(t.normal)).toBe(true);
+    expect(n3.equals(t.normal)).toBe(true);
   });
 
   test('a ray parallel with the triangle will not intersect', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
-    const r = ray(point(0, -1, -2), vector(0, 1, 0));
+    const r = new Ray(point(0, -1, -2), vector(0, 1, 0));
     const xs = t.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -40,7 +40,7 @@ describe('Triangles', () => {
 
   test('a ray misses the p1-p3 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
-    const r = ray(point(1, 1, -2), vector(0, 0, 1));
+    const r = new Ray(point(1, 1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -48,7 +48,7 @@ describe('Triangles', () => {
 
   test('a ray misses the p1-p2 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
-    const r = ray(point(-1, 1, -2), vector(0, 0, 1));
+    const r = new Ray(point(-1, 1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -56,7 +56,7 @@ describe('Triangles', () => {
 
   test('a ray misses the p2-p3 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
-    const r = ray(point(0, -1, -2), vector(0, 0, 1));
+    const r = new Ray(point(0, -1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
 
     expect(xs.length).toBe(0);
@@ -64,7 +64,7 @@ describe('Triangles', () => {
 
   test('a ray strikes a triangle', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
-    const r = ray(point(0, 0.5, -2), vector(0, 0, 1));
+    const r = new Ray(point(0, 0.5, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
 
     expect(xs.length).toBe(1);

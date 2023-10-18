@@ -14,10 +14,11 @@ import {
   rotationY,
   rotationZ,
 } from '../lib/math/transformations';
-import { point, vector, color, Color } from '../lib/math/tuples';
+import { color, Color } from '../lib/math/tuples';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { Checkers3dPattern } from '../lib/patterns/patterns';
+import { point, vector } from '../lib/math/vector4';
 
 export class MarbleMadness implements Scene {
   cameraCfg: CameraConfiguration = {

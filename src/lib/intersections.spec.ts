@@ -5,12 +5,13 @@ import {
   prepareComputations,
   reflectance,
 } from './intersections';
-import { ray } from './rays';
+import { Ray } from './rays';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere, glassSphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './math/transformations';
-import { areEqual, point, vector } from './math/tuples';
+import { areEqual } from './math/matrices';
+import { point, vector } from './math/vector4';
 
 test('an intersection encapsulates time and object', () => {
   const s = new Sphere();
@@ -89,7 +90,7 @@ test('the hit is always the lowest nonnegative intersection', () => {
 });
 
 test('precomputing the state of an intersection', () => {
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const s = new Sphere();
   const i = intersection(4, s);
 
@@ -97,13 +98,13 @@ test('precomputing the state of an intersection', () => {
 
   expect(comps.t).toEqual(i.time);
   expect(comps.object).toEqual(i.object);
-  expect(areEqual(comps.point, point(0, 0, -1))).toBe(true);
-  expect(areEqual(comps.eyev, vector(0, 0, -1))).toBe(true);
-  expect(areEqual(comps.normalv, vector(0, 0, -1))).toBe(true);
+  expect(comps.point.equals(point(0, 0, -1))).toBe(true);
+  expect(comps.eyev.equals(vector(0, 0, -1))).toBe(true);
+  expect(comps.normalv.equals(vector(0, 0, -1))).toBe(true);
 });
 
 test('the hit, when an intersection occurs on the outside', () => {
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const s = new Sphere();
   const i = intersection(4, s);
   const comps = prepareComputations(i, r);
@@ -112,32 +113,32 @@ test('the hit, when an intersection occurs on the outside', () => {
 });
 
 test('the hit, when an intersection occurs on the inside', () => {
-  const r = ray(point(0, 0, 0), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
   const s = new Sphere();
   const i = intersection(1, s);
   const comps = prepareComputations(i, r);
 
-  expect(areEqual(comps.point, point(0, 0, 1))).toBe(true);
-  expect(areEqual(comps.eyev, vector(0, 0, -1))).toBe(true);
+  expect(comps.point.equals(point(0, 0, 1))).toBe(true);
+  expect(comps.eyev.equals(vector(0, 0, -1))).toBe(true);
   expect(comps.inside).toEqual(true);
-  expect(areEqual(comps.normalv, vector(0, 0, -1))).toBe(true);
+  expect(comps.normalv.equals(vector(0, 0, -1))).toBe(true);
 });
 
 test('the hit should offset the point', () => {
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const s = new Sphere();
   s.transform = translation(0, 0, 1);
   const i = intersection(5, s);
 
   const comps = prepareComputations(i, r);
 
-  expect(comps.overPoint[2]).toBeLessThan(-0.00001 / 2);
-  expect(comps.point[2]).toBeGreaterThan(comps.overPoint[2]);
+  expect(comps.overPoint.z).toBeLessThan(-0.00001 / 2);
+  expect(comps.point.z).toBeGreaterThan(comps.overPoint.z);
 });
 
 test('precompuiting the reflection vector', () => {
   const shape = new Plane();
-  const r = ray(
+  const r = new Ray(
     point(0, 1, -1),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
@@ -145,7 +146,7 @@ test('precompuiting the reflection vector', () => {
   const comps = prepareComputations(i, r);
 
   expect(
-    areEqual(comps.reflectv, vector(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2))
+    comps.reflectv.equals(vector(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2))
   ).toBe(true);
 });
 
@@ -159,7 +160,7 @@ describe('finding n1 and n2 at various intersections', () => {
   c.transform = translation(0, 0, 0.25);
   c.material.refractiveIndex = 2.5;
 
-  const r = ray(point(0, 0, -4), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -4), vector(0, 0, 1));
   each`
         index | n1     | n2
         ${0}  | ${1.0} | ${1.5}
@@ -186,20 +187,20 @@ describe('finding n1 and n2 at various intersections', () => {
 });
 
 test('the underPoint is offset below the surface', () => {
-  const r = ray(point(0, 0, -5), vector(0, 0, 1));
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const s = glassSphere();
   s.transform = translation(0, 0, 1);
   const i = intersection(5, s);
 
   const comps = prepareComputations(i, r);
 
-  expect(comps.underPoint[2]).toBeGreaterThan(-0.00001 / 2);
-  expect(comps.point[2]).toBeLessThan(comps.underPoint[2]);
+  expect(comps.underPoint.z).toBeGreaterThan(-0.00001 / 2);
+  expect(comps.point.z).toBeLessThan(comps.underPoint.z);
 });
 
 test('the Schlick approximation under total internal reflection', () => {
   const s = glassSphere();
-  const r = ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
+  const r = new Ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
   const xs = [
     intersection(-Math.sqrt(2) / 2, s),
     intersection(Math.sqrt(2) / 2, s),
@@ -212,7 +213,7 @@ test('the Schlick approximation under total internal reflection', () => {
 
 test('the Schlick approximation with a perpendicular viewing angle', () => {
   const s = glassSphere();
-  const r = ray(point(0, 0, 0), vector(0, 1, 0));
+  const r = new Ray(point(0, 0, 0), vector(0, 1, 0));
   const xs = [intersection(-1, s), intersection(1, s)];
 
   const comps = prepareComputations(xs[1], r, xs);
@@ -222,7 +223,7 @@ test('the Schlick approximation with a perpendicular viewing angle', () => {
 
 test('the Schlick approximation with a small angle and n2 > n1', () => {
   const s = glassSphere();
-  const r = ray(point(0, 0.99, -2), vector(0, 0, 1));
+  const r = new Ray(point(0, 0.99, -2), vector(0, 0, 1));
   const i = intersection(1.8589, s);
 
   const comps = prepareComputations(i, r);

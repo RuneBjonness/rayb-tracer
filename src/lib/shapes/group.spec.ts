@@ -1,11 +1,11 @@
 import { areEqual, identityMatrix } from '../math/matrices';
-import { ray } from '../rays';
+import { Ray } from '../rays';
 import { translation, scaling, rotationY } from '../math/transformations';
-import { point, vector, areEqual as tuplesAreEqual } from '../math/tuples';
 import { Group } from './group';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
+import { point, vector } from '../math/vector4';
 
 describe('Groups', () => {
   test('creating a new group', () => {
@@ -27,7 +27,7 @@ describe('Groups', () => {
 
   test('intersecting a ray with an empty group', () => {
     const g = new Group();
-    const xs = g.intersects(ray(point(0, 0, 0), vector(0, 0, 1)));
+    const xs = g.intersects(new Ray(point(0, 0, 0), vector(0, 0, 1)));
 
     expect(xs.length).toBe(0);
   });
@@ -44,7 +44,7 @@ describe('Groups', () => {
     g.add(s2);
     g.add(s3);
 
-    const xs = g.intersects(ray(point(0, 0, -5), vector(0, 0, 1)));
+    const xs = g.intersects(new Ray(point(0, 0, -5), vector(0, 0, 1)));
 
     expect(xs.length).toBe(4);
     expect(xs[0].object).toBe(s2);
@@ -60,7 +60,7 @@ describe('Groups', () => {
     s.transform = translation(5, 0, 0);
     g.add(s);
 
-    const xs = g.intersects(ray(point(10, 0, -10), vector(0, 0, 1)));
+    const xs = g.intersects(new Ray(point(10, 0, -10), vector(0, 0, 1)));
 
     expect(xs.length).toBe(2);
   });
@@ -77,7 +77,7 @@ describe('Groups', () => {
 
     const n = s.normalAt(point(1.7321, 1.1547, -5.5774));
 
-    expect(tuplesAreEqual(n, vector(0.2857, 0.42854, -0.85716))).toBe(true);
+    expect(n.equals(vector(0.2857, 0.42854, -0.85716))).toBe(true);
   });
 
   test('the bounds of a group contains all children bounds', () => {

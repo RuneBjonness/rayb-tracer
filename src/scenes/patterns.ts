@@ -1,4 +1,4 @@
-import { point, vector, color, Color } from '../lib/math/tuples';
+import { color, Color } from '../lib/math/tuples';
 import {
   radians,
   rotationX,
@@ -26,6 +26,7 @@ import { Scene } from './scene';
 import { Group } from '../lib/shapes/group';
 import { CameraConfiguration } from './configuration';
 import { RenderConfiguration } from '../renderer/configuration';
+import { point, vector } from '../lib/math/vector4';
 
 export class Patterns implements Scene {
   cameraCfg: CameraConfiguration = {

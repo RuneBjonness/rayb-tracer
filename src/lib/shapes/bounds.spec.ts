@@ -1,11 +1,11 @@
 import each from 'jest-each';
-import { point } from '../math/tuples';
 import {
   Bounds,
   boundsContainsBounds,
   boundsContainsPoint,
   splitBounds,
 } from './bounds';
+import { point } from '../math/vector4';
 
 describe('Bounds', () => {
   each`
