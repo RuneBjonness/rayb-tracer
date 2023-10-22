@@ -6,7 +6,7 @@ import {
   scaling,
   viewTransform,
 } from '../lib/math/transformations';
-import { color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { SphericalMapper } from '../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../resources/moon.ppm?raw';
@@ -33,7 +33,7 @@ export class ImageMapping implements Scene {
   configureWorld(_renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      new PointLight(point(-2.4, 3.5, -2.4), color(0.9, 0.9, 0.9))
+      new PointLight(point(-2.4, 3.5, -2.4), new Color(0.9, 0.9, 0.9))
     );
 
     const img = parsePPM(moonImgMapFile);

@@ -14,7 +14,7 @@ import {
   rotationY,
   rotationZ,
 } from '../lib/math/transformations';
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { Checkers3dPattern } from '../lib/patterns/patterns';
@@ -35,7 +35,7 @@ export class MarbleMadness implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -49,8 +49,8 @@ export class MarbleMadness implements Scene {
 
     const floor = new Plane();
     floor.material.pattern = new Checkers3dPattern(
-      color(0.8, 0.7, 1),
-      color(0.15, 0.1, 0.3)
+      new Color(0.8, 0.7, 1),
+      new Color(0.15, 0.1, 0.3)
     );
     floor.material.pattern.transform = multiplyMatrices(
       translation(0, 0.5, 0),
@@ -66,7 +66,7 @@ export class MarbleMadness implements Scene {
     for (let i = 0; i < this.generatedMarbleData.length; i++) {
       marbles.add(
         this.reflectiveSphere(
-          color(
+          new Color(
             this.generatedMarbleData[i][0],
             this.generatedMarbleData[i][1],
             this.generatedMarbleData[i][2]
@@ -132,14 +132,14 @@ export class MarbleMadness implements Scene {
     const params = [];
     for (let x = 0; x < width; x++) {
       for (let z = 0; z < depth; z++) {
-        const c = color(Math.random(), Math.random(), Math.random());
+        const c = new Color(Math.random(), Math.random(), Math.random());
         const xpos = -width / 2 + x + Math.random();
         const zpos = -2.5 + z + Math.random();
         const scale = 0.15 + Math.random() * 0.1;
         params.push([
-          Number(c[0].toFixed(3)),
-          Number(c[1].toFixed(3)),
-          Number(c[2].toFixed(3)),
+          Number(c.r.toFixed(3)),
+          Number(c.g.toFixed(3)),
+          Number(c.b.toFixed(3)),
           Number(xpos.toFixed(3)),
           Number(zpos.toFixed(3)),
           Number(scale.toFixed(3)),

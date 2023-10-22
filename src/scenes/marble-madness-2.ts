@@ -12,7 +12,7 @@ import {
   radians,
   rotationZ,
 } from '../lib/math/transformations';
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { point, vector } from '../lib/math/vector4';
@@ -33,7 +33,7 @@ export class MarbleMadness2 implements Scene {
     const size = 70;
     const world = new World();
     const lamp = new AreaLight(
-      color(1.2, 1.2, 1.2),
+      new Color(1.2, 1.2, 1.2),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -50,7 +50,7 @@ export class MarbleMadness2 implements Scene {
       for (let y = 0; y < size; y++) {
         const yGroup = new Group();
         for (let z = 0; z < size; z++) {
-          const c = color(x / size, y / size, z / size);
+          const c = new Color(x / size, y / size, z / size);
           const xpos = -size / 2 + x;
           const ypos = -size / 2 + y;
           const zpos = -size / 2 + z;

@@ -1,11 +1,5 @@
+import { Color } from '../math/color';
 import { Matrix4, identityMatrix, inverse } from '../math/matrices';
-import {
-  color,
-  Color,
-  multiplyColorByScalar,
-  subtractColors,
-  addColors,
-} from '../math/tuples';
 import { Vector4 } from '../math/vector4';
 import { Shape } from '../shapes/shape';
 
@@ -40,7 +34,7 @@ export class TestPattern extends Pattern {
   }
 
   protected localColorAt(p: Vector4): Color {
-    return color(p.x, p.y, p.z);
+    return new Color(p.x, p.y, p.z);
   }
 }
 
@@ -50,19 +44,20 @@ export class StripePattern extends Pattern {
   }
 
   protected localColorAt(p: Vector4): Color {
-    return Math.floor(p.x) % 2 === 0 ? this.a : this.b;
+    return Math.floor(p.x) % 2 === 0 ? this.a.clone() : this.b.clone();
   }
 }
 
 export class GradientPattern extends Pattern {
+  distance: Color;
   constructor(public a: Color, public b: Color) {
     super();
+    this.distance = this.b.clone().subtract(this.a);
   }
 
   protected localColorAt(p: Vector4): Color {
-    const distance = subtractColors(this.b, this.a);
     const fraction = p.x - Math.floor(p.x);
-    return addColors(this.a, multiplyColorByScalar(distance, fraction));
+    return this.a.clone().add(this.distance.clone().multiplyByScalar(fraction));
   }
 }
 
@@ -73,8 +68,8 @@ export class RingPattern extends Pattern {
 
   protected localColorAt(p: Vector4): Color {
     return Math.floor(Math.sqrt(p.x ** 2 + p.z ** 2)) % 2 === 0
-      ? this.a
-      : this.b;
+      ? this.a.clone()
+      : this.b.clone();
   }
 }
 
@@ -85,21 +80,22 @@ export class Checkers3dPattern extends Pattern {
 
   protected localColorAt(p: Vector4): Color {
     return (Math.floor(p.x) + Math.floor(p.y) + Math.floor(p.z)) % 2 === 0
-      ? this.a
-      : this.b;
+      ? this.a.clone()
+      : this.b.clone();
   }
 }
 
 export class RadialGradientPattern extends Pattern {
+  distance: Color;
   constructor(public a: Color, public b: Color) {
     super();
+    this.distance = this.b.clone().subtract(this.a);
   }
 
   protected localColorAt(p: Vector4): Color {
-    const distance = subtractColors(this.b, this.a);
     const r = Math.sqrt(p.x ** 2 + p.z ** 2);
     const fraction = r - Math.floor(r);
-    return addColors(this.a, multiplyColorByScalar(distance, fraction));
+    return this.a.clone().add(this.distance.clone().multiplyByScalar(fraction));
   }
 }
 
@@ -109,7 +105,7 @@ export class SolidPattern extends Pattern {
   }
 
   protected localColorAt(_p: Vector4): Color {
-    return this.c;
+    return this.c.clone();
   }
 }
 
@@ -119,10 +115,10 @@ export class BlendedPatterns extends Pattern {
   }
 
   colorAt(shape: Shape, p: Vector4): Color {
-    return addColors(this.a.colorAt(shape, p), this.b.colorAt(shape, p));
+    return this.a.colorAt(shape, p).add(this.b.colorAt(shape, p));
   }
   protected localColorAt(p: Vector4): Color {
     // Not used in overriden colorAt()
-    return [0, 0, 0];
+    return new Color(0, 0, 0);
   }
 }

@@ -24,7 +24,7 @@ import {
   radians,
   rotationZ,
 } from '../lib/math/transformations';
-import { color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { point, vector } from '../lib/math/vector4';
@@ -44,7 +44,7 @@ export class TextureMapping implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -60,8 +60,8 @@ export class TextureMapping implements Scene {
       new CheckersUvPattern(
         2,
         2,
-        color(0.83, 0.9, 0.95),
-        color(0.1, 0.32, 0.46)
+        new Color(0.83, 0.9, 0.95),
+        new Color(0.1, 0.32, 0.46)
       ),
       new PlanarMapper()
     );
@@ -76,8 +76,8 @@ export class TextureMapping implements Scene {
       new CheckersUvPattern(
         16,
         8,
-        color(1, 0.98, 0.91),
-        color(0.95, 0.77, 0.06)
+        new Color(1, 0.98, 0.91),
+        new Color(0.95, 0.77, 0.06)
       ),
       new SphericalMapper()
     );
@@ -97,8 +97,8 @@ export class TextureMapping implements Scene {
       new CheckersUvPattern(
         16,
         8,
-        color(0.91, 0.96, 0.95),
-        color(0.08, 0.56, 0.47)
+        new Color(0.91, 0.96, 0.95),
+        new Color(0.08, 0.56, 0.47)
       ),
       new CylindricalMapper()
     );
@@ -110,8 +110,8 @@ export class TextureMapping implements Scene {
     const cubeSidePattern = new CheckersUvPattern(
       5,
       5,
-      color(0.98, 0.86, 0.95),
-      color(0.68, 0.06, 0.57)
+      new Color(0.98, 0.86, 0.95),
+      new Color(0.68, 0.06, 0.57)
     );
 
     const cubeMap = new CubeMap([

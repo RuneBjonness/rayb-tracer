@@ -1,15 +1,15 @@
 import each from 'jest-each';
 import { Cube } from '../../shapes/primitives/cube';
 import { Sphere } from '../../shapes/primitives/sphere';
-import { color } from '../../math/tuples';
+import { Color } from '../../math/color';
 import { CubeMap, TextureMap } from './texture-map';
 import { SphericalMapper } from './uv-mappers';
 import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';
 import { point } from '../../math/vector4';
 
 describe('Texture maps', () => {
-  const black = color(0, 0, 0);
-  const white = color(1, 1, 1);
+  const black = new Color(0, 0, 0);
+  const white = new Color(1, 1, 1);
 
   const uvCheckers = new CheckersUvPattern(16, 8, black, white);
   const uvMapper = new SphericalMapper();
@@ -37,14 +37,14 @@ describe('Texture maps', () => {
 });
 
 describe('Cube maps', () => {
-  const red = color(1, 0, 0);
-  const yellow = color(1, 1, 0);
-  const brown = color(1, 0.5, 0);
-  const green = color(0, 1, 0);
-  const cyan = color(0, 1, 1);
-  const blue = color(0, 0, 1);
-  const purple = color(1, 0, 1);
-  const white = color(1, 1, 1);
+  const red = new Color(1, 0, 0);
+  const yellow = new Color(1, 1, 0);
+  const brown = new Color(1, 0.5, 0);
+  const green = new Color(0, 1, 0);
+  const cyan = new Color(0, 1, 1);
+  const blue = new Color(0, 0, 1);
+  const purple = new Color(1, 0, 1);
+  const white = new Color(1, 1, 1);
 
   const cubeMap = new CubeMap([
     new UvAlignTestPattern(yellow, cyan, red, blue, brown),

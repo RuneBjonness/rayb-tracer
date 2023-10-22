@@ -11,7 +11,7 @@ import {
   scaling,
   viewTransform,
 } from '../lib/math/transformations';
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { point, vector } from '../lib/math/vector4';
@@ -31,7 +31,7 @@ export class Marbles implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const light = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -43,7 +43,7 @@ export class Marbles implements Scene {
     world.objects.push(light);
 
     // const lamp = new Sphere();
-    // lamp.material.color = color(1.5, 1.5, 1.5);
+    // lamp.material.color = new Color(1.5, 1.5, 1.5);
     // lamp.material.diffuse = 0;
     // lamp.material.specular = 0;
     // lamp.material.ambient = 1;
@@ -61,20 +61,20 @@ export class Marbles implements Scene {
     world.objects.push(f);
 
     const sphereColors = [
-      color(0.5, 0, 1),
-      color(0.6, 0.2, 1),
-      color(0.6, 0.3, 1),
-      color(0.7, 0.3, 0.9),
-      color(0.8, 0.3, 0.9),
-      color(0.8, 0.3, 0.8),
-      color(0.9, 0.3, 0.8),
-      color(1, 0.4, 0.8),
-      color(1, 0.5, 0.9),
-      color(1, 0.6, 1),
+      new Color(0.5, 0, 1),
+      new Color(0.6, 0.2, 1),
+      new Color(0.6, 0.3, 1),
+      new Color(0.7, 0.3, 0.9),
+      new Color(0.8, 0.3, 0.9),
+      new Color(0.8, 0.3, 0.8),
+      new Color(0.9, 0.3, 0.8),
+      new Color(1, 0.4, 0.8),
+      new Color(1, 0.5, 0.9),
+      new Color(1, 0.6, 1),
     ];
 
     const g = new Group();
-    g.add(this.glassSphere(color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
+    g.add(this.glassSphere(new Color(0.1, 0, 0.2), 0.3, 0.4, 0.7));
 
     g.add(this.basicSphere(sphereColors[0], -1.2, 0.2, 0.5));
     g.add(this.basicSphere(sphereColors[1], -2.5, 2, 0.75));
@@ -86,7 +86,10 @@ export class Marbles implements Scene {
     g.add(this.basicSphere(sphereColors[8], -1.1, 4, 0.5));
     g.add(this.basicSphere(sphereColors[9], -3, 11, 0.5));
 
-    world.objects.push(g, this.basicSphere(sphereColors[3], 1.3, -2.5, 0.8));
+    world.objects.push(
+      g,
+      this.basicSphere(sphereColors[3].clone(), 1.3, -2.5, 0.8)
+    );
 
     return world;
   }

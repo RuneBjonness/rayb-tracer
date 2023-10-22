@@ -1,12 +1,12 @@
 import each from 'jest-each';
-import { color } from '../../math/tuples';
+import { Color } from '../../math/color';
 import { CheckersUvPattern, ImageUvPattern } from './uv-patterns';
 
 describe('uv-patterns', () => {
-  const black = color(0, 0, 0);
-  const gray = color(0.5, 0.5, 0.5);
-  const white = color(1, 1, 1);
-  const red = color(1, 0, 0);
+  const black = new Color(0, 0, 0);
+  const gray = new Color(0.5, 0.5, 0.5);
+  const white = new Color(1, 1, 1);
+  const red = new Color(1, 0, 0);
 
   each`
         u      | v      | result

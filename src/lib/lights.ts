@@ -3,7 +3,7 @@ import { Photon } from './photon-mapper';
 import { Cube } from './shapes/primitives/cube';
 import { scaling } from './math/transformations';
 import { World } from './world';
-import { Color, multiplyColorByScalar } from './math/tuples';
+import { Color } from './math/color';
 import { Vector4, point, vector } from './math/vector4';
 
 export interface Light {
@@ -43,7 +43,7 @@ export class PointLight implements Light {
           Math.random() * 2 - 1
         ),
         interactedWithSpecular: false,
-        power: multiplyColorByScalar(this.intensity, powerFactor),
+        power: this.intensity.clone().multiplyByScalar(powerFactor),
       };
     }
     return photons;
@@ -156,7 +156,7 @@ export class AreaLight extends Cube implements Light {
           Math.random() * 2 - 1
         ),
         interactedWithSpecular: false,
-        power: multiplyColorByScalar(this.intensity, powerFactor),
+        power: this.intensity.clone().multiplyByScalar(powerFactor),
       };
     }
     return photons;

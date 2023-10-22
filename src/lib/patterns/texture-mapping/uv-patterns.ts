@@ -1,4 +1,4 @@
-import { Color } from '../../math/tuples';
+import { Color } from '../../math/color';
 
 export interface UvPattern {
   colorAt(u: number, v: number): Color;
@@ -16,21 +16,21 @@ export class UvAlignTestPattern implements UvPattern {
   colorAt(u: number, v: number): Color {
     if (v > 0.8) {
       if (u < 0.2) {
-        return this.ul;
+        return this.ul.clone();
       }
       if (u > 0.8) {
-        return this.ur;
+        return this.ur.clone();
       }
     }
     if (v < 0.2) {
       if (u < 0.2) {
-        return this.bl;
+        return this.bl.clone();
       }
       if (u > 0.8) {
-        return this.br;
+        return this.br.clone();
       }
     }
-    return this.main;
+    return this.main.clone();
   }
 }
 
@@ -45,7 +45,7 @@ export class CheckersUvPattern implements UvPattern {
   colorAt(u: number, v: number): Color {
     const uw = Math.floor(u * this.width);
     const vh = Math.floor(v * this.height);
-    return (uw + vh) % 2 === 0 ? this.c1 : this.c2;
+    return (uw + vh) % 2 === 0 ? this.c1.clone() : this.c2.clone();
   }
 }
 
@@ -55,6 +55,6 @@ export class ImageUvPattern implements UvPattern {
   colorAt(u: number, v: number): Color {
     const x = Math.round(u * (this.pixels.length - 1));
     const y = Math.round((1 - v) * (this.pixels[x].length - 1));
-    return this.pixels[x][y];
+    return this.pixels[x][y].clone();
   }
 }

@@ -1,4 +1,5 @@
 import { Canvas } from '../lib/canvas';
+import { Color } from '../lib/math/color';
 
 export function parsePPM(ppm: string): Canvas {
   const lines = ppm.split('\n');
@@ -16,11 +17,11 @@ export function parsePPM(ppm: string): Canvas {
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const i = (y * canvas.width + x) * 3;
-      canvas.pixels[x][y] = [
+      canvas.pixels[x][y] = new Color(
         data[i] / scale,
         data[i + 1] / scale,
-        data[i + 2] / scale,
-      ];
+        data[i + 2] / scale
+      );
     }
   }
   return canvas;

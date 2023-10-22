@@ -17,7 +17,7 @@ import {
   rotationX,
   rotationZ,
 } from '../lib/math/transformations';
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { point, vector } from '../lib/math/vector4';
@@ -37,7 +37,7 @@ export class Dodecahedron implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -56,18 +56,18 @@ export class Dodecahedron implements Scene {
     world.objects.push(f);
 
     const colors = [
-      color(1, 0, 0),
-      color(0.8, 0, 0.6),
-      color(0.6, 0, 0.6),
-      color(0.4, 0, 0.6),
-      color(0, 0.32, 0.83),
-      color(0.04, 0.7, 0.76),
-      color(0, 0.6, 0),
-      color(0.4, 0.8, 0),
-      color(1, 1, 0),
-      color(1, 0.8, 0),
-      color(1, 0.6, 0),
-      color(1, 0.4, 0),
+      new Color(1, 0, 0),
+      new Color(0.8, 0, 0.6),
+      new Color(0.6, 0, 0.6),
+      new Color(0.4, 0, 0.6),
+      new Color(0, 0.32, 0.83),
+      new Color(0.04, 0.7, 0.76),
+      new Color(0, 0.6, 0),
+      new Color(0.4, 0.8, 0),
+      new Color(1, 1, 0),
+      new Color(1, 0.8, 0),
+      new Color(1, 0.6, 0),
+      new Color(1, 0.4, 0),
     ];
 
     const dodecahedron = new Group();

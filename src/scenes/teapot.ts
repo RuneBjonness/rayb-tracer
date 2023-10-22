@@ -8,7 +8,7 @@ import {
   rotationZ,
   translation,
 } from '../lib/math/transformations';
-import { color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { ObjParser } from '../tools/obj-parser';
@@ -41,7 +41,7 @@ export class TeaPot implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1, 1, 1),
+      new Color(1, 1, 1),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -52,7 +52,7 @@ export class TeaPot implements Scene {
     world.lights.push(lamp);
 
     const f = new Plane();
-    f.material.color = color(0.3, 0.78, 0.59);
+    f.material.color = new Color(0.3, 0.78, 0.59);
     f.material.specular = 0;
     f.material.ambient = 0.05;
     f.material.diffuse = 0.67;
@@ -65,7 +65,7 @@ export class TeaPot implements Scene {
 
   private teapotObj(): Shape {
     const parser = new ObjParser();
-    parser.currentMaterial.color = color(0.3, 0.73, 0.78);
+    parser.currentMaterial.color = new Color(0.3, 0.73, 0.78);
     const model = parser.parse(
       this.highRes ? teapotObjFile : teapotLowResObjFile
     );

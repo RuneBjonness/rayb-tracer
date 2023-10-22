@@ -13,7 +13,7 @@ import {
   rotationX,
   rotationY,
 } from '../lib/math/transformations';
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { Scene } from './scene';
 import { Cube } from '../lib/shapes/primitives/cube';
@@ -25,8 +25,8 @@ export class CornellBoxTransparency implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
-    world.objects.push(diamondCube(color(0.1, 0, 0.2), -1.1, 1.4, 1, 1.8));
-    world.objects.push(glassSphere(color(0.1, 0, 0.2), 1.4, 0, 1.1));
+    world.objects.push(diamondCube(new Color(0.1, 0, 0.2), -1.1, 1.4, 1, 1.8));
+    world.objects.push(glassSphere(new Color(0.1, 0, 0.2), 1.4, 0, 1.1));
     return world;
   }
 }
@@ -36,9 +36,9 @@ export class CornellBoxMatteDiffuse implements Scene {
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
-    world.objects.push(basicSphere(color(1, 1, 1), -2.5, 2.5, 1.1));
-    world.objects.push(basicSphere(color(0.2, 0.2, 1), 0, 2.5, 1.1));
-    world.objects.push(basicSphere(color(1, 1, 1), 2.5, 2.5, 1.1));
+    world.objects.push(basicSphere(new Color(1, 1, 1), -2.5, 2.5, 1.1));
+    world.objects.push(basicSphere(new Color(0.2, 0.2, 1), 0, 2.5, 1.1));
+    world.objects.push(basicSphere(new Color(1, 1, 1), 2.5, 2.5, 1.1));
     return world;
   }
 }
@@ -60,7 +60,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
   const world = new World();
 
   const lamp = new AreaLight(
-    color(1, 1, 1),
+    new Color(1, 1, 1),
     renderCfg.maxLightSamples,
     renderCfg.adaptiveLightSamplingSensitivity
   );
@@ -70,29 +70,29 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
   world.objects.push(lamp);
 
   const floor = new Plane();
-  floor.material = wallMaterial(color(1, 1, 1));
+  floor.material = wallMaterial(new Color(1, 1, 1));
   floor.transform = translation(0, -0.001, 0);
 
   const ceiling = new Plane();
-  ceiling.material = wallMaterial(color(1, 1, 1));
+  ceiling.material = wallMaterial(new Color(1, 1, 1));
   ceiling.transform = translation(0, 5, 0);
 
   const backWall = new Plane();
-  backWall.material = wallMaterial(color(1, 1, 1));
+  backWall.material = wallMaterial(new Color(1, 1, 1));
   backWall.transform = multiplyMatrices(
     translation(0, 0, 5),
     rotationX(radians(90))
   );
 
   const leftWall = new Plane();
-  leftWall.material = wallMaterial(color(1, 0, 0));
+  leftWall.material = wallMaterial(new Color(1, 0, 0));
   leftWall.transform = multiplyMatrices(
     translation(-4.55, 0, 0),
     multiplyMatrices(rotationY(radians(90)), rotationX(radians(90)))
   );
 
   const rightWall = new Plane();
-  rightWall.material = wallMaterial(color(0, 1, 0));
+  rightWall.material = wallMaterial(new Color(0, 1, 0));
   rightWall.transform = multiplyMatrices(
     translation(4.55, 0, 0),
     multiplyMatrices(rotationY(radians(90)), rotationX(radians(90)))

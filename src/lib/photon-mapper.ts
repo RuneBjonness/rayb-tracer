@@ -6,7 +6,7 @@ import {
 } from './intersections';
 import { materialColorAt } from './materials';
 import { Ray } from './rays';
-import { addColors, blendColors, Color } from './math/tuples';
+import { Color } from './math/color';
 import { World } from './world';
 import { Vector4, vector } from './math/vector4';
 
@@ -32,8 +32,7 @@ export class PhotonMapper {
     public maxBounces: number = 4
   ) {
     this.totalLightIntensity = world.lights
-      .map((l) => l.intensity)
-      .reduce((a, b) => addColors(a, b))
+      .map((l) => l.intensity.r + l.intensity.b + l.intensity.g)
       .reduce((a, b) => a + b);
 
     this.photonPowerFactor = this.totalLightIntensity / totalPhotons;
@@ -106,10 +105,9 @@ export class PhotonMapper {
             ic.normalv.y * Math.random(),
             ic.normalv.z * Math.random()
           ),
-          power: blendColors(
-            photon.power,
-            materialColorAt(ic.object, ic.point)
-          ),
+          power: photon.power
+            .clone()
+            .blend(materialColorAt(ic.object, ic.point)),
           interactedWithSpecular: photon.interactedWithSpecular,
         },
         globalMap,
@@ -134,10 +132,9 @@ export class PhotonMapper {
           {
             position: ic.overPoint,
             direction: ic.reflectv,
-            power: blendColors(
-              photon.power,
-              materialColorAt(ic.object, ic.point)
-            ),
+            power: photon.power
+              .clone()
+              .blend(materialColorAt(ic.object, ic.point)),
             interactedWithSpecular: true,
           },
           globalMap,
@@ -151,10 +148,9 @@ export class PhotonMapper {
             {
               position: ic.underPoint,
               direction: dir,
-              power: blendColors(
-                photon.power,
-                materialColorAt(ic.object, ic.point)
-              ),
+              power: photon.power
+                .clone()
+                .blend(materialColorAt(ic.object, ic.point)),
               interactedWithSpecular: true,
             },
             globalMap,
@@ -170,7 +166,7 @@ export class PhotonMapper {
     const photons: Photon[] = [];
     this.world.lights.forEach((l) => {
       const emitCount =
-        (count * (l.intensity[0] + l.intensity[1] + l.intensity[2])) /
+        (count * (l.intensity.r + l.intensity.g + l.intensity.b)) /
         this.totalLightIntensity;
 
       photons.push(...l.emitPhotons(emitCount, this.photonPowerFactor));

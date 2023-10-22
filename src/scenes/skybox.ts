@@ -9,7 +9,7 @@ import {
   scaling,
   viewTransform,
 } from '../lib/math/transformations';
-import { color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 // import negXImgMapFile from '../resources/skybox/negx.ppm?raw';
 // import negYImgMapFile from '../resources/skybox/negy.ppm?raw';
@@ -38,8 +38,8 @@ export class Skybox implements Scene {
   configureWorld(_renderCfg: RenderConfiguration): World {
     const world = new World();
     world.lights.push(
-      new PointLight(point(-4.4, 3.5, 6.4), color(0.9, 0.9, 0.9)),
-      new PointLight(point(4.5, 4.99, 6.5), color(0.3, 0.3, 0.3))
+      new PointLight(point(-4.4, 3.5, 6.4), new Color(0.9, 0.9, 0.9)),
+      new PointLight(point(4.5, 4.99, 6.5), new Color(0.3, 0.3, 0.3))
     );
 
     const skybox = new Sphere();

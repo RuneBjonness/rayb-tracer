@@ -1,11 +1,11 @@
 import { Camera } from './camera';
+import { Color } from './math/color';
 import {
   areEqual as matricesAreEqual,
   identityMatrix,
   multiplyMatrices,
 } from './math/matrices';
 import { rotationY, translation, viewTransform } from './math/transformations';
-import { areEqual, color } from './math/tuples';
 import { point, vector } from './math/vector4';
 import { defaultWorld } from './world';
 
@@ -64,7 +64,7 @@ test('rendering a world with a camera', () => {
 
   const image = c.render(defaultWorld());
 
-  expect(areEqual(image.pixels[5][5], color(0.38066, 0.47583, 0.2855))).toBe(
+  expect(image.pixels[5][5].equals(new Color(0.38066, 0.47583, 0.2855))).toBe(
     true
   );
 });

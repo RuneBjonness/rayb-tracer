@@ -1,6 +1,6 @@
 import { World, defaultWorld } from './world';
 import { PointLight } from './lights';
-import { areEqual, color } from './math/tuples';
+import { Color } from './math/color';
 import { scaling, translation } from './math/transformations';
 import { Ray } from './rays';
 import { intersection, prepareComputations } from './intersections';
@@ -18,10 +18,10 @@ test('creating a world', () => {
 });
 
 test('the default world', () => {
-  const light = new PointLight(point(-10, 10, -10), color(1, 1, 1));
+  const light = new PointLight(point(-10, 10, -10), new Color(1, 1, 1));
 
   const s1 = new Sphere();
-  s1.material.color = color(0.8, 1.0, 0.6);
+  s1.material.color = new Color(0.8, 1.0, 0.6);
   s1.material.diffuse = 0.7;
   s1.material.specular = 0.2;
 
@@ -55,19 +55,19 @@ test('shading an intersection', () => {
 
   const c = w.shadeHit(prepareComputations(i, r));
 
-  expect(areEqual(c, color(0.38066, 0.47583, 0.2855))).toBe(true);
+  expect(c.equals(new Color(0.38066, 0.47583, 0.2855))).toBe(true);
 });
 
 test('shading an intersection from the inside', () => {
   const w = defaultWorld();
-  w.lights[0] = new PointLight(point(0, 0.25, 0), color(1, 1, 1));
+  w.lights[0] = new PointLight(point(0, 0.25, 0), new Color(1, 1, 1));
   const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
   const shape = w.objects[1];
   const i = intersection(0.5, shape);
 
   const c = w.shadeHit(prepareComputations(i, r));
 
-  expect(areEqual(c, color(0.90498, 0.90498, 0.90498))).toBe(true);
+  expect(c.equals(new Color(0.90498, 0.90498, 0.90498))).toBe(true);
 });
 
 test('the color when a ray misses', () => {
@@ -75,7 +75,7 @@ test('the color when a ray misses', () => {
   const r = new Ray(point(0, 0, -5), vector(0, 1, 0));
   const c = w.colorAt(r);
 
-  expect(areEqual(c, color(0.0, 0.0, 0.0))).toBe(true);
+  expect(c.equals(new Color(0.0, 0.0, 0.0))).toBe(true);
 });
 
 test('the color when a ray hits', () => {
@@ -83,7 +83,7 @@ test('the color when a ray hits', () => {
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const c = w.colorAt(r);
 
-  expect(areEqual(c, color(0.38066, 0.47583, 0.2855))).toBe(true);
+  expect(c.equals(new Color(0.38066, 0.47583, 0.2855))).toBe(true);
 });
 
 test('the color with an intersection behind the ray', () => {
@@ -97,7 +97,7 @@ test('the color with an intersection behind the ray', () => {
   const r = new Ray(point(0, 0, 0.75), vector(0, 0, -1));
   const c = w.colorAt(r);
 
-  expect(areEqual(c, inner.material.color)).toBe(true);
+  expect(c.equals(inner.material.color)).toBe(true);
 });
 
 // prettier-ignore
@@ -115,7 +115,7 @@ each`
 
 test('shading an intersection in shadow', () => {
   const w = new World();
-  w.lights.push(new PointLight(point(0, 0, -10), color(1, 1, 1)));
+  w.lights.push(new PointLight(point(0, 0, -10), new Color(1, 1, 1)));
   const s = new Sphere();
   s.transform = translation(0, 0, 10);
   w.objects.push(new Sphere(), s);
@@ -125,7 +125,7 @@ test('shading an intersection in shadow', () => {
 
   const c = w.shadeHit(prepareComputations(i, r));
 
-  expect(areEqual(c, color(0.1, 0.1, 0.1))).toBe(true);
+  expect(c.equals(new Color(0.1, 0.1, 0.1))).toBe(true);
 });
 
 test('the reflected color for a nonreflective material', () => {
@@ -137,7 +137,7 @@ test('the reflected color for a nonreflective material', () => {
   const comps = prepareComputations(i, r);
   const c = w.reflectedColor(comps);
 
-  expect(areEqual(c, color(0, 0, 0))).toBe(true);
+  expect(c.equals(new Color(0, 0, 0))).toBe(true);
 });
 
 test('the reflected color for a reflective material', () => {
@@ -156,7 +156,7 @@ test('the reflected color for a reflective material', () => {
   const comps = prepareComputations(i, r);
   const c = w.reflectedColor(comps);
 
-  expect(areEqual(c, color(0.19035, 0.23793, 0.14276))).toBe(true);
+  expect(c.equals(new Color(0.19035, 0.23793, 0.14276))).toBe(true);
 });
 
 test('shadeHit() with a reflective material', () => {
@@ -175,12 +175,12 @@ test('shadeHit() with a reflective material', () => {
   const comps = prepareComputations(i, r);
   const c = w.shadeHit(comps);
 
-  expect(areEqual(c, color(0.87677, 0.92436, 0.82918))).toBe(true);
+  expect(c.equals(new Color(0.87677, 0.92436, 0.82918))).toBe(true);
 });
 
 test('colorAt() with mutually reflective surfaces', () => {
   const w = new World();
-  w.lights.push(new PointLight(point(0, 0, 0), color(1, 1, 1)));
+  w.lights.push(new PointLight(point(0, 0, 0), new Color(1, 1, 1)));
 
   const lower = new Plane();
   lower.material.reflective = 1;
@@ -214,7 +214,7 @@ test('the reflected color at maximum recursive depth', () => {
   const comps = prepareComputations(i, r);
   const c = w.reflectedColor(comps, 0);
 
-  expect(areEqual(c, color(0, 0, 0))).toBe(true);
+  expect(c.equals(new Color(0, 0, 0))).toBe(true);
 });
 
 test('the refracted color with an opaque surface', () => {
@@ -225,7 +225,7 @@ test('the refracted color with an opaque surface', () => {
   const comps = prepareComputations(xs[0], r, xs);
   const c = w.refractedColor(comps);
 
-  expect(areEqual(c, color(0, 0, 0))).toBe(true);
+  expect(c.equals(new Color(0, 0, 0))).toBe(true);
 });
 
 test('the refracted color at maximum recursive depth', () => {
@@ -239,7 +239,7 @@ test('the refracted color at maximum recursive depth', () => {
   const comps = prepareComputations(xs[0], r, xs);
   const c = w.refractedColor(comps, 0);
 
-  expect(areEqual(c, color(0, 0, 0))).toBe(true);
+  expect(c.equals(new Color(0, 0, 0))).toBe(true);
 });
 
 test('the refracted color at under total internal reflection', () => {
@@ -256,7 +256,7 @@ test('the refracted color at under total internal reflection', () => {
   const comps = prepareComputations(xs[1], r, xs);
   const c = w.refractedColor(comps);
 
-  expect(areEqual(c, color(0, 0, 0))).toBe(true);
+  expect(c.equals(new Color(0, 0, 0))).toBe(true);
 });
 
 test('the refracted color with a refracted ray', () => {
@@ -278,7 +278,7 @@ test('the refracted color with a refracted ray', () => {
   const comps = prepareComputations(xs[2], r, xs);
   const c = w.refractedColor(comps, 5);
 
-  expect(areEqual(c, color(0, 0.99888, 0.04725))).toBe(true);
+  expect(c.equals(new Color(0, 0.99888, 0.04725))).toBe(true);
 });
 
 test('shadeHit() with a transparent material', () => {
@@ -290,7 +290,7 @@ test('shadeHit() with a transparent material', () => {
   w.objects.push(floor);
 
   const ball = new Sphere();
-  ball.material.color = [1, 0, 0];
+  ball.material.color = new Color(1, 0, 0);
   ball.material.ambient = 0.5;
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
@@ -304,7 +304,7 @@ test('shadeHit() with a transparent material', () => {
   const comps = prepareComputations(i, r);
   const c = w.shadeHit(comps, 5);
 
-  expect(areEqual(c, color(0.93642, 0.68642, 0.68642))).toBe(true);
+  expect(c.equals(new Color(0.93642, 0.68642, 0.68642))).toBe(true);
 });
 
 test('shadeHit() with a reflective and transparent material', () => {
@@ -317,7 +317,7 @@ test('shadeHit() with a reflective and transparent material', () => {
   w.objects.push(floor);
 
   const ball = new Sphere();
-  ball.material.color = [1, 0, 0];
+  ball.material.color = new Color(1, 0, 0);
   ball.material.ambient = 0.5;
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
@@ -331,5 +331,5 @@ test('shadeHit() with a reflective and transparent material', () => {
   const comps = prepareComputations(i, r);
   const c = w.shadeHit(comps, 5);
 
-  expect(areEqual(c, color(0.93391, 0.69643, 0.69243))).toBe(true);
+  expect(c.equals(new Color(0.93391, 0.69643, 0.69243))).toBe(true);
 });

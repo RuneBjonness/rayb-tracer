@@ -1,4 +1,4 @@
-import { Color } from './math/tuples';
+import { Color } from './math/color';
 
 export class Canvas {
   public pixels: Color[][];
@@ -15,11 +15,11 @@ export class Canvas {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         const i = (y * this.width + x) * 4;
-        const [r, g, b] = this.pixels[x][y];
+        const c = this.pixels[x][y];
 
-        arr[i + 0] = Math.round(r * 255);
-        arr[i + 1] = Math.round(g * 255);
-        arr[i + 2] = Math.round(b * 255);
+        arr[i + 0] = Math.round(c.r * 255);
+        arr[i + 1] = Math.round(c.g * 255);
+        arr[i + 2] = Math.round(c.b * 255);
         arr[i + 3] = 255; // Alpha
       }
     }

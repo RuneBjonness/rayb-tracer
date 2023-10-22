@@ -16,7 +16,7 @@ import {
   shearing,
   radians,
 } from '../lib/math/transformations';
-import { color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import { World } from '../lib/world';
 import { RenderConfiguration } from '../renderer/configuration';
 import { Scene } from './scene';
@@ -26,7 +26,7 @@ export class CsgRb implements Scene {
   private baseMaterial = material();
 
   constructor() {
-    this.baseMaterial.color = color(0.66, 0.35, 0.85);
+    this.baseMaterial.color = new Color(0.66, 0.35, 0.85);
   }
 
   cameraCfg: CameraConfiguration = {
@@ -43,7 +43,7 @@ export class CsgRb implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -55,7 +55,7 @@ export class CsgRb implements Scene {
     f.material.specular = 0;
     f.material.ambient = 0.025;
     f.material.diffuse = 0.67;
-    f.material.color = color(0.2, 0, 0.8);
+    f.material.color = new Color(0.2, 0, 0.8);
     world.objects.push(f);
 
     const rbt = new Group();

@@ -1,4 +1,4 @@
-import { color, Color } from '../lib/math/tuples';
+import { Color } from '../lib/math/color';
 import {
   radians,
   rotationX,
@@ -43,7 +43,7 @@ export class Patterns implements Scene {
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();
     const lamp = new AreaLight(
-      color(1.5, 1.5, 1.5),
+      new Color(1.5, 1.5, 1.5),
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
@@ -54,7 +54,7 @@ export class Patterns implements Scene {
     world.lights.push(lamp);
 
     world.objects.push(
-      ...this.checkeredRoom(color(0.9, 1, 0.9), color(0.1, 0.4, 0.1))
+      ...this.checkeredRoom(new Color(0.9, 1, 0.9), new Color(0.1, 0.4, 0.1))
     );
 
     const left = new Sphere();
@@ -63,8 +63,8 @@ export class Patterns implements Scene {
       scaling(0.5, 0.5, 0.5)
     );
     left.material.pattern = new RingPattern(
-      color(0, 0.5, 0.5),
-      color(0.2, 0.9, 0.9)
+      new Color(0, 0.5, 0.5),
+      new Color(0.2, 0.9, 0.9)
     );
     left.material.pattern.transform = multiplyMatrices(
       scaling(0.15, 0.15, 0.15),
@@ -76,7 +76,7 @@ export class Patterns implements Scene {
 
     const middle = new Sphere();
     middle.transform = translation(0.7, 1, 1.0);
-    middle.material.color = color(0.2, 0.2, 0.2);
+    middle.material.color = new Color(0.2, 0.2, 0.2);
     middle.material.reflective = 0.9;
     middle.material.specular = 1;
     middle.material.shininess = 400;
@@ -87,16 +87,16 @@ export class Patterns implements Scene {
       scaling(0.25, 0.25, 0.25)
     );
     const rotatedStripesA = new StripePattern(
-      color(0.1, 0.5, 1),
-      color(0.4, 0.7, 1)
+      new Color(0.1, 0.5, 1),
+      new Color(0.4, 0.7, 1)
     );
     rotatedStripesA.transform = multiplyMatrices(
       scaling(0.25, 0.25, 0.25),
       rotationZ(radians(45))
     );
     const rotatedStripesB = new StripePattern(
-      color(0.1, 0.5, 1),
-      color(0.4, 0.7, 1)
+      new Color(0.1, 0.5, 1),
+      new Color(0.4, 0.7, 1)
     );
     rotatedStripesB.transform = multiplyMatrices(
       scaling(0.25, 0.25, 0.25),
@@ -114,7 +114,7 @@ export class Patterns implements Scene {
       translation(-0.3, 0.5, -1.2),
       scaling(0.5, 0.5, 0.5)
     );
-    front.material.color = color(0, 0, 0.3);
+    front.material.color = new Color(0, 0, 0.3);
     front.material.reflective = 0.9;
     front.material.transparancy = 1;
     front.material.refractiveIndex = 1.5;
@@ -125,8 +125,8 @@ export class Patterns implements Scene {
       scaling(0.75, 0.75, 0.75)
     );
     middleBehind.material.pattern = new Checkers3dPattern(
-      color(0.1, 0.4, 0.3),
-      color(0.7, 0.9, 0.8)
+      new Color(0.1, 0.4, 0.3),
+      new Color(0.7, 0.9, 0.8)
     );
     middleBehind.material.pattern.transform = multiplyMatrices(
       scaling(0.5, 0.5, 0.5),
@@ -139,8 +139,8 @@ export class Patterns implements Scene {
       scaling(0.5, 0.5, 0.5)
     );
     right.material.pattern = new RadialGradientPattern(
-      color(1, 1, 0),
-      color(0, 1, 0)
+      new Color(1, 1, 0),
+      new Color(0, 1, 0)
     );
     right.material.pattern.transform = multiplyMatrices(
       scaling(0.2, 0.2, 0.2),

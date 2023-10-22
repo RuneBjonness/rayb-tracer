@@ -1,6 +1,5 @@
 import { Matrix4, identityMatrix, inverse } from './math/matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
-import { divideColor, addColors } from './math/tuples';
 import { World } from './world';
 import { Canvas } from './canvas';
 import { Vector4, point } from './math/vector4';
@@ -97,12 +96,12 @@ export class Camera {
             this.maxIndirectLightSamples
           );
         } else {
-          let sumSamples = w.colorAt(
+          const sumSamples = w.colorAt(
             rays[0],
             this.maxDepth,
             this.maxIndirectLightSamples
           );
-          let avgSampleColor = sumSamples;
+          let avgSampleColor = sumSamples.clone();
           let rayPassStartingIndex = 1;
           for (let p = 1; p < 9; p++) {
             const currentPassSampleCount = Math.min(
@@ -115,22 +114,20 @@ export class Camera {
               r < rayPassStartingIndex + currentPassSampleCount;
               r++
             ) {
-              sumSamples = addColors(
-                sumSamples,
+              sumSamples.add(
                 w.colorAt(rays[r], this.maxDepth, this.maxIndirectLightSamples)
               );
             }
-            const newAvgSampleColor = divideColor(
-              sumSamples,
-              rayPassStartingIndex + currentPassSampleCount
-            );
+            const newAvgSampleColor = sumSamples
+              .clone()
+              .divideByScalar(rayPassStartingIndex + currentPassSampleCount);
 
             if (
-              Math.abs(avgSampleColor[0] - newAvgSampleColor[0]) <=
+              Math.abs(avgSampleColor.r - newAvgSampleColor.r) <=
                 this.adaptiveSamplingColorSensitivity &&
-              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <=
+              Math.abs(avgSampleColor.g - newAvgSampleColor.g) <=
                 this.adaptiveSamplingColorSensitivity &&
-              Math.abs(avgSampleColor[1] - newAvgSampleColor[1]) <=
+              Math.abs(avgSampleColor.b - newAvgSampleColor.b) <=
                 this.adaptiveSamplingColorSensitivity
             ) {
               avgSampleColor = newAvgSampleColor;

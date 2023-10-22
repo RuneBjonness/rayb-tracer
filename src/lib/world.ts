@@ -10,13 +10,7 @@ import { Light, PointLight } from './lights';
 import { Ray } from './rays';
 import { Shape } from './shapes/shape';
 import { Sphere } from './shapes/primitives/sphere';
-import {
-  addColors,
-  Color,
-  color,
-  divideColor,
-  multiplyColorByScalar,
-} from './math/tuples';
+import { Color } from './math/color';
 import { scaling } from './math/transformations';
 import { lighting } from './materials';
 import { point, vector, Vector4 } from './math/vector4';
@@ -47,10 +41,9 @@ export class World {
       }
     }
     const indirectLightning = samples.length
-      ? divideColor(
-          samples.reduce((a, b) => addColors(a, b)),
-          samples.length
-        )
+      ? samples
+          .reduce((a, b) => a.add(b), new Color(0, 0, 0))
+          .divideByScalar(samples.length)
       : null;
 
     let shades: Color[] = [];
@@ -68,7 +61,7 @@ export class World {
       );
     });
     if (shades.length === 0) {
-      return [0, 0, 0];
+      return new Color(0, 0, 0);
     }
 
     let reflected = this.reflectedColor(comps, maxDepth);
@@ -80,13 +73,13 @@ export class World {
     ) {
       const r = reflectance(comps);
       shades.push(
-        multiplyColorByScalar(reflected, r),
-        multiplyColorByScalar(refracted, 1 - r)
+        reflected.multiplyByScalar(r),
+        refracted.multiplyByScalar(1 - r)
       );
     } else {
       shades.push(reflected, refracted);
     }
-    return shades.reduce((a, b) => addColors(a, b));
+    return shades.reduce((a, b) => a.add(b), new Color(0, 0, 0));
   }
 
   colorAt(
@@ -102,7 +95,7 @@ export class World {
           maxDepth,
           maxIndirectLightSamples
         )
-      : [0, 0, 0];
+      : new Color(0, 0, 0);
   }
 
   isShadowed(p: Vector4, lightPosition: Vector4): boolean {
@@ -116,25 +109,25 @@ export class World {
 
   reflectedColor(comps: IntersectionComputations, maxDepth: number = 4): Color {
     if (maxDepth <= 0 || comps.object.material.reflective < 0.001) {
-      return [0, 0, 0];
+      return new Color(0, 0, 0);
     }
     const c = this.colorAt(
       new Ray(comps.overPoint, comps.reflectv),
       maxDepth - 1
     );
-    return multiplyColorByScalar(c, comps.object.material.reflective);
+    return c.multiplyByScalar(comps.object.material.reflective);
   }
 
   refractedColor(comps: IntersectionComputations, maxDepth: number = 4): Color {
     if (maxDepth <= 0 || comps.object.material.transparancy < 0.001) {
-      return [0, 0, 0];
+      return new Color(0, 0, 0);
     }
     const dir = refractedDirection(comps);
     if (dir === null) {
-      return [0, 0, 0];
+      return new Color(0, 0, 0);
     }
     const c = this.colorAt(new Ray(comps.underPoint, dir), maxDepth - 1);
-    return multiplyColorByScalar(c, comps.object.material.transparancy);
+    return c.multiplyByScalar(comps.object.material.transparancy);
   }
 
   indirectLightningSample(
@@ -162,7 +155,7 @@ export class World {
     const xs = this.intersects(r);
     const i = hit(xs);
     if (i == null) {
-      return [0, 0, 0];
+      return new Color(0, 0, 0);
     }
 
     const ic = prepareComputations(i, r, xs);
@@ -177,8 +170,7 @@ export class World {
     }
     const c = this.shadeHit(ic, maxDepth - 1);
 
-    return multiplyColorByScalar(
-      c,
+    return c.multiplyByScalar(
       ic.object.material.diffuse * 0.5 +
         normalDiff * (1 - ic.object.material.diffuse * 0.5)
     );
@@ -187,10 +179,10 @@ export class World {
 
 export function defaultWorld(): World {
   const w = new World();
-  w.lights.push(new PointLight(point(-10, 10, -10), color(1, 1, 1)));
+  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
 
   const s1 = new Sphere();
-  s1.material.color = color(0.8, 1.0, 0.6);
+  s1.material.color = new Color(0.8, 1.0, 0.6);
   s1.material.diffuse = 0.7;
   s1.material.specular = 0.2;
   w.objects.push(s1);

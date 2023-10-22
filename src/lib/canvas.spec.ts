@@ -1,4 +1,4 @@
-import { Color } from './math/tuples';
+import { Color } from './math/color';
 import { Canvas } from './canvas';
 
 test('creating a Canvas', () => {
@@ -11,7 +11,7 @@ test('creating a Canvas', () => {
 
 test('writing pixels to a Canvas', () => {
   const canvas = new Canvas(10, 20);
-  const red: Color = [1, 0, 0];
+  const red = new Color(1, 0, 0);
 
   canvas.pixels[2][3] = red;
   expect(canvas.pixels[2][3]).toStrictEqual(red);

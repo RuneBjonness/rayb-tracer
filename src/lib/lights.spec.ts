@@ -7,19 +7,19 @@ import {
   rotationZ,
   translation,
 } from './math/transformations';
-import { addColors, areEqual, color } from './math/tuples';
+import { Color } from './math/color';
 import { defaultWorld } from './world';
 import { point } from './math/vector4';
 
 describe('point-light', () => {
   test('a point light has a single sample position and intensity', () => {
     const position = point(0, 0, 0);
-    const intensity = color(1, 1, 1);
+    const intensity = new Color(1, 1, 1);
 
     const light = new PointLight(position, intensity);
 
     expect(light.samplePoints()[0].equals(position)).toBe(true);
-    expect(areEqual(light.intensity, intensity)).toBe(true);
+    expect(light.intensity.equals(intensity)).toBe(true);
   });
 
   each`
@@ -43,7 +43,7 @@ describe('point-light', () => {
 
 describe('area-light', () => {
   test('an area light with no transformation spans from (-1,y,-1) to (1,y,1) where y is close to 0', () => {
-    const intensity = color(1, 1, 1);
+    const intensity = new Color(1, 1, 1);
 
     const light = new AreaLight(intensity, 50, 1);
     const samples = light.samplePoints();
@@ -64,11 +64,11 @@ describe('area-light', () => {
     expect(maxZpos).toBeLessThanOrEqual(1);
 
     expect(samples.every((s) => s.y < 0.01 && s.y > -0.01)).toBe(true);
-    expect(areEqual(light.intensity, intensity)).toBe(true);
+    expect(light.intensity.equals(intensity)).toBe(true);
   });
 
   test('an area light can be transformed', () => {
-    const light = new AreaLight(color(1, 1, 1), 50, 1);
+    const light = new AreaLight(new Color(1, 1, 1), 50, 1);
     light.transform = multiplyMatrices(
       translation(-5, 0, 0),
       rotationZ(radians(90))
@@ -95,10 +95,10 @@ describe('area-light', () => {
   });
 
   test('an area light has a single intensity', () => {
-    const intensity = color(1, 1, 1);
+    const intensity = new Color(1, 1, 1);
     const light = new AreaLight(intensity, 1, 1);
 
-    expect(areEqual(light.intensity, intensity)).toBe(true);
+    expect(light.intensity.equals(intensity)).toBe(true);
   });
 
   each`
@@ -113,7 +113,7 @@ describe('area-light', () => {
 `.test(
     'Area lights with maxSamples=1 evaluate the light intensity at a given point as if it were a point light placed in its center',
     ({ p, result }) => {
-      const l = new AreaLight(color(1, 1, 1), 1, 1);
+      const l = new AreaLight(new Color(1, 1, 1), 1, 1);
       l.transform = translation(-10.5, 9.5, -10);
       const w = defaultWorld();
       w.lights[0] = l;
@@ -132,7 +132,7 @@ describe('area-light', () => {
 `.test(
     'Area lights evaluate the average light intensity at a given point based on an evenly distributed collection of samples',
     ({ p, result }) => {
-      const l = new AreaLight(color(1, 1, 1), 5, 1);
+      const l = new AreaLight(new Color(1, 1, 1), 5, 1);
       l.transform = multiplyMatrices(
         translation(-0.5, 0, -5),
         rotationX(radians(90))
@@ -150,7 +150,7 @@ describe('area-light', () => {
 
 describe('photon-mapping: point-light', () => {
   const position = point(0, 0, 0);
-  const intensity = color(1, 0, 0.5);
+  const intensity = new Color(1, 0, 0.5);
 
   const light = new PointLight(position, intensity);
   const photons = light.emitPhotons(100, 0.01);
@@ -168,16 +168,16 @@ describe('photon-mapping: point-light', () => {
 
   test('the intesity of a point light is evenly distributed on all emitted photons ', () => {
     expect(
-      areEqual(
-        photons.map((p) => p.power).reduce((a, b) => addColors(a, b)),
-        light.intensity
-      )
+      photons
+        .map((p) => p.power)
+        .reduce((a, b) => a.add(b))
+        .equals(light.intensity)
     ).toBe(true);
   });
 });
 
 describe('photon-mapping: area-light', () => {
-  const intensity = color(1, 0, 0.5);
+  const intensity = new Color(1, 0, 0.5);
 
   const light = new AreaLight(intensity, 5, 1);
   const photons = light.emitPhotons(100, 0.01);
@@ -209,10 +209,10 @@ describe('photon-mapping: area-light', () => {
 
   test('the intesity of an area light is evenly distributed on all emitted photons ', () => {
     expect(
-      areEqual(
-        photons.map((p) => p.power).reduce((a, b) => addColors(a, b)),
-        light.intensity
-      )
+      photons
+        .map((p) => p.power)
+        .reduce((a, b) => a.add(b))
+        .equals(light.intensity)
     ).toBe(true);
   });
 });
