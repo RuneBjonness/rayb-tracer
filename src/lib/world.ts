@@ -33,22 +33,22 @@ export class World {
     maxDepth: number = 4,
     indirectLightningSamples: number = 0
   ): Color {
-    let samples: Color[] = [];
+    const indirectLightning = new Color(0, 0, 0);
+    let sampleCount = 0;
     for (let i = 0; i < indirectLightningSamples; i++) {
       const s = this.indirectLightningSample(comps, maxDepth);
       if (s) {
-        samples.push(s);
+        indirectLightning.add(s);
+        sampleCount++;
       }
     }
-    const indirectLightning = samples.length
-      ? samples
-          .reduce((a, b) => a.add(b), new Color(0, 0, 0))
-          .divideByScalar(samples.length)
-      : null;
+    if (sampleCount) {
+      indirectLightning.divideByScalar(sampleCount);
+    }
 
-    let shades: Color[] = [];
-    this.lights.forEach((l) => {
-      shades.push(
+    const shades = new Color(0, 0, 0);
+    for (let l of this.lights) {
+      shades.add(
         lighting(
           comps.object,
           l,
@@ -56,11 +56,11 @@ export class World {
           comps.eyev,
           comps.normalv,
           l.intensityAt(comps.overPoint, this),
-          indirectLightning
+          sampleCount > 0 ? indirectLightning : null
         )
       );
-    });
-    if (shades.length === 0) {
+    }
+    if (this.lights.length === 0) {
       return new Color(0, 0, 0);
     }
 
@@ -72,14 +72,10 @@ export class World {
       comps.object.material.transparancy > 0
     ) {
       const r = reflectance(comps);
-      shades.push(
-        reflected.multiplyByScalar(r),
-        refracted.multiplyByScalar(1 - r)
-      );
-    } else {
-      shades.push(reflected, refracted);
+      reflected.multiplyByScalar(r), refracted.multiplyByScalar(1 - r);
     }
-    return shades.reduce((a, b) => a.add(b), new Color(0, 0, 0));
+    shades.add(reflected).add(refracted);
+    return shades;
   }
 
   colorAt(

@@ -18,7 +18,7 @@ export class Sphere extends Shape {
     const a = r.direction.dot(r.direction);
     const b = 2 * r.direction.dot(spehereToRay);
     const c = spehereToRay.dot(spehereToRay) - 1;
-    const discriminant = b ** 2 - 4 * a * c;
+    const discriminant = b * b - 4 * a * c;
 
     if (discriminant < 0) {
       return [];

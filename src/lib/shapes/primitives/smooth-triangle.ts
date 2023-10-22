@@ -59,14 +59,14 @@ export class SmoothTriangle extends Shape {
       return [];
     }
 
-    const originCrossE1 = p1ToOrigin.cross(this.e1);
-    const v = f * r.direction.dot(originCrossE1);
+    p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(p1ToOrigin);
 
     if (v < 0 || u + v > 1) {
       return [];
     }
 
-    const t = f * this.e2.dot(originCrossE1);
+    const t = f * this.e2.dot(p1ToOrigin);
     return [intersection(t, this, u, v)];
   }
 

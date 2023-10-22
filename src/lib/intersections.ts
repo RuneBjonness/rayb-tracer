@@ -33,12 +33,13 @@ export function intersection(
 }
 
 export function hit(intersections: Intersection[]): Intersection | null {
-  let positives = intersections.filter((i) => i.time >= 0);
-  if (positives.length === 0) {
-    return null;
+  let first: Intersection | null = null;
+  for (const i of intersections) {
+    if (i.time >= 0 && (!first || i.time < first.time)) {
+      first = i;
+    }
   }
-  positives.sort((a, b) => a.time - b.time);
-  return positives[0];
+  return first;
 }
 
 export function prepareComputations(
@@ -70,7 +71,7 @@ export function prepareComputations(
   comps.reflectv.reflect(comps.normalv);
 
   const containers: Shape[] = [];
-  xs.forEach((inter) => {
+  for (const inter of xs) {
     if (inter === i) {
       comps.n1 =
         containers.length > 0
@@ -90,9 +91,9 @@ export function prepareComputations(
         containers.length > 0
           ? containers[containers.length - 1].material.refractiveIndex
           : 1.0;
-      return;
+      break;
     }
-  });
+  }
 
   return comps;
 }
@@ -102,7 +103,7 @@ export function reflectance(comps: IntersectionComputations): number {
 
   if (comps.n1 > comps.n2) {
     const n = comps.n1 / comps.n2;
-    const sin2t = n ** 2 * (1.0 - cos ** 2);
+    const sin2t = n * n * (1.0 - cos * cos);
     if (sin2t > 1) {
       return 1.0;
     }
@@ -124,7 +125,7 @@ export function refractedDirection(
   // check for total internal refraction
   const nRatio = comps.n1 / comps.n2;
   const cosI = comps.eyev.dot(comps.normalv);
-  const sin2T = nRatio ** 2 * (1 - cosI ** 2);
+  const sin2T = nRatio * nRatio * (1 - cosI * cosI);
   if (sin2T > 1) {
     return null;
   }

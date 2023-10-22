@@ -67,7 +67,7 @@ export class RingPattern extends Pattern {
   }
 
   protected localColorAt(p: Vector4): Color {
-    return Math.floor(Math.sqrt(p.x ** 2 + p.z ** 2)) % 2 === 0
+    return Math.floor(Math.sqrt(p.x * p.x + p.z * p.z)) % 2 === 0
       ? this.a.clone()
       : this.b.clone();
   }
@@ -93,7 +93,7 @@ export class RadialGradientPattern extends Pattern {
   }
 
   protected localColorAt(p: Vector4): Color {
-    const r = Math.sqrt(p.x ** 2 + p.z ** 2);
+    const r = Math.sqrt(p.x * p.x + p.z * p.z);
     const fraction = r - Math.floor(r);
     return this.a.clone().add(this.distance.clone().multiplyByScalar(fraction));
   }

@@ -38,7 +38,7 @@ export class Group extends Shape {
       const overlappingShapes: Shape[] = [];
       const [b1, b2] = splitBounds(this.bounds());
 
-      this.shapes.forEach((s) => {
+      for (const s of this.shapes) {
         const transformedShapeBounds = transformGroupBounds([s]);
         if (boundsContainsBounds(b1, transformedShapeBounds)) {
           g1.add(s);
@@ -47,7 +47,7 @@ export class Group extends Shape {
         } else {
           overlappingShapes.push(s);
         }
-      });
+      }
 
       this.shapes = overlappingShapes;
       if (g1.shapes.length > 0) {
@@ -58,7 +58,9 @@ export class Group extends Shape {
       }
     }
 
-    this.shapes.forEach((s) => s.divide(threshold));
+    for (const s of this.shapes) {
+      s.divide(threshold);
+    }
   }
 
   protected localIntersects(r: Ray): Intersection[] {

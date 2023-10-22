@@ -6,7 +6,7 @@ test('creating a Canvas', () => {
 
   expect(canvas.width).toBe(10);
   expect(canvas.height).toBe(20);
-  expect(canvas.pixels[5][5]).toStrictEqual([0, 0, 0]);
+  expect(canvas.pixels[5][5]).toStrictEqual(new Color(0, 0, 0));
 });
 
 test('writing pixels to a Canvas', () => {

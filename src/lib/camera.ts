@@ -64,9 +64,10 @@ export class Camera {
     const rays: Ray[] = [];
     if (this.aperture > 0) {
       const fp = rayFocalPoint(this.origin, px, this.focalLength);
-      this.sampleApertureOrigins().forEach((o) =>
-        rays.push(rayToTarget(o, fp))
-      );
+      const samples = this.sampleApertureOrigins();
+      for (let i = 0; i < samples.length; i++) {
+        rays.push(rayToTarget(samples[i], fp));
+      }
     } else {
       rays.push(rayToTarget(this.origin, px));
     }

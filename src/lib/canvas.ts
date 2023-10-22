@@ -5,8 +5,8 @@ export class Canvas {
 
   constructor(public width: number, public height: number) {
     this.pixels = new Array(width)
-      .fill([0, 0, 0])
-      .map(() => new Array(height).fill([0, 0, 0]));
+      .fill([])
+      .map(() => new Array(height).fill(new Color(0, 0, 0)));
   }
 
   getImageData(): ImageData {
