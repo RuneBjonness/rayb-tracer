@@ -49,31 +49,31 @@ export class CsgShape extends Shape {
     let inl = false;
     let inr = false;
     const res: Intersection[] = [];
-    xs.forEach((i) => {
+    for (const i of xs) {
       const lhit = this.includes(this.left, i.object);
-
       if (this.validIntersection(lhit, inl, inr)) {
         res.push(i);
       }
-
       if (lhit) {
         inl = !inl;
       } else {
         inr = !inr;
       }
-    });
-
+    }
     return res;
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    return intersectsBounds(this.bounds(), r)
-      ? this.filterIntersections(
-          [this.left, this.right]
-            .flatMap((x) => x.intersects(r))
-            .sort((a, b) => a.time - b.time)
-        )
-      : [];
+    if (intersectsBounds(this.bounds(), r)) {
+      const intersections: Intersection[] = [
+        ...this.left.intersects(r),
+        ...this.right.intersects(r),
+      ];
+      return this.filterIntersections(
+        intersections.sort((a, b) => a.time - b.time)
+      );
+    }
+    return [];
   }
 
   protected localNormalAt(p: Vector4): Vector4 {

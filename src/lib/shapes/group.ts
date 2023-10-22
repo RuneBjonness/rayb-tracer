@@ -62,11 +62,14 @@ export class Group extends Shape {
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    return intersectsBounds(this.bounds(), r)
-      ? this.shapes
-          .flatMap((x) => x.intersects(r))
-          .sort((a, b) => a.time - b.time)
-      : [];
+    if (intersectsBounds(this.bounds(), r)) {
+      const intersections: Intersection[] = [];
+      for (const shape of this.shapes) {
+        intersections.push(...shape.intersects(r));
+      }
+      return intersections.sort((a, b) => a.time - b.time);
+    }
+    return [];
   }
 
   protected localNormalAt(p: Vector4): Vector4 {
