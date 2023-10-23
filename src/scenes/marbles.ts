@@ -108,7 +108,7 @@ export class Marbles implements Scene {
     s.material.color = color;
     s.material.diffuse = 0.6;
     s.material.specular = 0;
-    s.material.ambient = 0.025;
+    s.material.ambient = 0.1;
     s.material.reflective = 0.3;
     return s;
   }
@@ -123,7 +123,7 @@ export class Marbles implements Scene {
     s.material.reflective = 0.9;
     s.material.transparancy = 1;
     s.material.refractiveIndex = 1.5;
-    s.material.diffuse = 0;
+    s.material.diffuse = 0.9;
     s.material.specular = 0.9;
     s.material.shininess = 200.0;
 

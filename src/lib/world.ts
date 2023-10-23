@@ -64,15 +64,16 @@ export class World {
       return new Color(0, 0, 0);
     }
 
-    let reflected = this.reflectedColor(comps, maxDepth);
-    let refracted = this.refractedColor(comps, maxDepth);
+    const reflected = this.reflectedColor(comps, maxDepth);
+    const refracted = this.refractedColor(comps, maxDepth);
 
     if (
       comps.object.material.reflective > 0 &&
       comps.object.material.transparancy > 0
     ) {
       const r = reflectance(comps);
-      reflected.multiplyByScalar(r), refracted.multiplyByScalar(1 - r);
+      reflected.multiplyByScalar(r);
+      refracted.multiplyByScalar(1 - r);
     }
     shades.add(reflected).add(refracted);
     return shades;

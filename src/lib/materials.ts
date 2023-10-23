@@ -145,26 +145,24 @@ function lightingSample(
   specularLight: Color
 ): Color {
   const lightv = lightSample.clone().subtract(point).normalize();
-  let diffuse: Color, specular: Color;
   const lightDotNormal = lightv.dot(normalv);
 
   if (lightDotNormal < 0) {
-    diffuse = new Color(0, 0, 0);
-    specular = new Color(0, 0, 0);
-  } else {
-    diffuse = effectiveColor
-      .clone()
-      .multiplyByScalar(material.diffuse * lightDotNormal);
-
-    const reflectv = lightv.negate().reflect(normalv);
-    const reflectDotEye = reflectv.dot(eyev);
-    if (reflectDotEye <= 0) {
-      specular = new Color(0, 0, 0);
-    } else {
-      specular = specularLight
-        .clone()
-        .multiplyByScalar(Math.pow(reflectDotEye, material.shininess));
-    }
+    return new Color(0, 0, 0);
   }
+
+  const diffuse = effectiveColor
+    .clone()
+    .multiplyByScalar(material.diffuse * lightDotNormal);
+
+  const reflectDotEye = lightv.negate().reflect(normalv).dot(eyev);
+  if (reflectDotEye <= 0) {
+    return diffuse;
+  }
+
+  const specular = specularLight
+    .clone()
+    .multiplyByScalar(Math.pow(reflectDotEye, material.shininess));
+
   return diffuse.add(specular);
 }
