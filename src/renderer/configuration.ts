@@ -24,6 +24,8 @@ export enum RenderMode {
   preview = 'Scene preview',
   dynamicSamplingPreview = 'Dynamic Sampling (preview)',
   dynamicSampling = 'Dynamic Sampling',
+  indirectLightningPreview = 'Dynamic sampling with indirect lightning (preview)',
+  indirectLightning = 'Dynamic sampling with indirect lightning',
   fixedSampling = 'Fixed sampling',
   progressivePhotonMapping = 'Progressive photon mapping',
 }
@@ -63,12 +65,19 @@ export function getRenderConfiguration(
     cfg.maxLightSamples = 1;
     cfg.maxFocalSamples = 1;
   } else if (mode === RenderMode.dynamicSamplingPreview) {
-    cfg.maxIndirectLightSamples = 1;
+    cfg.adaptiveLightSamplingSensitivity = 0.2;
+    cfg.adaptiveFocalSamplingSensitivity = 0.4;
   } else if (mode === RenderMode.dynamicSampling) {
     cfg.maxDepth = 8;
+    cfg.adaptiveLightSamplingSensitivity = 0.002;
+    cfg.adaptiveFocalSamplingSensitivity = 0.004;
+  } else if (mode === RenderMode.indirectLightningPreview) {
+    cfg.maxIndirectLightSamples = 1;
+  } else if (mode === RenderMode.indirectLightning) {
+    cfg.maxDepth = 8;
     cfg.maxIndirectLightSamples = 10;
-    cfg.adaptiveLightSamplingSensitivity = 0.001;
-    cfg.adaptiveFocalSamplingSensitivity = 0.001;
+    cfg.adaptiveLightSamplingSensitivity = 0.002;
+    cfg.adaptiveFocalSamplingSensitivity = 0.004;
   } else if (mode === RenderMode.fixedSampling) {
     cfg.maxDepth = 10;
     cfg.maxIndirectLightSamples = 16;
