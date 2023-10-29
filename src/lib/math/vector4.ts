@@ -97,13 +97,14 @@ export class Vector4 {
     return this.subtract(n.scale(2 * this.dot(n)));
   }
 
+  // prettier-ignore
   public applyMatrix(m: Matrix4): Vector4 {
     const x = this.x;
     const y = this.y;
 
-    this.x = m[0] * x + m[1] * y + m[2] * this.z + m[3] * this.w;
-    this.y = m[4] * x + m[5] * y + m[6] * this.z + m[7] * this.w;
-    this.z = m[8] * x + m[9] * y + m[10] * this.z + m[11] * this.w;
+    this.x = m.elements[0] * x + m.elements[1] * y + m.elements[2] * this.z + m.elements[3] * this.w;
+    this.y = m.elements[4] * x + m.elements[5] * y + m.elements[6] * this.z + m.elements[7] * this.w;
+    this.z = m.elements[8] * x + m.elements[9] * y + m.elements[10] * this.z + m.elements[11] * this.w;
     return this;
   }
 }

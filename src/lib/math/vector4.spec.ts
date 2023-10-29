@@ -1,4 +1,4 @@
-import { Matrix4, identityMatrix } from './matrices';
+import { Matrix4 } from './matrices';
 import { Vector4, point, vector } from './vector4';
 
 test('two vectors are equal if no values have a difference greater than 0.00001 ', () => {
@@ -141,12 +141,12 @@ test('reflecting a vector off a slanted surface', () => {
 
 test('applying a matrix', () => {
   // prettier-ignore
-  const m: Matrix4 = [
+  const m = new Matrix4([
     1, 2, 3, 4,
     2, 4, 4, 2,
     8, 6, 4, 1,
     0, 0, 0, 1,
-  ];
+  ]);
   const v = point(1, 2, 3);
   const result = v.applyMatrix(m);
 
@@ -155,7 +155,7 @@ test('applying a matrix', () => {
 
 test('applying the identity matrix is not changing the Vector4', () => {
   const a = new Vector4(1, 2, 3, 4);
-  const result = a.applyMatrix(identityMatrix());
+  const result = a.applyMatrix(new Matrix4());
 
   expect(result.equals(new Vector4(1, 2, 3, 4))).toBe(true);
 });

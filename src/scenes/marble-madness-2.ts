@@ -1,7 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { Group } from '../lib/shapes/group';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
@@ -37,8 +36,7 @@ export class MarbleMadness2 implements Scene {
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
-    lamp.transform = multiplyMatrices(
-      translation(size * 2, size * 2, -size),
+    lamp.transform = translation(size * 2, size * 2, -size).multiply(
       rotationZ(radians(90))
     );
 
@@ -74,10 +72,7 @@ export class MarbleMadness2 implements Scene {
     scale: number
   ): Shape {
     const s = new Sphere();
-    s.transform = multiplyMatrices(
-      translation(x, y, z),
-      scaling(scale, scale, scale)
-    );
+    s.transform = translation(x, y, z).multiply(scaling(scale, scale, scale));
     s.material.color = color;
     return s;
   }

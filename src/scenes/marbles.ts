@@ -1,7 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { Group } from '../lib/shapes/group';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
@@ -35,10 +34,7 @@ export class Marbles implements Scene {
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
-    light.transform = multiplyMatrices(
-      translation(-5, 6, -3),
-      scaling(2, 2, 2)
-    );
+    light.transform = translation(-5, 6, -3).multiply(scaling(2, 2, 2));
     world.lights.push(light);
     world.objects.push(light);
 
@@ -47,10 +43,7 @@ export class Marbles implements Scene {
     // lamp.material.diffuse = 0;
     // lamp.material.specular = 0;
     // lamp.material.ambient = 1;
-    // lamp.transform = multiplyMatrices(
-    //   translation(-5, 6, -3),
-    //   scaling(0.75, 0.75, 0.75)
-    // );
+    // lamp.transform = translation(-5, 6, -3).multiply(scaling(0.75, 0.75, 0.75));
     // world.objects.push(lamp);
 
     const f = new Plane();
@@ -101,8 +94,7 @@ export class Marbles implements Scene {
     scale: number
   ): Shape {
     const s = new Sphere();
-    s.transform = multiplyMatrices(
-      translation(x, scale, z),
+    s.transform = translation(x, scale, z).multiply(
       scaling(scale, scale, scale)
     );
     s.material.color = color;

@@ -10,7 +10,6 @@ import { Plane } from './shapes/primitives/plane';
 import { Sphere, glassSphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './math/transformations';
-import { areEqual } from './math/matrices';
 import { point, vector } from './math/vector4';
 
 test('an intersection encapsulates time and object', () => {

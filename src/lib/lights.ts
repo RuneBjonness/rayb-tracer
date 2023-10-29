@@ -1,4 +1,4 @@
-import { Matrix4, identityMatrix, multiplyMatrices } from './math/matrices';
+import { Matrix4 } from './math/matrices';
 import { Photon } from './photon-mapper';
 import { Cube } from './shapes/primitives/cube';
 import { scaling } from './math/transformations';
@@ -55,7 +55,7 @@ export class AreaLight extends Cube implements Light {
     return super.transform;
   }
   public set transform(m: Matrix4) {
-    super.transform = multiplyMatrices(m, scaling(1, 0.0001, 1));
+    super.transform = m.multiply(scaling(1, 0.0001, 1));
   }
 
   public samplePassCounts = new Array<number>(7);
@@ -71,7 +71,7 @@ export class AreaLight extends Cube implements Light {
     public adaptiveSampleSensitivity: number
   ) {
     super();
-    this.transform = identityMatrix();
+    this.transform = new Matrix4();
 
     this.material.color = intensity;
     this.material.diffuse = 0;

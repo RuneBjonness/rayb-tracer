@@ -1,4 +1,3 @@
-import { areEqual, identityMatrix } from '../math/matrices';
 import {
   Checkers3dPattern,
   GradientPattern,
@@ -12,11 +11,12 @@ import { Sphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../math/transformations';
 import { Color } from '../math/color';
 import { point } from '../math/vector4';
+import { Matrix4 } from '../math/matrices';
 
 describe('Common pattern features', () => {
   test('the default transformation', () => {
     const p = new TestPattern();
-    expect(areEqual(p.transform, identityMatrix())).toEqual(true);
+    expect(p.transform.equals(new Matrix4())).toEqual(true);
   });
 
   test('assigning transformation', () => {
@@ -24,7 +24,7 @@ describe('Common pattern features', () => {
     const t = translation(1, 2, 3);
     p.transform = t;
 
-    expect(areEqual(p.transform, t)).toEqual(true);
+    expect(p.transform.equals(t)).toEqual(true);
   });
 
   test('a pattern with an object transformation', () => {

@@ -1,6 +1,5 @@
 import each from 'jest-each';
 import { AreaLight, PointLight } from './lights';
-import { multiplyMatrices } from './math/matrices';
 import {
   radians,
   rotationX,
@@ -69,10 +68,7 @@ describe('area-light', () => {
 
   test('an area light can be transformed', () => {
     const light = new AreaLight(new Color(1, 1, 1), 50, 1);
-    light.transform = multiplyMatrices(
-      translation(-5, 0, 0),
-      rotationZ(radians(90))
-    );
+    light.transform = translation(-5, 0, 0).multiply(rotationZ(radians(90)));
 
     const samples = light.samplePoints();
 
@@ -133,10 +129,7 @@ describe('area-light', () => {
     'Area lights evaluate the average light intensity at a given point based on an evenly distributed collection of samples',
     ({ p, result }) => {
       const l = new AreaLight(new Color(1, 1, 1), 5, 1);
-      l.transform = multiplyMatrices(
-        translation(-0.5, 0, -5),
-        rotationX(radians(90))
-      );
+      l.transform = translation(-0.5, 0, -5).multiply(rotationX(radians(90)));
       const w = defaultWorld();
       w.lights[0] = l;
 

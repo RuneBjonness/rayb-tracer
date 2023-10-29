@@ -1,10 +1,4 @@
-import {
-  inverse,
-  areEqual as matricesAreEqual,
-  identityMatrix,
-  multiplyMatrices,
-  Matrix4,
-} from './matrices';
+import { Matrix4 } from './matrices';
 import {
   translation,
   scaling,
@@ -26,8 +20,7 @@ test('multiplying by a translation matrix', () => {
 
 test('multiplying by the inverse of a translation matrix', () => {
   const transform = translation(5, -3, 2);
-  const inv = inverse(transform);
-  const result = point(-3, 4, 5).applyMatrix(inv);
+  const result = point(-3, 4, 5).applyMatrix(transform.inverse());
 
   expect(result.equals(point(-8, 7, 3))).toBe(true);
 });
@@ -56,8 +49,7 @@ test('scaling matrix applied to a vector', () => {
 
 test('multiplying by the inverse of a scaling matrix', () => {
   const transform = scaling(2, 3, 4);
-  const inv = inverse(transform);
-  const result = vector(-4, 6, 8).applyMatrix(inv);
+  const result = vector(-4, 6, 8).applyMatrix(transform.inverse());
 
   expect(result.equals(vector(-2, 2, 2))).toBe(true);
 });
@@ -92,7 +84,7 @@ test('degreees to radians conversion', () => {
 
 test('the inverse of an x-rotatition rotates in the opposite direction', () => {
   const p = point(0, 1, 0);
-  const inv = inverse(rotationX(Math.PI / 4));
+  const inv = rotationX(Math.PI / 4).inverse();
 
   expect(
     p.applyMatrix(inv).equals(point(0, Math.sqrt(2) / 2, -Math.sqrt(2) / 2))
@@ -191,7 +183,7 @@ test('chained transformations must be applied in reverse order', () => {
   const b = scaling(5, 5, 5);
   const c = translation(10, 5, 7);
 
-  const t = multiplyMatrices(c, multiplyMatrices(b, a));
+  const t = c.multiply(b).multiply(a);
   const p2 = p.applyMatrix(t);
   expect(p2.equals(point(15, 0, 7))).toBe(true);
 });
@@ -202,7 +194,7 @@ test('the tranformation matrix for the default orientation', () => {
   const up = vector(0, 1, 0);
   const t = viewTransform(from, to, up);
 
-  expect(matricesAreEqual(t, identityMatrix())).toBe(true);
+  expect(t.equals(new Matrix4())).toBe(true);
 });
 
 test('a view tranformation matrix looking in positive z direction', () => {
@@ -211,7 +203,7 @@ test('a view tranformation matrix looking in positive z direction', () => {
   const up = vector(0, 1, 0);
   const t = viewTransform(from, to, up);
 
-  expect(matricesAreEqual(t, scaling(-1, 1, -1))).toBe(true);
+  expect(t.equals(scaling(-1, 1, -1))).toBe(true);
 });
 
 test('a view tranformation moves the world', () => {
@@ -220,7 +212,7 @@ test('a view tranformation moves the world', () => {
   const up = vector(0, 1, 0);
   const t = viewTransform(from, to, up);
 
-  expect(matricesAreEqual(t, translation(0, 0, -8))).toBe(true);
+  expect(t.equals(translation(0, 0, -8))).toBe(true);
 });
 
 test('an arbitrary view tranformation', () => {
@@ -230,12 +222,12 @@ test('an arbitrary view tranformation', () => {
   const t = viewTransform(from, to, up);
 
   // prettier-ignore
-  const expected: Matrix4 = [
+  const expected = new Matrix4([
     -0.50709, 0.50709, 0.67612, -2.36643,
     0.76772, 0.60609, 0.12122, -2.82843,
     -0.35857, 0.59761, -0.71714, 0.0,
     0.0, 0.0, 0.0, 1.0,
-  ];
+  ]);
 
-  expect(matricesAreEqual(t, expected)).toBe(true);
+  expect(expected.equals(t)).toBe(true);
 });

@@ -1,4 +1,3 @@
-import { areEqual, identityMatrix } from '../math/matrices';
 import { Ray } from '../rays';
 import { translation, scaling, rotationY } from '../math/transformations';
 import { Group } from './group';
@@ -6,12 +5,13 @@ import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
 import { point, vector } from '../math/vector4';
+import { Matrix4 } from '../math/matrices';
 
 describe('Groups', () => {
   test('creating a new group', () => {
     const g = new Group();
 
-    expect(areEqual(g.transform, identityMatrix())).toBe(true);
+    expect(g.transform.equals(new Matrix4())).toBe(true);
     expect(g.shapes.length).toBe(0);
   });
 

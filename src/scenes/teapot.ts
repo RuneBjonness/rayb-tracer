@@ -1,5 +1,4 @@
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import {
   scaling,
   viewTransform,
@@ -45,10 +44,7 @@ export class TeaPot implements Scene {
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
-    lamp.transform = multiplyMatrices(
-      translation(-3, 4, -2.5),
-      rotationZ(radians(90))
-    );
+    lamp.transform = translation(-3, 4, -2.5).multiply(rotationZ(radians(90)));
     world.lights.push(lamp);
 
     const f = new Plane();
@@ -69,10 +65,7 @@ export class TeaPot implements Scene {
     const model = parser.parse(
       this.highRes ? teapotObjFile : teapotLowResObjFile
     );
-    model.transform = multiplyMatrices(
-      scaling(0.1, 0.1, 0.1),
-      rotationX(-Math.PI / 2)
-    );
+    model.transform = scaling(0.1, 0.1, 0.1).multiply(rotationX(-Math.PI / 2));
     return model;
   }
 }

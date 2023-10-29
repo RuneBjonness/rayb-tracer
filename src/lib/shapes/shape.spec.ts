@@ -1,5 +1,4 @@
 import { material } from '../materials';
-import { areEqual, identityMatrix, multiplyMatrices } from '../math/matrices';
 import { Ray } from '../rays';
 import {
   rotationY,
@@ -11,11 +10,12 @@ import { Group } from './group';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
 import { point, vector } from '../math/vector4';
+import { Matrix4 } from '../math/matrices';
 
 describe('Common shape features', () => {
   test('the default transformation', () => {
     const s = new TestShape();
-    expect(areEqual(s.transform, identityMatrix())).toBe(true);
+    expect(s.transform.equals(new Matrix4())).toBe(true);
   });
 
   test('assigning transformation', () => {
@@ -23,7 +23,7 @@ describe('Common shape features', () => {
     const t = translation(2, 3, 4);
     s.transform = t;
 
-    expect(areEqual(s.transform, t)).toBe(true);
+    expect(s.transform.equals(t)).toBe(true);
   });
 
   test('the default material', () => {
@@ -71,7 +71,7 @@ describe('Common shape features', () => {
 
   test('computing the normal on a transformed shape', () => {
     const s = new TestShape();
-    s.transform = multiplyMatrices(scaling(1, 0.5, 1), rotationZ(Math.PI / 5));
+    s.transform = scaling(1, 0.5, 1).multiply(rotationZ(Math.PI / 5));
     const n = s.normalAt(point(0, Math.sqrt(2) / 2, -(Math.sqrt(2) / 2)));
     expect(n.equals(vector(0, 0.97014, -0.24254))).toBe(true);
   });

@@ -1,7 +1,6 @@
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
 import { material } from '../lib/materials';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { CsgShape } from '../lib/shapes/csg-shape';
 import { Group } from '../lib/shapes/group';
 import { Cube } from '../lib/shapes/primitives/cube';
@@ -136,8 +135,7 @@ export class CsgRb implements Scene {
   private letterCaptialP(): Shape {
     const leftLeg = new Cube();
     leftLeg.material = this.baseMaterial;
-    leftLeg.transform = multiplyMatrices(
-      translation(-0.25, 0.125, -1),
+    leftLeg.transform = translation(-0.25, 0.125, -1).multiply(
       scaling(0.25, 0.125, 2)
     );
 
@@ -147,10 +145,9 @@ export class CsgRb implements Scene {
   private letterCaptialR(): Shape {
     const rightLeg = new Cube();
     rightLeg.material = this.baseMaterial;
-    rightLeg.transform = multiplyMatrices(
-      translation(0.5, 0.125, -1.9),
-      multiplyMatrices(scaling(0.25, 0.125, 1.1), shearing(0, -1, 0, 0, 0, 0))
-    );
+    rightLeg.transform = translation(0.5, 0.125, -1.9)
+      .multiply(scaling(0.25, 0.125, 1.1))
+      .multiply(shearing(0, -1, 0, 0, 0, 0));
 
     return new CsgShape('union', rightLeg, this.letterCaptialP());
   }
@@ -158,8 +155,7 @@ export class CsgRb implements Scene {
   private letterCaptialB(): Shape {
     const lowerHalfCircle = this.halfCircle();
     lowerHalfCircle.material = this.baseMaterial;
-    lowerHalfCircle.transform = multiplyMatrices(
-      translation(0, 0, -1.8),
+    lowerHalfCircle.transform = translation(0, 0, -1.8).multiply(
       scaling(1.3, 1, 1.2)
     );
 
@@ -169,15 +165,11 @@ export class CsgRb implements Scene {
   private letterCaptialT(): Shape {
     const leg = new Cube();
     leg.material = this.baseMaterial;
-    leg.transform = multiplyMatrices(
-      translation(0, 0.125, -1),
-      scaling(0.25, 0.125, 2)
-    );
+    leg.transform = translation(0, 0.125, -1).multiply(scaling(0.25, 0.125, 2));
 
     const top = new Cube();
     top.material = this.baseMaterial;
-    top.transform = multiplyMatrices(
-      translation(0, 0.125, 0.75),
+    top.transform = translation(0, 0.125, 0.75).multiply(
       scaling(1, 0.125, 0.25)
     );
 
@@ -190,8 +182,7 @@ export class CsgRb implements Scene {
 
     const leg = new Cube();
     leg.material = this.baseMaterial;
-    leg.transform = multiplyMatrices(
-      translation(0.75, 0.125, -2),
+    leg.transform = translation(0.75, 0.125, -2).multiply(
       scaling(0.25, 0.125, 1)
     );
     return new CsgShape('union', c, leg);
@@ -203,10 +194,7 @@ export class CsgRb implements Scene {
 
     const cube = new Cube();
     cube.material = this.baseMaterial;
-    cube.transform = multiplyMatrices(
-      translation(1.5, 0, -2),
-      rotationY(radians(45))
-    );
+    cube.transform = translation(1.5, 0, -2).multiply(rotationY(radians(45)));
     return new CsgShape('difference', c, cube);
   }
 
@@ -216,16 +204,12 @@ export class CsgRb implements Scene {
 
     const cube = new Cube();
     cube.material = this.baseMaterial;
-    cube.transform = multiplyMatrices(
-      translation(0.7, 0, -2.2),
-      scaling(1, 1, 0.25)
-    );
+    cube.transform = translation(0.7, 0, -2.2).multiply(scaling(1, 1, 0.25));
     const openBody = new CsgShape('difference', body, cube);
 
     const bar = new Cube();
     bar.material = this.baseMaterial;
-    bar.transform = multiplyMatrices(
-      translation(0.25, 0.125, -2),
+    bar.transform = translation(0.25, 0.125, -2).multiply(
       scaling(0.75, 0.125, 0.25)
     );
     return new CsgShape('union', openBody, bar);
@@ -236,16 +220,12 @@ export class CsgRb implements Scene {
     c.transform = translation(0.1, 0, -2);
     const cube = new Cube();
     cube.material = this.baseMaterial;
-    cube.transform = multiplyMatrices(
-      translation(0, 0, -0.8),
-      rotationY(radians(45))
-    );
+    cube.transform = translation(0, 0, -0.8).multiply(rotationY(radians(45)));
     const top = new CsgShape('intersection', c, cube);
 
     const leg = new Cube();
     leg.material = this.baseMaterial;
-    leg.transform = multiplyMatrices(
-      translation(-0.5, 0.125, -2),
+    leg.transform = translation(-0.5, 0.125, -2).multiply(
       scaling(0.25, 0.125, 1)
     );
     return new CsgShape('union', top, leg);
@@ -254,17 +234,15 @@ export class CsgRb implements Scene {
   private letterY(): Shape {
     const shortLeg = new Cube();
     shortLeg.material = this.baseMaterial;
-    shortLeg.transform = multiplyMatrices(
-      translation(-0.12, 0.125, -2),
-      multiplyMatrices(scaling(0.25, 0.125, 1), shearing(0, -2, 0, 0, 0, 0))
-    );
+    shortLeg.transform = translation(-0.12, 0.125, -2)
+      .multiply(scaling(0.25, 0.125, 1))
+      .multiply(shearing(0, -2, 0, 0, 0, 0));
 
     const longLeg = new Cube();
     longLeg.material = this.baseMaterial;
-    longLeg.transform = multiplyMatrices(
-      translation(0.5, 0.125, -2.6),
-      multiplyMatrices(scaling(0.25, 0.125, 1.6), shearing(0, 2, 0, 0, 0, 0))
-    );
+    longLeg.transform = translation(0.5, 0.125, -2.6)
+      .multiply(scaling(0.25, 0.125, 1.6))
+      .multiply(shearing(0, 2, 0, 0, 0, 0));
 
     return new CsgShape('union', shortLeg, longLeg);
   }

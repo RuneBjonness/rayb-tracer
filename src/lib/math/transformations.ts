@@ -1,20 +1,20 @@
-import { Matrix4, identityMatrix, multiplyMatrices } from './matrices';
+import { Matrix4 } from './matrices';
 import { Vector4 } from './vector4';
 
 export function translation(x: number, y: number, z: number): Matrix4 {
-  let t = identityMatrix();
-  t[3] = x;
-  t[7] = y;
-  t[11] = z;
-  return t;
+  let m = new Matrix4();
+  m.elements[3] = x;
+  m.elements[7] = y;
+  m.elements[11] = z;
+  return m;
 }
 
 export function scaling(x: number, y: number, z: number): Matrix4 {
-  let t = identityMatrix();
-  t[0] = x;
-  t[5] = y;
-  t[10] = z;
-  return t;
+  let m = new Matrix4();
+  m.elements[0] = x;
+  m.elements[5] = y;
+  m.elements[10] = z;
+  return m;
 }
 
 export function radians(deg: number): number {
@@ -25,36 +25,36 @@ export function rotationX(radians: number): Matrix4 {
   const cosR = Math.cos(radians);
   const sinR = Math.sin(radians);
   // prettier-ignore
-  return [
+  return new Matrix4([
     1, 0, 0, 0,
     0, cosR, -sinR, 0,
     0, sinR, cosR, 0,
     0, 0, 0, 1,
-  ];
+  ]);
 }
 
 export function rotationY(radians: number): Matrix4 {
   const cosR = Math.cos(radians);
   const sinR = Math.sin(radians);
   // prettier-ignore
-  return [
+  return new Matrix4([
     cosR, 0, sinR, 0,
     0, 1, 0, 0,
     -sinR, 0, cosR, 0,
     0, 0, 0, 1,
-  ];
+  ]);
 }
 
 export function rotationZ(radians: number): Matrix4 {
   const cosR = Math.cos(radians);
   const sinR = Math.sin(radians);
   // prettier-ignore
-  return [
+  return new Matrix4([
     cosR, -sinR, 0, 0,
     sinR, cosR, 0, 0,
     0, 0, 1, 0,
     0, 0, 0, 1,
-  ];
+  ]);
 }
 
 export function shearing(
@@ -66,12 +66,12 @@ export function shearing(
   zy: number
 ): Matrix4 {
   // prettier-ignore
-  return [
+  return new Matrix4([
     1, xy, xz, 0,
     yx, 1, yz, 0,
     zx, zy, 1, 0,
     0, 0, 0, 1,
-  ];
+  ]);
 }
 
 export function viewTransform(
@@ -85,11 +85,11 @@ export function viewTransform(
   const trueUp = left.clone().cross(forward);
 
   // prettier-ignore
-  const orientation: Matrix4 = [
+  const orientation = new Matrix4([
     left.x, left.y, left.z, 0,
     trueUp.x, trueUp.y, trueUp.z, 0,
     -forward.x, -forward.y, -forward.z, 0,
     0, 0, 0, 1,
-  ];
-  return multiplyMatrices(orientation, translation(-from.x, -from.y, -from.z));
+  ]);
+  return orientation.multiply(translation(-from.x, -from.y, -from.z));
 }

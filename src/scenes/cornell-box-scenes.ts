@@ -1,7 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Shape } from '../lib/shapes/shape';
@@ -79,24 +78,19 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
 
   const backWall = new Plane();
   backWall.material = wallMaterial(new Color(1, 1, 1));
-  backWall.transform = multiplyMatrices(
-    translation(0, 0, 5),
-    rotationX(radians(90))
-  );
+  backWall.transform = translation(0, 0, 5).multiply(rotationX(radians(90)));
 
   const leftWall = new Plane();
   leftWall.material = wallMaterial(new Color(1, 0, 0));
-  leftWall.transform = multiplyMatrices(
-    translation(-4.55, 0, 0),
-    multiplyMatrices(rotationY(radians(90)), rotationX(radians(90)))
-  );
+  leftWall.transform = translation(-4.55, 0, 0)
+    .multiply(rotationY(radians(90)))
+    .multiply(rotationX(radians(90)));
 
   const rightWall = new Plane();
   rightWall.material = wallMaterial(new Color(0, 1, 0));
-  rightWall.transform = multiplyMatrices(
-    translation(4.55, 0, 0),
-    multiplyMatrices(rotationY(radians(90)), rotationX(radians(90)))
-  );
+  rightWall.transform = translation(4.55, 0, 0)
+    .multiply(rotationY(radians(90)))
+    .multiply(rotationX(radians(90)));
 
   world.objects.push(floor, ceiling, backWall, leftWall, rightWall);
 
@@ -105,10 +99,7 @@ function emptyCornellBox(renderCfg: RenderConfiguration): World {
 
 function basicSphere(color: Color, x: number, z: number, scale: number): Shape {
   const s = new Sphere();
-  s.transform = multiplyMatrices(
-    translation(x, scale, z),
-    scaling(scale, scale, scale)
-  );
+  s.transform = translation(x, scale, z).multiply(scaling(scale, scale, scale));
   s.material.color = color;
   s.material.diffuse = 0.8;
   s.material.specular = 0.1;
@@ -137,13 +128,9 @@ function basicCube(
   height: number
 ): Shape {
   const s = new Cube();
-  s.transform = multiplyMatrices(
-    translation(x, scale * height, z),
-    multiplyMatrices(
-      scaling(scale, scale * height, scale),
-      rotationY(radians(30))
-    )
-  );
+  s.transform = translation(x, scale * height, z)
+    .multiply(scaling(scale, scale * height, scale))
+    .multiply(rotationY(radians(30)));
   s.material.color = color;
   s.material.diffuse = 0.8;
   s.material.specular = 0.2;

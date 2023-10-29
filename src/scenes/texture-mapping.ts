@@ -1,7 +1,6 @@
 import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { AreaLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import {
   TextureMap,
   CubeMap,
@@ -48,10 +47,9 @@ export class TextureMapping implements Scene {
       renderCfg.maxLightSamples,
       renderCfg.adaptiveLightSamplingSensitivity
     );
-    lamp.transform = multiplyMatrices(
-      translation(-4, 5, -4),
-      multiplyMatrices(rotationY(radians(-45)), rotationZ(radians(90)))
-    );
+    lamp.transform = translation(-4, 5, -4)
+      .multiply(rotationY(radians(-45)))
+      .multiply(rotationZ(radians(90)));
     world.lights.push(lamp);
     world.objects.push(lamp);
 
@@ -65,8 +63,7 @@ export class TextureMapping implements Scene {
       ),
       new PlanarMapper()
     );
-    f.material.pattern.transform = multiplyMatrices(
-      translation(0, 0.5, 0),
+    f.material.pattern.transform = translation(0, 0.5, 0).multiply(
       rotationY(radians(-45))
     );
 
@@ -89,8 +86,7 @@ export class TextureMapping implements Scene {
     const cyl = new Cylinder();
     cyl.minimum = 0;
     cyl.maximum = 0.625;
-    cyl.transform = multiplyMatrices(
-      translation(-1.75, 0, 2.5),
+    cyl.transform = translation(-1.75, 0, 2.5).multiply(
       scaling(1.25, 1.25 * 3.1415, 1.25)
     );
     cyl.material.pattern = new TextureMap(
@@ -124,10 +120,9 @@ export class TextureMapping implements Scene {
     ]);
 
     const cube = new Cube();
-    cube.transform = multiplyMatrices(
-      translation(1.75, 1.25, 2.8),
-      multiplyMatrices(rotationY(radians(45)), scaling(1.25, 1.25, 1.25))
-    );
+    cube.transform = translation(1.75, 1.25, 2.8)
+      .multiply(rotationY(radians(45)))
+      .multiply(scaling(1.25, 1.25, 1.25));
     cube.material.pattern = cubeMap;
     cube.material.diffuse = 0.6;
     cube.material.specular = 0;

@@ -1,10 +1,6 @@
 import { Camera } from './camera';
 import { Color } from './math/color';
-import {
-  areEqual as matricesAreEqual,
-  identityMatrix,
-  multiplyMatrices,
-} from './math/matrices';
+import { Matrix4 } from './math/matrices';
 import { rotationY, translation, viewTransform } from './math/transformations';
 import { point, vector } from './math/vector4';
 import { defaultWorld } from './world';
@@ -15,7 +11,7 @@ test('creating a Camera', () => {
   expect(c.width).toBe(160);
   expect(c.height).toBe(120);
   expect(c.fieldOfView).toEqual(Math.PI / 2);
-  expect(matricesAreEqual(c.transform, identityMatrix())).toBe(true);
+  expect(c.transform.equals(new Matrix4())).toBe(true);
 });
 
 test('the pixel size for a horizontal canvas', () => {
@@ -46,7 +42,7 @@ test('constructing a ray through a corner of the canvas', () => {
 
 test('constructing a ray when the camera is transformed', () => {
   const c = new Camera(201, 101, Math.PI / 2);
-  c.transform = multiplyMatrices(rotationY(Math.PI / 4), translation(0, -2, 5));
+  c.transform = rotationY(Math.PI / 4).multiply(translation(0, -2, 5));
   const r = c.raysForPixel(100, 50)[0];
 
   expect(r.origin.equals(point(0, 2, -5))).toBe(true);

@@ -1,5 +1,5 @@
 import { Intersection } from '../intersections';
-import { Matrix4, identityMatrix, inverse, transpose } from '../math/matrices';
+import { Matrix4 } from '../math/matrices';
 import { Ray } from '../rays';
 import { material, Material } from '../materials';
 import { Bounds } from './bounds';
@@ -14,8 +14,8 @@ export abstract class Shape {
   }
   public set transform(m: Matrix4) {
     this._transform = m;
-    this.invTransform = inverse(m);
-    this.invTransformTransposed = transpose(this.invTransform);
+    this.invTransform = m.clone().inverse();
+    this.invTransformTransposed = this.invTransform.clone().transpose();
   }
 
   material: Material;
@@ -25,9 +25,9 @@ export abstract class Shape {
   private invTransformTransposed: Matrix4;
 
   constructor() {
-    this._transform = identityMatrix();
-    this.invTransform = inverse(this._transform);
-    this.invTransformTransposed = transpose(this.invTransform);
+    this._transform = new Matrix4();
+    this.invTransform = new Matrix4();
+    this.invTransformTransposed = new Matrix4();
     this.material = material();
   }
 

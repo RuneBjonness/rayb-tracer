@@ -1,5 +1,4 @@
 import { PointLight } from '../lib/lights';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import {
   translation,
@@ -39,10 +38,7 @@ export class ImageMapping implements Scene {
     const img = parsePPM(moonImgMapFile);
 
     const s = new Sphere();
-    s.transform = multiplyMatrices(
-      translation(0, 1, 0),
-      scaling(1.4, 1.4, 1.4)
-    );
+    s.transform = translation(0, 1, 0).multiply(scaling(1.4, 1.4, 1.4));
     s.material.pattern = new TextureMap(
       new ImageUvPattern(img.pixels),
       new SphericalMapper()

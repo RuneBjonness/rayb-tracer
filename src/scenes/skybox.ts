@@ -2,7 +2,6 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { CameraConfiguration } from './configuration';
 import { PointLight } from '../lib/lights';
 import { material } from '../lib/materials';
-import { multiplyMatrices } from '../lib/math/matrices';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import {
   translation,
@@ -63,24 +62,15 @@ export class Skybox implements Scene {
     m.shininess = 30;
 
     const s1 = new Sphere();
-    s1.transform = multiplyMatrices(
-      translation(2.5, 1, 4),
-      scaling(0.8, 0.8, 0.8)
-    );
+    s1.transform = translation(2.5, 1, 4).multiply(scaling(0.8, 0.8, 0.8));
     s1.material = m;
 
     const s2 = new Sphere();
-    s2.transform = multiplyMatrices(
-      translation(-2.5, 1, 4),
-      scaling(0.8, 0.8, 0.8)
-    );
+    s2.transform = translation(-2.5, 1, 4).multiply(scaling(0.8, 0.8, 0.8));
     s2.material = m;
 
     const s3 = new Sphere();
-    s3.transform = multiplyMatrices(
-      translation(0, 0, 4),
-      scaling(0.8, 0.8, 0.8)
-    );
+    s3.transform = translation(0, 0, 4).multiply(scaling(0.8, 0.8, 0.8));
     s3.material = m;
 
     world.objects.push(skybox, s1, s2, s3);

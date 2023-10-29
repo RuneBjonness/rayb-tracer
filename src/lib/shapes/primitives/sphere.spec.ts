@@ -1,4 +1,4 @@
-import { areEqual, identityMatrix } from '../../math/matrices';
+import { Matrix4 } from '../../math/matrices';
 import { point, vector } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Sphere, glassSphere } from './sphere';
@@ -97,7 +97,7 @@ describe('Spheres', () => {
   test('a helper for producing a sphere with a glassy material', () => {
     const s = glassSphere();
 
-    expect(s.transform).toStrictEqual(identityMatrix());
+    expect(s.transform.equals(new Matrix4())).toBe(true);
     expect(s.material.transparancy).toEqual(1.0);
     expect(s.material.refractiveIndex).toEqual(1.5);
   });

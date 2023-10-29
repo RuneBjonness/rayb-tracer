@@ -1,5 +1,5 @@
 import { Color } from '../math/color';
-import { Matrix4, identityMatrix, inverse } from '../math/matrices';
+import { Matrix4 } from '../math/matrices';
 import { Vector4 } from '../math/vector4';
 import { Shape } from '../shapes/shape';
 
@@ -10,14 +10,14 @@ export abstract class Pattern {
   }
   public set transform(m: Matrix4) {
     this._transform = m;
-    this.invTransform = inverse(m);
+    this.invTransform = m.clone().inverse();
   }
 
   private invTransform: Matrix4;
 
   constructor() {
-    this._transform = identityMatrix();
-    this.invTransform = inverse(this._transform);
+    this._transform = new Matrix4();
+    this.invTransform = new Matrix4();
   }
 
   colorAt(shape: Shape, p: Vector4): Color {

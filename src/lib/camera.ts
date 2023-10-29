@@ -1,4 +1,4 @@
-import { Matrix4, identityMatrix, inverse } from './math/matrices';
+import { Matrix4 } from './math/matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
 import { World } from './world';
 import { Canvas } from './canvas';
@@ -11,7 +11,7 @@ export class Camera {
   }
   public set transform(m: Matrix4) {
     this._transform = m;
-    this.invTransform = inverse(m);
+    this.invTransform = m.clone().inverse();
     this.origin = point(0, 0, 0).applyMatrix(this.invTransform);
   }
 
@@ -37,8 +37,8 @@ export class Camera {
     public height: number,
     public fieldOfView: number
   ) {
-    this._transform = identityMatrix();
-    this.invTransform = inverse(this._transform);
+    this._transform = new Matrix4();
+    this.invTransform = new Matrix4();
     this.origin = point(0, 0, 0).applyMatrix(this.invTransform);
 
     const halfView = Math.tan(fieldOfView / 2);
