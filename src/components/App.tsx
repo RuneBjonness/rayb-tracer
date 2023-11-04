@@ -15,7 +15,7 @@ import RenderSettingsEditor from './RenderSettingsEditor';
 import useRayTracerStore from '../store';
 import { getRenderConfiguration, RenderMode } from '../renderer/configuration';
 import SceneSelector from './SceneSelector';
-import { ScenePreset } from '../scenes/scene';
+import { ScenePreset } from '../scenes/scene-preset';
 
 function App() {
   const scenePreset = useRayTracerStore((state) => state.scenePreset);

@@ -1,5 +1,5 @@
 import { RenderConfiguration, RenderMode } from '../renderer/configuration';
-import { ScenePreset } from '../scenes/scene';
+import { ScenePreset } from '../scenes/scene-preset';
 import RenderWorker from './renderer-worker?worker';
 
 type CanvasPart = {
@@ -105,7 +105,7 @@ const render = (
       }
     };
 
-    worker.postMessage({ command: 'init', scenePreset, renderCfg: cfg });
+    worker.postMessage({ command: 'initPreset', scenePreset, renderCfg: cfg });
 
     if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
       if (remainingPhotonMapperIterations > 0) {

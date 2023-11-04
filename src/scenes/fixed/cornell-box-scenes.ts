@@ -1,26 +1,33 @@
-import { RenderConfiguration } from '../renderer/configuration';
-import { CameraConfiguration } from './configuration';
-import { AreaLight } from '../lib/lights';
-import { Plane } from '../lib/shapes/primitives/plane';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import { Shape } from '../lib/shapes/shape';
+import { RenderConfiguration } from '../../renderer/configuration';
+import { AreaLight } from '../../lib/lights';
+import { Plane } from '../../lib/shapes/primitives/plane';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { Shape } from '../../lib/shapes/shape';
 import {
   translation,
   scaling,
-  viewTransform,
   radians,
   rotationX,
   rotationY,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
-import { Scene } from './scene';
-import { Cube } from '../lib/shapes/primitives/cube';
-import { Material, material } from '../lib/materials';
-import { point, vector } from '../lib/math/vector4';
+} from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
+import { Scene } from '../scene';
+import { Cube } from '../../lib/shapes/primitives/cube';
+import { Material, material } from '../../lib/materials';
+import { CameraConfiguration } from '../scene-definition';
 
-export class CornellBoxTransparency implements Scene {
-  cameraCfg = cornellBoxCameraConfiguration();
+export class CornellBoxTransparency extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'CornellBoxTransparency',
+        camera: cornellBoxCameraConfiguration(),
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
@@ -30,8 +37,17 @@ export class CornellBoxTransparency implements Scene {
   }
 }
 
-export class CornellBoxMatteDiffuse implements Scene {
-  cameraCfg = cornellBoxCameraConfiguration();
+export class CornellBoxMatteDiffuse extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'CornellBoxMatteDiffuse',
+        camera: cornellBoxCameraConfiguration(),
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = emptyCornellBox(renderCfg);
@@ -44,14 +60,14 @@ export class CornellBoxMatteDiffuse implements Scene {
 
 function cornellBoxCameraConfiguration(): CameraConfiguration {
   return {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 2.56, -10),
-      point(0, 2.56, 0),
-      vector(0, 1, 0)
-    ),
+    fieldOfView: 60,
+    viewTransform: {
+      from: [0, 2.56, -10],
+      to: [0, 2.56, 0],
+      up: [0, 1, 0],
+    },
     aperture: 0.005,
-    focalLength: 2,
+    focalDistance: 2,
   };
 }
 

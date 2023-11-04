@@ -1,38 +1,42 @@
-import { RenderConfiguration } from '../renderer/configuration';
-import { CameraConfiguration } from './configuration';
-import { PointLight } from '../lib/lights';
-import { material } from '../lib/materials';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import {
-  translation,
-  scaling,
-  viewTransform,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
+import { RenderConfiguration } from '../../renderer/configuration';
+import { PointLight } from '../../lib/lights';
+import { material } from '../../lib/materials';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { translation, scaling } from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
 // import negXImgMapFile from '../resources/skybox/negx.ppm?raw';
 // import negYImgMapFile from '../resources/skybox/negy.ppm?raw';
 // import negZImgMapFile from '../resources/skybox/negz.ppm?raw';
 // import posXImgMapFile from '../resources/skybox/posx.ppm?raw';
 // import posYImgMapFile from '../resources/skybox/posy.ppm?raw';
 // import posZImgMapFile from '../resources/skybox/posz.ppm?raw';
-import { parsePPM } from '../tools/ppm-parser';
-import { Scene } from './scene';
-import { CubeMap } from '../lib/patterns/texture-mapping/texture-map';
-import { ImageUvPattern } from '../lib/patterns/texture-mapping/uv-patterns';
-import { point, vector } from '../lib/math/vector4';
+import { parsePPM } from '../../tools/ppm-parser';
+import { Scene } from '../scene';
+import { CubeMap } from '../../lib/patterns/texture-mapping/texture-map';
+import { ImageUvPattern } from '../../lib/patterns/texture-mapping/uv-patterns';
+import { point, vector } from '../../lib/math/vector4';
 
-export class Skybox implements Scene {
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 1.5, -5),
-      point(0, 1, 0),
-      vector(0, 1, 0)
-    ),
-    aperture: 0,
-    focalLength: 0,
-  };
+export class Skybox extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'Skybox',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [0, 1.5, -5],
+            to: [0, 1, 0],
+            up: [0, 1, 0],
+          },
+          aperture: 0,
+          focalDistance: 0,
+        },
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(_renderCfg: RenderConfiguration): World {
     const world = new World();

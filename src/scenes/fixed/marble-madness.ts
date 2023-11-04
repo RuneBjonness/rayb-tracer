@@ -1,35 +1,41 @@
-import { RenderConfiguration } from '../renderer/configuration';
-import { CameraConfiguration } from './configuration';
-import { AreaLight } from '../lib/lights';
-import { Group } from '../lib/shapes/group';
-import { Plane } from '../lib/shapes/primitives/plane';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import { Shape } from '../lib/shapes/shape';
+import { RenderConfiguration } from '../../renderer/configuration';
+import { AreaLight } from '../../lib/lights';
+import { Group } from '../../lib/shapes/group';
+import { Plane } from '../../lib/shapes/primitives/plane';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { Shape } from '../../lib/shapes/shape';
 import {
   translation,
   scaling,
-  viewTransform,
   radians,
   rotationY,
   rotationZ,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
-import { Scene } from './scene';
-import { Checkers3dPattern } from '../lib/patterns/patterns';
-import { point, vector } from '../lib/math/vector4';
+} from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
+import { Scene } from '../scene';
+import { Checkers3dPattern } from '../../lib/patterns/patterns';
 
-export class MarbleMadness implements Scene {
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 7, -5),
-      point(0, 1, 2),
-      vector(0, 1, 0)
-    ),
-    aperture: 0.005,
-    focalLength: 5,
-  };
+export class MarbleMadness extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'MarbleMadness',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [0, 7, -5],
+            to: [0, 1, 2],
+            up: [0, 1, 0],
+          },
+          aperture: 0.005,
+          focalDistance: 5,
+        },
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();

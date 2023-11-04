@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { RenderConfiguration } from '../renderer/configuration';
 import render from '../renderer/renderer';
-import { ScenePreset } from '../scenes/scene';
+import { ScenePreset } from '../scenes/scene-preset';
 import useRayTracerStore from '../store';
 
 type RtCanvasProps = {

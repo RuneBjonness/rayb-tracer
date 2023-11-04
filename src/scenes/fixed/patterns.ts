@@ -1,4 +1,4 @@
-import { Color } from '../lib/math/color';
+import { Color } from '../../lib/math/color';
 import {
   radians,
   rotationX,
@@ -6,38 +6,44 @@ import {
   rotationZ,
   scaling,
   translation,
-  viewTransform,
-} from '../lib/math/transformations';
-import { Shape } from '../lib/shapes/shape';
-import { AreaLight } from '../lib/lights';
-import { World } from '../lib/world';
+} from '../../lib/math/transformations';
+import { Shape } from '../../lib/shapes/shape';
+import { AreaLight } from '../../lib/lights';
+import { World } from '../../lib/world';
 import {
   BlendedPatterns,
   Checkers3dPattern,
   RadialGradientPattern,
   RingPattern,
   StripePattern,
-} from '../lib/patterns/patterns';
-import { material } from '../lib/materials';
-import { Plane } from '../lib/shapes/primitives/plane';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import { Scene } from './scene';
-import { Group } from '../lib/shapes/group';
-import { CameraConfiguration } from './configuration';
-import { RenderConfiguration } from '../renderer/configuration';
-import { point, vector } from '../lib/math/vector4';
+} from '../../lib/patterns/patterns';
+import { material } from '../../lib/materials';
+import { Plane } from '../../lib/shapes/primitives/plane';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { Scene } from '../scene';
+import { Group } from '../../lib/shapes/group';
+import { RenderConfiguration } from '../../renderer/configuration';
 
-export class Patterns implements Scene {
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 1.6, -5),
-      point(0, 1, 0),
-      vector(0, 1, 0)
-    ),
-    aperture: 0.005,
-    focalLength: 2.5,
-  };
+export class Patterns extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'Patterns',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [0, 1.6, -5],
+            to: [0, 1, 0],
+            up: [0, 1, 0],
+          },
+          aperture: 0.005,
+          focalDistance: 2.5,
+        },
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();

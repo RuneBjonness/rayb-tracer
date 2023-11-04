@@ -1,32 +1,38 @@
-import { RenderConfiguration } from '../renderer/configuration';
-import { CameraConfiguration } from './configuration';
-import { AreaLight } from '../lib/lights';
-import { Group } from '../lib/shapes/group';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import { Shape } from '../lib/shapes/shape';
+import { RenderConfiguration } from '../../renderer/configuration';
+import { AreaLight } from '../../lib/lights';
+import { Group } from '../../lib/shapes/group';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { Shape } from '../../lib/shapes/shape';
 import {
   translation,
   scaling,
-  viewTransform,
   radians,
   rotationZ,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
-import { Scene } from './scene';
-import { point, vector } from '../lib/math/vector4';
+} from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
+import { Scene } from '../scene';
 
-export class MarbleMadness2 implements Scene {
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(58, 48, -58),
-      point(0, -8, 0),
-      vector(0, 1, 0)
-    ),
-    aperture: 0.005,
-    focalLength: 5,
-  };
+export class MarbleMadness2 extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'MarbleMadness2',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [58, 48, -58],
+            to: [0, -8, 0],
+            up: [0, 1, 0],
+          },
+          aperture: 0.005,
+          focalDistance: 5,
+        },
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const size = 70;

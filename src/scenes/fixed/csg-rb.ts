@@ -1,43 +1,47 @@
-import { CameraConfiguration } from './configuration';
-import { AreaLight } from '../lib/lights';
-import { material } from '../lib/materials';
-import { CsgShape } from '../lib/shapes/csg-shape';
-import { Group } from '../lib/shapes/group';
-import { Cube } from '../lib/shapes/primitives/cube';
-import { Cylinder } from '../lib/shapes/primitives/cylinder';
-import { Plane } from '../lib/shapes/primitives/plane';
-import { Shape } from '../lib/shapes/shape';
+import { AreaLight } from '../../lib/lights';
+import { Material, material } from '../../lib/materials';
+import { CsgShape } from '../../lib/shapes/csg-shape';
+import { Group } from '../../lib/shapes/group';
+import { Cube } from '../../lib/shapes/primitives/cube';
+import { Cylinder } from '../../lib/shapes/primitives/cylinder';
+import { Plane } from '../../lib/shapes/primitives/plane';
+import { Shape } from '../../lib/shapes/shape';
 import {
   translation,
   scaling,
-  viewTransform,
   rotationY,
   shearing,
   radians,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
-import { RenderConfiguration } from '../renderer/configuration';
-import { Scene } from './scene';
-import { point, vector } from '../lib/math/vector4';
+} from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
+import { Scene } from '../scene';
+import { RenderConfiguration } from '../../renderer/configuration';
 
-export class CsgRb implements Scene {
-  private baseMaterial = material();
+export class CsgRb extends Scene {
+  private baseMaterial: Material;
 
-  constructor() {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'CsgRb',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [0, 6.2, -1.75],
+            to: [0, 0, 0],
+            up: [0, 1, 0],
+          },
+          aperture: 0.005,
+          focalDistance: 2,
+        },
+      },
+      renderCfg
+    );
+    this.baseMaterial = material();
     this.baseMaterial.color = new Color(0.66, 0.35, 0.85);
+    this.world = this.configureWorld(renderCfg);
   }
-
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 6.2, -1.75),
-      point(0, 0, 0),
-      vector(0, 1, 0)
-    ),
-    aperture: 0.005,
-    focalLength: 2,
-  };
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();

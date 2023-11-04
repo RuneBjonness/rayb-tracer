@@ -1,21 +1,13 @@
-import { RenderConfiguration } from './configuration';
-import { World } from '../lib/world';
-import { Camera } from '../lib/camera';
-import { createCamera, loadScene, Scene, ScenePreset } from '../scenes/scene';
+import { Scene } from '../scenes/scene';
+import { loadScene } from '../scenes/scene-preset';
 
 let scene: Scene;
-let world: World;
-let camera: Camera;
-
-const init = (scenePreset: ScenePreset, renderCfg: RenderConfiguration) => {
-  scene = loadScene(scenePreset);
-  world = scene.configureWorld(renderCfg);
-  camera = createCamera(scene.cameraCfg, renderCfg);
-};
 
 onmessage = function (e) {
   if (e.data.command === 'init') {
-    init(e.data.scenePreset, e.data.renderCfg);
+    scene = new Scene(e.data.definition, e.data.renderCfg);
+  } else if (e.data.command === 'initPreset') {
+    scene = loadScene(e.data.scenePreset, e.data.renderCfg);
   } else if (e.data.command === 'rtRenderTile') {
     const cp: {
       x: number;
@@ -24,9 +16,7 @@ onmessage = function (e) {
       h: number;
     } = e.data.cp;
 
-    const imageData = camera
-      .renderPart(world, cp.x, cp.y, cp.w, cp.h)
-      .getImageData();
+    const imageData = scene.renderTile(cp.x, cp.y, cp.w, cp.h);
     postMessage({ command: 'rtRenderTile', cp, imageData }, [
       imageData.data.buffer,
     ]);

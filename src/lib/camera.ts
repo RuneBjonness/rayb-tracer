@@ -18,7 +18,7 @@ export class Camera {
   public pixelSize: number;
 
   public aperture: number = 0;
-  public focalLength: number = 1;
+  public focalDistance: number = 1;
   public maxFocalSamples: number = 1;
   public adaptiveSamplingColorSensitivity: number = 1;
 
@@ -63,7 +63,7 @@ export class Camera {
 
     const rays: Ray[] = [];
     if (this.aperture > 0) {
-      const fp = rayFocalPoint(this.origin, px, this.focalLength);
+      const fp = rayFocalPoint(this.origin, px, this.focalDistance);
       const samples = this.sampleApertureOrigins();
       for (let i = 0; i < samples.length; i++) {
         rays.push(rayToTarget(samples[i], fp));

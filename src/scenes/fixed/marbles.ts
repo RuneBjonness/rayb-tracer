@@ -1,31 +1,34 @@
-import { RenderConfiguration } from '../renderer/configuration';
-import { CameraConfiguration } from './configuration';
-import { AreaLight } from '../lib/lights';
-import { Group } from '../lib/shapes/group';
-import { Plane } from '../lib/shapes/primitives/plane';
-import { Sphere } from '../lib/shapes/primitives/sphere';
-import { Shape } from '../lib/shapes/shape';
-import {
-  translation,
-  scaling,
-  viewTransform,
-} from '../lib/math/transformations';
-import { Color } from '../lib/math/color';
-import { World } from '../lib/world';
-import { Scene } from './scene';
-import { point, vector } from '../lib/math/vector4';
+import { RenderConfiguration } from '../../renderer/configuration';
+import { AreaLight } from '../../lib/lights';
+import { Group } from '../../lib/shapes/group';
+import { Plane } from '../../lib/shapes/primitives/plane';
+import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { Shape } from '../../lib/shapes/shape';
+import { translation, scaling } from '../../lib/math/transformations';
+import { Color } from '../../lib/math/color';
+import { World } from '../../lib/world';
+import { Scene } from '../scene';
 
-export class Marbles implements Scene {
-  cameraCfg: CameraConfiguration = {
-    fieldOfView: Math.PI / 3,
-    viewTransform: viewTransform(
-      point(0, 1.3, -5),
-      point(0, 0.5, 0),
-      vector(0, 1, 0)
-    ),
-    aperture: 0.04,
-    focalLength: 5,
-  };
+export class Marbles extends Scene {
+  constructor(renderCfg: RenderConfiguration) {
+    super(
+      {
+        name: 'Marbles',
+        camera: {
+          fieldOfView: 60,
+          viewTransform: {
+            from: [0, 1.3, -5],
+            to: [0, 0.5, 0],
+            up: [0, 1, 0],
+          },
+          aperture: 0.04,
+          focalDistance: 5,
+        },
+      },
+      renderCfg
+    );
+    this.world = this.configureWorld(renderCfg);
+  }
 
   configureWorld(renderCfg: RenderConfiguration): World {
     const world = new World();

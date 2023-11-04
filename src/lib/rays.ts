@@ -27,7 +27,7 @@ export function rayToTarget(origin: Vector4, target: Vector4): Ray {
 export function rayFocalPoint(
   origin: Vector4,
   target: Vector4,
-  focalLength: number
+  focalDistance: number
 ): Vector4 {
-  return rayToTarget(origin, target).position(focalLength);
+  return rayToTarget(origin, target).position(focalDistance);
 }

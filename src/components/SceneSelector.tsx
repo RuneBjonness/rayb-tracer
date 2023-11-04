@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import useRayTracerStore from '../store';
-import { ScenePreset } from '../scenes/scene';
+import { ScenePreset } from '../scenes/scene-preset';
 
 function SceneSelector() {
   const scenePreset = useRayTracerStore((state) => state.scenePreset);
