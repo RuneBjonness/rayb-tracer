@@ -1,14 +1,28 @@
 import { Camera } from '../lib/camera';
 import { RenderConfiguration } from '../renderer/configuration';
 import { World } from '../lib/world';
-import { CameraConfiguration, SceneDefinition } from './scene-definition';
-import { radians, viewTransform } from '../lib/math/transformations';
+import {
+  CameraConfiguration,
+  SceneDefinition,
+  Transform,
+} from './scene-definition';
+import {
+  radians,
+  rotationX,
+  rotationY,
+  rotationZ,
+  scaling,
+  shearing,
+  translation,
+  viewTransform,
+} from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';
-import { PointLight } from '../lib/lights';
+import { AreaLight, PointLight } from '../lib/lights';
 import { Color } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Plane } from '../lib/shapes/primitives/plane';
+import { Matrix4 } from '../lib/math/matrices';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -64,7 +78,14 @@ export class Scene {
           );
           w.lights.push(light);
         } else if (l.type === 'area') {
-          console.error('Area lights are not supported yet.');
+          const light = new AreaLight(
+            new Color(...l.intensity),
+            renderCfg.maxLightSamples,
+            renderCfg.adaptiveLightSamplingSensitivity
+          );
+          light.transform = this.getTransformMatrix(l.transform);
+          w.lights.push(light);
+          w.objects.push(light);
         }
       });
     }
@@ -78,19 +99,57 @@ export class Scene {
           obj = new Plane();
         } else {
           console.error('Unsupported object type: ', o.type);
+          return;
         }
 
-        if (obj) {
-          if (o.material?.color) {
-            obj.material.color = new Color(...o.material?.color);
-          }
-
-          w.objects.push(obj);
+        if (o.material?.color) {
+          obj.material.color = new Color(...o.material?.color);
         }
+        if (o.material?.pattern) {
+          console.error('Patterns are not supported yet.');
+        }
+
+        obj.material.ambient = o.material?.ambient ?? obj.material.ambient;
+        obj.material.diffuse = o.material?.diffuse ?? obj.material.diffuse;
+        obj.material.specular = o.material?.specular ?? obj.material.specular;
+        obj.material.shininess =
+          o.material?.shininess ?? obj.material.shininess;
+        obj.material.reflective =
+          o.material?.reflective ?? obj.material.reflective;
+        obj.material.transparency =
+          o.material?.transparency ?? obj.material.transparency;
+        obj.material.refractiveIndex =
+          o.material?.refractiveIndex ?? obj.material.refractiveIndex;
+
+        if (o.transform) {
+          obj.transform = this.getTransformMatrix(o.transform);
+        }
+
+        w.objects.push(obj);
       });
     }
 
     this.world = w;
     return w;
+  }
+
+  private getTransformMatrix(transformations: Transform[]): Matrix4 {
+    const m = new Matrix4();
+    for (let t of transformations) {
+      if (t[0] === 'translate') {
+        m.multiply(translation(t[1], t[2], t[3]));
+      } else if (t[0] === 'scale') {
+        m.multiply(scaling(t[1], t[2], t[3]));
+      } else if (t[0] === 'rotateX') {
+        m.multiply(rotationX(t[1]));
+      } else if (t[0] === 'rotateY') {
+        m.multiply(rotationY(t[1]));
+      } else if (t[0] === 'rotateZ') {
+        m.multiply(rotationZ(t[1]));
+      } else if (t[0] === 'shear') {
+        m.multiply(shearing(t[1], t[2], t[3], t[4], t[5], t[6]));
+      }
+    }
+    return m;
   }
 }

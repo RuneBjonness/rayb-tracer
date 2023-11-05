@@ -6,17 +6,17 @@ export const defaultScene: SceneDefinition = {
     fieldOfView: 60,
     viewTransform: {
       from: [0, 2, -5],
-      to: [0, 0, 0],
+      to: [0, 0.5, 0],
       up: [0, 1, 0],
     },
-    aperture: 0.01,
-    focalDistance: 5,
+    aperture: 0.02,
+    focalDistance: 4,
   },
   lights: [
     {
       type: 'point',
       intensity: [1, 1, 1],
-      position: [-10, 10, -10],
+      position: [-10, 10, -2],
     },
   ],
   objects: [
@@ -24,7 +24,7 @@ export const defaultScene: SceneDefinition = {
       type: 'plane',
       material: {
         color: [1, 1, 1],
-        ambient: 0.025,
+        ambient: 0.01,
         diffuse: 0.67,
         specular: 0,
         reflective: 0.2,
@@ -32,14 +32,14 @@ export const defaultScene: SceneDefinition = {
     },
     {
       type: 'sphere',
-      transform: [['translate', 0, 1, 0]],
+      transform: [['translate', -0.8, 1, 0]],
       material: {
         color: [0.5, 0, 1],
-        ambient: 0.1,
-        diffuse: 0.7,
+        ambient: 0.01,
+        diffuse: 0.67,
         specular: 0.3,
-        shininess: 200,
-        reflective: 0.1,
+        shininess: 400,
+        reflective: 0.3,
       },
     },
   ],
