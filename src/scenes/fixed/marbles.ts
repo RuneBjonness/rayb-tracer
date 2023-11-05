@@ -116,7 +116,7 @@ export class Marbles extends Scene {
   ): Shape {
     const s = this.basicSphere(color, x, z, scale);
     s.material.reflective = 0.9;
-    s.material.transparancy = 1;
+    s.material.transparency = 1;
     s.material.refractiveIndex = 1.5;
     s.material.diffuse = 0.9;
     s.material.specular = 0.9;

@@ -118,7 +118,7 @@ export function reflectance(comps: IntersectionComputations): number {
 export function refractedDirection(
   comps: IntersectionComputations
 ): Vector4 | null {
-  if (comps.object.material.transparancy < 0.001) {
+  if (comps.object.material.transparency < 0.001) {
     return null;
   }
 

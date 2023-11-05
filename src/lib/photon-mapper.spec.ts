@@ -72,12 +72,12 @@ describe('photon-mapping', () => {
 
     const g = new Sphere();
     g.material.diffuse = 0;
-    g.material.transparancy = 1;
+    g.material.transparency = 1;
     g.material.color = new Color(0, 0, 1);
 
     const s = new Sphere();
     s.material.diffuse = 1;
-    s.material.transparancy = 0;
+    s.material.transparency = 0;
     s.transform = scaling(2, 2, 2);
 
     w.objects.push(g, s);

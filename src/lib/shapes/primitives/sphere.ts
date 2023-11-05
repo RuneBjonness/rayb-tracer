@@ -37,7 +37,7 @@ export class Sphere extends Shape {
 
 export function glassSphere(): Sphere {
   const s = new Sphere();
-  s.material.transparancy = 1.0;
+  s.material.transparency = 1.0;
   s.material.refractiveIndex = 1.5;
   return s;
 }

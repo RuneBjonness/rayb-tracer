@@ -15,7 +15,7 @@ test('the default material', () => {
   expect(m.specular).toEqual(0.9);
   expect(m.shininess).toEqual(200);
   expect(m.reflective).toEqual(0.0);
-  expect(m.transparancy).toEqual(0.0);
+  expect(m.transparency).toEqual(0.0);
   expect(m.refractiveIndex).toEqual(1.0);
 });
 

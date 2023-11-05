@@ -74,7 +74,7 @@ export class PhotonMapper {
 
     const specularReflection = Math.max(
       i.object.material.reflective,
-      i.object.material.transparancy
+      i.object.material.transparency
     );
     const diffuseReflection = Math.min(
       i.object.material.diffuse,
@@ -119,7 +119,7 @@ export class PhotonMapper {
 
       if (
         ic.object.material.reflective > 0 &&
-        ic.object.material.transparancy > 0
+        ic.object.material.transparency > 0
       ) {
         reflect =
           interactionResult - diffuseReflection <

@@ -98,7 +98,7 @@ describe('Spheres', () => {
     const s = glassSphere();
 
     expect(s.transform.equals(new Matrix4())).toBe(true);
-    expect(s.material.transparancy).toEqual(1.0);
+    expect(s.material.transparency).toEqual(1.0);
     expect(s.material.refractiveIndex).toEqual(1.5);
   });
 

@@ -127,7 +127,7 @@ function basicSphere(color: Color, x: number, z: number, scale: number): Shape {
 function glassSphere(color: Color, x: number, z: number, scale: number): Shape {
   const s = basicSphere(color, x, z, scale);
   s.material.reflective = 0.9;
-  s.material.transparancy = 1;
+  s.material.transparency = 1;
   s.material.refractiveIndex = 1.5;
   s.material.diffuse = 0.1;
   s.material.specular = 0.9;
@@ -164,7 +164,7 @@ function diamondCube(
 ): Shape {
   const s = basicCube(color, x, z, scale, height);
   s.material.reflective = 0.9;
-  s.material.transparancy = 1;
+  s.material.transparency = 1;
   s.material.refractiveIndex = 2.5;
   s.material.diffuse = 0.1;
   s.material.specular = 0.9;

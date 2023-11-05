@@ -230,7 +230,7 @@ test('the refracted color with an opaque surface', () => {
 
 test('the refracted color at maximum recursive depth', () => {
   const w = defaultWorld();
-  w.objects[0].material.transparancy = 1.0;
+  w.objects[0].material.transparency = 1.0;
   w.objects[0].material.refractiveIndex = 1.5;
 
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
@@ -244,7 +244,7 @@ test('the refracted color at maximum recursive depth', () => {
 
 test('the refracted color at under total internal reflection', () => {
   const w = defaultWorld();
-  w.objects[0].material.transparancy = 1.0;
+  w.objects[0].material.transparency = 1.0;
   w.objects[0].material.refractiveIndex = 1.5;
 
   const r = new Ray(point(0, 0, Math.sqrt(2) / 2), vector(0, 1, 0));
@@ -264,7 +264,7 @@ test('the refracted color with a refracted ray', () => {
   w.objects[0].material.ambient = 1.0;
   w.objects[0].material.pattern = new TestPattern();
 
-  w.objects[1].material.transparancy = 1.0;
+  w.objects[1].material.transparency = 1.0;
   w.objects[1].material.refractiveIndex = 1.5;
 
   const r = new Ray(point(0, 0, 0.1), vector(0, 1, 0));
@@ -284,7 +284,7 @@ test('the refracted color with a refracted ray', () => {
 test('shadeHit() with a transparent material', () => {
   const w = defaultWorld();
   const floor = new Plane();
-  floor.material.transparancy = 0.5;
+  floor.material.transparency = 0.5;
   floor.material.refractiveIndex = 1.5;
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);
@@ -311,7 +311,7 @@ test('shadeHit() with a reflective and transparent material', () => {
   const w = defaultWorld();
   const floor = new Plane();
   floor.material.reflective = 0.5;
-  floor.material.transparancy = 0.5;
+  floor.material.transparency = 0.5;
   floor.material.refractiveIndex = 1.5;
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);

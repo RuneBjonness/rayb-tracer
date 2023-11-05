@@ -112,7 +112,7 @@ export class Patterns extends Scene {
     );
     front.material.color = new Color(0, 0, 0.3);
     front.material.reflective = 0.9;
-    front.material.transparancy = 1;
+    front.material.transparency = 1;
     front.material.refractiveIndex = 1.5;
 
     const middleBehind = new Sphere();

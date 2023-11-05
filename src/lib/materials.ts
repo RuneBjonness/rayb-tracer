@@ -12,7 +12,7 @@ export type Material = {
   specular: number;
   shininess: number;
   reflective: number;
-  transparancy: number;
+  transparency: number;
   refractiveIndex: number;
 };
 
@@ -25,7 +25,7 @@ export function material(): Material {
     specular: 0.9,
     shininess: 200.0,
     reflective: 0,
-    transparancy: 0,
+    transparency: 0,
     refractiveIndex: 1,
   };
 }

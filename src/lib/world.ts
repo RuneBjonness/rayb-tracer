@@ -69,7 +69,7 @@ export class World {
 
     if (
       comps.object.material.reflective > 0 &&
-      comps.object.material.transparancy > 0
+      comps.object.material.transparency > 0
     ) {
       const r = reflectance(comps);
       reflected.multiplyByScalar(r);
@@ -116,7 +116,7 @@ export class World {
   }
 
   refractedColor(comps: IntersectionComputations, maxDepth: number = 4): Color {
-    if (maxDepth <= 0 || comps.object.material.transparancy < 0.001) {
+    if (maxDepth <= 0 || comps.object.material.transparency < 0.001) {
       return new Color(0, 0, 0);
     }
     const dir = refractedDirection(comps);
@@ -124,7 +124,7 @@ export class World {
       return new Color(0, 0, 0);
     }
     const c = this.colorAt(new Ray(comps.underPoint, dir), maxDepth - 1);
-    return c.multiplyByScalar(comps.object.material.transparancy);
+    return c.multiplyByScalar(comps.object.material.transparency);
   }
 
   indirectLightningSample(
@@ -158,7 +158,7 @@ export class World {
     const ic = prepareComputations(i, r, xs);
     if (
       ic.object.material.reflective > 0.01 ||
-      ic.object.material.transparancy > 0.01 ||
+      ic.object.material.transparency > 0.01 ||
       (ic.object.material.specular > 0.01 &&
         ic.object.material.shininess > 5) ||
       ic.object.material.ambient === 1
