@@ -1,5 +1,6 @@
 import { SceneDefinition } from './scene-definition';
 import { defaultScene } from './templates/default';
+import { marbleScene } from './templates/marbles';
 
 export enum SceneTemplate {
   default = 'Default Scene',
@@ -12,7 +13,7 @@ export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
       return defaultScene;
 
     case SceneTemplate.marbles:
-      return defaultScene;
+      return marbleScene();
 
     default:
       return defaultScene;
