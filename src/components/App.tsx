@@ -18,7 +18,10 @@ import SceneSelector from './SceneSelector';
 import { ScenePreset } from '../scenes/scene-preset';
 
 function App() {
+  const sceneMode = useRayTracerStore((state) => state.sceneMode);
   const scenePreset = useRayTracerStore((state) => state.scenePreset);
+  const sceneDefinition = useRayTracerStore((state) => state.sceneDefinition);
+
   const width = useRayTracerStore((state) => state.width);
   const height = useRayTracerStore((state) => state.height);
   const numberOfWorkers = useRayTracerStore((state) => state.numberOfWorkers);
@@ -28,34 +31,55 @@ function App() {
   const [renderConfig, setRenderConfig] = useState(
     getRenderConfiguration(width, height, numberOfWorkers, renderMode)
   );
-  const [renderScene, setRenderScene] = useState<ScenePreset | null>(null);
+  const [renderScene, setRenderScene] = useState<ScenePreset | string | null>(
+    null
+  );
 
   const handleRenderClick = () => {
     setRenderConfig(
       getRenderConfiguration(width, height, numberOfWorkers, renderMode)
     );
-    setRenderScene(scenePreset);
+    setRenderScene(sceneMode === 'scenePreset' ? scenePreset : sceneDefinition);
   };
 
   const theme = createTheme({
     palette: {
+      mode: 'dark',
       primary: {
-        main: '#1e4745',
-        contrastText: '#dbefef',
+        main: '#b9d3cf',
       },
       secondary: {
         main: '#435061',
       },
       background: {
         default: '#02211f',
-        paper: '#113533',
+        paper: '#0d2b29',
       },
       text: {
         primary: '#b9d3cf',
-        secondary: '#e1efff',
+        secondary: '#506763',
       },
       action: {
-        active: '#b9d3cf',
+        selected: '#b9d3cf',
+      },
+    },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            scrollbarColor: '#1e4745 #02211f',
+            '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+              backgroundColor: '#02211f',
+              width: 6,
+              height: 6,
+            },
+            '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+              borderRadius: 3,
+              backgroundColor: '#1e4745',
+              minHeight: 24,
+            },
+          },
+        },
       },
     },
   });
@@ -66,11 +90,11 @@ function App() {
       <Box sx={{ display: 'flex' }}>
         <Drawer
           sx={{
-            width: 360,
+            width: 480,
             flexShrink: 0,
             p: 2,
             '& .MuiDrawer-paper': {
-              width: 360,
+              width: 480,
               boxSizing: 'border-box',
               p: 2,
             },
@@ -88,9 +112,8 @@ function App() {
             >
               RayB Tracer
             </Typography>
-            <SceneSelector />
-            <RenderSettingsEditor />
-            <Button variant="contained" onClick={handleRenderClick}>
+
+            <Button variant="outlined" onClick={handleRenderClick}>
               Render
             </Button>
             <LinearProgress
@@ -110,10 +133,17 @@ function App() {
                 : ` / ${width * height} pixels`}
               ]
             </Typography>
+
+            <RenderSettingsEditor />
+            <SceneSelector />
           </Stack>
         </Drawer>
         <Box sx={{ flexGrow: 1, p: 2 }}>
-          <RtCanvas scene={renderScene} cfg={renderConfig} />
+          <RtCanvas
+            sceneMode={sceneMode}
+            scene={renderScene}
+            cfg={renderConfig}
+          />
         </Box>
       </Box>
     </ThemeProvider>

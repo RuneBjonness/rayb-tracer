@@ -2,19 +2,26 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { RenderMode } from './renderer/configuration';
 import { ScenePreset } from './scenes/scene-preset';
+import { SceneTemplate } from './scenes/scene-template';
+import { SceneMode } from './scenes/scene';
 
 interface RayTracerStore {
+  sceneMode: SceneMode;
   scenePreset: ScenePreset;
+  sceneTemplate: SceneTemplate;
+  sceneDefinition: string;
 
   width: number;
   height: number;
   numberOfWorkers: number;
-
   renderMode: RenderMode;
 
   renderProgress: number;
 
+  setSceneMode: (sceneMode: SceneMode) => void;
   setScenePreset: (scenePreset: ScenePreset) => void;
+  setSceneTemplate: (sceneTemplate: SceneTemplate) => void;
+  setSceneDefinition: (sceneDefinition: string) => void;
 
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
@@ -29,14 +36,24 @@ const useRayTracerStore = create<RayTracerStore>()(
   devtools(
     persist(
       (set) => ({
+        sceneMode: 'sceneDefinition',
         scenePreset: ScenePreset.csgRayBTracer,
+        sceneTemplate: SceneTemplate.default,
+        sceneDefinition: '',
         width: 800,
         height: 600,
         numberOfWorkers: 8,
         renderMode: RenderMode.preview,
         renderProgress: 0,
+        setSceneMode(sceneMode) {
+          set({ sceneMode: sceneMode });
+        },
         setScenePreset: (scenePreset: ScenePreset) =>
           set({ scenePreset: scenePreset }),
+        setSceneTemplate: (sceneTemplate: SceneTemplate) =>
+          set({ sceneTemplate: sceneTemplate }),
+        setSceneDefinition: (sceneDefinition: string) =>
+          set({ sceneDefinition: sceneDefinition }),
         setWidth: (width: number) => set({ width: width }),
         setHeight: (height: number) => set({ height: height }),
         setNumberOfWorkers: (numberOfWorkers: number) =>

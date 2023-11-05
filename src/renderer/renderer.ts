@@ -1,4 +1,5 @@
 import { RenderConfiguration, RenderMode } from '../renderer/configuration';
+import { SceneMode } from '../scenes/scene';
 import { ScenePreset } from '../scenes/scene-preset';
 import RenderWorker from './renderer-worker?worker';
 
@@ -44,11 +45,12 @@ function createRenderPartList(
 
 const render = (
   ctx: CanvasRenderingContext2D,
-  scenePreset: ScenePreset | null,
   cfg: RenderConfiguration,
+  sceneMode: SceneMode,
+  scene: ScenePreset | string | null,
   onProgress: (units: number) => void
 ) => {
-  if (scenePreset == null) {
+  if (scene == null) {
     ctx!.fillRect(0, 0, cfg.width, cfg.height);
     return;
   } else {
@@ -104,8 +106,19 @@ const render = (
         onProgress(1);
       }
     };
-
-    worker.postMessage({ command: 'initPreset', scenePreset, renderCfg: cfg });
+    if (sceneMode === 'scenePreset') {
+      worker.postMessage({
+        command: 'initPreset',
+        scenePreset: scene,
+        renderCfg: cfg,
+      });
+    } else {
+      worker.postMessage({
+        command: 'init',
+        definition: scene,
+        renderCfg: cfg,
+      });
+    }
 
     if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
       if (remainingPhotonMapperIterations > 0) {

@@ -5,7 +5,7 @@ let scene: Scene;
 
 onmessage = function (e) {
   if (e.data.command === 'init') {
-    scene = new Scene(e.data.definition, e.data.renderCfg);
+    scene = new Scene(JSON.parse(e.data.definition), e.data.renderCfg);
   } else if (e.data.command === 'initPreset') {
     scene = loadScene(e.data.scenePreset, e.data.renderCfg);
   } else if (e.data.command === 'rtRenderTile') {

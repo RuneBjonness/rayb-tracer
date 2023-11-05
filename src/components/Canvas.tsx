@@ -3,13 +3,15 @@ import { RenderConfiguration } from '../renderer/configuration';
 import render from '../renderer/renderer';
 import { ScenePreset } from '../scenes/scene-preset';
 import useRayTracerStore from '../store';
+import { SceneMode } from '../scenes/scene';
 
 type RtCanvasProps = {
-  scene: ScenePreset | null;
   cfg: RenderConfiguration;
+  sceneMode: SceneMode;
+  scene: ScenePreset | string | null;
 };
 
-const RtCanvas = ({ scene, cfg }: RtCanvasProps) => {
+const RtCanvas = ({ cfg, sceneMode, scene }: RtCanvasProps) => {
   let canvasRef = useRef<HTMLCanvasElement | null>(null);
   let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
   const resetRenderProgress = useRayTracerStore(
@@ -23,7 +25,13 @@ const RtCanvas = ({ scene, cfg }: RtCanvasProps) => {
     if (canvasRef.current) {
       canvasCtxRef.current = canvasRef.current.getContext('2d');
       resetRenderProgress();
-      render(canvasCtxRef.current!, scene, cfg, incrementRenderProgress);
+      render(
+        canvasCtxRef.current!,
+        cfg,
+        sceneMode,
+        scene,
+        incrementRenderProgress
+      );
     }
   }, [scene, cfg]);
 
