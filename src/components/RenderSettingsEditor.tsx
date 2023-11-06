@@ -1,17 +1,18 @@
 import React from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
-import Grid from '@mui/material/Unstable_Grid2';
 import {
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import useRayTracerStore from '../store';
 import { RenderMode } from '../renderer/configuration';
+import ResolutionSelector from './ResolutionSelector';
 
 function RenderSettingsEditor() {
   const width = useRayTracerStore((state) => state.width);
@@ -57,16 +58,20 @@ function RenderSettingsEditor() {
   };
 
   return (
-    <Grid container spacing={1}>
-      <Grid xs={12} mb={1}>
-        <Typography variant="h6">
-          <TuneIcon
-            sx={{ verticalAlign: 'middle', paddingBottom: '3px', mr: 1 }}
-          />
-          Render Settings
-        </Typography>{' '}
-      </Grid>
-      <Grid xs={4}>
+    <Stack spacing={1}>
+      <Typography variant="h6" mb={1}>
+        <TuneIcon
+          sx={{ verticalAlign: 'middle', paddingBottom: '3px', mr: 1 }}
+        />
+        Render Settings
+      </Typography>
+      <Stack direction="row" spacing={1}>
+        <ResolutionSelector
+          onSetResolution={(width: number, height: number): void => {
+            setWidth(width);
+            setHeight(height);
+          }}
+        />
         <TextField
           id="input-width"
           label="Width"
@@ -75,8 +80,6 @@ function RenderSettingsEditor() {
           onChange={handleWidthChange}
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
-      </Grid>
-      <Grid xs={4}>
         <TextField
           id="input-height"
           label="Height"
@@ -85,8 +88,6 @@ function RenderSettingsEditor() {
           onChange={handleHeightChange}
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
-      </Grid>
-      <Grid xs={4}>
         <TextField
           id="input-number-of-workers"
           label="Workers"
@@ -95,29 +96,27 @@ function RenderSettingsEditor() {
           onChange={handleNumberOfWorkersChange}
           inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         />
-      </Grid>
-      <Grid xs={12}>
-        <FormControl fullWidth>
-          <InputLabel id="render-mode-label">Render Mode</InputLabel>
-          <Select
-            labelId="render-mode-label"
-            id="render-mode-select"
-            label="Render Mode"
-            size="small"
-            value={renderMode}
-            onChange={handleRenderModeChange}
-          >
-            {(Object.keys(RenderMode) as Array<keyof typeof RenderMode>).map(
-              (key) => (
-                <MenuItem value={RenderMode[key]} key={key}>
-                  {RenderMode[key]}
-                </MenuItem>
-              )
-            )}
-          </Select>
-        </FormControl>
-      </Grid>
-    </Grid>
+      </Stack>
+      <FormControl fullWidth>
+        <InputLabel id="render-mode-label">Render Mode</InputLabel>
+        <Select
+          labelId="render-mode-label"
+          id="render-mode-select"
+          label="Render Mode"
+          size="small"
+          value={renderMode}
+          onChange={handleRenderModeChange}
+        >
+          {(Object.keys(RenderMode) as Array<keyof typeof RenderMode>).map(
+            (key) => (
+              <MenuItem value={RenderMode[key]} key={key}>
+                {RenderMode[key]}
+              </MenuItem>
+            )
+          )}
+        </Select>
+      </FormControl>
+    </Stack>
   );
 }
 
