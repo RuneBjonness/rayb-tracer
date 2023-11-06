@@ -2,7 +2,6 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { CsgRb } from './fixed/csg-rb';
 import { Dodecahedron } from './fixed/dodecahedron';
 import { ImageMapping } from './fixed/image-mapping';
-import { Marbles } from './fixed/marbles';
 import { Patterns } from './fixed/patterns';
 import { Skybox } from './fixed/skybox';
 import { TeaPot } from './fixed/teapot';
@@ -16,7 +15,6 @@ import {
 import { Scene } from './scene';
 
 export enum ScenePreset {
-  marbles = 'Marbles',
   teapot = 'Teapot [high-res]',
   teapotLow = 'Teapot [low-res]',
   textureMapping = 'Texture mapping',
@@ -44,9 +42,6 @@ export function loadScene(
 
     case ScenePreset.imageMapping:
       return new ImageMapping(renderCfg);
-
-    case ScenePreset.marbles:
-      return new Marbles(renderCfg);
 
     case ScenePreset.patterns:
       return new Patterns(renderCfg);

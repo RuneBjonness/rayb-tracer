@@ -1,8 +1,10 @@
-import { ObjectPrimitive, SceneDefinition, Vec3 } from '../scene-definition';
+import { SceneDefinition, ShapeDefinition, Vec3 } from '../scene-definition';
 
-export function marbleScene(): SceneDefinition {
+export function marbleScene(options: {
+  lightShape: 'round' | 'rectangular';
+}): SceneDefinition {
   const scene: SceneDefinition = {
-    name: 'Marbles',
+    name: `Marbles (${options.lightShape} light source)`,
     camera: {
       fieldOfView: 60,
       viewTransform: {
@@ -21,6 +23,7 @@ export function marbleScene(): SceneDefinition {
           ['translate', -5, 6, -3],
           ['scale', 2, 2, 2],
         ],
+        includeGeometry: options.lightShape === 'rectangular',
       },
     ],
     objects: [
@@ -49,6 +52,22 @@ export function marbleScene(): SceneDefinition {
     ],
   };
 
+  if (options.lightShape === 'round') {
+    scene.objects!.push({
+      type: 'sphere',
+      transform: [
+        ['translate', -7, 8, -5],
+        ['scale', 1.75, 1.75, 1.75],
+      ],
+      material: {
+        color: [1.5, 1.5, 1.5],
+        diffuse: 0,
+        specular: 0,
+        ambient: 1,
+      },
+    });
+  }
+
   return scene;
 }
 
@@ -57,7 +76,7 @@ function basicSphere(
   x: number,
   z: number,
   scale: number
-): ObjectPrimitive {
+): ShapeDefinition {
   return {
     type: 'sphere',
     transform: [
@@ -78,7 +97,7 @@ function glassSphere(
   x: number,
   z: number,
   scale: number
-): ObjectPrimitive {
+): ShapeDefinition {
   return {
     type: 'sphere',
     transform: [

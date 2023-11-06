@@ -2,7 +2,7 @@ export type SceneDefinition = {
   name: string;
   camera: CameraConfiguration;
   lights?: LightConfiguration[];
-  objects?: ObjectPrimitive[];
+  objects?: ShapeDefinition[];
 };
 
 export type CameraConfiguration = {
@@ -38,9 +38,10 @@ export type LightConfiguration =
       type: 'area';
       intensity: Vec3;
       transform: Transform[];
+      includeGeometry?: boolean;
     };
 
-export type ObjectPrimitive = {
+export type ShapeDefinition = {
   type:
     | 'sphere'
     | 'plane'
@@ -52,10 +53,10 @@ export type ObjectPrimitive = {
     | 'group'
     | 'csg';
   transform?: Transform[];
-  material?: Material;
+  material?: MaterialDefinition;
 };
 
-export type Material = {
+export type MaterialDefinition = {
   color?: Vec3;
   ambient?: number;
   diffuse?: number;
@@ -64,10 +65,10 @@ export type Material = {
   reflective?: number;
   transparency?: number;
   refractiveIndex?: number;
-  pattern?: Pattern;
+  pattern?: PatternDefinition;
 };
 
-export type Pattern =
+export type PatternDefinition =
   | {
       type: 'solid';
       color1: Vec3;
@@ -81,7 +82,7 @@ export type Pattern =
     }
   | {
       type: 'blended';
-      pattern1: Pattern;
-      pattern2: Pattern;
+      pattern1: PatternDefinition;
+      pattern2: PatternDefinition;
       transform: Transform[];
     };

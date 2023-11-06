@@ -4,7 +4,8 @@ import { marbleScene } from './templates/marbles';
 
 export enum SceneTemplate {
   default = 'Default Scene',
-  marbles = 'Marbles',
+  marblesRoundLight = 'Marbles (round light source)',
+  marblesRectangularLight = 'Marbles (rectangular light source)',
 }
 
 export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
@@ -12,8 +13,11 @@ export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
     case SceneTemplate.default:
       return defaultScene;
 
-    case SceneTemplate.marbles:
-      return marbleScene();
+    case SceneTemplate.marblesRoundLight:
+      return marbleScene({ lightShape: 'round' });
+
+    case SceneTemplate.marblesRectangularLight:
+      return marbleScene({ lightShape: 'rectangular' });
 
     default:
       return defaultScene;
