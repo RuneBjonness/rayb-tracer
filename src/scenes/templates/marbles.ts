@@ -1,4 +1,5 @@
-import { SceneDefinition, ShapeDefinition, Vec3 } from '../scene-definition';
+import { SceneDefinition } from '../scene-definition';
+import { glassSphere, shinySphere } from './helpers/shapes';
 
 export function marbleScene(options: {
   lightShape: 'round' | 'rectangular';
@@ -39,16 +40,16 @@ export function marbleScene(options: {
       },
       glassSphere([0.1, 0, 0.2], 0.3, 0.4, 0.7),
 
-      basicSphere([0.5, 0, 1], -1.2, 0.2, 0.5),
-      basicSphere([0.6, 0.2, 1], -2.5, 2, 0.75),
-      basicSphere([0.6, 0.3, 1], 1.9, 6, 0.5),
-      basicSphere([0.7, 0.3, 0.9], 1.3, -2.5, 0.8),
-      basicSphere([0.8, 0.3, 0.9], -0.4, -1.5, 0.3),
-      basicSphere([0.8, 0.3, 0.8], -1, 7, 0.5),
-      basicSphere([0.9, 0.3, 0.8], 0.3, -1.1, 0.3),
-      basicSphere([1, 0.4, 0.8], -1.4, -1.5, 0.5),
-      basicSphere([1, 0.5, 0.9], -1.1, 4, 0.5),
-      basicSphere([1, 0.6, 1], -3, 11, 0.5),
+      shinySphere([0.5, 0, 1], -1.2, 0.2, 0.5),
+      shinySphere([0.6, 0.2, 1], -2.5, 2, 0.75),
+      shinySphere([0.6, 0.3, 1], 1.9, 6, 0.5),
+      shinySphere([0.7, 0.3, 0.9], 1.3, -2.5, 0.8),
+      shinySphere([0.8, 0.3, 0.9], -0.4, -1.5, 0.3),
+      shinySphere([0.8, 0.3, 0.8], -1, 7, 0.5),
+      shinySphere([0.9, 0.3, 0.8], 0.3, -1.1, 0.3),
+      shinySphere([1, 0.4, 0.8], -1.4, -1.5, 0.5),
+      shinySphere([1, 0.5, 0.9], -1.1, 4, 0.5),
+      shinySphere([1, 0.6, 1], -3, 11, 0.5),
     ],
   };
 
@@ -69,46 +70,4 @@ export function marbleScene(options: {
   }
 
   return scene;
-}
-
-function basicSphere(
-  color: Vec3,
-  x: number,
-  z: number,
-  scale: number
-): ShapeDefinition {
-  return {
-    type: 'sphere',
-    transform: [
-      ['translate', x, scale, z],
-      ['scale', scale, scale, scale],
-    ],
-    material: {
-      color: color,
-      diffuse: 0.6,
-      specular: 0,
-      reflective: 0.3,
-    },
-  };
-}
-
-function glassSphere(
-  color: Vec3,
-  x: number,
-  z: number,
-  scale: number
-): ShapeDefinition {
-  return {
-    type: 'sphere',
-    transform: [
-      ['translate', x, scale, z],
-      ['scale', scale, scale, scale],
-    ],
-    material: {
-      color: color,
-      reflective: 0.9,
-      transparency: 1,
-      refractiveIndex: 1.5,
-    },
-  };
 }

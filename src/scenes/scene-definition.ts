@@ -41,17 +41,30 @@ export type LightConfiguration =
       includeGeometry?: boolean;
     };
 
-export type ShapeDefinition = {
-  type:
-    | 'sphere'
-    | 'plane'
-    | 'cube'
-    | 'cylinder'
-    | 'cone'
-    | 'triangle'
-    | 'smooth-triangle'
-    | 'group'
-    | 'csg';
+export type ShapeDefinition = (
+  | { type: 'sphere' | 'plane' | 'cube' | 'group' | 'csg' }
+  | {
+      type: 'cylinder' | 'cone';
+      minimum: number;
+      maximum: number;
+      closed: boolean;
+    }
+  | {
+      type: 'triangle';
+      p1: Vec3;
+      p2: Vec3;
+      p3: Vec3;
+    }
+  | {
+      type: 'smooth-triangle';
+      p1: Vec3;
+      p2: Vec3;
+      p3: Vec3;
+      n1: Vec3[];
+      n2: Vec3[];
+      n3: Vec3[];
+    }
+) & {
   transform?: Transform[];
   material?: MaterialDefinition;
 };

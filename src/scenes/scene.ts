@@ -38,6 +38,9 @@ import {
   StripePattern,
 } from '../lib/patterns/patterns';
 import { Material, material } from '../lib/materials';
+import { Cube } from '../lib/shapes/primitives/cube';
+import { Cylinder } from '../lib/shapes/primitives/cylinder';
+import { Cone } from '../lib/shapes/primitives/cone';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -137,6 +140,20 @@ export class Scene {
       obj = new Sphere();
     } else if (s.type === 'plane') {
       obj = new Plane();
+    } else if (s.type === 'cube') {
+      obj = new Cube();
+    } else if (s.type === 'cylinder') {
+      const cyl = new Cylinder();
+      cyl.minimum = s.minimum;
+      cyl.maximum = s.maximum;
+      cyl.closed = s.closed;
+      obj = cyl;
+    } else if (s.type === 'cone') {
+      const cone = new Cone();
+      cone.minimum = s.minimum;
+      cone.maximum = s.maximum;
+      cone.closed = s.closed;
+      obj = cone;
     } else {
       throw new Error('Unsupported object type: ' + s.type);
     }
