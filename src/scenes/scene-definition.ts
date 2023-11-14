@@ -3,6 +3,10 @@ export type SceneDefinition = {
   camera: CameraConfiguration;
   lights?: LightConfiguration[];
   objects?: ShapeDefinition[];
+  colors?: Record<string, Vec3>;
+  patterns?: Record<string, PatternDefinition>;
+  materials?: Record<string, MaterialDefinition>;
+  shapes?: Record<string, ShapeDefinition>;
 };
 
 export type CameraConfiguration = {
@@ -31,12 +35,12 @@ export type Transform =
 export type LightConfiguration =
   | {
       type: 'point';
-      intensity: Vec3;
+      intensity: Vec3 | string;
       position: Vec3;
     }
   | {
       type: 'area';
-      intensity: Vec3;
+      intensity: Vec3 | string;
       transform: Transform[];
       includeGeometry?: boolean;
     };
@@ -45,9 +49,9 @@ export type ShapeDefinition = (
   | { type: 'sphere' | 'plane' | 'cube' | 'group' | 'csg' }
   | {
       type: 'cylinder' | 'cone';
-      minimum: number;
-      maximum: number;
-      closed: boolean;
+      minimum?: number;
+      maximum?: number;
+      closed?: boolean;
     }
   | {
       type: 'triangle';
@@ -66,11 +70,11 @@ export type ShapeDefinition = (
     }
 ) & {
   transform?: Transform[];
-  material?: MaterialDefinition;
+  material?: MaterialDefinition | string;
 };
 
 export type MaterialDefinition = {
-  color?: Vec3;
+  color?: Vec3 | string;
   ambient?: number;
   diffuse?: number;
   specular?: number;
@@ -78,24 +82,24 @@ export type MaterialDefinition = {
   reflective?: number;
   transparency?: number;
   refractiveIndex?: number;
-  pattern?: PatternDefinition;
+  pattern?: PatternDefinition | string;
 };
 
 export type PatternDefinition =
   | {
       type: 'solid';
-      color1: Vec3;
-      transform: Transform[];
+      color1?: Vec3 | string;
+      transform?: Transform[];
     }
   | {
       type: 'stripe' | 'gradient' | 'ring' | 'radial-gradient' | 'checkers';
-      color1: Vec3;
-      color2: Vec3;
-      transform: Transform[];
+      color1?: Vec3 | string;
+      color2?: Vec3 | string;
+      transform?: Transform[];
     }
   | {
       type: 'blended';
-      pattern1: PatternDefinition;
-      pattern2: PatternDefinition;
-      transform: Transform[];
+      pattern1?: PatternDefinition | string;
+      pattern2?: PatternDefinition | string;
+      transform?: Transform[];
     };

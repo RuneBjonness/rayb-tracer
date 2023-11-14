@@ -2,12 +2,10 @@ import {
   MaterialDefinition,
   SceneDefinition,
   ShapeDefinition,
-  Vec3,
 } from '../scene-definition';
 import { diamond, glass, matte, metal, shiny } from './helpers/materials';
 
 export function materialComparisonScene(): SceneDefinition {
-  const color: Vec3 = [0.12, 0.27, 0.27];
   const scene: SceneDefinition = {
     name: `Materials`,
     camera: {
@@ -63,12 +61,22 @@ export function materialComparisonScene(): SceneDefinition {
           specular: 0,
         },
       },
-      ...getShapeSet(-6, matte(color)),
-      ...getShapeSet(-3, shiny(color)),
-      ...getShapeSet(0, metal(color)),
-      ...getShapeSet(3, glass(color)),
-      ...getShapeSet(6, diamond(color)),
+      ...getShapeSet(-6, 'matte'),
+      ...getShapeSet(-3, 'shiny'),
+      ...getShapeSet(0, 'metal'),
+      ...getShapeSet(3, 'glass'),
+      ...getShapeSet(6, 'diamond'),
     ],
+    colors: {
+      darkTeal: [0.12, 0.27, 0.27],
+    },
+    materials: {
+      matte: matte('darkTeal'),
+      shiny: shiny('darkTeal'),
+      metal: metal('darkTeal'),
+      glass: glass('darkTeal'),
+      diamond: diamond('darkTeal'),
+    },
   };
 
   return scene;
@@ -76,7 +84,7 @@ export function materialComparisonScene(): SceneDefinition {
 
 const getShapeSet = (
   x: number,
-  material: MaterialDefinition
+  material: MaterialDefinition | string
 ): ShapeDefinition[] => {
   return [
     {

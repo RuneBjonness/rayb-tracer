@@ -3,7 +3,7 @@ import { glass, shiny } from './materials';
 import { restingOnYplane } from './transforms';
 
 export function shinySphere(
-  color: Vec3,
+  color: Vec3 | string,
   x: number,
   z: number,
   scale: number
@@ -16,7 +16,7 @@ export function shinySphere(
 }
 
 export function glassSphere(
-  color: Vec3,
+  color: Vec3 | string,
   x: number,
   z: number,
   scale: number

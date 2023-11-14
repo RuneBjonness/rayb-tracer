@@ -1,6 +1,6 @@
 import { Vec3, MaterialDefinition } from '../../scene-definition';
 
-export function matte(color: Vec3): MaterialDefinition {
+export function matte(color: Vec3 | string): MaterialDefinition {
   return {
     color: color,
     specular: 0.1,
@@ -8,7 +8,7 @@ export function matte(color: Vec3): MaterialDefinition {
   };
 }
 
-export function shiny(color: Vec3): MaterialDefinition {
+export function shiny(color: Vec3 | string): MaterialDefinition {
   return {
     color: color,
     diffuse: 0.6,
@@ -16,7 +16,7 @@ export function shiny(color: Vec3): MaterialDefinition {
   };
 }
 
-export function metal(color: Vec3): MaterialDefinition {
+export function metal(color: Vec3 | string): MaterialDefinition {
   return {
     color: color,
     diffuse: 0,
@@ -25,7 +25,7 @@ export function metal(color: Vec3): MaterialDefinition {
   };
 }
 
-export function glass(color: Vec3): MaterialDefinition {
+export function glass(color: Vec3 | string): MaterialDefinition {
   return {
     color: color,
     reflective: 0.9,
@@ -34,7 +34,7 @@ export function glass(color: Vec3): MaterialDefinition {
   };
 }
 
-export function diamond(color: Vec3): MaterialDefinition {
+export function diamond(color: Vec3 | string): MaterialDefinition {
   return {
     color: color,
     diffuse: 0.1,

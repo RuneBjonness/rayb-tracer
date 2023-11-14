@@ -9,6 +9,7 @@ import {
   SceneDefinition,
   ShapeDefinition,
   Transform,
+  Vec3,
 } from './scene-definition';
 import {
   radians,
@@ -47,7 +48,10 @@ export class Scene {
   protected world: World;
   private camera: Camera;
 
-  constructor(definiton: SceneDefinition, renderCfg: RenderConfiguration) {
+  constructor(
+    private definiton: SceneDefinition,
+    renderCfg: RenderConfiguration
+  ) {
     this.world = this.initWorld(definiton, renderCfg);
     this.camera = this.initCamera(definiton.camera, renderCfg);
   }
@@ -112,13 +116,13 @@ export class Scene {
       if (l.type === 'point') {
         const light = new PointLight(
           point(...l.position),
-          new Color(...l.intensity)
+          this.createColor(l.intensity)
         );
 
         lights.push(light);
       } else if (l.type === 'area') {
         const light = new AreaLight(
-          new Color(...l.intensity),
+          this.createColor(l.intensity),
           renderCfg.maxLightSamples,
           renderCfg.adaptiveLightSamplingSensitivity
         );
@@ -144,15 +148,15 @@ export class Scene {
       obj = new Cube();
     } else if (s.type === 'cylinder') {
       const cyl = new Cylinder();
-      cyl.minimum = s.minimum;
-      cyl.maximum = s.maximum;
-      cyl.closed = s.closed;
+      cyl.minimum = s.minimum ?? cyl.minimum;
+      cyl.maximum = s.maximum ?? cyl.maximum;
+      cyl.closed = s.closed ?? cyl.closed;
       obj = cyl;
     } else if (s.type === 'cone') {
       const cone = new Cone();
-      cone.minimum = s.minimum;
-      cone.maximum = s.maximum;
-      cone.closed = s.closed;
+      cone.minimum = s.minimum ?? cone.minimum;
+      cone.maximum = s.maximum ?? cone.maximum;
+      cone.closed = s.closed ?? cone.closed;
       obj = cone;
     } else {
       throw new Error('Unsupported object type: ' + s.type);
@@ -189,9 +193,19 @@ export class Scene {
     return m;
   }
 
-  private createMaterial(m: MaterialDefinition): Material {
+  private createMaterial(m?: MaterialDefinition | string): Material {
     const mat = material();
-    mat.color = m.color ? new Color(...m.color) : mat.color;
+    if (!m) {
+      return mat;
+    }
+    if (typeof m === 'string') {
+      if (!this.definiton.materials) {
+        return mat;
+      }
+      return this.createMaterial(this.definiton.materials[m]);
+    }
+
+    mat.color = this.createColor(m.color) ?? mat.color;
     mat.pattern = m.pattern ? this.createPattern(m.pattern) : mat.pattern;
     mat.ambient = m.ambient ?? mat.ambient;
     mat.diffuse = m.diffuse ?? mat.diffuse;
@@ -203,40 +217,50 @@ export class Scene {
     return mat;
   }
 
-  private createPattern(p: PatternDefinition): Pattern | null {
+  private createPattern(p?: PatternDefinition | string): Pattern | null {
+    if (!p) {
+      return null;
+    }
+    if (typeof p === 'string') {
+      if (!this.definiton.patterns) {
+        return null;
+      }
+      return this.createPattern(this.definiton.patterns[p]);
+    }
+
     let pattern: Pattern | null;
     switch (p.type) {
       case 'solid':
-        pattern = new SolidPattern(new Color(...p.color1));
+        pattern = new SolidPattern(this.createColor(p.color1));
         break;
       case 'stripe':
         pattern = new StripePattern(
-          new Color(...p.color1),
-          new Color(...p.color2)
+          this.createColor(p.color1),
+          this.createColor(p.color2)
         );
         break;
       case 'gradient':
         pattern = new GradientPattern(
-          new Color(...p.color1),
-          new Color(...p.color2)
+          this.createColor(p.color1),
+          this.createColor(p.color2)
         );
         break;
       case 'ring':
         pattern = new RingPattern(
-          new Color(...p.color1),
-          new Color(...p.color2)
+          this.createColor(p.color1),
+          this.createColor(p.color2)
         );
         break;
       case 'radial-gradient':
         pattern = new RadialGradientPattern(
-          new Color(...p.color1),
-          new Color(...p.color2)
+          this.createColor(p.color1),
+          this.createColor(p.color2)
         );
         break;
       case 'checkers':
         pattern = new Checkers3dPattern(
-          new Color(...p.color1),
-          new Color(...p.color2)
+          this.createColor(p.color1),
+          this.createColor(p.color2)
         );
         break;
       case 'blended':
@@ -251,9 +275,24 @@ export class Scene {
       default:
         pattern = null;
     }
-    if (pattern) {
+
+    if (pattern && p.transform) {
       pattern.transform = this.createTransformMatrix(p.transform);
     }
     return pattern;
+  }
+
+  private createColor(def?: Vec3 | string): Color {
+    if (!def) {
+      return new Color(1, 1, 1);
+    }
+    if (typeof def === 'string') {
+      if (!this.definiton.colors) {
+        return new Color(1, 1, 1);
+      }
+      return this.createColor(this.definiton.colors[def]);
+    }
+
+    return new Color(...def);
   }
 }
