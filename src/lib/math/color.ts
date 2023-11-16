@@ -52,3 +52,21 @@ export class Color {
     return this;
   }
 }
+
+export function colorFromRgbUint8(r: number, g: number, b: number): Color {
+  return new Color(r / 255, g / 255, b / 255);
+}
+
+export function colorFromHex(hex: string): Color {
+  if (hex.length !== 7 || hex[0] !== '#') {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
+  try {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+    return colorFromRgbUint8(r, g, b);
+  } catch (e) {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
+}

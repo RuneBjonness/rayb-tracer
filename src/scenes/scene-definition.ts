@@ -3,7 +3,7 @@ export type SceneDefinition = {
   camera: CameraConfiguration;
   lights?: LightConfiguration[];
   objects?: ShapeDefinition[];
-  colors?: Record<string, Vec3>;
+  colors?: Record<string, ColorDefinition>;
   patterns?: Record<string, PatternDefinition>;
   materials?: Record<string, MaterialDefinition>;
   shapes?: Record<string, ShapeDefinition>;
@@ -24,6 +24,9 @@ export type ViewTransform = {
 
 export type Vec3 = [number, number, number];
 
+export type ColorHexDefinition = `#${string}`;
+export type ColorDefinition = Vec3 | ColorHexDefinition;
+
 export type Transform =
   | ['translate', number, number, number]
   | ['scale', number, number, number]
@@ -35,12 +38,12 @@ export type Transform =
 export type LightConfiguration =
   | {
       type: 'point';
-      intensity: Vec3 | string;
+      intensity: ColorDefinition | string;
       position: Vec3;
     }
   | {
       type: 'area';
-      intensity: Vec3 | string;
+      intensity: ColorDefinition | string;
       transform: Transform[];
       includeGeometry?: boolean;
     };
@@ -74,7 +77,7 @@ export type ShapeDefinition = (
 };
 
 export type MaterialDefinition = {
-  color?: Vec3 | string;
+  color?: ColorDefinition | string;
   ambient?: number;
   diffuse?: number;
   specular?: number;
@@ -88,13 +91,13 @@ export type MaterialDefinition = {
 export type PatternDefinition =
   | {
       type: 'solid';
-      color1?: Vec3 | string;
+      color1?: ColorDefinition | string;
       transform?: Transform[];
     }
   | {
       type: 'stripe' | 'gradient' | 'ring' | 'radial-gradient' | 'checkers';
-      color1?: Vec3 | string;
-      color2?: Vec3 | string;
+      color1?: ColorDefinition | string;
+      color2?: ColorDefinition | string;
       transform?: Transform[];
     }
   | {

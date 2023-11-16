@@ -3,6 +3,7 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { World } from '../lib/world';
 import {
   CameraConfiguration,
+  ColorDefinition,
   LightConfiguration,
   MaterialDefinition,
   PatternDefinition,
@@ -23,7 +24,7 @@ import {
 } from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';
 import { AreaLight, Light, PointLight } from '../lib/lights';
-import { Color } from '../lib/math/color';
+import { Color, colorFromHex } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
 import { Sphere } from '../lib/shapes/primitives/sphere';
 import { Plane } from '../lib/shapes/primitives/plane';
@@ -282,11 +283,19 @@ export class Scene {
     return pattern;
   }
 
-  private createColor(def?: Vec3 | string): Color {
+  private createColor(def?: ColorDefinition | string): Color {
     if (!def) {
       return new Color(1, 1, 1);
     }
     if (typeof def === 'string') {
+      if (def.startsWith('#')) {
+        try {
+          return colorFromHex(def);
+        } catch (e) {
+          console.error(e);
+          return new Color(1, 1, 1);
+        }
+      }
       if (!this.definiton.colors) {
         return new Color(1, 1, 1);
       }

@@ -34,7 +34,7 @@ export function materialComparisonScene(): SceneDefinition {
         type: 'plane',
         transform: [['translate', 0, -0.01, 0]],
         material: {
-          color: [0.75, 0.85, 0.85],
+          color: 'paleBlue',
           ambient: 0.3,
           diffuse: 0.67,
           specular: 0,
@@ -49,8 +49,8 @@ export function materialComparisonScene(): SceneDefinition {
         material: {
           pattern: {
             type: 'checkers',
-            color1: [0.15, 0.25, 0.25],
-            color2: [0.75, 0.85, 0.85],
+            color1: 'darkTeal',
+            color2: 'mistyTeal',
             transform: [
               ['translate', 0, -0.1, 0],
               ['scale', 0.75, 0.75, 0.75],
@@ -68,7 +68,9 @@ export function materialComparisonScene(): SceneDefinition {
       ...getShapeSet(6, 'diamond'),
     ],
     colors: {
-      darkTeal: [0.12, 0.27, 0.27],
+      darkTeal: '#014d4e',
+      mistyTeal: '#b4ece3',
+      paleBlue: '#ccfdfe',
     },
     materials: {
       matte: matte('darkTeal'),

@@ -1,4 +1,4 @@
-import { Color } from './color';
+import { Color, colorFromHex, colorFromRgbUint8 } from './color';
 
 test('colors are (red, green, blue) tuples', () => {
   const { r, g, b } = new Color(-0.5, 0.4, 1.7);
@@ -44,4 +44,16 @@ test('multiplying colors', () => {
   const c = new Color(1, 0.2, 0.4).multiply(new Color(0.9, 1, 0.1));
 
   expect(c.equals(new Color(0.9, 0.2, 0.04))).toBe(true);
+});
+
+test('constructing a color from rgb uint8 values', () => {
+  const c = colorFromRgbUint8(255, 0, 153);
+
+  expect(c.equals(new Color(1, 0, 0.6))).toBe(true);
+});
+
+test('constructing a color from a hex string', () => {
+  const c = colorFromHex('#FF0099');
+
+  expect(c.equals(new Color(1, 0, 0.6))).toBe(true);
 });
