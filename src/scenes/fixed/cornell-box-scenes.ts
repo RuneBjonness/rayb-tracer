@@ -23,6 +23,7 @@ export class CornellBoxTransparency extends Scene {
       {
         name: 'CornellBoxTransparency',
         camera: cornellBoxCameraConfiguration(),
+        world: {},
       },
       renderCfg
     );
@@ -43,6 +44,7 @@ export class CornellBoxMatteDiffuse extends Scene {
       {
         name: 'CornellBoxMatteDiffuse',
         camera: cornellBoxCameraConfiguration(),
+        world: {},
       },
       renderCfg
     );

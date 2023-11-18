@@ -40,6 +40,7 @@ export class TextureMapping extends Scene {
           aperture: 0.005,
           focalDistance: 2.5,
         },
+        world: {},
       },
       renderCfg
     );

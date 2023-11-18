@@ -28,6 +28,7 @@ export class MarbleMadness2 extends Scene {
           aperture: 0.005,
           focalDistance: 5,
         },
+        world: {},
       },
       renderCfg
     );

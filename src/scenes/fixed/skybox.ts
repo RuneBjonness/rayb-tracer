@@ -32,6 +32,7 @@ export class Skybox extends Scene {
           aperture: 0,
           focalDistance: 0,
         },
+        world: {},
       },
       renderCfg
     );

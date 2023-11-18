@@ -31,6 +31,7 @@ export class TeaPot extends Scene {
           aperture: 0.006,
           focalDistance: 2,
         },
+        world: {},
       },
       renderCfg
     );
