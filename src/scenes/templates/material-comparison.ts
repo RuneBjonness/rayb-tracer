@@ -61,11 +61,11 @@ export function materialComparisonScene(): SceneDefinition {
           specular: 0,
         },
       },
-      ...getShapeSet(-6, 'matte'),
-      ...getShapeSet(-3, 'shiny'),
-      ...getShapeSet(0, 'metal'),
-      ...getShapeSet(3, 'glass'),
-      ...getShapeSet(6, 'diamond'),
+      getShapeSet(-6, 'matte'),
+      getShapeSet(-3, 'shiny'),
+      getShapeSet(0, 'metal'),
+      getShapeSet(3, 'glass'),
+      getShapeSet(6, 'diamond'),
     ],
     colors: {
       darkTeal: '#014d4e',
@@ -87,39 +87,43 @@ export function materialComparisonScene(): SceneDefinition {
 const getShapeSet = (
   x: number,
   material: MaterialDefinition | string
-): ShapeDefinition[] => {
-  return [
-    {
-      type: 'sphere',
-      transform: [['translate', x, 4, 0]],
-      material,
-    },
-    {
-      type: 'cube',
-      transform: [
-        ['translate', x, 1, 0],
-        ['rotateY', 60],
-      ],
-      material,
-    },
-    {
-      type: 'sphere',
-      transform: [
-        ['translate', x - 0.5, 0.4, -3],
-        ['scale', 0.4, 0.4, 0.4],
-      ],
-      material,
-    },
-    {
-      type: 'cylinder',
-      minimum: -1,
-      maximum: 1,
-      closed: true,
-      transform: [
-        ['translate', x + 0.5, 0.4, -3],
-        ['scale', 0.4, 0.4, 0.4],
-      ],
-      material,
-    },
-  ];
+): ShapeDefinition => {
+  return {
+    type: 'group',
+    transform: [
+      ['translate', x, 0, 0],
+      ['rotateY', -30],
+    ],
+    shapes: [
+      {
+        type: 'sphere',
+        transform: [['translate', 0, 4, 0]],
+        material,
+      },
+      {
+        type: 'cube',
+        transform: [['translate', 0, 1, 0]],
+        material,
+      },
+      {
+        type: 'sphere',
+        transform: [
+          ['translate', -0.5, 0.4, -1.75],
+          ['scale', 0.4, 0.4, 0.4],
+        ],
+        material,
+      },
+      {
+        type: 'cylinder',
+        minimum: -1,
+        maximum: 1,
+        closed: true,
+        transform: [
+          ['translate', 0.5, 0.4, -1.75],
+          ['scale', 0.4, 0.4, 0.4],
+        ],
+        material,
+      },
+    ],
+  };
 };

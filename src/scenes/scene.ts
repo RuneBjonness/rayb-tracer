@@ -43,6 +43,7 @@ import { Material, material } from '../lib/materials';
 import { Cube } from '../lib/shapes/primitives/cube';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Cone } from '../lib/shapes/primitives/cone';
+import { Group } from '../lib/shapes/group';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -159,6 +160,10 @@ export class Scene {
       cone.maximum = s.maximum ?? cone.maximum;
       cone.closed = s.closed ?? cone.closed;
       obj = cone;
+    } else if (s.type === 'group') {
+      const group = new Group();
+      s.shapes.forEach((c) => group.add(this.createShape(c)));
+      obj = group;
     } else {
       throw new Error('Unsupported object type: ' + s.type);
     }

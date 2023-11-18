@@ -49,7 +49,7 @@ export type LightConfiguration =
     };
 
 export type ShapeDefinition = (
-  | { type: 'sphere' | 'plane' | 'cube' | 'group' | 'csg' }
+  | { type: 'sphere' | 'plane' | 'cube' | 'csg' }
   | {
       type: 'cylinder' | 'cone';
       minimum?: number;
@@ -70,6 +70,10 @@ export type ShapeDefinition = (
       n1: Vec3[];
       n2: Vec3[];
       n3: Vec3[];
+    }
+  | {
+      type: 'group';
+      shapes: ShapeDefinition[];
     }
 ) & {
   transform?: Transform[];
