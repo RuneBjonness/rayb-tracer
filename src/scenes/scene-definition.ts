@@ -1,12 +1,16 @@
 export type SceneDefinition = {
   name: string;
   camera: CameraConfiguration;
-  lights?: LightConfiguration[];
-  objects?: ShapeDefinition[];
+  world: WorldDefinition;
   colors?: Record<string, ColorDefinition>;
   patterns?: Record<string, PatternDefinition>;
   materials?: Record<string, MaterialDefinition>;
-  shapes?: Record<string, ShapeDefinition>;
+  shapes?: Record<string, ShapePrimitiveDefinition>;
+};
+
+export type WorldDefinition = {
+  lights?: LightConfiguration[];
+  objects?: ShapeDefinition[];
 };
 
 export type CameraConfiguration = {
@@ -48,7 +52,7 @@ export type LightConfiguration =
       includeGeometry?: boolean;
     };
 
-export type ShapeDefinition = (
+export type ShapePrimitiveDefinition =
   | { type: 'sphere' | 'plane' | 'cube' | 'csg' }
   | {
       type: 'cylinder' | 'cone';
@@ -74,8 +78,10 @@ export type ShapeDefinition = (
   | {
       type: 'group';
       shapes: ShapeDefinition[];
-    }
-) & {
+    };
+
+export type ShapeDefinition = {
+  primitive: ShapePrimitiveDefinition | string;
   transform?: Transform[];
   material?: MaterialDefinition | string;
 };

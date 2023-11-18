@@ -9,8 +9,10 @@ import {
   PatternDefinition,
   SceneDefinition,
   ShapeDefinition,
+  ShapePrimitiveDefinition,
   Transform,
   Vec3,
+  WorldDefinition,
 } from './scene-definition';
 import {
   radians,
@@ -54,7 +56,7 @@ export class Scene {
     private definiton: SceneDefinition,
     renderCfg: RenderConfiguration
   ) {
-    this.world = this.initWorld(definiton, renderCfg);
+    this.world = this.initWorld(definiton.world, renderCfg);
     this.camera = this.initCamera(definiton.camera, renderCfg);
   }
 
@@ -88,19 +90,19 @@ export class Scene {
   }
 
   private initWorld(
-    def: SceneDefinition,
+    world: WorldDefinition,
     renderCfg: RenderConfiguration
   ): World {
     const w = new World();
 
-    if (def.lights) {
-      const [lights, objects] = this.createLights(def.lights, renderCfg);
+    if (world.lights) {
+      const [lights, objects] = this.createLights(world.lights, renderCfg);
       w.lights.push(...lights);
       w.objects.push(...objects);
     }
 
-    if (def.objects) {
-      w.objects.push(...def.objects.map((x) => this.createShape(x)));
+    if (world.objects) {
+      w.objects.push(...world.objects.map((x) => this.createShape(x)));
     }
 
     this.world = w;
@@ -140,42 +142,59 @@ export class Scene {
     return [lights, objects];
   }
 
-  private createShape(s: ShapeDefinition): Shape {
-    let obj: Shape | null = null;
-    if (s.type === 'sphere') {
-      obj = new Sphere();
-    } else if (s.type === 'plane') {
-      obj = new Plane();
-    } else if (s.type === 'cube') {
-      obj = new Cube();
-    } else if (s.type === 'cylinder') {
-      const cyl = new Cylinder();
-      cyl.minimum = s.minimum ?? cyl.minimum;
-      cyl.maximum = s.maximum ?? cyl.maximum;
-      cyl.closed = s.closed ?? cyl.closed;
-      obj = cyl;
-    } else if (s.type === 'cone') {
-      const cone = new Cone();
-      cone.minimum = s.minimum ?? cone.minimum;
-      cone.maximum = s.maximum ?? cone.maximum;
-      cone.closed = s.closed ?? cone.closed;
-      obj = cone;
-    } else if (s.type === 'group') {
-      const group = new Group();
-      s.shapes.forEach((c) => group.add(this.createShape(c)));
-      obj = group;
-    } else {
-      throw new Error('Unsupported object type: ' + s.type);
+  private createShapePrimitive(
+    primitive: ShapePrimitiveDefinition | string
+  ): Shape {
+    if (typeof primitive === 'string') {
+      if (!this.definiton.shapes) {
+        throw new Error('No shapes defined');
+      }
+      return this.createShapePrimitive(this.definiton.shapes[primitive]);
     }
 
+    switch (primitive.type) {
+      case 'sphere':
+        return new Sphere();
+      case 'plane':
+        return new Plane();
+      case 'cube':
+        return new Cube();
+      case 'cylinder':
+        const cyl = new Cylinder();
+        cyl.minimum = primitive.minimum ?? cyl.minimum;
+        cyl.maximum = primitive.maximum ?? cyl.maximum;
+        cyl.closed = primitive.closed ?? cyl.closed;
+        return cyl;
+      case 'cone':
+        const cone = new Cone();
+        cone.minimum = primitive.minimum ?? cone.minimum;
+        cone.maximum = primitive.maximum ?? cone.maximum;
+        cone.closed = primitive.closed ?? cone.closed;
+        return cone;
+      case 'triangle':
+        throw new Error('Triangle not supported');
+      case 'smooth-triangle':
+        throw new Error('Smooth triangle not supported');
+      case 'group':
+        const group = new Group();
+        primitive.shapes.forEach((c) => group.add(this.createShape(c)));
+        return group;
+      case 'csg':
+        throw new Error('CSG not supported');
+    }
+  }
+
+  private createShape(s: ShapeDefinition): Shape {
+    const obj = this.createShapePrimitive(s.primitive);
     if (s.material) {
       obj.material = this.createMaterial(s.material);
+      if (obj instanceof Group) {
+        obj.shapes.forEach((x) => (x.material = obj.material));
+      }
     }
-
     if (s.transform) {
       obj.transform = this.createTransformMatrix(s.transform);
     }
-
     return obj;
   }
 

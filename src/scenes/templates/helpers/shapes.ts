@@ -9,7 +9,7 @@ export function shinySphere(
   scale: number
 ): ShapeDefinition {
   return {
-    type: 'sphere',
+    primitive: { type: 'sphere' },
     transform: restingOnYplane(x, z, scale),
     material: shiny(color),
   };
@@ -22,7 +22,7 @@ export function glassSphere(
   scale: number
 ): ShapeDefinition {
   return {
-    type: 'sphere',
+    primitive: { type: 'sphere' },
     transform: restingOnYplane(x, z, scale),
     material: glass(color),
   };
