@@ -46,6 +46,7 @@ import { Cube } from '../lib/shapes/primitives/cube';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Cone } from '../lib/shapes/primitives/cone';
 import { Group } from '../lib/shapes/group';
+import { CsgShape } from '../lib/shapes/csg-shape';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -180,22 +181,34 @@ export class Scene {
         primitive.shapes.forEach((c) => group.add(this.createShape(c)));
         return group;
       case 'csg':
-        throw new Error('CSG not supported');
+        return new CsgShape(
+          primitive.operation,
+          this.createShape(primitive.left),
+          this.createShape(primitive.right)
+        );
     }
   }
 
   private createShape(s: ShapeDefinition): Shape {
     const obj = this.createShapePrimitive(s.primitive);
     if (s.material) {
-      obj.material = this.createMaterial(s.material);
-      if (obj instanceof Group) {
-        obj.shapes.forEach((x) => (x.material = obj.material));
-      }
+      this.setMaterial(this.createMaterial(s.material), obj);
     }
     if (s.transform) {
       obj.transform = this.createTransformMatrix(s.transform);
     }
     return obj;
+  }
+
+  private setMaterial(material: Material, shape: Shape): void {
+    if (shape instanceof Group) {
+      shape.shapes.forEach((x) => this.setMaterial(material, x));
+    } else if (shape instanceof CsgShape) {
+      this.setMaterial(material, shape.left);
+      this.setMaterial(material, shape.right);
+    } else {
+      shape.material = material;
+    }
   }
 
   private createTransformMatrix(transformations: Transform[]): Matrix4 {

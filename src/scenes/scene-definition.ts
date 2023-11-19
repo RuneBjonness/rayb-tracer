@@ -53,7 +53,7 @@ export type LightConfiguration =
     };
 
 export type ShapePrimitiveDefinition =
-  | { type: 'sphere' | 'plane' | 'cube' | 'csg' }
+  | { type: 'sphere' | 'plane' | 'cube' }
   | {
       type: 'cylinder' | 'cone';
       minimum?: number;
@@ -78,6 +78,12 @@ export type ShapePrimitiveDefinition =
   | {
       type: 'group';
       shapes: ShapeDefinition[];
+    }
+  | {
+      type: 'csg';
+      operation: 'union' | 'intersection' | 'difference';
+      left: ShapeDefinition;
+      right: ShapeDefinition;
     };
 
 export type ShapeDefinition = {
