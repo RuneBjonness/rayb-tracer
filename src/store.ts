@@ -2,13 +2,11 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { RenderMode } from './renderer/configuration';
 import { ScenePreset } from './scenes/scene-preset';
-import { SceneTemplate } from './scenes/scene-template';
 import { SceneMode } from './scenes/scene';
 
 interface RayTracerStore {
   sceneMode: SceneMode;
   scenePreset: ScenePreset;
-  sceneTemplate: SceneTemplate;
   sceneDefinition: string;
 
   width: number;
@@ -20,7 +18,6 @@ interface RayTracerStore {
 
   setSceneMode: (sceneMode: SceneMode) => void;
   setScenePreset: (scenePreset: ScenePreset) => void;
-  setSceneTemplate: (sceneTemplate: SceneTemplate) => void;
   setSceneDefinition: (sceneDefinition: string) => void;
 
   setWidth: (width: number) => void;
@@ -37,8 +34,7 @@ const useRayTracerStore = create<RayTracerStore>()(
     persist(
       (set) => ({
         sceneMode: 'sceneDefinition',
-        scenePreset: ScenePreset.csgRayBTracer,
-        sceneTemplate: SceneTemplate.default,
+        scenePreset: ScenePreset.teapot,
         sceneDefinition: '',
         width: 800,
         height: 600,
@@ -50,8 +46,6 @@ const useRayTracerStore = create<RayTracerStore>()(
         },
         setScenePreset: (scenePreset: ScenePreset) =>
           set({ scenePreset: scenePreset }),
-        setSceneTemplate: (sceneTemplate: SceneTemplate) =>
-          set({ sceneTemplate: sceneTemplate }),
         setSceneDefinition: (sceneDefinition: string) =>
           set({ sceneDefinition: sceneDefinition }),
         setWidth: (width: number) => set({ width: width }),

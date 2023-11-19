@@ -8,7 +8,6 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Stack,
   Tab,
   Tabs,
   TextField,
@@ -16,9 +15,9 @@ import {
 } from '@mui/material';
 import useRayTracerStore from '../store';
 import { ScenePreset } from '../scenes/scene-preset';
-import { defaultScene } from '../scenes/templates/default';
-import { SceneTemplate, loadSceneDefinition } from '../scenes/scene-template';
 import { SceneMode } from '../scenes/scene';
+import TemplateLoader from './TemplateLoader';
+import { SceneDefinition } from '../scenes/scene-definition';
 
 function SceneSelector() {
   const sceneMode = useRayTracerStore((state) => state.sceneMode);
@@ -26,9 +25,6 @@ function SceneSelector() {
 
   const scenePreset = useRayTracerStore((state) => state.scenePreset);
   const setScenePreset = useRayTracerStore((state) => state.setScenePreset);
-
-  const sceneTemplate = useRayTracerStore((state) => state.sceneTemplate);
-  const setSceneTemplate = useRayTracerStore((state) => state.setSceneTemplate);
 
   const sceneDefinition = useRayTracerStore((state) => state.sceneDefinition);
   const setSceneDefinition = useRayTracerStore(
@@ -45,12 +41,8 @@ function SceneSelector() {
     const val = event.target.value as ScenePreset;
     setScenePreset(val);
   };
-  const handleSceneTemplateChange = (event: SelectChangeEvent) => {
-    const val = event.target.value as SceneTemplate;
-    setSceneTemplate(val);
-    setSceneDefinition(
-      stringify(loadSceneDefinition(val), { indent: 4, maxLength: 60 })
-    );
+  const handleSceneTemplateChange = (definition: SceneDefinition) => {
+    setSceneDefinition(stringify(definition, { indent: 4, maxLength: 60 }));
   };
   const handleSceneDefinitionChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -73,25 +65,7 @@ function SceneSelector() {
         </Tabs>
       </Box>
       <Box hidden={sceneMode !== 'sceneDefinition'}>
-        <FormControl fullWidth sx={{ marginBottom: 1, marginTop: 2 }}>
-          <InputLabel id="scene-template-label">Load template</InputLabel>
-          <Select
-            labelId="scene-template-label"
-            id="scene-template-select"
-            label="Load template"
-            size="small"
-            value={sceneTemplate}
-            onChange={handleSceneTemplateChange}
-          >
-            {(
-              Object.keys(SceneTemplate) as Array<keyof typeof SceneTemplate>
-            ).map((key) => (
-              <MenuItem value={SceneTemplate[key]} key={key}>
-                {SceneTemplate[key]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TemplateLoader onLoaded={handleSceneTemplateChange} />
         <TextField
           fullWidth
           multiline
