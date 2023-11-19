@@ -1,5 +1,4 @@
 import { RenderConfiguration } from '../renderer/configuration';
-import { CsgRb } from './fixed/csg-rb';
 import { Dodecahedron } from './fixed/dodecahedron';
 import { ImageMapping } from './fixed/image-mapping';
 import { Patterns } from './fixed/patterns';
@@ -19,7 +18,6 @@ export enum ScenePreset {
   teapotLow = 'Teapot [low-res]',
   textureMapping = 'Texture mapping',
   skybox = 'Skybox',
-  csgRayBTracer = 'Constructive Solid Geometry',
   dodecahedron = 'Dodecahedron',
   imageMapping = 'Image mapping',
   patterns = '3D Patterns',
@@ -34,9 +32,6 @@ export function loadScene(
   renderCfg: RenderConfiguration
 ): Scene {
   switch (preset) {
-    case ScenePreset.csgRayBTracer:
-      return new CsgRb(renderCfg);
-
     case ScenePreset.dodecahedron:
       return new Dodecahedron(renderCfg);
 
@@ -69,8 +64,5 @@ export function loadScene(
 
     case ScenePreset.cornellBoxMatteDiffuse:
       return new CornellBoxMatteDiffuse(renderCfg);
-
-    default:
-      return new CsgRb(renderCfg);
   }
 }
