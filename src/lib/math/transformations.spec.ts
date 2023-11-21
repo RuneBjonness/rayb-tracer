@@ -188,6 +188,18 @@ test('chained transformations must be applied in reverse order', () => {
   expect(p2.equals(point(15, 0, 7))).toBe(true);
 });
 
+test('chained Matrix4 fluent api transformation operations must be applied in natural order', () => {
+  const p = point(1, 0, 1);
+  const t = new Matrix4();
+
+  t.rotateX(Math.PI / 2)
+    .scale(5, 5, 5)
+    .translate(10, 5, 7);
+
+  const p2 = p.applyMatrix(t);
+  expect(p2.equals(point(15, 0, 7))).toBe(true);
+});
+
 test('the tranformation matrix for the default orientation', () => {
   const from = point(0, 0, 0);
   const to = point(0, 0, -1);

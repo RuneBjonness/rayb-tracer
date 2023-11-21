@@ -1,3 +1,12 @@
+import {
+  rotationX,
+  rotationY,
+  rotationZ,
+  scaling,
+  shearing,
+  translation,
+} from './transformations';
+
 // prettier-ignore
 export type Matrix4Elements = [
   number, number, number, number,
@@ -163,5 +172,42 @@ export class Matrix4 {
       }
     }
     return true;
+  }
+
+  public translate(x: number, y: number, z: number): Matrix4 {
+    this.elements = translation(x, y, z).multiply(this).elements;
+    return this;
+  }
+
+  public scale(x: number, y: number, z: number): Matrix4 {
+    this.elements = scaling(x, y, z).multiply(this).elements;
+    return this;
+  }
+
+  public rotateX(radians: number): Matrix4 {
+    this.elements = rotationX(radians).multiply(this).elements;
+    return this;
+  }
+
+  public rotateY(radians: number): Matrix4 {
+    this.elements = rotationY(radians).multiply(this).elements;
+    return this;
+  }
+
+  public rotateZ(radians: number): Matrix4 {
+    this.elements = rotationZ(radians).multiply(this).elements;
+    return this;
+  }
+
+  public shear(
+    xy: number,
+    xz: number,
+    yx: number,
+    yz: number,
+    zx: number,
+    zy: number
+  ): Matrix4 {
+    this.elements = shearing(xy, xz, yx, yz, zx, zy).multiply(this).elements;
+    return this;
   }
 }
