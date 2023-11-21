@@ -123,8 +123,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', -0.25, 0.125, -1],
           ['scale', 0.25, 0.125, 2],
+          ['translate', -0.25, 0.125, -1],
         ],
       },
       right: {
@@ -139,9 +139,9 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0.5, 0.125, -1.9],
-          ['scale', 0.25, 0.125, 1.1],
           ['shear', 0, -1, 0, 0, 0, 0],
+          ['scale', 0.25, 0.125, 1.1],
+          ['translate', 0.5, 0.125, -1.9],
         ],
       },
       right: {
@@ -154,8 +154,8 @@ export const CsgRbScene: SceneDefinition = {
       left: {
         primitive: 'halfCircle',
         transform: [
-          ['translate', 0, 0, -1.8],
           ['scale', 1.3, 1, 1.2],
+          ['translate', 0, 0, -1.8],
         ],
       },
       right: {
@@ -170,8 +170,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0, 0.125, -1],
           ['scale', 0.25, 0.125, 2],
+          ['translate', 0, 0.125, -1],
         ],
       },
       right: {
@@ -179,8 +179,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0, 0.125, 0.75],
           ['scale', 1, 0.125, 0.25],
+          ['translate', 0, 0.125, 0.75],
         ],
       },
     },
@@ -196,8 +196,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0.75, 0.125, -2],
           ['scale', 0.25, 0.125, 1],
+          ['translate', 0.75, 0.125, -2],
         ],
       },
     },
@@ -213,8 +213,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 1.5, 0, -2],
           ['rotateY', 45],
+          ['translate', 1.5, 0, -2],
         ],
       },
     },
@@ -234,8 +234,8 @@ export const CsgRbScene: SceneDefinition = {
               type: 'cube',
             },
             transform: [
-              ['translate', 0.75, 0, -2.15],
               ['scale', 1, 1, 0.25],
+              ['translate', 0.75, 0, -2.15],
             ],
           },
         },
@@ -245,8 +245,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0.25, 0.125, -2],
           ['scale', 0.75, 0.125, 0.25],
+          ['translate', 0.25, 0.125, -2],
         ],
       },
     },
@@ -266,8 +266,8 @@ export const CsgRbScene: SceneDefinition = {
               type: 'cube',
             },
             transform: [
-              ['translate', 0, 0, -0.8],
               ['rotateY', 45],
+              ['translate', 0, 0, -0.8],
             ],
           },
         },
@@ -277,8 +277,8 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', -0.5, 0.125, -2],
           ['scale', 0.25, 0.125, 1],
+          ['translate', -0.5, 0.125, -2],
         ],
       },
     },
@@ -290,9 +290,9 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', -0.12, 0.125, -2],
-          ['scale', 0.25, 0.125, 1],
           ['shear', 0, -2, 0, 0, 0, 0],
+          ['scale', 0.25, 0.125, 1],
+          ['translate', -0.12, 0.125, -2],
         ],
       },
       right: {
@@ -300,9 +300,9 @@ export const CsgRbScene: SceneDefinition = {
           type: 'cube',
         },
         transform: [
-          ['translate', 0.5, 0.125, -2.6],
-          ['scale', 0.25, 0.125, 1.6],
           ['shear', 0, 2, 0, 0, 0, 0],
+          ['scale', 0.25, 0.125, 1.6],
+          ['translate', 0.5, 0.125, -2.6],
         ],
       },
     },

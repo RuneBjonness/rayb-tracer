@@ -10,7 +10,7 @@ export function restingOnYplane(
   }
 
   return [
-    ['translate', x, scale, z],
     ['scale', scale, scale, scale],
+    ['translate', x, scale, z],
   ];
 }

@@ -19,8 +19,8 @@ export const materialComparisonScene: SceneDefinition = {
         type: 'area',
         intensity: [1.5, 1.5, 1.5],
         transform: [
-          ['translate', -12, 24, -24],
           ['scale', 1.5, 1.5, 1.5],
+          ['translate', -12, 24, -24],
         ],
         includeGeometry: false,
       },
@@ -39,8 +39,8 @@ export const materialComparisonScene: SceneDefinition = {
       {
         primitive: { type: 'plane' },
         transform: [
-          ['translate', 0, -0.01, 3],
           ['rotateX', 90],
+          ['translate', 0, -0.01, 3],
         ],
         material: {
           pattern: {
@@ -48,8 +48,8 @@ export const materialComparisonScene: SceneDefinition = {
             color1: 'darkTeal',
             color2: 'mistyTeal',
             transform: [
-              ['translate', 0, -0.1, 0],
               ['scale', 0.75, 0.75, 0.75],
+              ['translate', 0, -0.1, 0],
             ],
           },
           ambient: 0.3,
@@ -61,16 +61,16 @@ export const materialComparisonScene: SceneDefinition = {
         primitive: 'shapeSet',
         material: 'matte',
         transform: [
-          ['translate', -6, 0, 0],
           ['rotateY', -30],
+          ['translate', -6, 0, 0],
         ],
       },
       {
         primitive: 'shapeSet',
         material: 'shiny',
         transform: [
-          ['translate', -3, 0, 0],
           ['rotateY', -30],
+          ['translate', -3, 0, 0],
         ],
       },
       {
@@ -82,16 +82,16 @@ export const materialComparisonScene: SceneDefinition = {
         primitive: 'shapeSet',
         material: 'glass',
         transform: [
-          ['translate', 3, 0, 0],
           ['rotateY', -30],
+          ['translate', 3, 0, 0],
         ],
       },
       {
         primitive: 'shapeSet',
         material: 'diamond',
         transform: [
-          ['translate', 6, 0, 0],
           ['rotateY', -30],
+          ['translate', 6, 0, 0],
         ],
       },
     ],
@@ -123,8 +123,8 @@ export const materialComparisonScene: SceneDefinition = {
         {
           primitive: { type: 'sphere' },
           transform: [
-            ['translate', -0.5, 0.4, -1.75],
             ['scale', 0.4, 0.4, 0.4],
+            ['translate', -0.5, 0.4, -1.75],
           ],
         },
         {
@@ -135,8 +135,8 @@ export const materialComparisonScene: SceneDefinition = {
             closed: true,
           },
           transform: [
-            ['translate', 0.5, 0.4, -1.75],
             ['scale', 0.4, 0.4, 0.4],
+            ['translate', 0.5, 0.4, -1.75],
           ],
         },
       ],

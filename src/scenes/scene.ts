@@ -11,19 +11,9 @@ import {
   ShapeDefinition,
   ShapePrimitiveDefinition,
   Transform,
-  Vec3,
   WorldDefinition,
 } from './scene-definition';
-import {
-  radians,
-  rotationX,
-  rotationY,
-  rotationZ,
-  scaling,
-  shearing,
-  translation,
-  viewTransform,
-} from '../lib/math/transformations';
+import { radians, viewTransform } from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';
 import { AreaLight, Light, PointLight } from '../lib/lights';
 import { Color, colorFromHex } from '../lib/math/color';
@@ -215,17 +205,17 @@ export class Scene {
     const m = new Matrix4();
     for (let t of transformations) {
       if (t[0] === 'translate') {
-        m.multiply(translation(t[1], t[2], t[3]));
+        m.translate(t[1], t[2], t[3]);
       } else if (t[0] === 'scale') {
-        m.multiply(scaling(t[1], t[2], t[3]));
+        m.scale(t[1], t[2], t[3]);
       } else if (t[0] === 'rotateX') {
-        m.multiply(rotationX(radians(t[1])));
+        m.rotateX(radians(t[1]));
       } else if (t[0] === 'rotateY') {
-        m.multiply(rotationY(radians(t[1])));
+        m.rotateY(radians(t[1]));
       } else if (t[0] === 'rotateZ') {
-        m.multiply(rotationZ(radians(t[1])));
+        m.rotateZ(radians(t[1]));
       } else if (t[0] === 'shear') {
-        m.multiply(shearing(t[1], t[2], t[3], t[4], t[5], t[6]));
+        m.shear(t[1], t[2], t[3], t[4], t[5], t[6]);
       }
     }
     return m;

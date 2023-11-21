@@ -22,8 +22,8 @@ export function marbleScene(options: {
           type: 'area',
           intensity: [1.5, 1.5, 1.5],
           transform: [
-            ['translate', -5, 6, -3],
             ['scale', 2, 2, 2],
+            ['translate', -5, 6, -3],
           ],
           includeGeometry: options.lightShape === 'rectangular',
         },
@@ -59,8 +59,8 @@ export function marbleScene(options: {
     scene.world.objects!.push({
       primitive: { type: 'sphere' },
       transform: [
-        ['translate', -7, 8, -5],
         ['scale', 1.75, 1.75, 1.75],
+        ['translate', -7, 8, -5],
       ],
       material: {
         color: [1.5, 1.5, 1.5],
