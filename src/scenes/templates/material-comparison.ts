@@ -17,10 +17,16 @@ export const materialComparisonScene: SceneDefinition = {
     lights: [
       {
         type: 'area',
-        intensity: [1.5, 1.5, 1.5],
+        intensity: [0.75, 0.75, 0.75],
+        transform: [['translate', -6, 8, -12]],
+        includeGeometry: false,
+      },
+      {
+        type: 'area',
+        intensity: [0.75, 0.75, 0.75],
         transform: [
-          ['scale', 1.5, 1.5, 1.5],
-          ['translate', -12, 24, -24],
+          ['rotateX', 120],
+          ['translate', 6, 2.5, -12],
         ],
         includeGeometry: false,
       },
@@ -28,13 +34,37 @@ export const materialComparisonScene: SceneDefinition = {
     objects: [
       {
         primitive: { type: 'plane' },
-        transform: [['translate', 0, -0.01, 0]],
-        material: {
-          color: 'paleBlue',
-          ambient: 0.3,
-          diffuse: 0.67,
-          specular: 0,
-        },
+        transform: [['translate', 0, -0.001, 0]],
+        material: 'matteLight',
+      },
+      {
+        primitive: { type: 'plane' },
+        transform: [['translate', 0, 15, 0]],
+        material: 'matteLight',
+      },
+      {
+        primitive: { type: 'plane' },
+        transform: [
+          ['rotateX', 90],
+          ['translate', 0, 0, -28],
+        ],
+        material: 'matteLight',
+      },
+      {
+        primitive: { type: 'plane' },
+        transform: [
+          ['rotateZ', 90],
+          ['translate', -15, 0, 0],
+        ],
+        material: 'matteLight',
+      },
+      {
+        primitive: { type: 'plane' },
+        transform: [
+          ['rotateZ', 90],
+          ['translate', 15, 0, 0],
+        ],
+        material: 'matteLight',
       },
       {
         primitive: { type: 'plane' },
@@ -60,46 +90,32 @@ export const materialComparisonScene: SceneDefinition = {
       {
         primitive: 'shapeSet',
         material: 'matte',
-        transform: [
-          ['rotateY', -30],
-          ['translate', -6, 0, 0],
-        ],
+        transform: [['translate', -6, 0, 0]],
       },
       {
         primitive: 'shapeSet',
         material: 'shiny',
-        transform: [
-          ['rotateY', -30],
-          ['translate', -3, 0, 0],
-        ],
+        transform: [['translate', -3, 0, 0]],
       },
       {
         primitive: 'shapeSet',
         material: 'metal',
-        transform: [['rotateY', -30]],
       },
       {
         primitive: 'shapeSet',
         material: 'glass',
-        transform: [
-          ['rotateY', -30],
-          ['translate', 3, 0, 0],
-        ],
+        transform: [['translate', 3, 0, 0]],
       },
       {
         primitive: 'shapeSet',
         material: 'diamond',
-        transform: [
-          ['rotateY', -30],
-          ['translate', 6, 0, 0],
-        ],
+        transform: [['translate', 6, 0, 0]],
       },
     ],
   },
   colors: {
     darkTeal: '#014d4e',
     mistyTeal: '#b4ece3',
-    paleBlue: '#ccfdfe',
   },
   materials: {
     matte: matte('darkTeal'),
@@ -107,6 +123,7 @@ export const materialComparisonScene: SceneDefinition = {
     metal: metal('darkTeal'),
     glass: glass('darkTeal'),
     diamond: diamond('darkTeal'),
+    matteLight: matte('mistyTeal'),
   },
   shapes: {
     shapeSet: {
@@ -118,13 +135,16 @@ export const materialComparisonScene: SceneDefinition = {
         },
         {
           primitive: { type: 'cube' },
-          transform: [['translate', 0, 1, 0]],
+          transform: [
+            ['rotateY', -30],
+            ['translate', 0, 1, 0],
+          ],
         },
         {
           primitive: { type: 'sphere' },
           transform: [
             ['scale', 0.4, 0.4, 0.4],
-            ['translate', -0.5, 0.4, -1.75],
+            ['translate', -0.5, 0.4, -2.75],
           ],
         },
         {
@@ -136,7 +156,7 @@ export const materialComparisonScene: SceneDefinition = {
           },
           transform: [
             ['scale', 0.4, 0.4, 0.4],
-            ['translate', 0.5, 0.4, -1.75],
+            ['translate', 0.5, 0.4, -2.75],
           ],
         },
       ],
