@@ -1,5 +1,4 @@
 import { RenderConfiguration } from '../renderer/configuration';
-import { Dodecahedron } from './fixed/dodecahedron';
 import { ImageMapping } from './fixed/image-mapping';
 import { Patterns } from './fixed/patterns';
 import { Skybox } from './fixed/skybox';
@@ -18,7 +17,6 @@ export enum ScenePreset {
   teapotLow = 'Teapot [low-res]',
   textureMapping = 'Texture mapping',
   skybox = 'Skybox',
-  dodecahedron = 'Dodecahedron',
   imageMapping = 'Image mapping',
   patterns = '3D Patterns',
   marbleMadness = 'Marble madness',
@@ -32,9 +30,6 @@ export function loadScene(
   renderCfg: RenderConfiguration
 ): Scene {
   switch (preset) {
-    case ScenePreset.dodecahedron:
-      return new Dodecahedron(renderCfg);
-
     case ScenePreset.imageMapping:
       return new ImageMapping(renderCfg);
 
