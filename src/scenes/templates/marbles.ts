@@ -17,6 +17,7 @@ export function marbleScene(options: {
       focalDistance: 5,
     },
     world: {
+      ambientLight: 0.025,
       lights: [
         {
           type: 'area',
@@ -33,7 +34,6 @@ export function marbleScene(options: {
           primitive: { type: 'plane' },
           material: {
             color: [1, 1, 1],
-            ambient: 0.025,
             diffuse: 0.67,
             specular: 0,
             reflective: 0.2,

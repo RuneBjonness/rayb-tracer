@@ -223,6 +223,8 @@ export class Scene {
 
   private createMaterial(m?: MaterialDefinition | string): Material {
     const mat = material();
+    mat.ambient = this.definiton.world?.ambientLight ?? mat.ambient;
+
     if (!m) {
       return mat;
     }

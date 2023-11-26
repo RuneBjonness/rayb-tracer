@@ -9,6 +9,7 @@ export type SceneDefinition = {
 };
 
 export type WorldDefinition = {
+  ambientLight?: number;
   lights?: LightConfiguration[];
   objects?: ShapeDefinition[];
 };

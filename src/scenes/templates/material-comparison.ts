@@ -15,6 +15,7 @@ export const materialComparisonScene: SceneDefinition = {
     focalDistance: 14,
   },
   world: {
+    ambientLight: 0.2,
     lights: [
       {
         type: 'area',
@@ -83,7 +84,6 @@ export const materialComparisonScene: SceneDefinition = {
               ['translate', 0, -0.1, 0],
             ],
           },
-          ambient: 0.3,
           diffuse: 0.67,
           specular: 0,
         },

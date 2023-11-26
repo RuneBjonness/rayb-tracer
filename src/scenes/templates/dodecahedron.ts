@@ -19,6 +19,7 @@ export const dodecahedronScene: SceneDefinition = {
     focalDistance: 2.5,
   },
   world: {
+    ambientLight: 0.025,
     lights: [
       {
         type: 'area',
@@ -37,7 +38,6 @@ export const dodecahedronScene: SceneDefinition = {
         ],
         material: {
           color: [0.6, 1, 0.8],
-          ambient: 0.01,
           diffuse: 0.67,
           specular: 0,
           reflective: 0.05,

@@ -13,6 +13,7 @@ export const CsgRbScene: SceneDefinition = {
     focalDistance: 2,
   },
   world: {
+    ambientLight: 0.025,
     lights: [
       {
         type: 'area',
@@ -80,7 +81,6 @@ export const CsgRbScene: SceneDefinition = {
     matteBlue: {
       color: [0.2, 0, 0.8],
       specular: 0,
-      ambient: 0.025,
       diffuse: 0.67,
     },
     purple: {

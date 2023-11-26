@@ -13,6 +13,7 @@ export const defaultScene: SceneDefinition = {
     focalDistance: 4,
   },
   world: {
+    ambientLight: 0.01,
     lights: [
       {
         type: 'point',
@@ -25,7 +26,6 @@ export const defaultScene: SceneDefinition = {
         primitive: { type: 'plane' },
         material: {
           color: [1, 1, 1],
-          ambient: 0.01,
           diffuse: 0.67,
           specular: 0,
           reflective: 0.2,
@@ -36,7 +36,6 @@ export const defaultScene: SceneDefinition = {
         transform: [['translate', -0.8, 1, 0]],
         material: {
           color: [0.5, 0, 1],
-          ambient: 0.01,
           diffuse: 0.67,
           specular: 0.3,
           shininess: 400,
