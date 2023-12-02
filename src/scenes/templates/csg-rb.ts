@@ -1,4 +1,4 @@
-import { SceneDefinition, ShapePrimitiveDefinition } from '../scene-definition';
+import { SceneDefinition } from '../scene-definition';
 
 export const CsgRbScene: SceneDefinition = {
   name: 'CsgRb',

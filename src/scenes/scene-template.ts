@@ -1,4 +1,8 @@
 import { SceneDefinition } from './scene-definition';
+import {
+  cornellBoxMatteDiffuseScene,
+  cornellBoxTransparencyScene,
+} from './templates/cornell-box-scenes';
 import { CsgRbScene } from './templates/csg-rb';
 import { defaultScene } from './templates/default';
 import { dodecahedronScene } from './templates/dodecahedron';
@@ -12,6 +16,8 @@ export enum SceneTemplate {
   marblesRoundLight = 'Marbles (round light source)',
   marblesRectangularLight = 'Marbles (rectangular light source)',
   materialComparison = 'Material Comparison',
+  cornellBoxTransparency = 'Cornell Box: Transparency',
+  cornellBoxMatteDiffuse = 'Cornell Box: Matte Diffuse',
 }
 
 export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
@@ -33,6 +39,12 @@ export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
 
     case SceneTemplate.materialComparison:
       return materialComparisonScene;
+
+    case SceneTemplate.cornellBoxTransparency:
+      return cornellBoxTransparencyScene;
+
+    case SceneTemplate.cornellBoxMatteDiffuse:
+      return cornellBoxMatteDiffuseScene;
 
     default:
       return defaultScene;

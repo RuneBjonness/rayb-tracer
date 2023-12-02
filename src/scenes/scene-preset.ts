@@ -6,10 +6,6 @@ import { TeaPot } from './fixed/teapot';
 import { TextureMapping } from './fixed/texture-mapping';
 import { MarbleMadness } from './fixed/marble-madness';
 import { MarbleMadness2 } from './fixed/marble-madness-2';
-import {
-  CornellBoxMatteDiffuse,
-  CornellBoxTransparency,
-} from './fixed/cornell-box-scenes';
 import { Scene } from './scene';
 
 export enum ScenePreset {
@@ -21,8 +17,6 @@ export enum ScenePreset {
   patterns = '3D Patterns',
   marbleMadness = 'Marble madness',
   marbleMadness2 = 'Marble madness 2',
-  cornellBoxTransparency = 'Cornell Box: Transparency',
-  cornellBoxMatteDiffuse = 'Cornell Box: Matte Diffuse',
 }
 
 export function loadScene(
@@ -53,11 +47,5 @@ export function loadScene(
 
     case ScenePreset.marbleMadness2:
       return new MarbleMadness2(renderCfg);
-
-    case ScenePreset.cornellBoxTransparency:
-      return new CornellBoxTransparency(renderCfg);
-
-    case ScenePreset.cornellBoxMatteDiffuse:
-      return new CornellBoxMatteDiffuse(renderCfg);
   }
 }
