@@ -10,6 +10,8 @@ type CanvasPart = {
   h: number;
 };
 
+const workerPool: Worker[] = [];
+
 function createRenderPartList(
   cfg: RenderConfiguration,
   randomizeOrder: boolean
@@ -66,7 +68,10 @@ const render = (
   let remainingPhotonMapperIterations = cfg.iterations;
 
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
-    const worker = new RenderWorker();
+    if (workerPool.length <= i) {
+      workerPool.push(new RenderWorker());
+    }
+    const worker = workerPool[i];
 
     worker.onmessage = function (e) {
       if (e.data.command === 'rtRenderTile') {
@@ -80,7 +85,6 @@ const render = (
               1000
             ).toFixed(3)} s`
           );
-          worker.terminate();
         }
 
         const cp: CanvasPart = e.data.cp;
@@ -100,7 +104,6 @@ const render = (
               1000
             ).toFixed(3)} s`
           );
-          worker.terminate();
         }
 
         onProgress(1);
