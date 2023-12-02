@@ -221,8 +221,10 @@ export class Scene {
     return m;
   }
 
-  private createMaterial(m?: MaterialDefinition | string): Material {
-    const mat = material();
+  private createMaterial(
+    m?: MaterialDefinition | string | [string, ColorDefinition | string]
+  ): Material {
+    let mat = material();
     mat.ambient = this.definiton.world?.ambientLight ?? mat.ambient;
 
     if (!m) {
@@ -233,6 +235,15 @@ export class Scene {
         return mat;
       }
       return this.createMaterial(this.definiton.materials[m]);
+    }
+    if (Array.isArray(m)) {
+      if (!this.definiton.materials) {
+        return mat;
+      }
+      const [name, color] = m;
+      mat = this.createMaterial(this.definiton.materials[name]);
+      mat.color = this.createColor(color) ?? mat.color;
+      return mat;
     }
 
     mat.color = this.createColor(m.color) ?? mat.color;

@@ -1,5 +1,6 @@
 import { SceneDefinition } from '../scene-definition';
-import { glassSphere, shinySphere } from './helpers/shapes';
+import { MATERIAL_GLASS, MATERIAL_SHINY } from './helpers/materials';
+import { sphere } from './helpers/shapes';
 
 export function marbleScene(options: {
   lightShape: 'round' | 'rectangular';
@@ -39,19 +40,23 @@ export function marbleScene(options: {
             reflective: 0.2,
           },
         },
-        glassSphere([0.1, 0, 0.2], 0.3, 0.4, 0.7),
+        sphere(0.3, 0.4, 0.7, ['glass', [0.1, 0, 0.2]]),
 
-        shinySphere([0.5, 0, 1], -1.2, 0.2, 0.5),
-        shinySphere([0.6, 0.2, 1], -2.5, 2, 0.75),
-        shinySphere([0.6, 0.3, 1], 1.9, 6, 0.5),
-        shinySphere([0.7, 0.3, 0.9], 1.3, -2.5, 0.8),
-        shinySphere([0.8, 0.3, 0.9], -0.4, -1.5, 0.3),
-        shinySphere([0.8, 0.3, 0.8], -1, 7, 0.5),
-        shinySphere([0.9, 0.3, 0.8], 0.3, -1.1, 0.3),
-        shinySphere([1, 0.4, 0.8], -1.4, -1.5, 0.5),
-        shinySphere([1, 0.5, 0.9], -1.1, 4, 0.5),
-        shinySphere([1, 0.6, 1], -3, 11, 0.5),
+        sphere(-1.2, 0.2, 0.5, ['shiny', [0.5, 0, 1]]),
+        sphere(-2.5, 2, 0.75, ['shiny', [0.6, 0.2, 1]]),
+        sphere(1.9, 6, 0.5, ['shiny', [0.6, 0.3, 1]]),
+        sphere(1.3, -2.5, 0.8, ['shiny', [0.7, 0.3, 0.9]]),
+        sphere(-0.4, -1.5, 0.3, ['shiny', [0.8, 0.3, 0.9]]),
+        sphere(-1, 7, 0.5, ['shiny', [0.8, 0.3, 0.8]]),
+        sphere(0.3, -1.1, 0.3, ['shiny', [0.9, 0.3, 0.8]]),
+        sphere(-1.4, -1.5, 0.5, ['shiny', [1, 0.4, 0.8]]),
+        sphere(-1.1, 4, 0.5, ['shiny', [1, 0.5, 0.9]]),
+        sphere(-3, 11, 0.5, ['shiny', [1, 0.6, 1]]),
       ],
+    },
+    materials: {
+      shiny: MATERIAL_SHINY,
+      glass: MATERIAL_GLASS,
     },
   };
 

@@ -90,7 +90,7 @@ export type ShapePrimitiveDefinition =
 export type ShapeDefinition = {
   primitive: ShapePrimitiveDefinition | string;
   transform?: Transform[];
-  material?: MaterialDefinition | string;
+  material?: MaterialDefinition | string | [string, ColorDefinition | string];
 };
 
 export type MaterialDefinition = {

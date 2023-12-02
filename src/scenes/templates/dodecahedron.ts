@@ -1,5 +1,5 @@
 import { SceneDefinition } from '../scene-definition';
-import { metal } from './helpers/materials';
+import { MATERIAL_METAL } from './helpers/materials';
 import { dodecahedronDefinition } from './helpers/shapes';
 
 const edgeLength = 1 / 1.401258538;
@@ -45,10 +45,13 @@ export const dodecahedronScene: SceneDefinition = {
       },
       {
         primitive: 'dodecahedron',
-        material: metal([0.5, 0.5, 0.5]),
+        material: ['metal', [0.5, 0.5, 0.5]],
         transform: [['rotateY', 12]],
       },
     ],
+  },
+  materials: {
+    metal: MATERIAL_METAL,
   },
   shapes: dodecahedronDefinition(edgeLength, cylinderRadius),
 };
