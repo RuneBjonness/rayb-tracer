@@ -105,21 +105,58 @@ export type MaterialDefinition = {
   pattern?: PatternDefinition | string;
 };
 
-export type PatternDefinition =
+export type UvPatternDefinition = {
+  type: 'uv-checkers';
+  width: number;
+  height: number;
+  color1: ColorDefinition | string;
+  color2: ColorDefinition | string;
+};
+
+export type UvMapperDefinition =
+  | 'planar'
+  | 'cylindrical'
+  | 'spherical'
+  | 'cube-front'
+  | 'cube-back'
+  | 'cube-left'
+  | 'cube-right'
+  | 'cube-top'
+  | 'cube-bottom';
+
+export type CubeFacePatterns = {
+  left: UvPatternDefinition;
+  front: UvPatternDefinition;
+  right: UvPatternDefinition;
+  back: UvPatternDefinition;
+  top: UvPatternDefinition;
+  bottom: UvPatternDefinition;
+};
+
+export type PatternDefinition = (
   | {
       type: 'solid';
       color1?: ColorDefinition | string;
-      transform?: Transform[];
     }
   | {
       type: 'stripe' | 'gradient' | 'ring' | 'radial-gradient' | 'checkers';
       color1?: ColorDefinition | string;
       color2?: ColorDefinition | string;
-      transform?: Transform[];
     }
   | {
       type: 'blended';
       pattern1?: PatternDefinition | string;
       pattern2?: PatternDefinition | string;
-      transform?: Transform[];
-    };
+    }
+  | {
+      type: 'texture-map';
+      uvPattern: UvPatternDefinition;
+      mapper: UvMapperDefinition;
+    }
+  | {
+      type: 'cube-map';
+      uvPattern: UvPatternDefinition | CubeFacePatterns;
+    }
+) & {
+  transform?: Transform[];
+};

@@ -4,6 +4,7 @@ import { World } from '../lib/world';
 import {
   CameraConfiguration,
   ColorDefinition,
+  CubeFacePatterns,
   LightConfiguration,
   MaterialDefinition,
   PatternDefinition,
@@ -11,6 +12,8 @@ import {
   ShapeDefinition,
   ShapePrimitiveDefinition,
   Transform,
+  UvMapperDefinition,
+  UvPatternDefinition,
   WorldDefinition,
 } from './scene-definition';
 import { radians, viewTransform } from '../lib/math/transformations';
@@ -37,6 +40,26 @@ import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Cone } from '../lib/shapes/primitives/cone';
 import { Group } from '../lib/shapes/group';
 import { CsgShape } from '../lib/shapes/csg-shape';
+import {
+  CheckersUvPattern,
+  UvPattern,
+} from '../lib/patterns/texture-mapping/uv-patterns';
+import {
+  CubeBackMapper,
+  CubeBottomMapper,
+  CubeFrontMapper,
+  CubeLeftMapper,
+  CubeRightMapper,
+  CubeTopMapper,
+  CylindricalMapper,
+  PlanarMapper,
+  SphericalMapper,
+  UvMapper,
+} from '../lib/patterns/texture-mapping/uv-mappers';
+import {
+  CubeMap,
+  TextureMap,
+} from '../lib/patterns/texture-mapping/texture-map';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -313,6 +336,34 @@ export class Scene {
           pattern = null;
         }
         break;
+      case 'texture-map':
+        pattern = new TextureMap(
+          this.createUvPattern(p.uvPattern),
+          this.createUvMapper(p.mapper)
+        );
+        break;
+      case 'cube-map':
+        if (this.isUvPatternDefinition(p.uvPattern)) {
+          const uvPattern = this.createUvPattern(p.uvPattern);
+          pattern = new CubeMap([
+            uvPattern,
+            uvPattern,
+            uvPattern,
+            uvPattern,
+            uvPattern,
+            uvPattern,
+          ]);
+        } else {
+          pattern = new CubeMap([
+            this.createUvPattern(p.uvPattern.left),
+            this.createUvPattern(p.uvPattern.front),
+            this.createUvPattern(p.uvPattern.right),
+            this.createUvPattern(p.uvPattern.back),
+            this.createUvPattern(p.uvPattern.top),
+            this.createUvPattern(p.uvPattern.bottom),
+          ]);
+        }
+        break;
       default:
         pattern = null;
     }
@@ -321,6 +372,40 @@ export class Scene {
       pattern.transform = this.createTransformMatrix(p.transform);
     }
     return pattern;
+  }
+
+  private createUvPattern(p: UvPatternDefinition): UvPattern {
+    switch (p.type) {
+      case 'uv-checkers':
+        return new CheckersUvPattern(
+          p.width,
+          p.height,
+          this.createColor(p.color1),
+          this.createColor(p.color2)
+        );
+    }
+  }
+  private createUvMapper(m: UvMapperDefinition): UvMapper {
+    switch (m) {
+      case 'planar':
+        return new PlanarMapper();
+      case 'cylindrical':
+        return new CylindricalMapper();
+      case 'spherical':
+        return new SphericalMapper();
+      case 'cube-front':
+        return new CubeFrontMapper();
+      case 'cube-back':
+        return new CubeBackMapper();
+      case 'cube-left':
+        return new CubeLeftMapper();
+      case 'cube-right':
+        return new CubeRightMapper();
+      case 'cube-top':
+        return new CubeTopMapper();
+      case 'cube-bottom':
+        return new CubeBottomMapper();
+    }
   }
 
   private createColor(def?: ColorDefinition | string): Color {
@@ -343,5 +428,11 @@ export class Scene {
     }
 
     return new Color(...def);
+  }
+
+  private isUvPatternDefinition(
+    cubePattern: UvPatternDefinition | CubeFacePatterns
+  ): cubePattern is UvPatternDefinition {
+    return (<UvPatternDefinition>cubePattern).type !== undefined;
   }
 }
