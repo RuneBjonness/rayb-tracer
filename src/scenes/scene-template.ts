@@ -9,6 +9,7 @@ import { dodecahedronScene } from './templates/dodecahedron';
 import { marbleScene } from './templates/marbles';
 import { materialComparisonScene } from './templates/material-comparison';
 import { patternsScene } from './templates/patterns';
+import { textureMappingScene } from './templates/texture-mapping';
 
 export enum SceneTemplate {
   default = 'Default Scene',
@@ -19,6 +20,7 @@ export enum SceneTemplate {
   materialComparison = 'Material Comparison',
   cornellBoxTransparency = 'Cornell Box: Transparency',
   cornellBoxMatteDiffuse = 'Cornell Box: Matte Diffuse',
+  textureMapping = 'Texture mapping',
   patterns = '3D Patterns',
 }
 
@@ -47,6 +49,9 @@ export function loadSceneDefinition(template: SceneTemplate): SceneDefinition {
 
     case SceneTemplate.cornellBoxMatteDiffuse:
       return cornellBoxMatteDiffuseScene;
+
+    case SceneTemplate.textureMapping:
+      return textureMappingScene;
 
     case SceneTemplate.patterns:
       return patternsScene;

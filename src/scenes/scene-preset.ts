@@ -2,7 +2,6 @@ import { RenderConfiguration } from '../renderer/configuration';
 import { ImageMapping } from './fixed/image-mapping';
 import { Skybox } from './fixed/skybox';
 import { TeaPot } from './fixed/teapot';
-import { TextureMapping } from './fixed/texture-mapping';
 import { MarbleMadness } from './fixed/marble-madness';
 import { MarbleMadness2 } from './fixed/marble-madness-2';
 import { Scene } from './scene';
@@ -10,7 +9,6 @@ import { Scene } from './scene';
 export enum ScenePreset {
   teapot = 'Teapot [high-res]',
   teapotLow = 'Teapot [low-res]',
-  textureMapping = 'Texture mapping',
   skybox = 'Skybox',
   imageMapping = 'Image mapping',
   marbleMadness = 'Marble madness',
@@ -33,9 +31,6 @@ export function loadScene(
 
     case ScenePreset.teapotLow:
       return new TeaPot(renderCfg, false);
-
-    case ScenePreset.textureMapping:
-      return new TextureMapping(renderCfg);
 
     case ScenePreset.marbleMadness:
       return new MarbleMadness(renderCfg);
