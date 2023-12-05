@@ -2,9 +2,9 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { Shape } from '../shape';
+import { BaseShape } from '../shape';
 
-export class Cone extends Shape {
+export class Cone extends BaseShape {
   minimum: number = Number.NEGATIVE_INFINITY;
   maximum: number = Number.POSITIVE_INFINITY;
   closed: boolean = false;

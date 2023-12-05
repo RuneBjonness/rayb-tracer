@@ -2,12 +2,27 @@ import { Intersection } from '../intersections';
 import { Matrix4 } from '../math/matrices';
 import { Ray } from '../rays';
 import { material, Material } from '../materials';
-import { Bounds } from './bounds';
-import { Group } from './group';
+import { Bounds, transformBoundsCorners } from './bounds';
+import { Group, SubGroup } from './group';
 import { CsgShape } from './csg-shape';
 import { Vector4, point, vector } from '../math/vector4';
 
-export abstract class Shape {
+export interface Shape {
+  transform: Matrix4;
+  material: Material;
+  parent: Group | SubGroup | CsgShape | null;
+  transformedBoundsCorners: Vector4[];
+
+  bounds(): Bounds;
+  intersects(r: Ray): Intersection[];
+  normalAt(p: Vector4, i: Intersection | null): Vector4;
+  worldToObject(p: Vector4): Vector4;
+  normalToWorld(n: Vector4): Vector4;
+  pointToWorld(p: Vector4): Vector4;
+  divide(threshold: number): void;
+}
+
+export abstract class BaseShape implements Shape {
   private _transform: Matrix4;
   public get transform() {
     return this._transform;
@@ -16,6 +31,17 @@ export abstract class Shape {
     this._transform = m;
     this.invTransform = m.clone().inverse();
     this.invTransformTransposed = this.invTransform.clone().transpose();
+  }
+
+  private _transformedBoundsCorners: Vector4[] | null = null;
+  public get transformedBoundsCorners(): Vector4[] {
+    if (!this._transformedBoundsCorners) {
+      this._transformedBoundsCorners = transformBoundsCorners(
+        this.bounds(),
+        this.transform
+      );
+    }
+    return this._transformedBoundsCorners;
   }
 
   material: Material;
@@ -65,7 +91,7 @@ export abstract class Shape {
   }
 }
 
-export class TestShape extends Shape {
+export class TestShape extends BaseShape {
   localRayFromBase: Ray | null = null;
 
   constructor() {

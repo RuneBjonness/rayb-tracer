@@ -20,9 +20,9 @@ export function boundsContainsBounds(b1: Bounds, b2: Bounds): boolean {
   return boundsContainsPoint(b1, b2[0]) && boundsContainsPoint(b1, b2[1]);
 }
 
-export function transformBoundsCorners(b: Bounds, m: Matrix4): Vector4[] {
+export function boundsCorners(b: Bounds): Vector4[] {
   const [sMin, sMax] = b;
-  let corners = [
+  return [
     point(sMin.x, sMin.y, sMin.z),
     point(sMin.x, sMin.y, sMax.z),
     point(sMin.x, sMax.y, sMax.z),
@@ -32,27 +32,51 @@ export function transformBoundsCorners(b: Bounds, m: Matrix4): Vector4[] {
     point(sMax.x, sMax.y, sMax.z),
     point(sMax.x, sMax.y, sMin.z),
   ];
-
-  return corners.map((t) => t.applyMatrix(m));
 }
 
-export function transformGroupBounds(shapes: Shape[]): Bounds {
-  const groupPoints: Vector4[] = shapes.flatMap((s) =>
-    transformBoundsCorners(s.bounds(), s.transform)
-  );
+export function transformBoundsCorners(b: Bounds, m: Matrix4): Vector4[] {
+  const [sMin, sMax] = b;
+  return [
+    point(sMin.x, sMin.y, sMin.z).applyMatrix(m),
+    point(sMin.x, sMin.y, sMax.z).applyMatrix(m),
+    point(sMin.x, sMax.y, sMax.z).applyMatrix(m),
+    point(sMin.x, sMax.y, sMin.z).applyMatrix(m),
+    point(sMax.x, sMin.y, sMin.z).applyMatrix(m),
+    point(sMax.x, sMin.y, sMax.z).applyMatrix(m),
+    point(sMax.x, sMax.y, sMax.z).applyMatrix(m),
+    point(sMax.x, sMax.y, sMin.z).applyMatrix(m),
+  ];
+}
+
+const cornersToBounds = (corners: Vector4[]): Bounds => {
+  const xComponents = corners.map((p) => p.x);
+  const yComponents = corners.map((p) => p.y);
+  const zComponents = corners.map((p) => p.z);
 
   return [
     point(
-      Math.min(...groupPoints.map((p) => p.x)),
-      Math.min(...groupPoints.map((p) => p.y)),
-      Math.min(...groupPoints.map((p) => p.z))
+      Math.min(...xComponents),
+      Math.min(...yComponents),
+      Math.min(...zComponents)
     ),
     point(
-      Math.max(...groupPoints.map((p) => p.x)),
-      Math.max(...groupPoints.map((p) => p.y)),
-      Math.max(...groupPoints.map((p) => p.z))
+      Math.max(...xComponents),
+      Math.max(...yComponents),
+      Math.max(...zComponents)
     ),
   ];
+};
+
+export function transformBounds(shape: Shape): Bounds {
+  return cornersToBounds(shape.transformedBoundsCorners);
+}
+
+export function transformGroupBounds(shapes: Shape[]): Bounds {
+  const groupPoints: Vector4[] = [];
+  for (const s of shapes) {
+    groupPoints.push(...s.transformedBoundsCorners);
+  }
+  return cornersToBounds(groupPoints);
 }
 
 export function splitBounds(b: Bounds): [Bounds, Bounds] {

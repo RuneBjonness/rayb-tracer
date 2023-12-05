@@ -3,9 +3,9 @@ import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
 import { Bounds, intersectsBounds, transformGroupBounds } from './bounds';
 import { Group } from './group';
-import { Shape } from './shape';
+import { BaseShape, Shape } from './shape';
 
-export class CsgShape extends Shape {
+export class CsgShape extends BaseShape {
   private groupBounds: Bounds | null = null;
 
   constructor(

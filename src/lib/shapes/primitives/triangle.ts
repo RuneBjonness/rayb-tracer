@@ -1,10 +1,10 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { Shape } from '../shape';
+import { BaseShape } from '../shape';
 import { Vector4, point } from '../../math/vector4';
 
-export class Triangle extends Shape {
+export class Triangle extends BaseShape {
   e1: Vector4;
   e2: Vector4;
   normal: Vector4;
