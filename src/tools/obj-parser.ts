@@ -12,13 +12,15 @@ export class ObjParser {
   model: Group = new Group();
   currentMaterial: Material = material();
 
-  private activeGroup = this.model;
+  private activeGroup: Group | null = null;
 
   constructor() {}
 
   parse(data: string): Group {
     data.split('\n').forEach((cmd) => this.parseLine(cmd));
-
+    if (this.activeGroup?.shapes.length) {
+      this.model.add(this.activeGroup);
+    }
     this.model.divide(4);
     return this.model;
   }
@@ -55,7 +57,11 @@ export class ObjParser {
             this.vertices[p[i + 1][0] - 1]
           );
           t.material = this.currentMaterial;
-          this.activeGroup.add(t);
+          if (this.activeGroup) {
+            this.activeGroup.add(t);
+          } else {
+            this.model.add(t);
+          }
         } else if (p[i].length == 3) {
           const t = new SmoothTriangle(
             this.vertices[p[0][0] - 1],
@@ -66,13 +72,19 @@ export class ObjParser {
             this.normals[p[i + 1][2] - 1]
           );
           t.material = this.currentMaterial;
-          this.activeGroup.add(t);
+          if (this.activeGroup) {
+            this.activeGroup.add(t);
+          } else {
+            this.model.add(t);
+          }
         }
       }
     } else if (params.length === 2 && params[0] === 'g') {
+      if (this.activeGroup?.shapes.length) {
+        this.model.add(this.activeGroup);
+      }
       this.groups[params[1]] = new Group();
       this.activeGroup = this.groups[params[1]];
-      this.model.add(this.activeGroup);
     } else {
       this.ignoredLines++;
     }

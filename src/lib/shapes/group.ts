@@ -3,37 +3,21 @@ import { Material } from '../materials';
 import { Matrix4 } from '../math/matrices';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import {
-  Bounds,
-  boundsContainsBounds,
-  boundsCorners,
-  intersectsBounds,
-  splitBounds,
-  transformBounds,
-  transformGroupBounds,
-} from './bounds';
+import { Bounds } from './bounds';
 import { CsgShape } from './csg-shape';
 import { BaseShape, Shape } from './shape';
 
 export class Group extends BaseShape {
   shapes: Shape[] = [];
 
-  private groupBounds: Bounds | null = null;
-
   constructor() {
     super();
-  }
-
-  bounds(): Bounds {
-    if (!this.groupBounds) {
-      this.groupBounds = transformGroupBounds(this.shapes);
-    }
-    return this.groupBounds;
   }
 
   add(child: Shape) {
     child.parent = this;
     this.shapes.push(child);
+    this.bounds.merge(child.transformedBounds);
   }
 
   override divide(threshold: number): void {
@@ -41,7 +25,7 @@ export class Group extends BaseShape {
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    if (intersectsBounds(this.bounds(), r)) {
+    if (this.bounds.intersects(r)) {
       const intersections: Intersection[] = [];
       for (const shape of this.shapes) {
         intersections.push(...shape.intersects(r));
@@ -59,39 +43,30 @@ export class Group extends BaseShape {
 }
 
 export class SubGroup implements Shape {
-  private groupBounds: Bounds | null = null;
   shapes: Shape[] = [];
 
   transform: Matrix4;
   material: Material;
   parent: Group | SubGroup | CsgShape | null;
 
-  private _transformedBoundsCorners: Vector4[] | null = null;
-  public get transformedBoundsCorners(): Vector4[] {
-    if (!this._transformedBoundsCorners) {
-      this._transformedBoundsCorners = boundsCorners(this.bounds());
-    }
-    return this._transformedBoundsCorners;
-  }
+  bounds: Bounds;
+  transformedBounds: Bounds;
 
   constructor(parent: Group | SubGroup) {
     this.transform = parent.transform;
     this.material = parent.material;
     this.parent = parent;
+    this.bounds = Bounds.empty();
+    this.transformedBounds = this.bounds;
   }
 
   add(child: Shape) {
     this.shapes.push(child);
+    this.bounds.merge(child.transformedBounds);
   }
 
-  bounds(): Bounds {
-    if (!this.groupBounds) {
-      this.groupBounds = transformGroupBounds(this.shapes);
-    }
-    return this.groupBounds;
-  }
   intersects(r: Ray): Intersection[] {
-    if (intersectsBounds(this.bounds(), r)) {
+    if (this.bounds.intersects(r)) {
       const intersections: Intersection[] = [];
       for (const shape of this.shapes) {
         intersections.push(...shape.intersects(r));
@@ -118,32 +93,43 @@ export class SubGroup implements Shape {
 }
 
 function divideGroup(group: Group | SubGroup, threshold: number): void {
-  if (group.shapes.length >= threshold) {
+  if (group.shapes.length > threshold) {
     const g1 = new SubGroup(group);
     const g2 = new SubGroup(group);
+
     const overlappingShapes: Shape[] = [];
-    const [b1, b2] = splitBounds(group.bounds());
+    const [b1, b2] = group.bounds.split();
 
     for (const s of group.shapes) {
-      const transformedShapeBounds = transformBounds(s);
-      if (boundsContainsBounds(b1, transformedShapeBounds)) {
+      if (b1.containsBounds(s.transformedBounds)) {
         g1.add(s);
-      } else if (boundsContainsBounds(b2, transformedShapeBounds)) {
+      } else if (b2.containsBounds(s.transformedBounds)) {
         g2.add(s);
       } else {
         overlappingShapes.push(s);
       }
     }
 
-    group.shapes = overlappingShapes;
-    if (g1.shapes.length > 0) {
-      group.add(g1);
-    }
-    if (g2.shapes.length > 0) {
-      group.add(g2);
+    if (g1.shapes.length > 0 || g2.shapes.length > 0) {
+      group.shapes = [];
+      if (g1.shapes.length > 0) {
+        group.shapes.push(g1);
+      }
+      if (g2.shapes.length > 0) {
+        group.shapes.push(g2);
+      }
+
+      if (overlappingShapes.length > threshold) {
+        const g3 = new SubGroup(group);
+        for (const s of overlappingShapes) {
+          g3.add(s);
+        }
+        group.shapes.push(g3);
+      } else {
+        group.shapes.push(...overlappingShapes);
+      }
     }
   }
-
   for (const s of group.shapes) {
     s.divide(threshold);
   }

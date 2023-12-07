@@ -1,10 +1,5 @@
 import each from 'jest-each';
-import {
-  Bounds,
-  boundsContainsBounds,
-  boundsContainsPoint,
-  splitBounds,
-} from './bounds';
+import { Bounds } from './bounds';
 import { point } from '../math/vector4';
 
 describe('Bounds', () => {
@@ -22,9 +17,9 @@ describe('Bounds', () => {
     `.test(
     'checking to see if a box contains a given point',
     ({ p, result }) => {
-      const b: Bounds = [point(5, -2, 0), point(11, 4, 7)];
+      const b = new Bounds(point(5, -2, 0), point(11, 4, 7));
 
-      expect(boundsContainsPoint(b, p)).toEqual(result);
+      expect(b.containsPoint(p)).toEqual(result);
     }
   );
 
@@ -37,40 +32,40 @@ describe('Bounds', () => {
     `.test(
     'checking to see if a box contains a given point',
     ({ min, max, result }) => {
-      const b1: Bounds = [point(5, -2, 0), point(11, 4, 7)];
-      const b2: Bounds = [min, max];
+      const b1 = new Bounds(point(5, -2, 0), point(11, 4, 7));
+      const b2 = new Bounds(min, max);
 
-      expect(boundsContainsBounds(b1, b2)).toEqual(result);
+      expect(b1.containsBounds(b2)).toEqual(result);
     }
   );
 
   test('splitting an x-wide bounding box', () => {
-    const b: Bounds = [point(-1, -2, -3), point(9, 5.5, 3)];
-    const [left, right] = splitBounds(b);
+    const b = new Bounds(point(-1, -2, -3), point(9, 5.5, 3));
+    const [left, right] = b.split();
 
-    expect(left[0]).toEqual(point(-1, -2, -3));
-    expect(left[1]).toEqual(point(4, 5.5, 3));
-    expect(right[0]).toEqual(point(4, -2, -3));
-    expect(right[1]).toEqual(point(9, 5.5, 3));
+    expect(left.min).toEqual(point(-1, -2, -3));
+    expect(left.max).toEqual(point(4, 5.5, 3));
+    expect(right.min).toEqual(point(4, -2, -3));
+    expect(right.max).toEqual(point(9, 5.5, 3));
   });
 
   test('splitting an y-wide bounding box', () => {
-    const b: Bounds = [point(-1, -2, -3), point(5, 8, 3)];
-    const [left, right] = splitBounds(b);
+    const b = new Bounds(point(-1, -2, -3), point(5, 8, 3));
+    const [left, right] = b.split();
 
-    expect(left[0]).toEqual(point(-1, -2, -3));
-    expect(left[1]).toEqual(point(5, 3, 3));
-    expect(right[0]).toEqual(point(-1, 3, -3));
-    expect(right[1]).toEqual(point(5, 8, 3));
+    expect(left.min).toEqual(point(-1, -2, -3));
+    expect(left.max).toEqual(point(5, 3, 3));
+    expect(right.min).toEqual(point(-1, 3, -3));
+    expect(right.max).toEqual(point(5, 8, 3));
   });
 
   test('splitting an z-wide bounding box', () => {
-    const b: Bounds = [point(-1, -2, -3), point(5, 3, 7)];
-    const [left, right] = splitBounds(b);
+    const b = new Bounds(point(-1, -2, -3), point(5, 3, 7));
+    const [left, right] = b.split();
 
-    expect(left[0]).toEqual(point(-1, -2, -3));
-    expect(left[1]).toEqual(point(5, 3, 2));
-    expect(right[0]).toEqual(point(-1, -2, 2));
-    expect(right[1]).toEqual(point(5, 3, 7));
+    expect(left.min).toEqual(point(-1, -2, -3));
+    expect(left.max).toEqual(point(5, 3, 2));
+    expect(right.min).toEqual(point(-1, -2, 2));
+    expect(right.max).toEqual(point(5, 3, 7));
   });
 });

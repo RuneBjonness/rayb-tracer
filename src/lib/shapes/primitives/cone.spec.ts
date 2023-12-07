@@ -39,10 +39,7 @@ describe('Cones', () => {
     `.test(
     'intersecting the caps of a closed cone',
     ({ origin, direction, count }) => {
-      const c = new Cone();
-      c.minimum = -0.5;
-      c.maximum = 0.5;
-      c.closed = true;
+      const c = new Cone(-0.5, 0.5, true);
       const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
@@ -63,16 +60,15 @@ describe('Cones', () => {
 
   test('the bounds of a unbounded cone', () => {
     const c = new Cone();
-    const [min, max] = c.bounds();
 
-    expect(min).toEqual(
+    expect(c.bounds?.min).toEqual(
       point(
         Number.NEGATIVE_INFINITY,
         Number.NEGATIVE_INFINITY,
         Number.NEGATIVE_INFINITY
       )
     );
-    expect(max).toEqual(
+    expect(c.bounds?.max).toEqual(
       point(
         Number.POSITIVE_INFINITY,
         Number.POSITIVE_INFINITY,
@@ -82,12 +78,9 @@ describe('Cones', () => {
   });
 
   test('the bounds of a cone', () => {
-    const c = new Cone();
-    c.minimum = -5;
-    c.maximum = 3;
-    const [min, max] = c.bounds();
+    const c = new Cone(-5, 3);
 
-    expect(min).toEqual(point(-5, -5, -5));
-    expect(max).toEqual(point(5, 3, 5));
+    expect(c.bounds?.min).toEqual(point(-5, -5, -5));
+    expect(c.bounds?.max).toEqual(point(5, 3, 5));
   });
 });

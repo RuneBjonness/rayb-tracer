@@ -1,7 +1,5 @@
 import { AreaLight } from '../../lib/lights';
 import {
-  scaling,
-  rotationX,
   radians,
   rotationZ,
   translation,
@@ -66,7 +64,9 @@ export class TeaPot extends Scene {
     const model = parser.parse(
       this.highRes ? teapotObjFile : teapotLowResObjFile
     );
-    model.transform = scaling(0.1, 0.1, 0.1).multiply(rotationX(-Math.PI / 2));
+    model.transform = model.transform
+      .rotateX(-Math.PI / 2)
+      .scale(0.1, 0.1, 0.1);
     return model;
   }
 }

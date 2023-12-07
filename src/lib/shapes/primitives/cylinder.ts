@@ -5,16 +5,20 @@ import { Bounds } from '../bounds';
 import { BaseShape } from '../shape';
 
 export class Cylinder extends BaseShape {
-  minimum: number = Number.NEGATIVE_INFINITY;
-  maximum: number = Number.POSITIVE_INFINITY;
-  closed: boolean = false;
+  private minimum: number;
+  private maximum: number;
+  private closed: boolean;
 
-  constructor() {
+  constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();
-  }
+    this.minimum = minimum ?? Number.NEGATIVE_INFINITY;
+    this.maximum = maximum ?? Number.POSITIVE_INFINITY;
+    this.closed = closed ?? false;
 
-  bounds(): Bounds {
-    return [point(-1, this.minimum, -1), point(1, this.maximum, 1)];
+    this.bounds = new Bounds(
+      point(-1, this.minimum, -1),
+      point(1, this.maximum, 1)
+    );
   }
 
   protected localIntersects(r: Ray): Intersection[] {

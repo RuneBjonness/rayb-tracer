@@ -2,7 +2,7 @@ import { Intersection } from '../intersections';
 import { Matrix4 } from '../math/matrices';
 import { Ray } from '../rays';
 import { material, Material } from '../materials';
-import { Bounds, transformBoundsCorners } from './bounds';
+import { Bounds } from './bounds';
 import { Group, SubGroup } from './group';
 import { CsgShape } from './csg-shape';
 import { Vector4, point, vector } from '../math/vector4';
@@ -11,9 +11,9 @@ export interface Shape {
   transform: Matrix4;
   material: Material;
   parent: Group | SubGroup | CsgShape | null;
-  transformedBoundsCorners: Vector4[];
+  bounds: Bounds;
+  transformedBounds: Bounds;
 
-  bounds(): Bounds;
   intersects(r: Ray): Intersection[];
   normalAt(p: Vector4, i: Intersection | null): Vector4;
   worldToObject(p: Vector4): Vector4;
@@ -33,19 +33,18 @@ export abstract class BaseShape implements Shape {
     this.invTransformTransposed = this.invTransform.clone().transpose();
   }
 
-  private _transformedBoundsCorners: Vector4[] | null = null;
-  public get transformedBoundsCorners(): Vector4[] {
-    if (!this._transformedBoundsCorners) {
-      this._transformedBoundsCorners = transformBoundsCorners(
-        this.bounds(),
-        this.transform
-      );
-    }
-    return this._transformedBoundsCorners;
-  }
-
   material: Material;
   parent: Group | CsgShape | null = null;
+
+  bounds: Bounds;
+
+  private _transformedBounds: Bounds | null = null;
+  public get transformedBounds(): Bounds {
+    if (!this._transformedBounds) {
+      this._transformedBounds = this.bounds.clone().transform(this.transform);
+    }
+    return this._transformedBounds;
+  }
 
   private invTransform: Matrix4;
   private invTransformTransposed: Matrix4;
@@ -55,9 +54,8 @@ export abstract class BaseShape implements Shape {
     this.invTransform = new Matrix4();
     this.invTransformTransposed = new Matrix4();
     this.material = material();
+    this.bounds = Bounds.empty();
   }
-
-  abstract bounds(): Bounds;
 
   intersects(r: Ray): Intersection[] {
     return this.localIntersects(r.clone().transform(this.invTransform));
@@ -96,10 +94,6 @@ export class TestShape extends BaseShape {
 
   constructor() {
     super();
-  }
-
-  bounds(): Bounds {
-    return [point(-1, -1, -1), point(1, 1, 1)];
   }
 
   protected localIntersects(r: Ray): Intersection[] {

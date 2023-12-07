@@ -104,9 +104,8 @@ describe('Spheres', () => {
 
   test('the bounds of a sphere', () => {
     const s = new Sphere();
-    const [min, max] = s.bounds();
 
-    expect(min).toEqual(point(-1, -1, -1));
-    expect(max).toEqual(point(1, 1, 1));
+    expect(s.bounds?.min).toEqual(point(-1, -1, -1));
+    expect(s.bounds?.max).toEqual(point(1, 1, 1));
   });
 });

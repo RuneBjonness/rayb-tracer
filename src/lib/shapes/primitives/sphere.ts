@@ -7,10 +7,7 @@ import { BaseShape } from '../shape';
 export class Sphere extends BaseShape {
   constructor() {
     super();
-  }
-
-  bounds(): Bounds {
-    return [point(-1, -1, -1), point(1, 1, 1)];
+    this.bounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 
   protected localIntersects(r: Ray): Intersection[] {

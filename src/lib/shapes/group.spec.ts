@@ -82,18 +82,14 @@ describe('Groups', () => {
 
   test('the bounds of a group contains all children bounds', () => {
     const s = new Sphere();
-    const c = new Cylinder();
-    c.minimum = -5;
-    c.maximum = 5;
+    const c = new Cylinder(-5, 5);
 
     const g = new Group();
     g.add(s);
     g.add(c);
 
-    const [min, max] = g.bounds();
-
-    expect(min).toEqual(point(-1, -5, -1));
-    expect(max).toEqual(point(1, 5, 1));
+    expect(g.bounds.min).toEqual(point(-1, -5, -1));
+    expect(g.bounds.max).toEqual(point(1, 5, 1));
   });
 
   test('the bounds of a group is affected by children transformations', () => {
@@ -106,10 +102,8 @@ describe('Groups', () => {
     g.add(s1);
     g.add(s2);
 
-    const [min, max] = g.bounds();
-
-    expect(min).toEqual(point(-2, -2, -2));
-    expect(max).toEqual(point(6, 2, 2));
+    expect(g.bounds.min).toEqual(point(-2, -2, -2));
+    expect(g.bounds.max).toEqual(point(6, 2, 2));
   });
 
   test('dividing a group partitions its children', () => {
@@ -127,9 +121,8 @@ describe('Groups', () => {
     g.divide(1);
 
     expect(g.shapes.length).toBe(2);
-    expect(g.shapes[0].transform).toEqual(s3.transform);
 
-    const subgroup = g.shapes[1] as Group;
+    const subgroup = g.shapes[0] as Group;
     expect(subgroup.shapes.length).toBe(2);
     expect((subgroup.shapes[0] as Group).shapes[0].transform).toEqual(
       s1.transform
@@ -137,5 +130,7 @@ describe('Groups', () => {
     expect((subgroup.shapes[1] as Group).shapes[0].transform).toEqual(
       s2.transform
     );
+
+    expect(g.shapes[1].transform).toEqual(s3.transform);
   });
 });

@@ -5,37 +5,32 @@ import { BaseShape } from '../shape';
 import { Vector4, point } from '../../math/vector4';
 
 export class Triangle extends BaseShape {
-  e1: Vector4;
-  e2: Vector4;
-  normal: Vector4;
+  readonly e1: Vector4;
+  readonly e2: Vector4;
+  readonly normal: Vector4;
 
-  private calculatedBounds: Bounds | null = null;
-
-  constructor(public p1: Vector4, public p2: Vector4, public p3: Vector4) {
+  constructor(
+    readonly p1: Vector4,
+    readonly p2: Vector4,
+    readonly p3: Vector4
+  ) {
     super();
     this.e1 = p2.clone().subtract(p1);
     this.e2 = p3.clone().subtract(p1);
     this.normal = this.e2.clone().cross(this.e1).normalize();
-  }
 
-  bounds(): Bounds {
-    if (this.calculatedBounds) {
-      return this.calculatedBounds;
-    }
-
-    this.calculatedBounds = [
+    this.bounds = new Bounds(
       point(
-        Math.min(this.p1.x, this.p2.x, this.p3.x),
-        Math.min(this.p1.y, this.p2.y, this.p3.y),
-        Math.min(this.p1.z, this.p2.z, this.p3.z)
+        Math.min(p1.x, p2.x, p3.x),
+        Math.min(p1.y, p2.y, p3.y),
+        Math.min(p1.z, p2.z, p3.z)
       ),
       point(
-        Math.max(this.p1.x, this.p2.x, this.p3.x),
-        Math.max(this.p1.y, this.p2.y, this.p3.y),
-        Math.max(this.p1.z, this.p2.z, this.p3.z)
-      ),
-    ];
-    return this.calculatedBounds;
+        Math.max(p1.x, p2.x, p3.x),
+        Math.max(p1.y, p2.y, p3.y),
+        Math.max(p1.z, p2.z, p3.z)
+      )
+    );
   }
 
   protected localIntersects(r: Ray): Intersection[] {

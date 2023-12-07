@@ -79,7 +79,7 @@ export class MarbleMadness extends Scene {
         )
       );
     }
-    marbles.divide(8);
+    marbles.divide(2);
     world.objects.push(marbles);
 
     return world;

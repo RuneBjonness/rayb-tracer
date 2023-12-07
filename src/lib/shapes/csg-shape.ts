@@ -1,28 +1,22 @@
 import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { Bounds, intersectsBounds, transformGroupBounds } from './bounds';
+import { Bounds } from './bounds';
 import { Group } from './group';
 import { BaseShape, Shape } from './shape';
 
 export class CsgShape extends BaseShape {
-  private groupBounds: Bounds | null = null;
-
   constructor(
-    public operation: 'union' | 'intersection' | 'difference',
-    public left: Shape,
-    public right: Shape
+    readonly operation: 'union' | 'intersection' | 'difference',
+    readonly left: Shape,
+    readonly right: Shape
   ) {
     super();
     left.parent = this;
     right.parent = this;
-  }
 
-  bounds(): Bounds {
-    if (!this.groupBounds) {
-      this.groupBounds = transformGroupBounds([this.left, this.right]);
-    }
-    return this.groupBounds;
+    this.bounds = left.transformedBounds.clone();
+    this.bounds.merge(right.transformedBounds);
   }
 
   override divide(threshold: number): void {
@@ -64,7 +58,7 @@ export class CsgShape extends BaseShape {
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    if (intersectsBounds(this.bounds(), r)) {
+    if (this.bounds.intersects(r)) {
       const intersections: Intersection[] = [
         ...this.left.intersects(r),
         ...this.right.intersects(r),

@@ -5,20 +5,21 @@ import { Bounds } from '../bounds';
 import { BaseShape } from '../shape';
 
 export class Cone extends BaseShape {
-  minimum: number = Number.NEGATIVE_INFINITY;
-  maximum: number = Number.POSITIVE_INFINITY;
-  closed: boolean = false;
+  private minimum: number;
+  private maximum: number;
+  private closed: boolean;
 
-  constructor() {
+  constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();
-  }
+    this.minimum = minimum ?? Number.NEGATIVE_INFINITY;
+    this.maximum = maximum ?? Number.POSITIVE_INFINITY;
+    this.closed = closed ?? false;
 
-  bounds(): Bounds {
     const limit = Math.max(Math.abs(this.minimum), Math.abs(this.maximum));
-    return [
+    this.bounds = new Bounds(
       point(-limit, this.minimum, -limit),
-      point(limit, this.maximum, limit),
-    ];
+      point(limit, this.maximum, limit)
+    );
   }
 
   protected localIntersects(r: Ray): Intersection[] {

@@ -59,9 +59,8 @@ describe('Cubes', () => {
 
   test('the bounds of a cube', () => {
     const c = new Cube();
-    const [min, max] = c.bounds();
 
-    expect(min).toEqual(point(-1, -1, -1));
-    expect(max).toEqual(point(1, 1, 1));
+    expect(c.bounds?.min).toEqual(point(-1, -1, -1));
+    expect(c.bounds?.max).toEqual(point(1, 1, 1));
   });
 });

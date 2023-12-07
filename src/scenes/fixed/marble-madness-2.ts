@@ -36,7 +36,7 @@ export class MarbleMadness2 extends Scene {
   }
 
   configureWorld(renderCfg: RenderConfiguration): World {
-    const size = 70;
+    const size = 100;
     const world = new World();
     const lamp = new AreaLight(
       new Color(1.2, 1.2, 1.2),
@@ -51,21 +51,19 @@ export class MarbleMadness2 extends Scene {
 
     const marbles = new Group();
     for (let x = 0; x < size; x++) {
-      const xGroup = new Group();
       for (let y = 0; y < size; y++) {
-        const yGroup = new Group();
         for (let z = 0; z < size; z++) {
           const c = new Color(x / size, y / size, z / size);
           const xpos = -size / 2 + x;
           const ypos = -size / 2 + y;
           const zpos = -size / 2 + z;
-          yGroup.add(this.glassSphere(c, xpos, ypos, zpos, 0.33));
+          marbles.add(this.glassSphere(c, xpos, ypos, zpos, 0.33));
         }
-        yGroup.divide(10);
-        xGroup.add(yGroup);
       }
-      marbles.add(xGroup);
     }
+    marbles.divide(2 * 2 * 2);
+    marbles.transform = scaling(0.4, 0.4, 0.4);
+
     world.objects.push(marbles);
 
     return world;

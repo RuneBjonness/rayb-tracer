@@ -174,17 +174,13 @@ export class Scene {
       case 'cube':
         return new Cube();
       case 'cylinder':
-        const cyl = new Cylinder();
-        cyl.minimum = primitive.minimum ?? cyl.minimum;
-        cyl.maximum = primitive.maximum ?? cyl.maximum;
-        cyl.closed = primitive.closed ?? cyl.closed;
-        return cyl;
+        return new Cylinder(
+          primitive.minimum,
+          primitive.maximum,
+          primitive.closed
+        );
       case 'cone':
-        const cone = new Cone();
-        cone.minimum = primitive.minimum ?? cone.minimum;
-        cone.maximum = primitive.maximum ?? cone.maximum;
-        cone.closed = primitive.closed ?? cone.closed;
-        return cone;
+        return new Cone(primitive.minimum, primitive.maximum, primitive.closed);
       case 'triangle':
         throw new Error('Triangle not supported');
       case 'smooth-triangle':

@@ -4,14 +4,6 @@ import { Cylinder } from './cylinder';
 import { point, vector } from '../../math/vector4';
 
 describe('Cylinders', () => {
-  test('the default properties for a cylinder', () => {
-    const cyl = new Cylinder();
-
-    expect(cyl.minimum).toEqual(Number.NEGATIVE_INFINITY);
-    expect(cyl.maximum).toEqual(Number.POSITIVE_INFINITY);
-    expect(cyl.closed).toBe(false);
-  });
-
   each`
         origin             | direction          
         ${point(1, 0, 0)}  | ${vector(0, 1, 0)}
@@ -62,9 +54,7 @@ describe('Cylinders', () => {
     `.test(
     'a ray strikes a truncated cylinder',
     ({ origin, direction, count }) => {
-      const c = new Cylinder();
-      c.minimum = 1;
-      c.maximum = 2;
+      const c = new Cylinder(1, 2);
       const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
@@ -81,10 +71,7 @@ describe('Cylinders', () => {
     `.test(
     'intersecting the caps of a closed cylinder',
     ({ origin, direction, count }) => {
-      const c = new Cylinder();
-      c.minimum = 1;
-      c.maximum = 2;
-      c.closed = true;
+      const c = new Cylinder(1, 2, true);
       const xs = c.intersects(new Ray(origin, direction.normalize()));
 
       expect(xs.length).toEqual(count);
@@ -102,10 +89,7 @@ describe('Cylinders', () => {
     `.test(
     "the normal vector on a cylinder's end caps ",
     ({ point, normal }) => {
-      const c = new Cylinder();
-      c.minimum = 1;
-      c.maximum = 2;
-      c.closed = true;
+      const c = new Cylinder(1, 2, true);
       const n = c.normalAt(point);
 
       expect(n.equals(normal)).toBe(true);
@@ -114,19 +98,15 @@ describe('Cylinders', () => {
 
   test('the default bounds of a cylinder', () => {
     const c = new Cylinder();
-    const [min, max] = c.bounds();
 
-    expect(min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
-    expect(max).toEqual(point(1, Number.POSITIVE_INFINITY, 1));
+    expect(c.bounds?.min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
+    expect(c.bounds?.max).toEqual(point(1, Number.POSITIVE_INFINITY, 1));
   });
 
   test('the bounds of a truncated cylinder', () => {
-    const c = new Cylinder();
-    c.minimum = -5;
-    c.maximum = 5;
-    const [min, max] = c.bounds();
+    const c = new Cylinder(-5, 5);
 
-    expect(min).toEqual(point(-1, -5, -1));
-    expect(max).toEqual(point(1, 5, 1));
+    expect(c.bounds?.min).toEqual(point(-1, -5, -1));
+    expect(c.bounds?.max).toEqual(point(1, 5, 1));
   });
 });

@@ -3,7 +3,7 @@ import { intersection } from '../intersections';
 import { Ray } from '../rays';
 import { translation, scaling } from '../math/transformations';
 import { CsgShape } from './csg-shape';
-import { Group } from './group';
+import { Group, SubGroup } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
@@ -110,15 +110,12 @@ describe('CSG Shapes', () => {
 
   test('the bounds of a csg contains both operands bounds', () => {
     const s = new Sphere();
-    const c = new Cylinder();
-    c.minimum = -5;
-    c.maximum = 5;
+    const c = new Cylinder(-5, 5);
 
     const csg = new CsgShape('union', s, c);
-    const [min, max] = csg.bounds();
 
-    expect(min).toEqual(point(-1, -5, -1));
-    expect(max).toEqual(point(1, 5, 1));
+    expect(csg.bounds.min).toEqual(point(-1, -5, -1));
+    expect(csg.bounds.max).toEqual(point(1, 5, 1));
   });
 
   test('the bounds of a csg is affected by children transformations', () => {
@@ -128,10 +125,9 @@ describe('CSG Shapes', () => {
     s2.transform = translation(5, 0, 0);
 
     const csg = new CsgShape('union', s1, s2);
-    const [min, max] = csg.bounds();
 
-    expect(min).toEqual(point(-2, -2, -2));
-    expect(max).toEqual(point(6, 2, 2));
+    expect(csg.bounds.min).toEqual(point(-2, -2, -2));
+    expect(csg.bounds.max).toEqual(point(6, 2, 2));
   });
 
   test('dividing a csg shape partitions its children', () => {
@@ -154,9 +150,17 @@ describe('CSG Shapes', () => {
     const csg = new CsgShape('difference', g1, g2);
     csg.divide(1);
 
-    expect((g1.shapes[0] as Group).shapes[0].transform).toEqual(s1.transform);
-    expect((g1.shapes[1] as Group).shapes[0].transform).toEqual(s2.transform);
-    expect((g2.shapes[0] as Group).shapes[0].transform).toEqual(s3.transform);
-    expect((g2.shapes[1] as Group).shapes[0].transform).toEqual(s4.transform);
+    expect((g1.shapes[0] as SubGroup).shapes[0].transform).toEqual(
+      s1.transform
+    );
+    expect((g1.shapes[1] as SubGroup).shapes[0].transform).toEqual(
+      s2.transform
+    );
+    expect((g2.shapes[0] as SubGroup).shapes[0].transform).toEqual(
+      s3.transform
+    );
+    expect((g2.shapes[1] as SubGroup).shapes[0].transform).toEqual(
+      s4.transform
+    );
   });
 });
