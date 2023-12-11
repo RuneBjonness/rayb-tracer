@@ -5,8 +5,10 @@ import { TeaPot } from './fixed/teapot';
 import { MarbleMadness } from './fixed/marble-madness';
 import { MarbleMadness2 } from './fixed/marble-madness-2';
 import { Scene } from './scene';
+import { Dragon } from './fixed/dragon';
 
 export enum ScenePreset {
+  dragon = 'Dragon',
   teapot = 'Teapot [high-res]',
   teapotLow = 'Teapot [low-res]',
   skybox = 'Skybox',
@@ -20,6 +22,9 @@ export function loadScene(
   renderCfg: RenderConfiguration
 ): Scene {
   switch (preset) {
+    case ScenePreset.dragon:
+      return new Dragon(renderCfg);
+
     case ScenePreset.imageMapping:
       return new ImageMapping(renderCfg);
 

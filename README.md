@@ -17,9 +17,10 @@ Marbles with reflective and refractive surfaces rendered with a shallow depth of
 
 ![Marbles](./examples/rayb-tracer-marbles_2560x1440.png)
 
-## Teapot
+## OBJ support
 
 Basic support for the OBJ file format
+![Dragon](./examples/rayb-tracer-dragon_3440x1440.png)
 
 ![Teapot](./examples/rayb-tracer-teapot_2560x1440.png)
 
