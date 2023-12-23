@@ -1,16 +1,17 @@
 import { PointLight } from '../../lib/lights';
 import { Sphere } from '../../lib/shapes/primitives/sphere';
-import { translation, scaling } from '../../lib/math/transformations';
+import { radians } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
 import { SphericalMapper } from '../../lib/patterns/texture-mapping/uv-mappers';
-import moonImgMapFile from '../../resources/moon.ppm?raw';
-import { parsePPM } from '../../tools/ppm-parser';
+import moonImgMapFile from '../../resources/moon.png';
 import { Scene } from '../scene';
 import { TextureMap } from '../../lib/patterns/texture-mapping/texture-map';
 import { ImageUvPattern } from '../../lib/patterns/texture-mapping/uv-patterns';
 import { RenderConfiguration } from '../../renderer/configuration';
 import { point } from '../../lib/math/vector4';
+import { canvasFromImage } from '../../tools/image-loader';
+import { Matrix4 } from '../../lib/math/matrices';
 
 export class ImageMapping extends Scene {
   constructor(renderCfg: RenderConfiguration) {
@@ -25,25 +26,27 @@ export class ImageMapping extends Scene {
             up: [0, 1, 0],
           },
           aperture: 0.005,
-          focalDistance: 2,
+          focalDistance: 3.5,
         },
         world: {},
       },
       renderCfg
     );
-    this.world = this.configureWorld(renderCfg);
   }
 
-  configureWorld(_renderCfg: RenderConfiguration): World {
+  async configureWorld(_renderCfg: RenderConfiguration): Promise<World> {
     const world = new World();
     world.lights.push(
       new PointLight(point(-2.4, 3.5, -2.4), new Color(0.9, 0.9, 0.9))
     );
 
-    const img = parsePPM(moonImgMapFile);
+    const img = await canvasFromImage(moonImgMapFile);
 
     const s = new Sphere();
-    s.transform = translation(0, 1, 0).multiply(scaling(1.4, 1.4, 1.4));
+    s.transform = new Matrix4()
+      .rotateY(radians(-130))
+      .scale(1.4, 1.4, 1.4)
+      .translate(0, 1, 0);
     s.material.pattern = new TextureMap(
       new ImageUvPattern(img.pixels),
       new SphericalMapper()
@@ -52,6 +55,7 @@ export class ImageMapping extends Scene {
     s.material.ambient = 0.02;
 
     world.objects.push(s);
+    this.world = world;
 
     return world;
   }

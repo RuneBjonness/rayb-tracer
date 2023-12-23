@@ -5,7 +5,7 @@ import { material, Material } from '../materials';
 import { Bounds } from './bounds';
 import { Group, SubGroup } from './group';
 import { CsgShape } from './csg-shape';
-import { Vector4, point, vector } from '../math/vector4';
+import { Vector4, vector } from '../math/vector4';
 
 export interface Shape {
   transform: Matrix4;

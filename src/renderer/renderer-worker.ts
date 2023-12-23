@@ -3,13 +3,15 @@ import { loadScene } from '../scenes/scene-preset';
 
 let scene: Scene | null = null;
 
-onmessage = function (e) {
+onmessage = async function (e) {
   if (e.data.command === 'init') {
     scene = null;
     scene = new Scene(JSON.parse(e.data.definition), e.data.renderCfg);
+    postMessage({ command: 'initComplete' });
   } else if (e.data.command === 'initPreset') {
     scene = null;
-    scene = loadScene(e.data.scenePreset, e.data.renderCfg);
+    scene = await loadScene(e.data.scenePreset, e.data.renderCfg);
+    postMessage({ command: 'initComplete' });
   } else if (e.data.command === 'rtRenderTile') {
     const cp: {
       x: number;

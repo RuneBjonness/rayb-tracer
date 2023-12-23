@@ -45,7 +45,7 @@ function createRenderPartList(
   return canvasParts;
 }
 
-const render = (
+const render = async (
   ctx: CanvasRenderingContext2D,
   cfg: RenderConfiguration,
   sceneMode: SceneMode,
@@ -107,8 +107,30 @@ const render = (
         }
 
         onProgress(1);
+      } else if (e.data.command === 'initComplete') {
+        console.log(
+          `   --Worker #${i} loaded after ${(
+            (performance.now() - startTime) /
+            1000
+          ).toFixed(3)} s`
+        );
+        if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
+          if (remainingPhotonMapperIterations > 0) {
+            remainingPhotonMapperIterations--;
+            worker.postMessage({
+              command: 'photonMapperIteration',
+              photons: cfg.photonsPerIteration,
+            });
+          }
+        } else {
+          const cp = canvasParts.pop();
+          if (cp) {
+            worker.postMessage({ command: 'rtRenderTile', cp });
+          }
+        }
       }
     };
+
     if (sceneMode === 'scenePreset') {
       worker.postMessage({
         command: 'initPreset',
@@ -121,21 +143,6 @@ const render = (
         definition: scene,
         renderCfg: cfg,
       });
-    }
-
-    if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
-      if (remainingPhotonMapperIterations > 0) {
-        remainingPhotonMapperIterations--;
-        worker.postMessage({
-          command: 'photonMapperIteration',
-          photons: cfg.photonsPerIteration,
-        });
-      }
-    } else {
-      const cp = canvasParts.pop();
-      if (cp) {
-        worker.postMessage({ command: 'rtRenderTile', cp });
-      }
     }
   }
 };

@@ -141,25 +141,3 @@ export class Bounds {
     return tmin <= tmax;
   }
 }
-
-// export function transformBoundsCorners(b: Bounds, m: Matrix4): Vector4[] {
-//   const [sMin, sMax] = b;
-//   return [
-//     point(sMin.x, sMin.y, sMin.z).applyMatrix(m),
-//     point(sMin.x, sMin.y, sMax.z).applyMatrix(m),
-//     point(sMin.x, sMax.y, sMax.z).applyMatrix(m),
-//     point(sMin.x, sMax.y, sMin.z).applyMatrix(m),
-//     point(sMax.x, sMin.y, sMin.z).applyMatrix(m),
-//     point(sMax.x, sMin.y, sMax.z).applyMatrix(m),
-//     point(sMax.x, sMax.y, sMax.z).applyMatrix(m),
-//     point(sMax.x, sMax.y, sMin.z).applyMatrix(m),
-//   ];
-// }
-
-// export function transformGroupBounds(shapes: Shape[]): Bounds {
-//   const groupPoints: Vector4[] = [];
-//   for (const s of shapes) {
-//     groupPoints.push(...s.transformedBoundsCorners);
-//   }
-//   return cornersToBounds(groupPoints);
-// }

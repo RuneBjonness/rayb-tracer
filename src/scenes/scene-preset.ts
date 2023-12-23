@@ -17,16 +17,18 @@ export enum ScenePreset {
   marbleMadness2 = 'Marble madness 2',
 }
 
-export function loadScene(
+export async function loadScene(
   preset: ScenePreset,
   renderCfg: RenderConfiguration
-): Scene {
+): Promise<Scene> {
   switch (preset) {
     case ScenePreset.dragon:
       return new Dragon(renderCfg);
 
     case ScenePreset.imageMapping:
-      return new ImageMapping(renderCfg);
+      const scene = new ImageMapping(renderCfg);
+      await scene.configureWorld(renderCfg);
+      return scene;
 
     case ScenePreset.skybox:
       return new Skybox(renderCfg);

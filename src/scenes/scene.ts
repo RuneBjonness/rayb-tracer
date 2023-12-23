@@ -381,6 +381,7 @@ export class Scene {
         );
     }
   }
+
   private createUvMapper(m: UvMapperDefinition): UvMapper {
     switch (m) {
       case 'planar':
