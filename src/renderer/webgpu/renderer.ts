@@ -2,6 +2,7 @@ import { Scene, SceneMode } from '../../scenes/scene';
 import { ScenePreset } from '../../scenes/scene-preset';
 import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
+import intersectionsWgsl from './intersections.wgsl?raw';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -16,7 +17,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   const device = await adapter.requestDevice();
 
   const module = device.createShaderModule({
-    code: mainWgsl,
+    code: mainWgsl + intersectionsWgsl,
   });
 
   const bindGroupLayout = device.createBindGroupLayout({
