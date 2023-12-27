@@ -7,7 +7,19 @@ import { Group, SubGroup } from './group';
 import { CsgShape } from './csg-shape';
 import { Vector4, vector } from '../math/vector4';
 
+export type ShapeType =
+  | 'sphere'
+  | 'plane'
+  | 'cube'
+  | 'cylinder'
+  | 'cone'
+  | 'triangle'
+  | 'smooth-triangle'
+  | 'csg'
+  | 'group'
+  | 'unknown';
 export interface Shape {
+  shapeType: ShapeType;
   transform: Matrix4;
   material: Material;
   parent: Group | SubGroup | CsgShape | null;
@@ -20,6 +32,7 @@ export interface Shape {
   normalToWorld(n: Vector4): Vector4;
   pointToWorld(p: Vector4): Vector4;
   divide(threshold: number): void;
+  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void;
 }
 
 export abstract class BaseShape implements Shape {
@@ -33,6 +46,7 @@ export abstract class BaseShape implements Shape {
     this.invTransformTransposed = this.invTransform.clone().transpose();
   }
 
+  shapeType: ShapeType = 'unknown';
   material: Material;
   parent: Group | CsgShape | null = null;
 
@@ -86,6 +100,40 @@ export abstract class BaseShape implements Shape {
 
   divide(threshold: number): void {
     return;
+  }
+
+  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+    const u32view = new Uint32Array(buffer, offset, 4);
+
+    u32view[0] = this.shapeTypeId();
+    this.transform.copyToArrayBuffer(buffer, offset + 4 * 4);
+    this.invTransform.copyToArrayBuffer(buffer, offset + 20 * 4);
+    this.invTransformTransposed.copyToArrayBuffer(buffer, offset + 36 * 4);
+  }
+
+  private shapeTypeId(): number {
+    switch (this.shapeType) {
+      case 'sphere':
+        return 1;
+      case 'plane':
+        return 2;
+      case 'cube':
+        return 3;
+      case 'cylinder':
+        return 4;
+      case 'cone':
+        return 5;
+      case 'triangle':
+        return 6;
+      case 'smooth-triangle':
+        return 7;
+      case 'csg':
+        return 8;
+      case 'group':
+        return 9;
+      default:
+        return 0;
+    }
   }
 }
 

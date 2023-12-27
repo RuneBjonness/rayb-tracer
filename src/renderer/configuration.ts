@@ -27,7 +27,8 @@ export enum RenderMode {
   indirectLightningPreview = 'Dynamic sampling with indirect lightning (preview)',
   indirectLightning = 'Dynamic sampling with indirect lightning',
   fixedSampling = 'Fixed sampling',
-  progressivePhotonMapping = 'Progressive photon mapping',
+  progressivePhotonMapping = 'Progressive photon mapping (experimental)',
+  webGpuPreview = 'WebGPU preview (experimental)',
 }
 
 function renderConfiguration(

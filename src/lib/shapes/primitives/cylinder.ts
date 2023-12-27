@@ -11,6 +11,7 @@ export class Cylinder extends BaseShape {
 
   constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();
+    this.shapeType = 'cylinder';
     this.minimum = minimum ?? Number.NEGATIVE_INFINITY;
     this.maximum = maximum ?? Number.POSITIVE_INFINITY;
     this.closed = closed ?? false;

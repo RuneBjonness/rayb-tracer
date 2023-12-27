@@ -39,7 +39,7 @@ export class Camera {
   ) {
     this._transform = new Matrix4();
     this.invTransform = new Matrix4();
-    this.origin = point(0, 0, 0).applyMatrix(this.invTransform);
+    this.origin = point(0, 0, 0);
 
     const halfView = Math.tan(fieldOfView / 2);
     const aspect = width / height;
@@ -150,6 +150,27 @@ export class Camera {
     }
     // console.log(debugStats);
     return c;
+  }
+
+  toArrayBuffer(): ArrayBuffer {
+    const buffer = new ArrayBuffer(27 * 4);
+    const view = new Float32Array(buffer);
+    const u32view = new Uint32Array(buffer);
+
+    view[0] = this.origin.x;
+    view[1] = this.origin.y;
+    view[2] = this.origin.z;
+
+    this.invTransform.copyToArrayBuffer(buffer, 4 * 4);
+
+    view[20] = this.pixelSize;
+    view[21] = this.halfWidth;
+    view[22] = this.halfHeight;
+    view[23] = this.aperture;
+    view[24] = this.focalDistance;
+    u32view[25] = this.maxDepth;
+    u32view[26] = this.width;
+    return buffer;
   }
 
   private sampleApertureOrigins(): Vector4[] {

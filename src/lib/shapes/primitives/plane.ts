@@ -7,6 +7,7 @@ import { BaseShape } from '../shape';
 export class Plane extends BaseShape {
   constructor() {
     super();
+    this.shapeType = 'plane';
     this.bounds = new Bounds(
       point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY),
       point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY)

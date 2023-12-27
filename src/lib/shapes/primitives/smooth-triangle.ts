@@ -17,6 +17,7 @@ export class SmoothTriangle extends BaseShape {
     readonly n3: Vector4
   ) {
     super();
+    this.shapeType = 'smooth-triangle';
     this.e1 = p2.clone().subtract(p1);
     this.e2 = p3.clone().subtract(p1);
 

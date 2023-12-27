@@ -12,6 +12,7 @@ export class CsgShape extends BaseShape {
     readonly right: Shape
   ) {
     super();
+    this.shapeType = 'csg';
     left.parent = this;
     right.parent = this;
 

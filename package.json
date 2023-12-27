@@ -13,6 +13,7 @@
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.14",
     "@mui/material": "^5.10.14",
+    "@webgpu/types": "^0.1.40",
     "json-stringify-pretty-compact": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

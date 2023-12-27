@@ -5,13 +5,14 @@ import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
 import { Bounds } from './bounds';
 import { CsgShape } from './csg-shape';
-import { BaseShape, Shape } from './shape';
+import { BaseShape, Shape, ShapeType } from './shape';
 
 export class Group extends BaseShape {
   shapes: Shape[] = [];
 
   constructor() {
     super();
+    this.shapeType = 'group';
   }
 
   add(child: Shape) {
@@ -52,12 +53,17 @@ export class SubGroup implements Shape {
   bounds: Bounds;
   transformedBounds: Bounds;
 
+  shapeType: ShapeType = 'unknown';
+
   constructor(parent: Group | SubGroup) {
     this.transform = parent.transform;
     this.material = parent.material;
     this.parent = parent;
     this.bounds = Bounds.empty();
     this.transformedBounds = this.bounds;
+  }
+  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+    throw new Error('Method not implemented.');
   }
 
   add(child: Shape) {

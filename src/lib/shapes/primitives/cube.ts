@@ -7,6 +7,7 @@ import { BaseShape } from '../shape';
 export class Cube extends BaseShape {
   constructor() {
     super();
+    this.shapeType = 'cube';
     this.bounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 

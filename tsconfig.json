@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "types": ["vite/client", "@types/jest"],
+    "types": ["vite/client", "@types/jest", "@webgpu/types"],
   },
   "include": ["./src"]
 }

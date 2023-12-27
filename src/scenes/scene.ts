@@ -63,8 +63,8 @@ import {
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
-  protected world: World;
-  private camera: Camera;
+  public world: World;
+  public camera: Camera;
 
   constructor(
     private definiton: SceneDefinition,

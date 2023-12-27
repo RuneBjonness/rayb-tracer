@@ -210,4 +210,24 @@ export class Matrix4 {
     this.elements = shearing(xy, xz, yx, yz, zx, zy).multiply(this).elements;
     return this;
   }
+
+  public copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+    const view = new Float32Array(buffer, offset, 16);
+    view[0] = this.elements[0];
+    view[1] = this.elements[4];
+    view[2] = this.elements[8];
+    view[3] = this.elements[12];
+    view[4] = this.elements[1];
+    view[5] = this.elements[5];
+    view[6] = this.elements[9];
+    view[7] = this.elements[13];
+    view[8] = this.elements[2];
+    view[9] = this.elements[6];
+    view[10] = this.elements[10];
+    view[11] = this.elements[14];
+    view[12] = this.elements[3];
+    view[13] = this.elements[7];
+    view[14] = this.elements[11];
+    view[15] = this.elements[15];
+  }
 }

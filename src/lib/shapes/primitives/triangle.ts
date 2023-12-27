@@ -15,6 +15,7 @@ export class Triangle extends BaseShape {
     readonly p3: Vector4
   ) {
     super();
+    this.shapeType = 'triangle';
     this.e1 = p2.clone().subtract(p1);
     this.e2 = p3.clone().subtract(p1);
     this.normal = this.e2.clone().cross(this.e1).normalize();

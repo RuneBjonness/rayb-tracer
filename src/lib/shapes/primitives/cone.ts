@@ -11,6 +11,7 @@ export class Cone extends BaseShape {
 
   constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();
+    this.shapeType = 'cone';
     this.minimum = minimum ?? Number.NEGATIVE_INFINITY;
     this.maximum = maximum ?? Number.POSITIVE_INFINITY;
     this.closed = closed ?? false;

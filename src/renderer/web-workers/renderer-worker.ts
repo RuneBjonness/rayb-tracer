@@ -1,5 +1,5 @@
-import { Scene } from '../scenes/scene';
-import { loadScene } from '../scenes/scene-preset';
+import { Scene } from '../../scenes/scene';
+import { loadScene } from '../../scenes/scene-preset';
 
 let scene: Scene | null = null;
 

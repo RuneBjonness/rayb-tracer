@@ -7,6 +7,7 @@ import { BaseShape } from '../shape';
 export class Sphere extends BaseShape {
   constructor() {
     super();
+    this.shapeType = 'sphere';
     this.bounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 
