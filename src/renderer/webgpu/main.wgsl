@@ -77,9 +77,73 @@ fn trace(ray: Ray) -> vec3<f32> {
   if(hit.distance <= 0.0) {
     return vec3<f32>(0.0, 0.0, 0.0);
   }
+  // return abs(hit.point)*0.2; // Debug intersection positions
 
-  //return abs(hit.point)*0.2;
-  let normal = normal_at(hit);
+  var normal = normal_at(hit);
+  // return abs(normal); // Debug surface normals
 
-  return abs(normal);
+  let eye_v = -ray.direction;
+
+  if(dot(normal, eye_v) < 0.0) {
+    normal = -normal;
+  }
+
+  let adjusted_normal = normal * 0.0001;
+  let reflect_v = reflect(ray.direction, normal);
+
+  // todo: support shape materials and lights
+  // temporary test with hardcoded material and light:
+  var light_intensity = 1.0;
+  var light_color = vec3<f32>(1.0, 1.0, 1.0);
+
+  var mat_color = vec3<f32>(1.0, 1.0, 1.0);
+  if(shapes[hit.shape_index].shape_type == SHAPE_SPHERE) {
+    mat_color = vec3<f32>(0.6, 0.2, 1.0);
+
+  } else if (shapes[hit.shape_index].shape_type == SHAPE_CUBE) {
+    mat_color = vec3<f32>(0.2, 1.0, 1.0);
+  }
+  let mat_specular = 0.9;
+  let mat_diffuse = 0.9;
+  let mat_shininess = 200.0;
+
+  let effective_color = mat_color * light_color;
+  let ambient = effective_color * 0.1;
+
+  if(is_shadowed(hit.point + adjusted_normal, vec3<f32>(0.0, 4.99, 0.0))) {
+    return ambient;
+  }
+
+  let light_v = normalize(vec3<f32>(0.0, 4.99, 0.0) - hit.point);
+  let light_dot_normal = dot(light_v, normal);
+
+  if(light_dot_normal < 0.0) {
+    return ambient;
+  }
+
+  let diffuse = effective_color * (mat_diffuse * light_dot_normal);
+
+  let reflect_dot_eye = dot(reflect(-light_v, normal), eye_v);
+  if(reflect_dot_eye <= 0.0) {
+    return ambient + diffuse;
+  }
+
+  let specular = (light_color * mat_specular) * pow(reflect_dot_eye, mat_shininess);
+
+  let color = ambient + diffuse + specular;
+
+  return clamp(color, vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(1.0, 1.0, 1.0));
+}
+
+fn is_shadowed(point: vec3<f32>, light: vec3<f32>) -> bool {
+  let v = light - point;
+  let distance = length(v);
+  let direction = normalize(v);
+
+  let r = Ray(point, direction);
+  let hit = hit(r);
+  if(hit.distance > 0.0 && hit.distance < distance) {
+    return true;
+  }
+  return false;
 }
