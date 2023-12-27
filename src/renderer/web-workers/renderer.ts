@@ -52,17 +52,10 @@ const renderWebWorkers = async (
   scene: ScenePreset | string | null,
   onProgress: (units: number) => void
 ) => {
-  if (scene == null) {
-    ctx!.fillRect(0, 0, cfg.width, cfg.height);
-    return;
-  } else {
-    ctx!.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx!.fillRect(0, 0, cfg.width, cfg.height);
-    ctx!.fillStyle = 'black';
-  }
-
   const startTime = performance.now();
-  console.log(`renderScene(${cfg.width}X${cfg.height}) started..`);
+  console.log(
+    `renderWebWorkers(${cfg.width}X${cfg.height}) started - using ${cfg.numberOfWorkers} workers`
+  );
 
   const canvasParts = createRenderPartList(cfg, true);
   let remainingPhotonMapperIterations = cfg.iterations;
@@ -81,9 +74,8 @@ const renderWebWorkers = async (
         } else {
           console.log(
             `   --Worker #${i} terminated after ${(
-              (performance.now() - startTime) /
-              1000
-            ).toFixed(3)} s`
+              performance.now() - startTime
+            ).toFixed(1)} ms`
           );
         }
 
@@ -100,9 +92,8 @@ const renderWebWorkers = async (
         } else {
           console.log(
             `   --Worker #${i} terminated after ${(
-              (performance.now() - startTime) /
-              1000
-            ).toFixed(3)} s`
+              performance.now() - startTime
+            ).toFixed(1)} ms`
           );
         }
 
@@ -110,9 +101,8 @@ const renderWebWorkers = async (
       } else if (e.data.command === 'initComplete') {
         console.log(
           `   --Worker #${i} loaded after ${(
-            (performance.now() - startTime) /
-            1000
-          ).toFixed(3)} s`
+            performance.now() - startTime
+          ).toFixed(1)} ms`
         );
         if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
           if (remainingPhotonMapperIterations > 0) {

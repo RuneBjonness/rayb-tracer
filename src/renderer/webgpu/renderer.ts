@@ -126,6 +126,8 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
     OUTPUT_BUFFER_SIZE
   );
   const commands = commandEncoder.finish();
+
+  performance.mark('compute-pipeline-created');
   device.queue.submit([commands]);
 
   await stagingBuffer.mapAsync(GPUMapMode.READ, 0, OUTPUT_BUFFER_SIZE);
@@ -133,10 +135,14 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   const data = copyArrayBuffer.slice(0);
   stagingBuffer.unmap();
 
+  performance.mark('webgpu-render-pass-end');
+
   const arr = new Uint8ClampedArray(data);
   // console.log(arr);
   const imageData = new ImageData(arr, scene.camera.width);
   ctx!.putImageData(imageData, 0, 0);
+
+  performance.mark('result-drawn-to-screen');
 }
 
 const renderWebGpu = (
@@ -146,25 +152,41 @@ const renderWebGpu = (
   sceneDefinition: ScenePreset | string | null,
   onProgress: (units: number) => void
 ) => {
-  if (sceneDefinition == null) {
-    ctx.fillRect(0, 0, cfg.width, cfg.height);
-    return;
-  } else {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.fillRect(0, 0, cfg.width, cfg.height);
-    ctx.fillStyle = 'black';
-  }
+  console.log(`renderWebGpu(${cfg.width}X${cfg.height}) started..`);
 
-  const startTime = performance.now();
-  console.log(`renderScene(${cfg.width}X${cfg.height}) started..`);
-
+  performance.clearMarks();
+  performance.mark('render-start');
   if (sceneDefinition && typeof sceneDefinition === 'string') {
     const scene = new Scene(JSON.parse(sceneDefinition), cfg);
+    performance.mark('scene-created');
+
     init(scene, ctx).then(() => {
+      performance.mark('render-end');
+
       console.log(
-        `renderScene(${cfg.width}X${cfg.height}) finished in ${
-          performance.now() - startTime
-        }ms`
+        ` building scene: ${performance
+          .measure('scene', 'render-start', 'scene-created')
+          .duration.toFixed(1)} ms\n`,
+        `building compute pipeline: ${performance
+          .measure('pipeline', 'scene-created', 'compute-pipeline-created')
+          .duration.toFixed(1)} ms\n`,
+        `render pass: ${performance
+          .measure(
+            'render-pass',
+            'compute-pipeline-created',
+            'webgpu-render-pass-end'
+          )
+          .duration.toFixed(1)} ms\n`,
+        `draw to screen: ${performance
+          .measure(
+            'draw-to-screen',
+            'webgpu-render-pass-end',
+            'result-drawn-to-screen'
+          )
+          .duration.toFixed(1)} ms\n`,
+        `total time: ${performance
+          .measure('total', 'render-start', 'render-end')
+          .duration.toFixed(1)} ms\n`
       );
     });
   }
