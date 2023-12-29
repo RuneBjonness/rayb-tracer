@@ -47,7 +47,11 @@ export class SubGroup implements Shape {
   shapes: Shape[] = [];
 
   transform: Matrix4;
+
   material: Material;
+  materialIdx: number = -1;
+  materialDefinitions: Material[] = [];
+
   parent: Group | SubGroup | CsgShape | null;
 
   bounds: Bounds;

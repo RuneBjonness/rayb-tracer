@@ -3,7 +3,7 @@ import { lighting, material } from './materials';
 import { StripePattern } from './patterns/patterns';
 import { Sphere } from './shapes/primitives/sphere';
 import { Color } from './math/color';
-import { defaultWorld } from './world';
+import { defaultWorld } from './world.spec';
 import { point, vector } from './math/vector4';
 
 test('the default material', () => {
@@ -100,11 +100,14 @@ describe('lighting features', () => {
   test('lighting with a pattern applied', () => {
     const c1 = new Color(1, 1, 1);
     const c2 = new Color(0, 0, 0);
+    const mat = material();
+    mat.pattern = new StripePattern(c1, c2);
+    mat.ambient = 1;
+    mat.diffuse = 0;
+    mat.specular = 0;
     const shape = new Sphere();
-    shape.material.pattern = new StripePattern(c1, c2);
-    shape.material.ambient = 1;
-    shape.material.diffuse = 0;
-    shape.material.specular = 0;
+    shape.materialDefinitions = [mat];
+    shape.material = mat;
 
     const eyev = vector(0, 0, -1);
     const light = new PointLight(point(0, 0, -10), new Color(1, 1, 1));

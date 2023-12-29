@@ -7,7 +7,7 @@ import {
   translation,
 } from './math/transformations';
 import { Color } from './math/color';
-import { defaultWorld } from './world';
+import { defaultWorld } from './world.spec';
 import { point } from './math/vector4';
 
 describe('point-light', () => {

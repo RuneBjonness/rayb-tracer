@@ -3,6 +3,7 @@ import { ScenePreset } from '../../scenes/scene-preset';
 import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
+import { copyMaterialToArrayBuffer } from '../../lib/materials';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -40,6 +41,13 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
         binding: 2,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 3,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
           type: 'storage',
         },
       },
@@ -75,6 +83,22 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
   device.queue.writeBuffer(shapesStorageBuffer, 0, shapesArrayBuffer);
 
+  const materialsArrayBuffer = new ArrayBuffer(
+    scene.materials.length * (12 * 4)
+  );
+  for (let i = 0; i < scene.materials.length; i++) {
+    copyMaterialToArrayBuffer(
+      scene.materials[i],
+      materialsArrayBuffer,
+      i * (12 * 4)
+    );
+  }
+  const materialsStorageBuffer = device.createBuffer({
+    size: Math.ceil(materialsArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(materialsStorageBuffer, 0, materialsArrayBuffer);
+
   const OUTPUT_BUFFER_SIZE = scene.camera.width * scene.camera.height * 4;
   const output = device.createBuffer({
     size: OUTPUT_BUFFER_SIZE,
@@ -103,6 +127,12 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       },
       {
         binding: 2,
+        resource: {
+          buffer: materialsStorageBuffer,
+        },
+      },
+      {
+        binding: 3,
         resource: {
           buffer: output,
         },

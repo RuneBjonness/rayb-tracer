@@ -30,6 +30,24 @@ export function material(): Material {
   };
 }
 
+export function copyMaterialToArrayBuffer(
+  m: Material,
+  buffer: ArrayBuffer,
+  offset: number
+): void {
+  const view = new Float32Array(buffer, offset, 10);
+  view[0] = m.color.r;
+  view[1] = m.color.g;
+  view[2] = m.color.b;
+  view[3] = m.ambient;
+  view[4] = m.diffuse;
+  view[5] = m.specular;
+  view[6] = m.shininess;
+  view[7] = m.reflective;
+  view[8] = m.transparency;
+  view[9] = m.refractiveIndex;
+}
+
 export function lighting(
   shape: Shape,
   light: Light,

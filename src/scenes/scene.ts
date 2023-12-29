@@ -63,22 +63,23 @@ import {
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
-  public world: World;
-  public camera: Camera;
+  world: World = new World();
+  camera: Camera = new Camera(0, 0, 0);
+  materials: Material[] = [];
 
   constructor(
     private definiton: SceneDefinition,
     renderCfg: RenderConfiguration
   ) {
-    this.world = this.initWorld(definiton.world, renderCfg);
-    this.camera = this.initCamera(definiton.camera, renderCfg);
+    this.camera = this.createCamera(definiton.camera, renderCfg);
+    this.init(renderCfg);
   }
 
   public renderTile(x: number, y: number, w: number, h: number): ImageData {
     return this.camera.renderPart(this.world, x, y, w, h).getImageData();
   }
 
-  private initCamera(
+  private createCamera(
     cameraCfg: CameraConfiguration,
     renderCfg: RenderConfiguration
   ): Camera {
@@ -99,28 +100,32 @@ export class Scene {
     );
     camera.maxDepth = renderCfg.maxDepth;
     camera.maxIndirectLightSamples = renderCfg.maxIndirectLightSamples;
-    this.camera = camera;
     return camera;
   }
 
-  private initWorld(
-    world: WorldDefinition,
-    renderCfg: RenderConfiguration
-  ): World {
-    const w = new World();
+  private init(renderCfg: RenderConfiguration): void {
+    if (this.definiton.materials) {
+      const keys = Object.keys(this.definiton.materials) as Array<string>;
+      this.materials = keys.map((k) => this.createMaterial(k));
+    }
 
-    if (world.lights) {
-      const [lights, objects] = this.createLights(world.lights, renderCfg);
+    const w = new World();
+    if (this.definiton.world.lights) {
+      const [lights, objects] = this.createLights(
+        this.definiton.world.lights,
+        renderCfg
+      );
       w.lights.push(...lights);
       w.objects.push(...objects);
     }
 
-    if (world.objects) {
-      w.objects.push(...world.objects.map((x) => this.createShape(x)));
+    if (this.definiton.world.objects) {
+      w.objects.push(
+        ...this.definiton.world.objects.map((x) => this.createShape(x))
+      );
     }
 
     this.world = w;
-    return w;
   }
 
   private createLights(
@@ -201,7 +206,12 @@ export class Scene {
   private createShape(s: ShapeDefinition): Shape {
     const obj = this.createShapePrimitive(s.primitive);
     if (s.material) {
-      this.setMaterial(this.createMaterial(s.material), obj);
+      const m = this.createMaterial(s.material);
+      let idx = this.materials.indexOf(m);
+      if (idx < 0) {
+        idx = this.materials.push(m) - 1;
+      }
+      this.setMaterial(idx, obj);
     }
     if (s.transform) {
       obj.transform = this.createTransformMatrix(s.transform);
@@ -209,14 +219,15 @@ export class Scene {
     return obj;
   }
 
-  private setMaterial(material: Material, shape: Shape): void {
+  private setMaterial(materialIdx: number, shape: Shape): void {
     if (shape instanceof Group) {
-      shape.shapes.forEach((x) => this.setMaterial(material, x));
+      shape.shapes.forEach((x) => this.setMaterial(materialIdx, x));
     } else if (shape instanceof CsgShape) {
-      this.setMaterial(material, shape.left);
-      this.setMaterial(material, shape.right);
+      this.setMaterial(materialIdx, shape.left);
+      this.setMaterial(materialIdx, shape.right);
     } else {
-      shape.material = material;
+      shape.materialDefinitions = this.materials;
+      shape.materialIdx = materialIdx;
     }
   }
 

@@ -31,13 +31,28 @@ describe('Common shape features', () => {
     expect(s.material).toEqual(material());
   });
 
-  test('assigning a material', () => {
+  test('assigning a material by index', () => {
     const s = new TestShape();
     const m = material();
     m.ambient = 1;
+
+    s.materialDefinitions = [m];
+    s.materialIdx = 0;
+
+    expect(s.material).toEqual(m);
+    expect(s.materialIdx).toEqual(0);
+  });
+
+  test('assigning a material by material', () => {
+    const s = new TestShape();
+    const m = material();
+    m.ambient = 1;
+
+    s.materialDefinitions = [m];
     s.material = m;
 
     expect(s.material).toEqual(m);
+    expect(s.materialIdx).toEqual(0);
   });
 
   test('intersecting a scaled shape with a ray', () => {

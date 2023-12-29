@@ -12,9 +12,21 @@ struct Camera {
 
 struct Shape {
   shape_type: u32,
+  material_idx: u32,
   transform: mat4x4<f32>,
   inv_transform: mat4x4<f32>,
   inv_transform_transposed: mat4x4<f32>,
+}
+
+struct Material {
+  color: vec3<f32>,
+  ambient: f32,
+  diffuse: f32,
+  specular: f32,
+  shininess: f32,
+  reflective: f32,
+  transparency: f32,
+  refractive_index: f32,
 }
 
 struct Ray {
@@ -39,6 +51,9 @@ var<uniform> camera: Camera;
 var<storage, read> shapes: array<Shape>;
 
 @group(0) @binding(2)
+var<storage, read> materials: array<Material>;
+
+@group(0) @binding(3)
 var<storage, read_write> output: array<u32>;
 
 @compute @workgroup_size(8,8)
@@ -62,7 +77,8 @@ fn ray_for_pixel(x: f32, y: f32) -> Ray {
   let world_x = camera.half_width - xoffset;
   let world_y = camera.half_height - yoffset;
 
-  let pixel = (camera.inv_transform * vec4<f32>(world_x, world_y, -camera.focal_distance, 1.0)).xyz;
+  // let pixel = (camera.inv_transform * vec4<f32>(world_x, world_y, -camera.focal_distance, 1.0)).xyz;
+  let pixel = (camera.inv_transform * vec4<f32>(world_x, world_y, -1.0, 1.0)).xyz;
   let direction = normalize(pixel.xyz - camera.origin.xyz);
 
   return Ray(camera.origin, direction);
@@ -91,24 +107,14 @@ fn trace(ray: Ray) -> vec3<f32> {
   let adjusted_normal = normal * 0.0001;
   let reflect_v = reflect(ray.direction, normal);
 
-  // todo: support shape materials and lights
-  // temporary test with hardcoded material and light:
+  // todo: support lights
+  // temporary test with hardcoded point light:
   var light_intensity = 1.0;
-  var light_color = vec3<f32>(1.0, 1.0, 1.0);
+  var light_color = vec3<f32>(1.5, 1.5, 1.5);
 
-  var mat_color = vec3<f32>(1.0, 1.0, 1.0);
-  if(shapes[hit.shape_index].shape_type == SHAPE_SPHERE) {
-    mat_color = vec3<f32>(0.6, 0.2, 1.0);
-
-  } else if (shapes[hit.shape_index].shape_type == SHAPE_CUBE) {
-    mat_color = vec3<f32>(0.2, 1.0, 1.0);
-  }
-  let mat_specular = 0.9;
-  let mat_diffuse = 0.9;
-  let mat_shininess = 200.0;
-
-  let effective_color = mat_color * light_color;
-  let ambient = effective_color * 0.1;
+  let material = materials[shapes[hit.shape_index].material_idx];
+  let effective_color = material.color * light_color;
+  let ambient = effective_color * material.ambient;
 
   if(is_shadowed(hit.point + adjusted_normal, vec3<f32>(0.0, 4.99, 0.0))) {
     return ambient;
@@ -121,14 +127,14 @@ fn trace(ray: Ray) -> vec3<f32> {
     return ambient;
   }
 
-  let diffuse = effective_color * (mat_diffuse * light_dot_normal);
+  let diffuse = effective_color * (material.diffuse * light_dot_normal);
 
   let reflect_dot_eye = dot(reflect(-light_v, normal), eye_v);
   if(reflect_dot_eye <= 0.0) {
     return ambient + diffuse;
   }
 
-  let specular = (light_color * mat_specular) * pow(reflect_dot_eye, mat_shininess);
+  let specular = (light_color * material.specular) * pow(reflect_dot_eye, material.shininess);
 
   let color = ambient + diffuse + specular;
 

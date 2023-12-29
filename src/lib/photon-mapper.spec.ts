@@ -5,6 +5,7 @@ import { scaling } from './math/transformations';
 import { Color } from './math/color';
 import { World } from './world';
 import { point } from './math/vector4';
+import { material } from './materials';
 
 describe('photon-mapping', () => {
   test('a photon mapper calculates total light intensity from all light sources in the world', () => {
@@ -55,9 +56,14 @@ describe('photon-mapping', () => {
     const w = new World();
     w.lights.push(new PointLight(point(0, 0, 0), new Color(1, 1, 1)));
 
+    const mat = material();
+    mat.diffuse = 0.5;
+    mat.reflective = 0.5;
+
     const s = new Sphere();
-    s.material.diffuse = 0.5;
-    s.material.reflective = 0.5;
+    s.materialDefinitions = [mat];
+    s.material = mat;
+
     w.objects.push(s);
 
     const photonMapper = new PhotonMapper(w, 50, 4);
@@ -70,14 +76,21 @@ describe('photon-mapping', () => {
     const w = new World();
     w.lights.push(new PointLight(point(0, 0, 0), new Color(1, 0, 0)));
 
+    const mat = material();
+    mat.diffuse = 0;
+    mat.transparency = 1;
+    mat.color = new Color(0, 0, 1);
+
+    const mat2 = material();
+    mat2.diffuse = 1;
+
     const g = new Sphere();
-    g.material.diffuse = 0;
-    g.material.transparency = 1;
-    g.material.color = new Color(0, 0, 1);
+    g.materialDefinitions = [mat, mat2];
+    g.material = mat;
 
     const s = new Sphere();
-    s.material.diffuse = 1;
-    s.material.transparency = 0;
+    s.materialDefinitions = [mat, mat2];
+    s.material = mat2;
     s.transform = scaling(2, 2, 2);
 
     w.objects.push(g, s);

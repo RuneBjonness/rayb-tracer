@@ -1,4 +1,4 @@
-import { World, defaultWorld } from './world';
+import { World } from './world';
 import { PointLight } from './lights';
 import { Color } from './math/color';
 import { scaling, translation } from './math/transformations';
@@ -9,6 +9,31 @@ import { Plane } from './shapes/primitives/plane';
 import { Sphere } from './shapes/primitives/sphere';
 import each from 'jest-each';
 import { point, vector } from './math/vector4';
+import { material } from './materials';
+
+export function defaultWorld(): World {
+  const w = new World();
+  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
+
+  const mat = material();
+  mat.color = new Color(0.8, 1.0, 0.6);
+  mat.diffuse = 0.7;
+  mat.specular = 0.2;
+
+  const mats = [material(), mat];
+
+  const s1 = new Sphere();
+  s1.materialDefinitions = mats;
+  s1.materialIdx = 1;
+  w.objects.push(s1);
+
+  const s2 = new Sphere();
+  s2.materialDefinitions = mats;
+  s2.materialIdx = 0;
+  s2.transform = scaling(0.5, 0.5, 0.5);
+  w.objects.push(s2);
+  return w;
+}
 
 test('creating a world', () => {
   const w = new World();
@@ -17,25 +42,7 @@ test('creating a world', () => {
   expect(w.objects.length).toBe(0);
 });
 
-test('the default world', () => {
-  const light = new PointLight(point(-10, 10, -10), new Color(1, 1, 1));
-
-  const s1 = new Sphere();
-  s1.material.color = new Color(0.8, 1.0, 0.6);
-  s1.material.diffuse = 0.7;
-  s1.material.specular = 0.2;
-
-  const s2 = new Sphere();
-  s2.transform = scaling(0.5, 0.5, 0.5);
-
-  const w = defaultWorld();
-
-  expect(w.lights[0]).toStrictEqual(light);
-  expect(w.objects[0]).toStrictEqual(s1);
-  expect(w.objects[1]).toStrictEqual(s2);
-});
-
-test('creating a world', () => {
+test('intersections for all objects in world', () => {
   const w = defaultWorld();
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
   const xs = w.intersects(r);
@@ -143,7 +150,10 @@ test('the reflected color for a nonreflective material', () => {
 test('the reflected color for a reflective material', () => {
   const w = defaultWorld();
   const shape = new Plane();
-  shape.material.reflective = 0.5;
+  const mat = material();
+  mat.reflective = 0.5;
+  shape.materialDefinitions = [mat];
+  shape.material = mat;
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
@@ -162,7 +172,10 @@ test('the reflected color for a reflective material', () => {
 test('shadeHit() with a reflective material', () => {
   const w = defaultWorld();
   const shape = new Plane();
-  shape.material.reflective = 0.5;
+  const mat = material();
+  mat.reflective = 0.5;
+  shape.materialDefinitions = [mat];
+  shape.material = mat;
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
@@ -183,12 +196,16 @@ test('colorAt() with mutually reflective surfaces', () => {
   w.lights.push(new PointLight(point(0, 0, 0), new Color(1, 1, 1)));
 
   const lower = new Plane();
-  lower.material.reflective = 1;
+  const mat = material();
+  mat.reflective = 1;
+  lower.materialDefinitions = [mat];
+  lower.material = mat;
   lower.transform = translation(0, -1, 0);
   w.objects.push(lower);
 
   const upper = new Plane();
-  upper.material.reflective = 1;
+  upper.materialDefinitions = [mat];
+  upper.material = mat;
   upper.transform = translation(0, 1, 0);
   w.objects.push(upper);
 
@@ -201,7 +218,10 @@ test('colorAt() with mutually reflective surfaces', () => {
 test('the reflected color at maximum recursive depth', () => {
   const w = defaultWorld();
   const shape = new Plane();
-  shape.material.reflective = 0.5;
+  const mat = material();
+  mat.reflective = 0.5;
+  shape.materialDefinitions = [mat];
+  shape.material = mat;
   shape.transform = translation(0, -1, 0);
   w.objects.push(shape);
 
@@ -283,15 +303,25 @@ test('the refracted color with a refracted ray', () => {
 
 test('shadeHit() with a transparent material', () => {
   const w = defaultWorld();
+  const mat = material();
+  mat.transparency = 0.5;
+  mat.refractiveIndex = 1.5;
+
+  const mat2 = material();
+  mat2.color = new Color(1, 0, 0);
+  mat2.ambient = 0.5;
+
+  const mats = [mat, mat2];
+
   const floor = new Plane();
-  floor.material.transparency = 0.5;
-  floor.material.refractiveIndex = 1.5;
+  floor.materialDefinitions = mats;
+  floor.material = mat;
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);
 
   const ball = new Sphere();
-  ball.material.color = new Color(1, 0, 0);
-  ball.material.ambient = 0.5;
+  ball.materialDefinitions = mats;
+  ball.material = mat2;
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
 
@@ -309,16 +339,26 @@ test('shadeHit() with a transparent material', () => {
 
 test('shadeHit() with a reflective and transparent material', () => {
   const w = defaultWorld();
+  const mat = material();
+  mat.reflective = 0.5;
+  mat.transparency = 0.5;
+  mat.refractiveIndex = 1.5;
+
+  const mat2 = material();
+  mat2.color = new Color(1, 0, 0);
+  mat2.ambient = 0.5;
+
+  const mats = [mat, mat2];
+
   const floor = new Plane();
-  floor.material.reflective = 0.5;
-  floor.material.transparency = 0.5;
-  floor.material.refractiveIndex = 1.5;
+  floor.materialDefinitions = mats;
+  floor.material = mat;
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);
 
   const ball = new Sphere();
-  ball.material.color = new Color(1, 0, 0);
-  ball.material.ambient = 0.5;
+  ball.materialDefinitions = mats;
+  ball.material = mat2;
   ball.transform = translation(0, -3.5, -0.5);
   w.objects.push(ball);
 

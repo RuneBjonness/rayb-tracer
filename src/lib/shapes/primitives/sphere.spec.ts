@@ -1,7 +1,6 @@
-import { Matrix4 } from '../../math/matrices';
 import { point, vector } from '../../math/vector4';
 import { Ray } from '../../rays';
-import { Sphere, glassSphere } from './sphere';
+import { Sphere } from './sphere';
 
 describe('Spheres', () => {
   test('a ray intersects a sphere at two points', () => {
@@ -92,14 +91,6 @@ describe('Spheres', () => {
     const s = new Sphere();
     const n = s.normalAt(point(a, a, a));
     expect(n.equals(n.clone().normalize())).toBe(true);
-  });
-
-  test('a helper for producing a sphere with a glassy material', () => {
-    const s = glassSphere();
-
-    expect(s.transform.equals(new Matrix4())).toBe(true);
-    expect(s.material.transparency).toEqual(1.0);
-    expect(s.material.refractiveIndex).toEqual(1.5);
   });
 
   test('the bounds of a sphere', () => {

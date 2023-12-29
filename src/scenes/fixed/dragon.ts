@@ -12,6 +12,7 @@ import dragonObjFile from '../../resources/dragon.obj?raw';
 import { Shape } from '../../lib/shapes/shape';
 import { Plane } from '../../lib/shapes/primitives/plane';
 import { RenderConfiguration } from '../../renderer/configuration';
+import { material } from '../../lib/materials';
 
 export class Dragon extends Scene {
   constructor(renderCfg: RenderConfiguration) {
@@ -45,12 +46,17 @@ export class Dragon extends Scene {
     lamp.transform = translation(-3, 4, -2.5).multiply(rotationZ(radians(90)));
     world.lights.push(lamp);
 
+    const floorMaterial = material();
+    floorMaterial.color = colorFromHex('#9B0000');
+    floorMaterial.specular = 0;
+    floorMaterial.ambient = 0.05;
+    floorMaterial.diffuse = 0.67;
+    floorMaterial.reflective = 0.15;
+    this.materials.push(floorMaterial);
+
     const f = new Plane();
-    f.material.color = colorFromHex('#9B0000');
-    f.material.specular = 0;
-    f.material.ambient = 0.05;
-    f.material.diffuse = 0.67;
-    f.material.reflective = 0.15;
+    f.materialDefinitions = this.materials;
+    f.material = floorMaterial;
 
     world.objects.push(f, this.dragonObj());
 
@@ -58,12 +64,17 @@ export class Dragon extends Scene {
   }
 
   private dragonObj(): Shape {
+    const mat = material();
+    mat.color = colorFromHex('#FFD700');
+    mat.ambient = 0.05;
+    mat.specular = 0.1;
+    mat.diffuse = 0.6;
+    mat.reflective = 0.8;
+    this.materials.push(mat);
+
     const parser = new ObjParser();
-    parser.currentMaterial.color = colorFromHex('#FFD700');
-    parser.currentMaterial.ambient = 0.05;
-    parser.currentMaterial.specular = 0.1;
-    parser.currentMaterial.diffuse = 0.6;
-    parser.currentMaterial.reflective = 0.8;
+    parser.materialDefinitions = this.materials;
+    parser.currentMaterial = mat;
     const model = parser.parse(dragonObjFile);
     model.transform = model.transform
       .rotateY(radians(-150))

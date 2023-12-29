@@ -10,6 +10,7 @@ export class ObjParser {
   normals: Vector4[] = [];
   groups: { [groupName: string]: Group } = {};
   model: Group = new Group();
+  materialDefinitions: Material[] = [];
   currentMaterial: Material = material();
 
   private activeGroup: Group | null = null;
@@ -22,6 +23,14 @@ export class ObjParser {
       this.model.add(this.activeGroup);
     }
     this.model.divide(4);
+
+    console.log(
+      `Parsed obj file with ${this.ignoredLines} ignored lines, ${
+        this.vertices.length
+      } vertices, ${this.normals.length} normals, ${
+        Object.keys(this.groups).length
+      } groups and ${this.model.shapes.length} shapes.`
+    );
     return this.model;
   }
 
@@ -56,6 +65,7 @@ export class ObjParser {
             this.vertices[p[i][0] - 1],
             this.vertices[p[i + 1][0] - 1]
           );
+          t.materialDefinitions = this.materialDefinitions;
           t.material = this.currentMaterial;
           if (this.activeGroup) {
             this.activeGroup.add(t);
@@ -71,6 +81,7 @@ export class ObjParser {
             this.normals[p[i][2] - 1],
             this.normals[p[i + 1][2] - 1]
           );
+          t.materialDefinitions = this.materialDefinitions;
           t.material = this.currentMaterial;
           if (this.activeGroup) {
             this.activeGroup.add(t);

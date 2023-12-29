@@ -6,14 +6,12 @@ import {
   reflectance,
   refractedDirection,
 } from './intersections';
-import { Light, PointLight } from './lights';
+import { Light } from './lights';
 import { Ray } from './rays';
 import { Shape } from './shapes/shape';
-import { Sphere } from './shapes/primitives/sphere';
 import { Color } from './math/color';
-import { scaling } from './math/transformations';
 import { lighting } from './materials';
-import { point, vector, Vector4 } from './math/vector4';
+import { vector, Vector4 } from './math/vector4';
 
 export class World {
   objects: Shape[] = [];
@@ -172,20 +170,4 @@ export class World {
         normalDiff * (1 - ic.object.material.diffuse * 0.5)
     );
   }
-}
-
-export function defaultWorld(): World {
-  const w = new World();
-  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
-
-  const s1 = new Sphere();
-  s1.material.color = new Color(0.8, 1.0, 0.6);
-  s1.material.diffuse = 0.7;
-  s1.material.specular = 0.2;
-  w.objects.push(s1);
-
-  const s2 = new Sphere();
-  s2.transform = scaling(0.5, 0.5, 0.5);
-  w.objects.push(s2);
-  return w;
 }

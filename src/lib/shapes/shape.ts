@@ -21,7 +21,11 @@ export type ShapeType =
 export interface Shape {
   shapeType: ShapeType;
   transform: Matrix4;
+
   material: Material;
+  materialIdx: number;
+  materialDefinitions: Material[];
+
   parent: Group | SubGroup | CsgShape | null;
   bounds: Bounds;
   transformedBounds: Bounds;
@@ -47,7 +51,22 @@ export abstract class BaseShape implements Shape {
   }
 
   shapeType: ShapeType = 'unknown';
-  material: Material;
+
+  get material(): Material {
+    if (
+      this.materialIdx < 0 ||
+      this.materialIdx >= this.materialDefinitions.length
+    ) {
+      return material();
+    }
+    return this.materialDefinitions[this.materialIdx];
+  }
+  set material(m: Material) {
+    this.materialIdx = this.materialDefinitions.indexOf(m);
+  }
+  materialIdx: number = -1;
+  materialDefinitions: Material[] = [];
+
   parent: Group | CsgShape | null = null;
 
   bounds: Bounds;
@@ -67,7 +86,6 @@ export abstract class BaseShape implements Shape {
     this._transform = new Matrix4();
     this.invTransform = new Matrix4();
     this.invTransformTransposed = new Matrix4();
-    this.material = material();
     this.bounds = Bounds.empty();
   }
 
@@ -104,8 +122,9 @@ export abstract class BaseShape implements Shape {
 
   copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
     const u32view = new Uint32Array(buffer, offset, 4);
-
     u32view[0] = this.shapeTypeId();
+    u32view[1] = this.materialIdx;
+
     this.transform.copyToArrayBuffer(buffer, offset + 4 * 4);
     this.invTransform.copyToArrayBuffer(buffer, offset + 20 * 4);
     this.invTransformTransposed.copyToArrayBuffer(buffer, offset + 36 * 4);

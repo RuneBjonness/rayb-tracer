@@ -7,10 +7,28 @@ import {
 } from './intersections';
 import { Ray } from './rays';
 import { Plane } from './shapes/primitives/plane';
-import { Sphere, glassSphere } from './shapes/primitives/sphere';
+import { Sphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './math/transformations';
 import { point, vector } from './math/vector4';
+import { material } from './materials';
+
+function glassSphere(): Sphere {
+  const m = material();
+  m.transparency = 1.0;
+  m.refractiveIndex = 1.5;
+
+  const s = new Sphere();
+  s.materialDefinitions = [m];
+  s.material = m;
+  return s;
+}
+
+test('a helper for producing a sphere with a glassy material', () => {
+  const s = glassSphere();
+  expect(s.material.transparency).toEqual(1.0);
+  expect(s.material.refractiveIndex).toEqual(1.5);
+});
 
 test('an intersection encapsulates time and object', () => {
   const s = new Sphere();

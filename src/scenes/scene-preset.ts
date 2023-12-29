@@ -3,18 +3,15 @@ import { ImageMapping } from './fixed/image-mapping';
 import { Skybox } from './fixed/skybox';
 import { TeaPot } from './fixed/teapot';
 import { MarbleMadness } from './fixed/marble-madness';
-import { MarbleMadness2 } from './fixed/marble-madness-2';
 import { Scene } from './scene';
 import { Dragon } from './fixed/dragon';
 
 export enum ScenePreset {
   dragon = 'Dragon',
-  teapot = 'Teapot [high-res]',
-  teapotLow = 'Teapot [low-res]',
+  teapot = 'Teapot',
   skybox = 'Skybox',
   imageMapping = 'Image mapping',
   marbleMadness = 'Marble madness',
-  marbleMadness2 = 'Marble madness 2',
 }
 
 export async function loadScene(
@@ -34,15 +31,9 @@ export async function loadScene(
       return new Skybox(renderCfg);
 
     case ScenePreset.teapot:
-      return new TeaPot(renderCfg, true);
-
-    case ScenePreset.teapotLow:
-      return new TeaPot(renderCfg, false);
+      return new TeaPot(renderCfg);
 
     case ScenePreset.marbleMadness:
       return new MarbleMadness(renderCfg);
-
-    case ScenePreset.marbleMadness2:
-      return new MarbleMadness2(renderCfg);
   }
 }

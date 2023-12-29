@@ -32,10 +32,3 @@ export class Sphere extends BaseShape {
     return vector(p.x, p.y, p.z);
   }
 }
-
-export function glassSphere(): Sphere {
-  const s = new Sphere();
-  s.material.transparency = 1.0;
-  s.material.refractiveIndex = 1.5;
-  return s;
-}

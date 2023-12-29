@@ -12,6 +12,7 @@ import { RenderConfiguration } from '../../renderer/configuration';
 import { point } from '../../lib/math/vector4';
 import { canvasFromImage } from '../../tools/image-loader';
 import { Matrix4 } from '../../lib/math/matrices';
+import { material } from '../../lib/materials';
 
 export class ImageMapping extends Scene {
   constructor(renderCfg: RenderConfiguration) {
@@ -42,17 +43,23 @@ export class ImageMapping extends Scene {
 
     const img = await canvasFromImage(moonImgMapFile);
 
+    const m = material();
+    m.pattern = new TextureMap(
+      new ImageUvPattern(img.pixels),
+      new SphericalMapper()
+    );
+    m.specular = 0;
+    m.ambient = 0.02;
+
+    this.materials.push(m);
+
     const s = new Sphere();
     s.transform = new Matrix4()
       .rotateY(radians(-130))
       .scale(1.4, 1.4, 1.4)
       .translate(0, 1, 0);
-    s.material.pattern = new TextureMap(
-      new ImageUvPattern(img.pixels),
-      new SphericalMapper()
-    );
-    s.material.specular = 0;
-    s.material.ambient = 0.02;
+    s.materialDefinitions = this.materials;
+    s.materialIdx = 0;
 
     world.objects.push(s);
     this.world = world;

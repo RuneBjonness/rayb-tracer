@@ -3,7 +3,7 @@ import { Color } from './math/color';
 import { Matrix4 } from './math/matrices';
 import { rotationY, translation, viewTransform } from './math/transformations';
 import { point, vector } from './math/vector4';
-import { defaultWorld } from './world';
+import { defaultWorld } from './world.spec';
 
 test('creating a Camera', () => {
   const c = new Camera(160, 120, Math.PI / 2);

@@ -8,14 +8,14 @@ import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
 import { Scene } from '../scene';
 import { ObjParser } from '../../tools/obj-parser';
-import teapotLowResObjFile from '../../resources/teapot-lowres.obj?raw';
 import teapotObjFile from '../../resources/teapot.obj?raw';
 import { Shape } from '../../lib/shapes/shape';
 import { Plane } from '../../lib/shapes/primitives/plane';
 import { RenderConfiguration } from '../../renderer/configuration';
+import { material } from '../../lib/materials';
 
 export class TeaPot extends Scene {
-  constructor(renderCfg: RenderConfiguration, private highRes: boolean) {
+  constructor(renderCfg: RenderConfiguration) {
     super(
       {
         name: 'TeaPot',
@@ -46,12 +46,17 @@ export class TeaPot extends Scene {
     lamp.transform = translation(-3, 4, -2.5).multiply(rotationZ(radians(90)));
     world.lights.push(lamp);
 
+    const floorMaterial = material();
+    floorMaterial.color = new Color(0.3, 0.78, 0.59);
+    floorMaterial.specular = 0;
+    floorMaterial.ambient = 0.05;
+    floorMaterial.diffuse = 0.67;
+    floorMaterial.reflective = 0.3;
+    this.materials.push(floorMaterial);
+
     const f = new Plane();
-    f.material.color = new Color(0.3, 0.78, 0.59);
-    f.material.specular = 0;
-    f.material.ambient = 0.05;
-    f.material.diffuse = 0.67;
-    f.material.reflective = 0.3;
+    f.materialDefinitions = this.materials;
+    f.material = floorMaterial;
 
     world.objects.push(f, this.teapotObj());
 
@@ -59,11 +64,14 @@ export class TeaPot extends Scene {
   }
 
   private teapotObj(): Shape {
+    const mat = material();
+    mat.color = new Color(0.3, 0.73, 0.78);
+    this.materials.push(mat);
+
     const parser = new ObjParser();
-    parser.currentMaterial.color = new Color(0.3, 0.73, 0.78);
-    const model = parser.parse(
-      this.highRes ? teapotObjFile : teapotLowResObjFile
-    );
+    parser.materialDefinitions = this.materials;
+    parser.currentMaterial = mat;
+    const model = parser.parse(teapotObjFile);
     model.transform = model.transform
       .rotateX(-Math.PI / 2)
       .scale(0.1, 0.1, 0.1);
