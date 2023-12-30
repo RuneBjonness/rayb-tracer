@@ -3,6 +3,7 @@ import { ScenePreset } from '../../scenes/scene-preset';
 import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
+import previewRendererWgsl from './preview-renderer.wgsl?raw';
 import { copyMaterialToArrayBuffer } from '../../lib/materials';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
@@ -18,7 +19,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   const device = await adapter.requestDevice();
 
   const module = device.createShaderModule({
-    code: mainWgsl + intersectionsWgsl,
+    code: mainWgsl + intersectionsWgsl + previewRendererWgsl,
   });
 
   const bindGroupLayout = device.createBindGroupLayout({

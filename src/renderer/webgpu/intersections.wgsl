@@ -1,3 +1,8 @@
+struct Ray {
+  origin: vec3<f32>,
+  direction: vec3<f32>,
+}
+
 struct HitInfo {
   distance: f32,
   point: vec3<f32>,
