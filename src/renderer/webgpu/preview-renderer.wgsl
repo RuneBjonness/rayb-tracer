@@ -86,7 +86,10 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
     result.refractive_index = refractive_index;
   }
 
-  result.color = lightning(ray, hit, normal, eye_v) * blend_factor;
+  let light_count = arrayLength(&lights);
+  for(var i = 0u; i < light_count; i++) {
+    result.color += lightning(ray, hit, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
+  }
 
   let material = materials[shapes[hit.shape_index].material_idx];
   
@@ -95,35 +98,28 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
     n_ratio = material.refractive_index / refractive_index;
   }
   var r = 1.0;
-  if(material.reflective > 0.001 && material.transparency > 0.001) {
+  if(material.reflective > 0.0 && material.transparency > 0.0) {
     r = reflectance(eye_v, normal, n_ratio);
   }
-  if(material.reflective > 0.001) {
-    result.reflect_ray = Ray(hit.point + normal * 0.0001, reflect(ray.direction, normal));
+  if(material.reflective > 0.0) {
+    result.reflect_ray = Ray(hit.point + normal * SURFACE_EPSILON, reflect(ray.direction, normal));
     result.reflect_blend_factor = material.reflective * blend_factor * r;
     result.terminate = false;
   }
-  if(material.transparency > 0.001) {
-    result.refract_ray = Ray(hit.point - normal * 0.0001, refracted_direction(eye_v, normal, n_ratio));
+  if(material.transparency > 0.0) {
+    result.refract_ray = Ray(hit.point - normal * SURFACE_EPSILON, refracted_direction(eye_v, normal, n_ratio));
     result.refract_blend_factor = material.transparency * blend_factor * (1.0 - r);
     result.terminate = false;
   }
   return result;
 }
 
-fn lightning(ray: Ray, hit: HitInfo, normal: vec3f, eye_v: vec3f) -> vec3<f32> {
-  // todo: support lights
-  // temporary test with hardcoded point light:
-  var light_intensity = 1.0;
-  var light_color = vec3<f32>(1.5, 1.5, 1.5);
-  let light_pos = vec3<f32>(-5.0, 6.0, -3.0);
-  //let light_pos = vec3<f32>(-0.0, 4.999, 0.0);
-
+fn lightning(ray: Ray, hit: HitInfo, normal: vec3f, eye_v: vec3f, light_color: vec3f, light_pos: vec3f) -> vec3<f32> {
   let material = materials[shapes[hit.shape_index].material_idx];
   let effective_color = material.color * light_color;
   let ambient = effective_color * material.ambient;
 
-  if(is_shadowed(hit.point + normal * 0.0001, light_pos)) {
+  if(is_shadowed(hit.point + normal * SURFACE_EPSILON, light_pos)) {
     return ambient;
   }
 

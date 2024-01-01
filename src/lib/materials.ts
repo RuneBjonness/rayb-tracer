@@ -30,6 +30,8 @@ export function material(): Material {
   };
 }
 
+export const MATERIAL_BYTE_SIZE = 48;
+
 export function copyMaterialToArrayBuffer(
   m: Material,
   buffer: ArrayBuffer,

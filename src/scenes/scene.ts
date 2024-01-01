@@ -134,6 +134,7 @@ export class Scene {
   ): [Light[], Shape[]] {
     const lights: Light[] = [];
     const objects: Shape[] = [];
+    let shapeIdx = 1;
 
     lightCfgs.forEach((l) => {
       if (l.type === 'point') {
@@ -147,14 +148,18 @@ export class Scene {
         const light = new AreaLight(
           this.createColor(l.intensity),
           renderCfg.maxLightSamples,
-          renderCfg.adaptiveLightSamplingSensitivity
+          renderCfg.adaptiveLightSamplingSensitivity,
+          this.materials
         );
         light.transform = this.createTransformMatrix(l.transform);
 
-        lights.push(light);
         if (l.includeGeometry) {
+          light.shapeIdx = shapeIdx;
           objects.push(light);
+
+          shapeIdx++;
         }
+        lights.push(light);
       }
     });
 

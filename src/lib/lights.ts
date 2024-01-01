@@ -5,9 +5,13 @@ import { scaling } from './math/transformations';
 import { World } from './world';
 import { Color } from './math/color';
 import { Vector4, point, vector } from './math/vector4';
+import { Material, material } from './materials';
+
+export const LIGHTS_BYTE_SIZE = 32;
 
 export interface Light {
   intensity: Color;
+  shapeIdx: number;
   samplePassCounts: number[];
   maxSamples: number;
   adaptiveSampleSensitivity: number;
@@ -15,12 +19,15 @@ export interface Light {
   intensityAt(p: Vector4, w: World): number;
   samplePoints(): Vector4[];
   emitPhotons(count: number, powerFactor: number): Photon[];
+
+  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void;
 }
 
 export class PointLight implements Light {
-  public samplePassCounts = [1];
-  public maxSamples = 1;
-  public adaptiveSampleSensitivity = 1;
+  shapeIdx = 0;
+  samplePassCounts = [1];
+  maxSamples = 1;
+  adaptiveSampleSensitivity = 1;
 
   constructor(private position: Vector4, public intensity: Color) {}
 
@@ -48,17 +55,31 @@ export class PointLight implements Light {
     }
     return photons;
   }
+
+  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+    const f32view = new Float32Array(buffer, offset, 8);
+    f32view[0] = this.intensity.r;
+    f32view[1] = this.intensity.g;
+    f32view[2] = this.intensity.b;
+    f32view[4] = this.position.x;
+    f32view[5] = this.position.y;
+    f32view[6] = this.position.z;
+
+    const u32view = new Uint32Array(buffer, offset, 8);
+    u32view[7] = this.shapeIdx;
+  }
 }
 
 export class AreaLight extends Cube implements Light {
-  public get transform() {
+  get transform() {
     return super.transform;
   }
-  public set transform(m: Matrix4) {
-    super.transform = m.multiply(scaling(1, 0.0001, 1));
+  set transform(m: Matrix4) {
+    super.transform = m.multiply(scaling(1, 0.001, 1));
   }
 
-  public samplePassCounts = new Array<number>(7);
+  shapeIdx = 0;
+  samplePassCounts = new Array<number>(7);
 
   private corner: Vector4;
   private uVec: Vector4;
@@ -68,15 +89,20 @@ export class AreaLight extends Cube implements Light {
   constructor(
     public intensity: Color,
     public maxSamples: number,
-    public adaptiveSampleSensitivity: number
+    public adaptiveSampleSensitivity: number,
+    materials: Material[]
   ) {
     super();
     this.transform = new Matrix4();
 
-    this.material.color = intensity;
-    this.material.diffuse = 0;
-    this.material.specular = 0;
-    this.material.ambient = 1;
+    const mat = material();
+    mat.color = intensity;
+    mat.diffuse = 0;
+    mat.specular = 0;
+    mat.ambient = 1;
+    materials.push(mat);
+    this.materialDefinitions = materials;
+    this.material = mat;
 
     this.corner = point(-1, -1.001, -1);
     this.uVec = vector(2, 0, 0).divide(7);
@@ -160,6 +186,21 @@ export class AreaLight extends Cube implements Light {
       };
     }
     return photons;
+  }
+
+  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+    const f32view = new Float32Array(buffer, offset, 8);
+    f32view[0] = this.intensity.r;
+    f32view[1] = this.intensity.g;
+    f32view[2] = this.intensity.b;
+
+    const pos = this.pointOnLight(3, 3, false);
+    f32view[4] = pos.x;
+    f32view[5] = pos.y;
+    f32view[6] = pos.z;
+
+    const u32view = new Uint32Array(buffer, offset, 8);
+    u32view[7] = this.shapeIdx;
   }
 
   private pointOnLight(u: number, v: number, applyNoise = true): Vector4 {

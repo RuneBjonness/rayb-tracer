@@ -1,3 +1,6 @@
+const EPSILON = 0.0001;
+const SURFACE_EPSILON = 0.001;
+
 struct Ray {
   origin: vec3<f32>,
   direction: vec3<f32>,
@@ -162,7 +165,7 @@ fn sphere_local_intersects(ray: Ray, sphere: Shape) -> f32 {
 }
 
 fn plane_local_intersects(ray: Ray, plane: Shape) -> f32 {
-  if(abs(ray.direction.y) < 0.0001) {
+  if(abs(ray.direction.y) < EPSILON) {
     return -1.0;
   }
   return -ray.origin.y / ray.direction.y;
@@ -189,7 +192,7 @@ fn check_axis(origin: f32, direction: f32) -> vec2f {
   var tmin: f32;
   var tmax: f32;
 
-  if(abs(direction) >= 0.0001) {
+  if(abs(direction) >= EPSILON) {
     tmin = tmin_numerator / direction;
     tmax = tmax_numerator / direction;
   } else {
@@ -220,7 +223,7 @@ fn cube_local_normal(point: vec3<f32>) -> vec3<f32> {
 fn cylinder_local_intersects(ray: Ray, cylinder: Shape) -> f32 {
   let a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z;
   var closest_hit = 1000000.0;
-  if(abs(a) > 0.0001) {
+  if(abs(a) > EPSILON) {
     let b = 2.0 * ray.origin.x * ray.direction.x + 2.0 * ray.origin.z * ray.direction.z;
     let c = ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z - 1.0;
 
@@ -237,7 +240,7 @@ fn cylinder_local_intersects(ray: Ray, cylinder: Shape) -> f32 {
       }
     }
 
-    if(cylinder.closed == 1 && abs(ray.direction.y) > 0.0001) {
+    if(cylinder.closed == 1 && abs(ray.direction.y) > EPSILON) {
       let hit0 = hit_cylinder_caps(ray, (cylinder.min - ray.origin.y) / ray.direction.y);
       let hit1 = hit_cylinder_caps(ray, (cylinder.max - ray.origin.y) / ray.direction.y);
       if(hit0 > 0.0 && hit0 < closest_hit) {
@@ -261,7 +264,7 @@ fn cone_local_intersects(ray: Ray, cylinder: Shape) -> f32 {
 
   var closest_hit = 1000000.0;
 
-  if(abs(a) > 0.0001) {
+  if(abs(a) > EPSILON) {
     let discriminant = b * b - 4.0 * a * c;
     
     if(discriminant >= 0.0) {
@@ -274,14 +277,14 @@ fn cone_local_intersects(ray: Ray, cylinder: Shape) -> f32 {
         closest_hit = hit1;
       }
     }
-  } else if(abs(b) > 0.0001) {
+  } else if(abs(b) > EPSILON) {
     let hit0 = hit_cone_or_cylinder_walls(ray, -c / (2.0 * b), cylinder.min, cylinder.max);
     if(hit0 > 0.0 && hit0 < closest_hit) {
       closest_hit = hit0;
     }
   }
 
-  if(cylinder.closed == 1 && abs(ray.direction.y) > 0.0001) {
+  if(cylinder.closed == 1 && abs(ray.direction.y) > EPSILON) {
     let hit0 = hit_cone_caps(ray, cylinder.min);
     let hit1 = hit_cone_caps(ray, cylinder.max);
     if(hit0 > 0.0 && hit0 < closest_hit) {
@@ -316,10 +319,10 @@ fn hit_cylinder_caps(ray: Ray, t: f32) -> f32 {
 
 fn cylinder_local_normal(point: vec3<f32>, min: f32, max: f32) -> vec3<f32> {
   let dist = point.x * point.x + point.z * point.z;
-  if(dist < 1.0 && point.y >= max - 0.0001) {
+  if(dist < 1.0 && point.y >= max - EPSILON) {
     return vec3<f32>(0.0, 1.0, 0.0);
   }
-  if(dist < 1.0 && point.y <= min + 0.0001) {
+  if(dist < 1.0 && point.y <= min + EPSILON) {
     return vec3<f32>(0.0, -1.0, 0.0);
   }
   return vec3<f32>(point.x, 0.0, point.z);
@@ -337,10 +340,10 @@ fn hit_cone_caps(ray: Ray, y: f32) -> f32 {
 
 fn cone_local_normal(point: vec3<f32>, min: f32, max: f32) -> vec3<f32> {
   let dist = point.x * point.x + point.z * point.z;
-  if(dist < 1.0 && point.y >= max - 0.0001) {
+  if(dist < 1.0 && point.y >= max - EPSILON) {
     return vec3<f32>(0.0, 1.0, 0.0);
   }
-  if(dist < 1.0 && point.y <= min + 0.0001) {
+  if(dist < 1.0 && point.y <= min + EPSILON) {
     return vec3<f32>(0.0, -1.0, 0.0);
   }
   var y = sqrt(dist);

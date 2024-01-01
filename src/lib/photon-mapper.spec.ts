@@ -17,7 +17,7 @@ describe('photon-mapping', () => {
         point(-1, 1, 0),
         new Color(intensityA, intensityA, intensityA)
       ),
-      new AreaLight(new Color(intensityB, intensityB, intensityB), 1, 1)
+      new AreaLight(new Color(intensityB, intensityB, intensityB), 1, 1, [])
     );
 
     const photonMapper = new PhotonMapper(w, 1000);

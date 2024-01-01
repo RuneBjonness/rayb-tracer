@@ -4,8 +4,12 @@ import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
 import previewRendererWgsl from './preview-renderer.wgsl?raw';
-import { copyMaterialToArrayBuffer } from '../../lib/materials';
+import {
+  MATERIAL_BYTE_SIZE,
+  copyMaterialToArrayBuffer,
+} from '../../lib/materials';
 import { SHAPE_BYTE_SIZE } from '../../lib/shapes/shape';
+import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -50,6 +54,20 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
         binding: 3,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 4,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 5,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
           type: 'storage',
         },
       },
@@ -76,11 +94,16 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   const shapesArrayBuffer = new ArrayBuffer(
     (scene.world.numberOfShapes() + 1) * SHAPE_BYTE_SIZE
   );
-  let offset = SHAPE_BYTE_SIZE;
+  let shapesOffset = SHAPE_BYTE_SIZE;
+
+  const bvhArrayBuffer = new ArrayBuffer(
+    (scene.world.numberOfShapes() + 1) * SHAPE_BYTE_SIZE
+  );
+  let bvhOffset = SHAPE_BYTE_SIZE;
   for (let i = 0; i < scene.world.objects.length; i++) {
-    offset = scene.world.objects[i].copyToArrayBuffer(
+    shapesOffset = scene.world.objects[i].copyToArrayBuffer(
       shapesArrayBuffer,
-      offset,
+      shapesOffset,
       0
     );
   }
@@ -90,14 +113,35 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
   device.queue.writeBuffer(shapesStorageBuffer, 0, shapesArrayBuffer);
 
+  const bvhStorageBuffer = device.createBuffer({
+    size: Math.ceil(bvhArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(bvhStorageBuffer, 0, bvhArrayBuffer);
+
+  const lightsArrayBuffer = new ArrayBuffer(
+    scene.world.lights.length * LIGHTS_BYTE_SIZE
+  );
+  for (let i = 0; i < scene.world.lights.length; i++) {
+    scene.world.lights[i].copyLightToArrayBuffer(
+      lightsArrayBuffer,
+      i * LIGHTS_BYTE_SIZE
+    );
+  }
+  const lightsStorageBuffer = device.createBuffer({
+    size: Math.ceil(lightsArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(lightsStorageBuffer, 0, lightsArrayBuffer);
+
   const materialsArrayBuffer = new ArrayBuffer(
-    scene.materials.length * (12 * 4)
+    scene.materials.length * MATERIAL_BYTE_SIZE
   );
   for (let i = 0; i < scene.materials.length; i++) {
     copyMaterialToArrayBuffer(
       scene.materials[i],
       materialsArrayBuffer,
-      i * (12 * 4)
+      i * MATERIAL_BYTE_SIZE
     );
   }
   const materialsStorageBuffer = device.createBuffer({
@@ -135,11 +179,23 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       {
         binding: 2,
         resource: {
-          buffer: materialsStorageBuffer,
+          buffer: bvhStorageBuffer,
         },
       },
       {
         binding: 3,
+        resource: {
+          buffer: lightsStorageBuffer,
+        },
+      },
+      {
+        binding: 4,
+        resource: {
+          buffer: materialsStorageBuffer,
+        },
+      },
+      {
+        binding: 5,
         resource: {
           buffer: output,
         },

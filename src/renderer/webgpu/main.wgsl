@@ -37,6 +37,12 @@ struct BvhNode {
   bound_max: vec3f,
 }
 
+struct Light {
+  color: vec3f,
+  position: vec3f,
+  shape_idx: u32,
+}
+
 struct Material {
   color: vec3<f32>,
   ambient: f32,
@@ -66,9 +72,15 @@ var<uniform> camera: Camera;
 var<storage, read> shapes: array<Shape>;
 
 @group(0) @binding(2)
-var<storage, read> materials: array<Material>;
+var<storage, read> bvh: array<BvhNode>;
 
 @group(0) @binding(3)
+var<storage, read> lights: array<Light>;
+
+@group(0) @binding(4)
+var<storage, read> materials: array<Material>;
+
+@group(0) @binding(5)
 var<storage, read_write> output: array<u32>;
 
 @compute @workgroup_size(8,8)

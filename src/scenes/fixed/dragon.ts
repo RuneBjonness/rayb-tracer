@@ -41,7 +41,8 @@ export class Dragon extends Scene {
     const lamp = new AreaLight(
       new Color(1, 1, 1),
       renderCfg.maxLightSamples,
-      renderCfg.adaptiveLightSamplingSensitivity
+      renderCfg.adaptiveLightSamplingSensitivity,
+      this.materials
     );
     lamp.transform = translation(-3, 4, -2.5).multiply(rotationZ(radians(90)));
     world.lights.push(lamp);

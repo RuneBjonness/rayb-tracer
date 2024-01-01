@@ -44,7 +44,7 @@ describe('area-light', () => {
   test('an area light with no transformation spans from (-1,y,-1) to (1,y,1) where y is close to 0', () => {
     const intensity = new Color(1, 1, 1);
 
-    const light = new AreaLight(intensity, 50, 1);
+    const light = new AreaLight(intensity, 50, 1, []);
     const samples = light.samplePoints();
 
     const minXpos = Math.min(...samples.map((s) => s.x));
@@ -67,7 +67,7 @@ describe('area-light', () => {
   });
 
   test('an area light can be transformed', () => {
-    const light = new AreaLight(new Color(1, 1, 1), 50, 1);
+    const light = new AreaLight(new Color(1, 1, 1), 50, 1, []);
     light.transform = translation(-5, 0, 0).multiply(rotationZ(radians(90)));
 
     const samples = light.samplePoints();
@@ -92,7 +92,7 @@ describe('area-light', () => {
 
   test('an area light has a single intensity', () => {
     const intensity = new Color(1, 1, 1);
-    const light = new AreaLight(intensity, 1, 1);
+    const light = new AreaLight(intensity, 1, 1, []);
 
     expect(light.intensity.equals(intensity)).toBe(true);
   });
@@ -109,7 +109,7 @@ describe('area-light', () => {
 `.test(
     'Area lights with maxSamples=1 evaluate the light intensity at a given point as if it were a point light placed in its center',
     ({ p, result }) => {
-      const l = new AreaLight(new Color(1, 1, 1), 1, 1);
+      const l = new AreaLight(new Color(1, 1, 1), 1, 1, []);
       l.transform = translation(-10.5, 9.5, -10);
       const w = defaultWorld();
       w.lights[0] = l;
@@ -128,7 +128,7 @@ describe('area-light', () => {
 `.test(
     'Area lights evaluate the average light intensity at a given point based on an evenly distributed collection of samples',
     ({ p, result }) => {
-      const l = new AreaLight(new Color(1, 1, 1), 5, 1);
+      const l = new AreaLight(new Color(1, 1, 1), 5, 1, []);
       l.transform = translation(-0.5, 0, -5).multiply(rotationX(radians(90)));
       const w = defaultWorld();
       w.lights[0] = l;
@@ -172,7 +172,7 @@ describe('photon-mapping: point-light', () => {
 describe('photon-mapping: area-light', () => {
   const intensity = new Color(1, 0, 0.5);
 
-  const light = new AreaLight(intensity, 5, 1);
+  const light = new AreaLight(intensity, 5, 1, []);
   const photons = light.emitPhotons(100, 0.01);
 
   test('an area light emits photons from its entire area', () => {
