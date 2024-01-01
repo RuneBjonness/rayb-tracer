@@ -1,10 +1,11 @@
 import { Scene, SceneMode } from '../../scenes/scene';
-import { ScenePreset } from '../../scenes/scene-preset';
+import { ScenePreset, loadScene } from '../../scenes/scene-preset';
 import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
 import previewRendererWgsl from './preview-renderer.wgsl?raw';
 import { copyMaterialToArrayBuffer } from '../../lib/materials';
+import { SHAPE_BYTE_SIZE } from '../../lib/shapes/shape';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -73,10 +74,15 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   device.queue.writeBuffer(cameraUniformBuffer, 0, cameraArrayBuffer);
 
   const shapesArrayBuffer = new ArrayBuffer(
-    scene.world.objects.length * (52 * 4)
+    (scene.world.numberOfShapes() + 1) * SHAPE_BYTE_SIZE
   );
+  let offset = SHAPE_BYTE_SIZE;
   for (let i = 0; i < scene.world.objects.length; i++) {
-    scene.world.objects[i].copyToArrayBuffer(shapesArrayBuffer, i * (52 * 4));
+    offset = scene.world.objects[i].copyToArrayBuffer(
+      shapesArrayBuffer,
+      offset,
+      0
+    );
   }
   const shapesStorageBuffer = device.createBuffer({
     size: Math.ceil(shapesArrayBuffer.byteLength / 16) * 16,
@@ -177,7 +183,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   performance.mark('result-drawn-to-screen');
 }
 
-const renderWebGpu = (
+const renderWebGpu = async (
   ctx: CanvasRenderingContext2D,
   cfg: RenderConfiguration,
   sceneMode: SceneMode,
@@ -188,40 +194,45 @@ const renderWebGpu = (
 
   performance.clearMarks();
   performance.mark('render-start');
-  if (sceneDefinition && typeof sceneDefinition === 'string') {
-    const scene = new Scene(JSON.parse(sceneDefinition), cfg);
-    performance.mark('scene-created');
 
-    init(scene, ctx).then(() => {
-      performance.mark('render-end');
-
-      console.log(
-        ` building scene: ${performance
-          .measure('scene', 'render-start', 'scene-created')
-          .duration.toFixed(1)} ms\n`,
-        `building compute pipeline: ${performance
-          .measure('pipeline', 'scene-created', 'compute-pipeline-created')
-          .duration.toFixed(1)} ms\n`,
-        `render pass: ${performance
-          .measure(
-            'render-pass',
-            'compute-pipeline-created',
-            'webgpu-render-pass-end'
-          )
-          .duration.toFixed(1)} ms\n`,
-        `draw to screen: ${performance
-          .measure(
-            'draw-to-screen',
-            'webgpu-render-pass-end',
-            'result-drawn-to-screen'
-          )
-          .duration.toFixed(1)} ms\n`,
-        `total time: ${performance
-          .measure('total', 'render-start', 'render-end')
-          .duration.toFixed(1)} ms\n`
-      );
-    });
+  let scene: Scene;
+  if (sceneMode === 'scenePreset') {
+    scene = await loadScene(sceneDefinition as ScenePreset, cfg);
+  } else {
+    scene = new Scene(JSON.parse(sceneDefinition as string), cfg);
   }
+
+  performance.mark('scene-created');
+
+  init(scene, ctx).then(() => {
+    performance.mark('render-end');
+
+    console.log(
+      ` building scene: ${performance
+        .measure('scene', 'render-start', 'scene-created')
+        .duration.toFixed(1)} ms\n`,
+      `building compute pipeline: ${performance
+        .measure('pipeline', 'scene-created', 'compute-pipeline-created')
+        .duration.toFixed(1)} ms\n`,
+      `render pass: ${performance
+        .measure(
+          'render-pass',
+          'compute-pipeline-created',
+          'webgpu-render-pass-end'
+        )
+        .duration.toFixed(1)} ms\n`,
+      `draw to screen: ${performance
+        .measure(
+          'draw-to-screen',
+          'webgpu-render-pass-end',
+          'result-drawn-to-screen'
+        )
+        .duration.toFixed(1)} ms\n`,
+      `total time: ${performance
+        .measure('total', 'render-start', 'render-end')
+        .duration.toFixed(1)} ms\n`
+    );
+  });
 };
 
 export default renderWebGpu;

@@ -6,6 +6,8 @@ import { Bounds } from './bounds';
 import { Group, SubGroup } from './group';
 import { CsgShape } from './csg-shape';
 import { Vector4, vector } from '../math/vector4';
+import { Cone } from './primitives/cone';
+import { Cylinder } from './primitives/cylinder';
 
 export type ShapeType =
   | 'sphere'
@@ -17,7 +19,11 @@ export type ShapeType =
   | 'smooth-triangle'
   | 'csg'
   | 'group'
+  | 'bvh-group'
   | 'unknown';
+
+export const SHAPE_BYTE_SIZE = 256;
+
 export interface Shape {
   shapeType: ShapeType;
   transform: Matrix4;
@@ -36,7 +42,14 @@ export interface Shape {
   normalToWorld(n: Vector4): Vector4;
   pointToWorld(p: Vector4): Vector4;
   divide(threshold: number): void;
-  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void;
+  isGroup(): this is Group;
+  isCsgShape(): this is CsgShape;
+  numberOfDescendants(): number;
+  copyToArrayBuffer(
+    buffer: ArrayBuffer,
+    offset: number,
+    parentIdx: number
+  ): number;
 }
 
 export abstract class BaseShape implements Shape {
@@ -120,14 +133,99 @@ export abstract class BaseShape implements Shape {
     return;
   }
 
-  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
-    const u32view = new Uint32Array(buffer, offset, 4);
-    u32view[0] = this.shapeTypeId();
-    u32view[1] = this.materialIdx;
+  copyToArrayBuffer(
+    buffer: ArrayBuffer,
+    offset: number,
+    parentIndex = 0
+  ): number {
+    const u32view = new Uint32Array(buffer, offset, 8);
+    const f32view = new Float32Array(buffer, offset, 64);
 
-    this.transform.copyToArrayBuffer(buffer, offset + 4 * 4);
-    this.invTransform.copyToArrayBuffer(buffer, offset + 20 * 4);
-    this.invTransformTransposed.copyToArrayBuffer(buffer, offset + 36 * 4);
+    u32view[0] = this.shapeTypeId();
+
+    if (this.isConeOrCylinder()) {
+      f32view[1] = this.minimum;
+      f32view[2] = this.maximum;
+      u32view[3] = this.closed ? 1 : 0;
+    }
+
+    u32view[4] = this.materialIdx;
+    u32view[5] = parentIndex;
+
+    if (this.isGroup()) {
+      u32view[6] = (offset + SHAPE_BYTE_SIZE) / SHAPE_BYTE_SIZE;
+      u32view[7] =
+        (offset + SHAPE_BYTE_SIZE * this.numberOfDescendants()) /
+        SHAPE_BYTE_SIZE;
+    } else if (this.isCsgShape()) {
+      u32view[6] = (offset + SHAPE_BYTE_SIZE) / SHAPE_BYTE_SIZE;
+      u32view[7] =
+        (offset + SHAPE_BYTE_SIZE * this.numberOfDescendants()) /
+        SHAPE_BYTE_SIZE;
+    }
+
+    f32view[8] = this.bounds.min.x;
+    f32view[9] = this.bounds.min.y;
+    f32view[10] = this.bounds.min.z;
+    f32view[12] = this.bounds.max.x;
+    f32view[13] = this.bounds.max.y;
+    f32view[14] = this.bounds.max.z;
+
+    this.transform.copyToArrayBuffer(buffer, offset + 16 * 4);
+    this.invTransform.copyToArrayBuffer(buffer, offset + 32 * 4);
+    this.invTransformTransposed.copyToArrayBuffer(buffer, offset + 48 * 4);
+
+    let currentOffset = offset + SHAPE_BYTE_SIZE;
+    if (this.isGroup()) {
+      for (const shape of this.shapes) {
+        currentOffset = shape.copyToArrayBuffer(
+          buffer,
+          currentOffset,
+          offset / SHAPE_BYTE_SIZE
+        );
+      }
+    } else if (this.isCsgShape()) {
+      currentOffset = this.left.copyToArrayBuffer(
+        buffer,
+        currentOffset,
+        offset / SHAPE_BYTE_SIZE
+      );
+      currentOffset = this.right.copyToArrayBuffer(
+        buffer,
+        currentOffset,
+        offset / SHAPE_BYTE_SIZE
+      );
+    }
+    return currentOffset;
+  }
+
+  isConeOrCylinder(): this is Cone | Cylinder {
+    return this.shapeType === 'cone' || this.shapeType === 'cylinder';
+  }
+
+  isGroup(): this is Group {
+    return this.shapeType === 'group';
+  }
+
+  isCsgShape(): this is CsgShape {
+    return this.shapeType === 'csg';
+  }
+
+  numberOfDescendants(): number {
+    let count = 0;
+    if (this.isGroup()) {
+      for (const shape of this.shapes) {
+        if (shape.shapeType !== 'bvh-group') {
+          count++;
+        }
+        count += shape.numberOfDescendants();
+      }
+    } else if (this.isCsgShape()) {
+      count += 2;
+      count += this.left.numberOfDescendants();
+      count += this.right.numberOfDescendants();
+    }
+    return count;
   }
 
   private shapeTypeId(): number {
@@ -150,6 +248,8 @@ export abstract class BaseShape implements Shape {
         return 8;
       case 'group':
         return 9;
+      case 'bvh-group':
+        return 10;
       default:
         return 0;
     }

@@ -1,8 +1,6 @@
 import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { Bounds } from './bounds';
-import { Group } from './group';
 import { BaseShape, Shape } from './shape';
 
 export class CsgShape extends BaseShape {
@@ -78,19 +76,13 @@ export class CsgShape extends BaseShape {
   }
 
   private includes(s1: Shape, s2: Shape): boolean {
-    if (this.isGroup(s1)) {
+    if (s1.isGroup()) {
       const self = this;
       return s1.shapes.some((s) => self.includes(s, s2));
     }
-    if (this.isCsgShape(s1)) {
+    if (s1.isCsgShape()) {
       return this.includes(s1.left, s2) || this.includes(s1.right, s2);
     }
     return s1 === s2;
-  }
-  private isGroup(shape: Shape): shape is Group {
-    return (<Group>shape).shapes !== undefined;
-  }
-  private isCsgShape(shape: Shape): shape is CsgShape {
-    return (<CsgShape>shape).operation !== undefined;
   }
 }

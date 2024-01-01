@@ -170,4 +170,13 @@ export class World {
         normalDiff * (1 - ic.object.material.diffuse * 0.5)
     );
   }
+
+  numberOfShapes(): number {
+    let count = 0;
+    for (const shape of this.objects) {
+      count++;
+      count += shape.numberOfDescendants();
+    }
+    return count;
+  }
 }

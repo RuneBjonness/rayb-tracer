@@ -57,7 +57,7 @@ export class SubGroup implements Shape {
   bounds: Bounds;
   transformedBounds: Bounds;
 
-  shapeType: ShapeType = 'unknown';
+  shapeType: ShapeType = 'bvh-group';
 
   constructor(parent: Group | SubGroup) {
     this.transform = parent.transform;
@@ -66,7 +66,17 @@ export class SubGroup implements Shape {
     this.bounds = Bounds.empty();
     this.transformedBounds = this.bounds;
   }
-  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+
+  numberOfDescendants(): number {
+    return this.shapes.reduce((acc, s) => acc + s.numberOfDescendants(), 0);
+  }
+  isGroup(): this is Group {
+    return false;
+  }
+  isCsgShape(): this is CsgShape {
+    return false;
+  }
+  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): number {
     throw new Error('Method not implemented.');
   }
 

@@ -12,10 +12,29 @@ struct Camera {
 
 struct Shape {
   shape_type: u32,
+  min: f32,
+  max: f32,
+  closed: u32,
+
   material_idx: u32,
+  parent_idx: u32,
+  child_idx_start: u32,
+  child_idx_end: u32,
+
+  bound_min: vec3f,
+  bound_max: vec3f,
+
   transform: mat4x4<f32>,
   inv_transform: mat4x4<f32>,
   inv_transform_transposed: mat4x4<f32>,
+}
+
+struct BvhNode {
+  leaf: u32,
+  child_idx_start: u32,
+  child_idx_end: u32,
+  bound_min: vec3f,
+  bound_max: vec3f,
 }
 
 struct Material {
@@ -36,8 +55,9 @@ const SHAPE_CYLINDER = 4u;
 const SHAPE_CONE = 5u;
 const SHAPE_TRIANGLE = 6u;
 const SHAPE_SMOOTH_TRIANGLE = 7u;
-const SHAPE_SCG = 8u;
+const SHAPE_CSG = 8u;
 const SHAPE_GROUP = 9u;
+const SHAPE_BVH_GROUP = 10u;
 
 @group(0) @binding(0)
 var<uniform> camera: Camera;

@@ -5,9 +5,9 @@ import { Bounds } from '../bounds';
 import { BaseShape } from '../shape';
 
 export class Cylinder extends BaseShape {
-  private minimum: number;
-  private maximum: number;
-  private closed: boolean;
+  readonly minimum: number;
+  readonly maximum: number;
+  readonly closed: boolean;
 
   constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();

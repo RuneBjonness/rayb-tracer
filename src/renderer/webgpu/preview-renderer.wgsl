@@ -10,7 +10,7 @@ struct TraceResult {
 
 fn shade_pixel(x: f32, y: f32) -> vec3f {
   var color = vec3<f32>(0.0, 0.0, 0.0);
-  let max_depth = clamp(camera.max_depth + 1, 1, 6);
+  let max_depth = clamp(camera.max_depth + 1, 1, 6); // TODO: change definition of max_depth to include the first ray in TS
   let trace_results_len = u32(pow(2.0, f32(max_depth)));
   var trace_results = array<TraceResult, 128>();
   trace_results[0] = TraceResult(true, vec3<f32>(0.0, 0.0, 0.0), 1.0, ray_for_pixel(x, y), Ray(vec3f(), vec3f()), 1.0, 0.0);
