@@ -3,7 +3,7 @@ import { Matrix4 } from '../math/matrices';
 import { Ray } from '../rays';
 import { material, Material } from '../materials';
 import { Bounds } from './bounds';
-import { Group, SubGroup } from './group';
+import { Group } from './group';
 import { CsgShape } from './csg-shape';
 import { Vector4, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
@@ -19,12 +19,15 @@ export type ShapeType =
   | 'smooth-triangle'
   | 'csg'
   | 'group'
-  | 'bvh-group'
   | 'unknown';
 
 export const SHAPE_BYTE_SIZE = 256;
 
-export interface Shape {
+export interface Intersectable {
+  intersects(r: Ray): Intersection[];
+}
+
+export interface Shape extends Intersectable {
   shapeType: ShapeType;
   transform: Matrix4;
 
@@ -32,11 +35,10 @@ export interface Shape {
   materialIdx: number;
   materialDefinitions: Material[];
 
-  parent: Group | SubGroup | CsgShape | null;
+  parent: Group | CsgShape | null;
   bounds: Bounds;
   transformedBounds: Bounds;
 
-  intersects(r: Ray): Intersection[];
   normalAt(p: Vector4, i: Intersection | null): Vector4;
   worldToObject(p: Vector4): Vector4;
   normalToWorld(n: Vector4): Vector4;
@@ -215,11 +217,10 @@ export abstract class BaseShape implements Shape {
     let count = 0;
     if (this.isGroup()) {
       for (const shape of this.shapes) {
-        if (shape.shapeType !== 'bvh-group') {
-          count++;
-        }
+        count++;
         count += shape.numberOfDescendants();
       }
+      count += this.bvhNode?.numberOfShapeDescendants() ?? 0;
     } else if (this.isCsgShape()) {
       count += 2;
       count += this.left.numberOfDescendants();
@@ -248,8 +249,6 @@ export abstract class BaseShape implements Shape {
         return 8;
       case 'group':
         return 9;
-      case 'bvh-group':
-        return 10;
       default:
         return 0;
     }

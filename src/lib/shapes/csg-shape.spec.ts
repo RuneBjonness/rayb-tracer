@@ -3,7 +3,7 @@ import { intersection } from '../intersections';
 import { Ray } from '../rays';
 import { translation, scaling } from '../math/transformations';
 import { CsgShape } from './csg-shape';
-import { Group, SubGroup } from './group';
+import { Group } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
@@ -150,17 +150,9 @@ describe('CSG Shapes', () => {
     const csg = new CsgShape('difference', g1, g2);
     csg.divide(1);
 
-    expect((g1.shapes[0] as SubGroup).shapes[0].transform).toEqual(
-      s1.transform
-    );
-    expect((g1.shapes[1] as SubGroup).shapes[0].transform).toEqual(
-      s2.transform
-    );
-    expect((g2.shapes[0] as SubGroup).shapes[0].transform).toEqual(
-      s3.transform
-    );
-    expect((g2.shapes[1] as SubGroup).shapes[0].transform).toEqual(
-      s4.transform
-    );
+    expect(g1.bvhNode?.bvhNodes[0].shapes[0].transform).toEqual(s1.transform);
+    expect(g1.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s2.transform);
+    expect(g2.bvhNode?.bvhNodes[0].shapes[0].transform).toEqual(s3.transform);
+    expect(g2.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s4.transform);
   });
 });

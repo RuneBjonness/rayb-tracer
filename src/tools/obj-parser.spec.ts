@@ -41,8 +41,8 @@ f 1 3 4`;
   const parser = new ObjParser();
   parser.parse(objData);
 
-  const t1 = parser.model.shapes[0] as Triangle;
-  const t2 = parser.model.shapes[1] as Triangle;
+  const t1 = parser.model.bvhNode?.shapes[0] as Triangle;
+  const t2 = parser.model.bvhNode?.shapes[1] as Triangle;
 
   expect(t1.p1).toEqual(parser.vertices[0]);
   expect(t1.p2).toEqual(parser.vertices[1]);
@@ -66,9 +66,9 @@ f 1 2 3 4 5`;
   const parser = new ObjParser();
   parser.parse(objData);
 
-  const t1 = parser.model.shapes[0] as Triangle;
-  const t2 = parser.model.shapes[1] as Triangle;
-  const t3 = parser.model.shapes[2] as Triangle;
+  const t1 = parser.model.bvhNode?.shapes[0] as Triangle;
+  const t2 = parser.model.bvhNode?.shapes[1] as Triangle;
+  const t3 = parser.model.bvhNode?.shapes[2] as Triangle;
 
   expect(t1.p1).toEqual(parser.vertices[0]);
   expect(t1.p2).toEqual(parser.vertices[1]);
@@ -101,8 +101,8 @@ f 1 3 4`;
   const g1 = parser.groups['FirstGroup'];
   const g2 = parser.groups['SecondGroup'];
 
-  const t1 = g1.shapes[0] as Triangle;
-  const t2 = g2.shapes[0] as Triangle;
+  const t1 = g1.bvhNode?.shapes[0] as Triangle;
+  const t2 = g2.bvhNode?.shapes[0] as Triangle;
 
   expect(t1.p1).toEqual(parser.vertices[0]);
   expect(t1.p2).toEqual(parser.vertices[1]);
@@ -143,8 +143,8 @@ f 1/0/3 2/102/1 3/14/2`;
   const parser = new ObjParser();
   parser.parse(objData);
 
-  const t1 = parser.model.shapes[0] as SmoothTriangle;
-  const t2 = parser.model.shapes[1] as SmoothTriangle;
+  const t1 = parser.model.bvhNode?.shapes[0] as SmoothTriangle;
+  const t2 = parser.model.bvhNode?.shapes[1] as SmoothTriangle;
 
   expect(t1.p1).toEqual(parser.vertices[0]);
   expect(t1.p2).toEqual(parser.vertices[1]);

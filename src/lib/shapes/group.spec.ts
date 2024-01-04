@@ -120,17 +120,15 @@ describe('Groups', () => {
     g.add(s3);
     g.divide(1);
 
-    expect(g.shapes.length).toBe(2);
-
-    const subgroup = g.shapes[0] as Group;
-    expect(subgroup.shapes.length).toBe(2);
-    expect((subgroup.shapes[0] as Group).shapes[0].transform).toEqual(
+    expect(g.shapes.length).toBe(0);
+    expect(g.bvhNode?.bvhNodes.length).toBe(2);
+    expect(g.bvhNode?.shapes.length).toBe(0);
+    expect(g.bvhNode?.bvhNodes[0].bvhNodes[0].shapes[0].transform).toEqual(
       s1.transform
     );
-    expect((subgroup.shapes[1] as Group).shapes[0].transform).toEqual(
+    expect(g.bvhNode?.bvhNodes[0].bvhNodes[1].shapes[0].transform).toEqual(
       s2.transform
     );
-
-    expect(g.shapes[1].transform).toEqual(s3.transform);
+    expect(g.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s3.transform);
   });
 });

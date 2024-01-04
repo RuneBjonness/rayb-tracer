@@ -14,7 +14,6 @@ import {
   Transform,
   UvMapperDefinition,
   UvPatternDefinition,
-  WorldDefinition,
 } from './scene-definition';
 import { radians, viewTransform } from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';

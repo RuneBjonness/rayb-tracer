@@ -63,7 +63,6 @@ const SHAPE_TRIANGLE = 6u;
 const SHAPE_SMOOTH_TRIANGLE = 7u;
 const SHAPE_CSG = 8u;
 const SHAPE_GROUP = 9u;
-const SHAPE_BVH_GROUP = 10u;
 
 @group(0) @binding(0)
 var<uniform> camera: Camera;

@@ -1,14 +1,12 @@
 import { Intersection } from '../intersections';
-import { Material } from '../materials';
-import { Matrix4 } from '../math/matrices';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
 import { Bounds } from './bounds';
-import { CsgShape } from './csg-shape';
-import { BaseShape, Shape, ShapeType } from './shape';
+import { BaseShape, Intersectable, Shape } from './shape';
 
 export class Group extends BaseShape {
   shapes: Shape[] = [];
+  bvhNode: BvhNode | null = null;
 
   constructor() {
     super();
@@ -22,7 +20,11 @@ export class Group extends BaseShape {
   }
 
   override divide(threshold: number): void {
-    divideGroup(this, threshold);
+    this.bvhNode = new BvhNode();
+    this.bvhNode.bounds = this.bounds;
+    this.bvhNode.shapes = [...this.shapes];
+    this.shapes = [];
+    this.bvhNode.divide(threshold);
   }
 
   protected localIntersects(r: Ray): Intersection[] {
@@ -30,6 +32,9 @@ export class Group extends BaseShape {
       const intersections: Intersection[] = [];
       for (const shape of this.shapes) {
         intersections.push(...shape.intersects(r));
+      }
+      if (this.bvhNode) {
+        intersections.push(...this.bvhNode.intersects(r));
       }
       return intersections.sort((a, b) => a.time - b.time);
     }
@@ -43,114 +48,101 @@ export class Group extends BaseShape {
   }
 }
 
-export class SubGroup implements Shape {
+export class BvhNode implements Intersectable {
+  bvhNodes: BvhNode[] = [];
   shapes: Shape[] = [];
+  bounds: Bounds = Bounds.empty();
 
-  transform: Matrix4;
+  constructor() {}
 
-  material: Material;
-  materialIdx: number = -1;
-  materialDefinitions: Material[] = [];
-
-  parent: Group | SubGroup | CsgShape | null;
-
-  bounds: Bounds;
-  transformedBounds: Bounds;
-
-  shapeType: ShapeType = 'bvh-group';
-
-  constructor(parent: Group | SubGroup) {
-    this.transform = parent.transform;
-    this.material = parent.material;
-    this.parent = parent;
-    this.bounds = Bounds.empty();
-    this.transformedBounds = this.bounds;
+  isLeafNode(): boolean {
+    return this.bvhNodes.length === 0;
   }
 
-  numberOfDescendants(): number {
-    return this.shapes.reduce((acc, s) => acc + s.numberOfDescendants(), 0);
+  numberOfNodeDescendants(): number {
+    return this.bvhNodes.reduce(
+      (acc, n) => acc + n.numberOfNodeDescendants(),
+      0
+    );
   }
-  isGroup(): this is Group {
-    return false;
+
+  numberOfShapeDescendants(): number {
+    if (this.isLeafNode()) {
+      return this.shapes.reduce((acc, s) => acc + s.numberOfDescendants(), 0);
+    }
+    return this.bvhNodes.reduce(
+      (acc, n) => acc + n.numberOfShapeDescendants(),
+      0
+    );
   }
-  isCsgShape(): this is CsgShape {
-    return false;
-  }
+
   copyToArrayBuffer(buffer: ArrayBuffer, offset: number): number {
     throw new Error('Method not implemented.');
   }
 
-  add(child: Shape) {
-    this.shapes.push(child);
-    this.bounds.merge(child.transformedBounds);
+  add(shape: Shape) {
+    this.shapes.push(shape);
+    this.bounds.merge(shape.transformedBounds);
   }
 
   intersects(r: Ray): Intersection[] {
     if (this.bounds.intersects(r)) {
       const intersections: Intersection[] = [];
-      for (const shape of this.shapes) {
-        intersections.push(...shape.intersects(r));
+      if (this.isLeafNode()) {
+        for (const shape of this.shapes) {
+          intersections.push(...shape.intersects(r));
+        }
+      } else {
+        for (const node of this.bvhNodes) {
+          intersections.push(...node.intersects(r));
+        }
       }
       return intersections.sort((a, b) => a.time - b.time);
     }
     return [];
   }
-  normalAt(p: Vector4, i: Intersection | null): Vector4 {
-    throw new Error('Method not implemented.');
-  }
-  worldToObject(p: Vector4): Vector4 {
-    return p;
-  }
-  normalToWorld(n: Vector4): Vector4 {
-    return n;
-  }
-  pointToWorld(p: Vector4): Vector4 {
-    return p;
-  }
+
   divide(threshold: number): void {
-    divideGroup(this, threshold);
-  }
-}
+    if (this.shapes.length > threshold) {
+      const n1 = new BvhNode();
+      const n2 = new BvhNode();
 
-function divideGroup(group: Group | SubGroup, threshold: number): void {
-  if (group.shapes.length > threshold) {
-    const g1 = new SubGroup(group);
-    const g2 = new SubGroup(group);
+      const overlappingShapes: Shape[] = [];
+      const [b1, b2] = this.bounds.split();
 
-    const overlappingShapes: Shape[] = [];
-    const [b1, b2] = group.bounds.split();
-
-    for (const s of group.shapes) {
-      if (b1.containsBounds(s.transformedBounds)) {
-        g1.add(s);
-      } else if (b2.containsBounds(s.transformedBounds)) {
-        g2.add(s);
-      } else {
-        overlappingShapes.push(s);
-      }
-    }
-
-    if (g1.shapes.length > 0 || g2.shapes.length > 0) {
-      group.shapes = [];
-      if (g1.shapes.length > 0) {
-        group.shapes.push(g1);
-      }
-      if (g2.shapes.length > 0) {
-        group.shapes.push(g2);
-      }
-
-      if (overlappingShapes.length > threshold) {
-        const g3 = new SubGroup(group);
-        for (const s of overlappingShapes) {
-          g3.add(s);
+      for (const s of this.shapes) {
+        if (b1.containsBounds(s.transformedBounds)) {
+          n1.add(s);
+        } else if (b2.containsBounds(s.transformedBounds)) {
+          n2.add(s);
+        } else {
+          overlappingShapes.push(s);
         }
-        group.shapes.push(g3);
-      } else {
-        group.shapes.push(...overlappingShapes);
+      }
+
+      if (n1.shapes.length > 0 || n2.shapes.length > 0) {
+        this.shapes = [];
+        if (n1.shapes.length > 0) {
+          this.bvhNodes.push(n1);
+        }
+        if (n2.shapes.length > 0) {
+          this.bvhNodes.push(n2);
+        }
+
+        if (overlappingShapes.length > 0) {
+          const n3 = new BvhNode();
+          for (const s of overlappingShapes) {
+            n3.add(s);
+          }
+          this.bvhNodes.push(n3);
+        }
       }
     }
-  }
-  for (const s of group.shapes) {
-    s.divide(threshold);
+    for (const n of this.bvhNodes) {
+      n.divide(threshold);
+    }
+    for (const s of this.shapes) {
+      s.divide(threshold);
+    }
   }
 }

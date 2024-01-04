@@ -41,7 +41,8 @@ export class MarbleMadness extends Scene {
     const lamp = new AreaLight(
       new Color(1.2, 1.2, 1.2),
       renderCfg.maxLightSamples,
-      renderCfg.adaptiveLightSamplingSensitivity
+      renderCfg.adaptiveLightSamplingSensitivity,
+      this.materials
     );
     lamp.transform = translation(size * 2, size * 2, -size).multiply(
       rotationZ(radians(90))
