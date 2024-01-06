@@ -10,6 +10,7 @@ import {
 } from '../../lib/materials';
 import { SHAPE_BYTE_SIZE } from '../../lib/shapes/shape';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
+import { BVH_NODE_BYTE_SIZE } from '../../lib/shapes/bvh-node';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -97,13 +98,15 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   let shapesOffset = SHAPE_BYTE_SIZE;
 
   const bvhArrayBuffer = new ArrayBuffer(
-    (scene.world.numberOfShapes() + 1) * SHAPE_BYTE_SIZE
+    (scene.world.numberOfBvhNodes() + 1) * BVH_NODE_BYTE_SIZE
   );
-  let bvhOffset = SHAPE_BYTE_SIZE;
+  let bvhOffset = BVH_NODE_BYTE_SIZE;
   for (let i = 0; i < scene.world.objects.length; i++) {
-    shapesOffset = scene.world.objects[i].copyToArrayBuffer(
+    [shapesOffset, bvhOffset] = scene.world.objects[i].copyToArrayBuffers(
       shapesArrayBuffer,
       shapesOffset,
+      bvhArrayBuffer,
+      bvhOffset,
       0
     );
   }

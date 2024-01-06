@@ -49,7 +49,7 @@ export class MarbleMadness extends Scene {
     );
 
     world.lights.push(lamp);
-    let matIdx = -1;
+    let matIdx = 0;
     const marbles = new Group();
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {

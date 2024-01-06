@@ -20,13 +20,25 @@ fn hit(ray: Ray) -> HitInfo {
   var parent_idx = 0u;
   var parent_space_ray = ray;
 
+  let bvh_node_count = arrayLength(&bvh);
+  var n = 0u;
+  var last_bvh_approved_shape_idx = 0u;
+
   while(i < shape_count) {
-    if(parent_idx > 0 && i > shapes[parent_idx].child_idx_end) {
-      parent_space_ray = Ray(
-        (shapes[parent_idx].transform * vec4<f32>(parent_space_ray.origin, 1.0)).xyz,
-        (shapes[parent_idx].transform * vec4<f32>(parent_space_ray.direction, 0.0)).xyz,
-      );
-      parent_idx = shapes[parent_idx].parent_idx;
+    if(parent_idx > 0) {
+      var last_child_idx = shapes[parent_idx].child_idx_end;
+
+      if(shapes[parent_idx].shape_type == SHAPE_GROUP_BVH) {
+        last_child_idx = bvh[shapes[parent_idx].child_idx_end].child_idx_end;
+      }
+
+      if(i > last_child_idx) {
+        parent_space_ray = Ray(
+          (shapes[parent_idx].transform * vec4<f32>(parent_space_ray.origin, 1.0)).xyz,
+          (shapes[parent_idx].transform * vec4<f32>(parent_space_ray.direction, 0.0)).xyz,
+        );
+        parent_idx = shapes[parent_idx].parent_idx;
+      }
     }
 
     let inv_ray = Ray(
@@ -72,7 +84,16 @@ fn hit(ray: Ray) -> HitInfo {
         } else {
           i = shapes[i].child_idx_end;
         }
-      }      
+      }
+      case SHAPE_GROUP_BVH: {
+        if(bounds_intersects(inv_ray, shapes[i].bound_min, shapes[i].bound_max) == true) {
+          parent_idx = i;
+          parent_space_ray = inv_ray;
+          n = shapes[i].child_idx_start + 1u;
+        } else {
+          i = bvh[shapes[i].child_idx_end].child_idx_end;
+        }
+      }
       default: {
         hit = -1.0;
       }
@@ -81,7 +102,26 @@ fn hit(ray: Ray) -> HitInfo {
       closest_hit = hit;
       closest_shape = i;
     }
+
     i++;
+
+    while(n > 0 && n < bvh_node_count && i > last_bvh_approved_shape_idx) {
+      if(bounds_intersects(parent_space_ray, bvh[n].bound_min, bvh[n].bound_max) == true) {
+        if(bvh[n].leaf == 1u) {
+          i = bvh[n].child_idx_start;
+          last_bvh_approved_shape_idx = bvh[n].child_idx_end;
+        }
+        n++;
+      } else {
+        if(bvh[n].leaf == 1u) {
+          i = bvh[n].child_idx_end + 1u;
+          n++;
+        } else {
+          i = bvh[bvh[n].child_idx_end].child_idx_end + 1u;
+          n = bvh[n].child_idx_end + 1u;
+        }
+      }
+    }
   }
 
   if(closest_hit < 1000000.0) {
