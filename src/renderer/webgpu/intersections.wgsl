@@ -1,5 +1,5 @@
-const EPSILON = 0.0001;
-const SURFACE_EPSILON = 0.001;
+const EPSILON = 0.001;
+const SURFACE_EPSILON = 0.005;
 
 struct Ray {
   origin: vec3<f32>,
@@ -137,10 +137,13 @@ fn normal_at(hit: HitInfo) -> vec3<f32> {
 
   var local_point = hit.point;
   var idx = hit.shape_index;
-  while(idx > 0) {
-    local_point = (shapes[idx].inv_transform * vec4<f32>(local_point, 1.0)).xyz;
+
+  var m = shapes[idx].inv_transform;
+  while(shapes[idx].parent_idx > 0) {
     idx = shapes[idx].parent_idx;
+    m = m * shapes[idx].inv_transform;
   }
+  local_point = (m * vec4<f32>(local_point, 1.0)).xyz;
 
   var local_normal = vec3<f32>(0.0, 0.0, 0.0);
   switch(shape.shape_type) {
