@@ -77,7 +77,9 @@ export class MarbleMadness extends Scene {
       }
     }
     marbles.divide(2 * 2 * 2);
-    marbles.transform = scaling(0.4, 0.4, 0.4);
+    marbles.transform = scaling(0.44, 0.44, 0.44); // SIZE 100
+    // marbles.transform = scaling(0.6, 0.6, 0.6); // SIZE 70
+    // marbles.transform = scaling(1.8, 1.8, 1.8); // SIZE 25
 
     world.objects.push(marbles);
 

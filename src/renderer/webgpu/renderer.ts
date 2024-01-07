@@ -22,7 +22,17 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
     throw new Error('No appropriate GPUAdapter found.');
   }
 
-  const device = await adapter.requestDevice();
+  const canUse512MBStorageBuffers =
+    adapter?.limits.maxStorageBufferBindingSize >= 512 * 1024 * 1024;
+  if (!canUse512MBStorageBuffers) {
+    throw new Error(
+      `GPUAdapter does not support 512MB storage buffers. Max: ${adapter?.limits.maxStorageBufferBindingSize}`
+    );
+  }
+
+  const device = await adapter.requestDevice({
+    requiredLimits: { maxStorageBufferBindingSize: 512 * 1024 * 1024 },
+  });
 
   const module = device.createShaderModule({
     code: mainWgsl + intersectionsWgsl + previewRendererWgsl,
