@@ -31,14 +31,12 @@ export interface Intersectable {
 
 export interface Shape extends Intersectable {
   shapeType: ShapeType;
-  transform: Matrix4;
 
   material: Material;
   materialIdx: number;
   materialDefinitions: Material[];
 
   parent: Group | CsgShape | null;
-  localBounds: Bounds;
   bounds: Bounds;
 
   normalAt(p: Vector4, i: Intersection | null): Vector4;

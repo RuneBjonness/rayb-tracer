@@ -6,6 +6,7 @@ import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
 import { point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
+import { Cube } from './primitives/cube';
 
 describe('Groups', () => {
   test('creating a new group', () => {
@@ -107,28 +108,28 @@ describe('Groups', () => {
   });
 
   test('dividing a group partitions its children', () => {
-    const s1 = new Sphere();
-    s1.transform = translation(-2, -2, 0);
-    const s2 = new Sphere();
-    s2.transform = translation(-2, 2, 0);
-    const s3 = new Sphere();
-    s3.transform = scaling(4, 4, 4);
+    const sphere = new Sphere();
+    sphere.transform = translation(-2, -2, 0);
+    const cyl = new Cylinder(-1, 1);
+    cyl.transform = translation(-2, 2, 0);
+    const cube = new Cube();
+    cube.transform = scaling(4, 4, 4);
 
     const g = new Group();
-    g.add(s1);
-    g.add(s2);
-    g.add(s3);
+    g.add(sphere);
+    g.add(cyl);
+    g.add(cube);
     g.divide(1);
 
     expect(g.shapes.length).toBe(0);
     expect(g.bvhNode?.bvhNodes.length).toBe(2);
     expect(g.bvhNode?.shapes.length).toBe(0);
-    expect(g.bvhNode?.bvhNodes[0].bvhNodes[0].shapes[0].transform).toEqual(
-      s1.transform
+    expect(g.bvhNode?.bvhNodes[0].bvhNodes[0].shapes[0].shapeType).toEqual(
+      'sphere'
     );
-    expect(g.bvhNode?.bvhNodes[0].bvhNodes[1].shapes[0].transform).toEqual(
-      s2.transform
+    expect(g.bvhNode?.bvhNodes[0].bvhNodes[1].shapes[0].shapeType).toEqual(
+      'cylinder'
     );
-    expect(g.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s3.transform);
+    expect(g.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cube');
   });
 });

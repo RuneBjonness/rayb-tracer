@@ -9,6 +9,7 @@ import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
 import { TestShape } from './shape';
 import { point, vector } from '../math/vector4';
+import { Cone } from './primitives/cone';
 
 describe('CSG Shapes', () => {
   test('CSG is created with an operation and two shapes', () => {
@@ -131,28 +132,28 @@ describe('CSG Shapes', () => {
   });
 
   test('dividing a csg shape partitions its children', () => {
-    const s1 = new Sphere();
-    s1.transform = translation(-1.5, 0, 0);
-    const s2 = new Sphere();
-    s2.transform = translation(1.5, 0, 0);
+    const sphere = new Sphere();
+    sphere.transform = translation(-1.5, 0, 0);
+    const cylinder = new Cylinder(-1, 1);
+    cylinder.transform = translation(1.5, 0, 0);
     const g1 = new Group();
-    g1.add(s1);
-    g1.add(s2);
+    g1.add(sphere);
+    g1.add(cylinder);
 
-    const s3 = new Sphere();
-    s3.transform = translation(0, 0, -1.5);
-    const s4 = new Sphere();
-    s4.transform = translation(0, 0, 1.5);
+    const cube = new Cube();
+    cube.transform = translation(0, 0, -1.5);
+    const cone = new Cone(-1, 1, true);
+    cone.transform = translation(0, 0, 1.5);
     const g2 = new Group();
-    g2.add(s3);
-    g2.add(s4);
+    g2.add(cube);
+    g2.add(cone);
 
     const csg = new CsgShape('difference', g1, g2);
     csg.divide(1);
 
-    expect(g1.bvhNode?.bvhNodes[0].shapes[0].transform).toEqual(s1.transform);
-    expect(g1.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s2.transform);
-    expect(g2.bvhNode?.bvhNodes[0].shapes[0].transform).toEqual(s3.transform);
-    expect(g2.bvhNode?.bvhNodes[1].shapes[0].transform).toEqual(s4.transform);
+    expect(g1.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual('sphere');
+    expect(g1.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cylinder');
+    expect(g2.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual('cube');
+    expect(g2.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cone');
   });
 });
