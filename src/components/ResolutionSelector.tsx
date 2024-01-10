@@ -70,6 +70,13 @@ export default function ResolutionSelector({
           />
           <Divider />
           <ResolutionMenuItem
+            width={1024}
+            height={576}
+            ratio="16:9"
+            standard="WSVGA"
+            onClick={setResolution}
+          />
+          <ResolutionMenuItem
             width={1280}
             height={720}
             ratio="16:9"
