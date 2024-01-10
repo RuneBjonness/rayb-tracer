@@ -38,8 +38,8 @@ export interface Shape extends Intersectable {
   materialDefinitions: Material[];
 
   parent: Group | CsgShape | null;
+  localBounds: Bounds;
   bounds: Bounds;
-  transformedBounds: Bounds;
 
   normalAt(p: Vector4, i: Intersection | null): Vector4;
   worldToObject(p: Vector4): Vector4;
@@ -88,14 +88,14 @@ export abstract class BaseShape implements Shape {
 
   parent: Group | CsgShape | null = null;
 
-  bounds: Bounds;
+  localBounds: Bounds;
 
-  private _transformedBounds: Bounds | null = null;
-  public get transformedBounds(): Bounds {
-    if (!this._transformedBounds) {
-      this._transformedBounds = this.bounds.clone().transform(this.transform);
+  private _bounds: Bounds | null = null;
+  public get bounds(): Bounds {
+    if (!this._bounds) {
+      this._bounds = this.localBounds.clone().transform(this.transform);
     }
-    return this._transformedBounds;
+    return this._bounds;
   }
 
   private invTransform: Matrix4;
@@ -105,7 +105,7 @@ export abstract class BaseShape implements Shape {
     this._transform = new Matrix4();
     this.invTransform = new Matrix4();
     this.invTransformTransposed = new Matrix4();
-    this.bounds = Bounds.empty();
+    this.localBounds = Bounds.empty();
   }
 
   intersects(r: Ray): Intersection[] {
@@ -165,18 +165,18 @@ export abstract class BaseShape implements Shape {
     if (this.isGroup() && this.bvhNode) {
       const bvhIndex = bvhBufferOffset / BVH_NODE_BYTE_SIZE;
       u32view[6] = bvhIndex;
-      u32view[7] = bvhIndex + this.bvhNode.numberOfNodeDescendants();
+      u32view[7] = bvhIndex + this.bvhNode.numberOfNodeDescendants() - 1;
     } else if (this.shapeType === 'group' || this.shapeType === 'csg') {
       u32view[6] = shapeIndex + 1;
       u32view[7] = shapeIndex + this.numberOfDescendants();
     }
 
-    f32view[8] = this.bounds.min.x;
-    f32view[9] = this.bounds.min.y;
-    f32view[10] = this.bounds.min.z;
-    f32view[12] = this.bounds.max.x;
-    f32view[13] = this.bounds.max.y;
-    f32view[14] = this.bounds.max.z;
+    f32view[8] = this.localBounds.min.x;
+    f32view[9] = this.localBounds.min.y;
+    f32view[10] = this.localBounds.min.z;
+    f32view[12] = this.localBounds.max.x;
+    f32view[13] = this.localBounds.max.y;
+    f32view[14] = this.localBounds.max.z;
 
     this.transform.copyToArrayBuffer(shapeBuffer, shapeBufferOffset + 16 * 4);
     this.invTransform.copyToArrayBuffer(

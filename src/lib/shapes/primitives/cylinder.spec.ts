@@ -99,14 +99,14 @@ describe('Cylinders', () => {
   test('the default bounds of a cylinder', () => {
     const c = new Cylinder();
 
-    expect(c.bounds?.min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
-    expect(c.bounds?.max).toEqual(point(1, Number.POSITIVE_INFINITY, 1));
+    expect(c.localBounds?.min).toEqual(point(-1, Number.NEGATIVE_INFINITY, -1));
+    expect(c.localBounds?.max).toEqual(point(1, Number.POSITIVE_INFINITY, 1));
   });
 
   test('the bounds of a truncated cylinder', () => {
     const c = new Cylinder(-5, 5);
 
-    expect(c.bounds?.min).toEqual(point(-1, -5, -1));
-    expect(c.bounds?.max).toEqual(point(1, 5, 1));
+    expect(c.localBounds?.min).toEqual(point(-1, -5, -1));
+    expect(c.localBounds?.max).toEqual(point(1, 5, 1));
   });
 });

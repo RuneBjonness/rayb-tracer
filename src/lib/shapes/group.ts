@@ -16,13 +16,13 @@ export class Group extends BaseShape {
   add(child: Shape) {
     child.parent = this;
     this.shapes.push(child);
-    this.bounds.merge(child.transformedBounds);
+    this.localBounds.merge(child.bounds);
   }
 
   override divide(threshold: number): void {
     this.shapeType = 'group-bvh';
     this.bvhNode = new BvhNode();
-    this.bvhNode.bounds = this.bounds;
+    this.bvhNode.bounds = this.localBounds;
     this.bvhNode.shapes = [...this.shapes];
     this.shapes = [];
     this.bvhNode.divide(threshold);
@@ -33,7 +33,7 @@ export class Group extends BaseShape {
       return this.bvhNode.intersects(r).sort((a, b) => a.time - b.time);
     }
 
-    if (this.bounds.intersects(r)) {
+    if (this.localBounds.intersects(r)) {
       const intersections: Intersection[] = [];
       for (const shape of this.shapes) {
         intersections.push(...shape.intersects(r));

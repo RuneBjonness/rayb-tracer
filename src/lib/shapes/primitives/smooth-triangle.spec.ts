@@ -22,8 +22,8 @@ describe('Smooth Triangles', () => {
   });
 
   test('the bounds of a smooth triangle', () => {
-    expect(tri.bounds?.min).toEqual(point(-1, 0, 0));
-    expect(tri.bounds?.max).toEqual(point(1, 1, 0));
+    expect(tri.localBounds?.min).toEqual(point(-1, 0, 0));
+    expect(tri.localBounds?.max).toEqual(point(1, 1, 0));
   });
 
   test('an intersection with a smooth triangle stores u/v', () => {

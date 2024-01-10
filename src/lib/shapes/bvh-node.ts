@@ -94,7 +94,7 @@ export class BvhNode implements Intersectable {
 
   add(shape: Shape) {
     this.shapes.push(shape);
-    this.bounds.merge(shape.transformedBounds);
+    this.bounds.merge(shape.bounds);
   }
 
   intersects(r: Ray): Intersection[] {
@@ -123,9 +123,9 @@ export class BvhNode implements Intersectable {
       const [b1, b2] = this.bounds.split();
 
       for (const s of this.shapes) {
-        if (b1.containsBounds(s.transformedBounds)) {
+        if (b1.containsBounds(s.bounds)) {
           n1.add(s);
-        } else if (b2.containsBounds(s.transformedBounds)) {
+        } else if (b2.containsBounds(s.bounds)) {
           n2.add(s);
         } else {
           overlappingShapes.push(s);

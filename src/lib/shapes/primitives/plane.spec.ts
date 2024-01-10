@@ -53,10 +53,10 @@ describe('Planes', () => {
   test('the bounds of a plane', () => {
     const p = new Plane();
 
-    expect(p.bounds?.min).toEqual(
+    expect(p.localBounds?.min).toEqual(
       point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY)
     );
-    expect(p.bounds?.max).toEqual(
+    expect(p.localBounds?.max).toEqual(
       point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY)
     );
   });

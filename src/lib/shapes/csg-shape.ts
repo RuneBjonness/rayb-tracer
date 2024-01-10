@@ -14,8 +14,8 @@ export class CsgShape extends BaseShape {
     left.parent = this;
     right.parent = this;
 
-    this.bounds = left.transformedBounds.clone();
-    this.bounds.merge(right.transformedBounds);
+    this.localBounds = left.bounds.clone();
+    this.localBounds.merge(right.bounds);
   }
 
   override divide(threshold: number): void {
@@ -57,7 +57,7 @@ export class CsgShape extends BaseShape {
   }
 
   protected localIntersects(r: Ray): Intersection[] {
-    if (this.bounds.intersects(r)) {
+    if (this.localBounds.intersects(r)) {
       const intersections: Intersection[] = [
         ...this.left.intersects(r),
         ...this.right.intersects(r),

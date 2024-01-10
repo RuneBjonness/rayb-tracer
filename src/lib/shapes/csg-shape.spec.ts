@@ -114,8 +114,8 @@ describe('CSG Shapes', () => {
 
     const csg = new CsgShape('union', s, c);
 
-    expect(csg.bounds.min).toEqual(point(-1, -5, -1));
-    expect(csg.bounds.max).toEqual(point(1, 5, 1));
+    expect(csg.localBounds.min).toEqual(point(-1, -5, -1));
+    expect(csg.localBounds.max).toEqual(point(1, 5, 1));
   });
 
   test('the bounds of a csg is affected by children transformations', () => {
@@ -126,8 +126,8 @@ describe('CSG Shapes', () => {
 
     const csg = new CsgShape('union', s1, s2);
 
-    expect(csg.bounds.min).toEqual(point(-2, -2, -2));
-    expect(csg.bounds.max).toEqual(point(6, 2, 2));
+    expect(csg.localBounds.min).toEqual(point(-2, -2, -2));
+    expect(csg.localBounds.max).toEqual(point(6, 2, 2));
   });
 
   test('dividing a csg shape partitions its children', () => {

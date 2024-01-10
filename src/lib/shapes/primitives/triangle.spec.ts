@@ -74,7 +74,7 @@ describe('Triangles', () => {
   test('the bounds of a triangle', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
 
-    expect(t.bounds?.min).toEqual(point(-1, 0, 0));
-    expect(t.bounds?.max).toEqual(point(1, 1, 0));
+    expect(t.localBounds?.min).toEqual(point(-1, 0, 0));
+    expect(t.localBounds?.max).toEqual(point(1, 1, 0));
   });
 });

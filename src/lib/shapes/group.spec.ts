@@ -88,8 +88,8 @@ describe('Groups', () => {
     g.add(s);
     g.add(c);
 
-    expect(g.bounds.min).toEqual(point(-1, -5, -1));
-    expect(g.bounds.max).toEqual(point(1, 5, 1));
+    expect(g.localBounds.min).toEqual(point(-1, -5, -1));
+    expect(g.localBounds.max).toEqual(point(1, 5, 1));
   });
 
   test('the bounds of a group is affected by children transformations', () => {
@@ -102,8 +102,8 @@ describe('Groups', () => {
     g.add(s1);
     g.add(s2);
 
-    expect(g.bounds.min).toEqual(point(-2, -2, -2));
-    expect(g.bounds.max).toEqual(point(6, 2, 2));
+    expect(g.localBounds.min).toEqual(point(-2, -2, -2));
+    expect(g.localBounds.max).toEqual(point(6, 2, 2));
   });
 
   test('dividing a group partitions its children', () => {

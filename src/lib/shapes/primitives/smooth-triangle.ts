@@ -21,7 +21,7 @@ export class SmoothTriangle extends BaseShape {
     this.e1 = p2.clone().subtract(p1);
     this.e2 = p3.clone().subtract(p1);
 
-    this.bounds = new Bounds(
+    this.localBounds = new Bounds(
       point(
         Math.min(p1.x, p2.x, p3.x),
         Math.min(p1.y, p2.y, p3.y),

@@ -61,14 +61,14 @@ describe('Cones', () => {
   test('the bounds of a unbounded cone', () => {
     const c = new Cone();
 
-    expect(c.bounds?.min).toEqual(
+    expect(c.localBounds?.min).toEqual(
       point(
         Number.NEGATIVE_INFINITY,
         Number.NEGATIVE_INFINITY,
         Number.NEGATIVE_INFINITY
       )
     );
-    expect(c.bounds?.max).toEqual(
+    expect(c.localBounds?.max).toEqual(
       point(
         Number.POSITIVE_INFINITY,
         Number.POSITIVE_INFINITY,
@@ -80,7 +80,7 @@ describe('Cones', () => {
   test('the bounds of a cone', () => {
     const c = new Cone(-5, 3);
 
-    expect(c.bounds?.min).toEqual(point(-5, -5, -5));
-    expect(c.bounds?.max).toEqual(point(5, 3, 5));
+    expect(c.localBounds?.min).toEqual(point(-5, -5, -5));
+    expect(c.localBounds?.max).toEqual(point(5, 3, 5));
   });
 });

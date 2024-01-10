@@ -17,7 +17,7 @@ export class Cone extends BaseShape {
     this.closed = closed ?? false;
 
     const limit = Math.max(Math.abs(this.minimum), Math.abs(this.maximum));
-    this.bounds = new Bounds(
+    this.localBounds = new Bounds(
       point(-limit, this.minimum, -limit),
       point(limit, this.maximum, limit)
     );

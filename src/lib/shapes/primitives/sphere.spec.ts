@@ -96,7 +96,7 @@ describe('Spheres', () => {
   test('the bounds of a sphere', () => {
     const s = new Sphere();
 
-    expect(s.bounds?.min).toEqual(point(-1, -1, -1));
-    expect(s.bounds?.max).toEqual(point(1, 1, 1));
+    expect(s.localBounds?.min).toEqual(point(-1, -1, -1));
+    expect(s.localBounds?.max).toEqual(point(1, 1, 1));
   });
 });

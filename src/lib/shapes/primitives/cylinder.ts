@@ -16,7 +16,7 @@ export class Cylinder extends BaseShape {
     this.maximum = maximum ?? Number.POSITIVE_INFINITY;
     this.closed = closed ?? false;
 
-    this.bounds = new Bounds(
+    this.localBounds = new Bounds(
       point(-1, this.minimum, -1),
       point(1, this.maximum, 1)
     );

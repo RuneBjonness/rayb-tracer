@@ -60,7 +60,7 @@ describe('Cubes', () => {
   test('the bounds of a cube', () => {
     const c = new Cube();
 
-    expect(c.bounds?.min).toEqual(point(-1, -1, -1));
-    expect(c.bounds?.max).toEqual(point(1, 1, 1));
+    expect(c.localBounds?.min).toEqual(point(-1, -1, -1));
+    expect(c.localBounds?.max).toEqual(point(1, 1, 1));
   });
 });
