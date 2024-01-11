@@ -1,5 +1,4 @@
 import { ObjParser } from './obj-parser';
-import { SmoothTriangle } from '../lib/shapes/primitives/smooth-triangle';
 import { Triangle } from '../lib/shapes/primitives/triangle';
 import { point, vector } from '../lib/math/vector4';
 
@@ -143,8 +142,8 @@ f 1/0/3 2/102/1 3/14/2`;
   const parser = new ObjParser();
   parser.parse(objData);
 
-  const t1 = parser.model.bvhNode?.shapes[0] as SmoothTriangle;
-  const t2 = parser.model.bvhNode?.shapes[1] as SmoothTriangle;
+  const t1 = parser.model.bvhNode?.shapes[0] as Triangle;
+  const t2 = parser.model.bvhNode?.shapes[1] as Triangle;
 
   expect(t1.p1).toEqual(parser.vertices[0]);
   expect(t1.p2).toEqual(parser.vertices[1]);

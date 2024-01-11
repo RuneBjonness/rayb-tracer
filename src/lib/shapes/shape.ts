@@ -23,6 +23,33 @@ export type ShapeType =
   | 'group-bvh'
   | 'unknown';
 
+export function shapeTypeId(shapeType: ShapeType): number {
+  switch (shapeType) {
+    case 'sphere':
+      return 1;
+    case 'plane':
+      return 2;
+    case 'cube':
+      return 3;
+    case 'cylinder':
+      return 4;
+    case 'cone':
+      return 5;
+    case 'triangle':
+      return 6;
+    case 'smooth-triangle':
+      return 7;
+    case 'csg':
+      return 8;
+    case 'group':
+      return 9;
+    case 'group-bvh':
+      return 10;
+    default:
+      return 0;
+  }
+}
+
 export const SHAPE_BYTE_SIZE = 256;
 
 export interface Intersectable {
@@ -149,7 +176,7 @@ export abstract class BaseShape implements Shape {
     const u32view = new Uint32Array(shapeBuffer, shapeBufferOffset, 8);
     const f32view = new Float32Array(shapeBuffer, shapeBufferOffset, 64);
 
-    u32view[0] = this.shapeTypeId();
+    u32view[0] = shapeTypeId(this.shapeType);
 
     if (this.isConeOrCylinder()) {
       f32view[1] = this.minimum;
@@ -251,33 +278,6 @@ export abstract class BaseShape implements Shape {
       count += this.right.numberOfDescendants();
     }
     return count;
-  }
-
-  private shapeTypeId(): number {
-    switch (this.shapeType) {
-      case 'sphere':
-        return 1;
-      case 'plane':
-        return 2;
-      case 'cube':
-        return 3;
-      case 'cylinder':
-        return 4;
-      case 'cone':
-        return 5;
-      case 'triangle':
-        return 6;
-      case 'smooth-triangle':
-        return 7;
-      case 'csg':
-        return 8;
-      case 'group':
-        return 9;
-      case 'group-bvh':
-        return 10;
-      default:
-        return 0;
-    }
   }
 }
 

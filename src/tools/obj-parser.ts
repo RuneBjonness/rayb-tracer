@@ -1,7 +1,6 @@
 import { Material, material } from '../lib/materials';
 import { Vector4, point, vector } from '../lib/math/vector4';
 import { Group } from '../lib/shapes/group';
-import { SmoothTriangle } from '../lib/shapes/primitives/smooth-triangle';
 import { Triangle } from '../lib/shapes/primitives/triangle';
 
 export class ObjParser {
@@ -73,7 +72,7 @@ export class ObjParser {
             this.model.add(t);
           }
         } else if (p[i].length == 3) {
-          const t = new SmoothTriangle(
+          const t = new Triangle(
             this.vertices[p[0][0] - 1],
             this.vertices[p[i][0] - 1],
             this.vertices[p[i + 1][0] - 1],

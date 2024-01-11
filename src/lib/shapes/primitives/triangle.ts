@@ -1,26 +1,43 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { BaseShape } from '../shape';
-import { Vector4, point } from '../../math/vector4';
+import { Shape, ShapeType } from '../shape';
+import { Vector4, point, vector } from '../../math/vector4';
+import { Material, material } from '../../materials';
+import { CsgShape } from '../csg-shape';
+import { Group } from '../group';
 
-export class Triangle extends BaseShape {
+export class Triangle implements Shape {
   readonly e1: Vector4;
   readonly e2: Vector4;
-  readonly normal: Vector4;
+  readonly n1: Vector4;
+  readonly n2: Vector4;
+  readonly n3: Vector4;
 
   constructor(
     readonly p1: Vector4,
     readonly p2: Vector4,
-    readonly p3: Vector4
+    readonly p3: Vector4,
+    n1?: Vector4,
+    n2?: Vector4,
+    n3?: Vector4
   ) {
-    super();
-    this.shapeType = 'triangle';
     this.e1 = p2.clone().subtract(p1);
     this.e2 = p3.clone().subtract(p1);
-    this.normal = this.e2.clone().cross(this.e1).normalize();
 
-    this.localBounds = new Bounds(
+    if (n1 && n2 && n3) {
+      this.shapeType = 'smooth-triangle';
+      this.n1 = n1;
+      this.n2 = n2;
+      this.n3 = n3;
+    } else {
+      this.shapeType = 'triangle';
+      this.n1 = this.e2.clone().cross(this.e1).normalize();
+      this.n2 = this.n1;
+      this.n3 = this.n1;
+    }
+
+    this.bounds = new Bounds(
       point(
         Math.min(p1.x, p2.x, p3.x),
         Math.min(p1.y, p2.y, p3.y),
@@ -33,8 +50,26 @@ export class Triangle extends BaseShape {
       )
     );
   }
+  shapeType: ShapeType;
+  get material(): Material {
+    if (
+      this.materialIdx < 0 ||
+      this.materialIdx >= this.materialDefinitions.length
+    ) {
+      return material();
+    }
+    return this.materialDefinitions[this.materialIdx];
+  }
+  set material(m: Material) {
+    this.materialIdx = this.materialDefinitions.indexOf(m);
+  }
+  materialIdx: number = -1;
+  materialDefinitions: Material[] = [];
 
-  protected localIntersects(r: Ray): Intersection[] {
+  parent: Group | CsgShape | null = null;
+  bounds: Bounds;
+
+  intersects(r: Ray): Intersection[] {
     const dirCrossE2 = r.direction.clone().cross(this.e2);
     const det = this.e1.dot(dirCrossE2);
 
@@ -50,18 +85,71 @@ export class Triangle extends BaseShape {
       return [];
     }
 
-    const originCrossE1 = p1ToOrigin.cross(this.e1);
-    const v = f * r.direction.dot(originCrossE1);
+    p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(p1ToOrigin);
 
     if (v < 0 || u + v > 1) {
       return [];
     }
 
-    const t = f * this.e2.dot(originCrossE1);
-    return [intersection(t, this)];
+    const t = f * this.e2.dot(p1ToOrigin);
+    return [intersection(t, this, u, v)];
   }
 
-  protected localNormalAt(_p: Vector4): Vector4 {
-    return this.normal;
+  normalAt(p: Vector4, i: Intersection | null): Vector4 {
+    if (this.shapeType === 'triangle') {
+      return this.normalToWorld(this.n1);
+    }
+
+    if (i == null) {
+      return vector(0, 0, 0);
+    }
+
+    const localNormal = this.n2
+      .clone()
+      .scale(i.u)
+      .add(this.n3.clone().scale(i.v))
+      .add(this.n1.clone().scale(1 - i.u - i.v))
+      .normalize();
+
+    return this.normalToWorld(localNormal);
+  }
+
+  worldToObject(p: Vector4): Vector4 {
+    return this.parent ? this.parent.worldToObject(p) : p.clone();
+  }
+
+  normalToWorld(n: Vector4): Vector4 {
+    return this.parent ? this.parent.normalToWorld(n) : n.clone();
+  }
+
+  pointToWorld(p: Vector4): Vector4 {
+    return this.parent ? this.parent.pointToWorld(p) : p.clone();
+  }
+
+  divide(threshold: number): void {
+    return;
+  }
+
+  isGroup(): this is Group {
+    return false;
+  }
+
+  isCsgShape(): this is CsgShape {
+    return false;
+  }
+
+  numberOfDescendants(): number {
+    return 0;
+  }
+
+  copyToArrayBuffers(
+    shapeBuffer: ArrayBuffer,
+    shapeBufferOffset: number,
+    bvhBuffer: ArrayBuffer,
+    bvhBufferOffset: number,
+    parentIdx: number
+  ): [shapeOffset: number, bvhOffset: number] {
+    throw new Error('Method not implemented.');
   }
 }
