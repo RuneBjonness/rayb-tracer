@@ -2,9 +2,9 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { BaseShape } from '../shape';
+import { TransformableShape } from '../shape';
 
-export class Cylinder extends BaseShape {
+export class Cylinder extends TransformableShape {
   readonly minimum: number;
   readonly maximum: number;
   readonly closed: boolean;

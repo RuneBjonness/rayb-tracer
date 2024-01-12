@@ -1,9 +1,15 @@
 import { Intersection } from '../intersections';
 import { Ray } from '../rays';
 import { Bounds } from './bounds';
-import { Intersectable, SHAPE_BYTE_SIZE, Shape } from './shape';
-
-export const BVH_NODE_BYTE_SIZE = 48;
+import {
+  BVH_NODE_BYTE_SIZE,
+  ObjectBufferType,
+  ObjectBuffers,
+  SHAPE_BYTE_SIZE,
+  TRIANGLE_BYTE_SIZE,
+  numberOfObjects,
+} from './object-buffers';
+import { Intersectable, Shape } from './shape';
 
 export class BvhNode implements Intersectable {
   bvhNodes: BvhNode[] = [];
@@ -16,48 +22,47 @@ export class BvhNode implements Intersectable {
     return this.bvhNodes.length === 0;
   }
 
-  numberOfNodeDescendants(): number {
+  hasTriangleChildren(): boolean {
     return (
-      this.bvhNodes.length +
-      this.bvhNodes.reduce((acc, n) => acc + n.numberOfNodeDescendants(), 0)
+      this.shapes.length > 0 &&
+      (this.shapes[0].shapeType === 'triangle' ||
+        this.shapes[0].shapeType === 'smooth-triangle')
     );
   }
 
-  numberOfShapeDescendants(): number {
-    if (this.isLeafNode()) {
-      return (
-        this.shapes.length +
-        this.shapes.reduce((acc, s) => acc + s.numberOfDescendants(), 0)
-      );
-    }
-    return this.bvhNodes.reduce(
-      (acc, n) => acc + n.numberOfShapeDescendants(),
-      0
+  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+    const index = buffers.bvhBufferOffset / BVH_NODE_BYTE_SIZE;
+    const u32view = new Uint32Array(
+      buffers.bvhArrayBuffer,
+      buffers.bvhBufferOffset,
+      4
     );
-  }
-
-  copyToArrayBuffers(
-    shapeBuffer: ArrayBuffer,
-    shapeBufferOffset: number,
-    bvhBuffer: ArrayBuffer,
-    bvhBufferOffset: number,
-    parentIndex: number
-  ): [shapeOffset: number, bvhOffset: number] {
-    const index = bvhBufferOffset / BVH_NODE_BYTE_SIZE;
-    const u32view = new Uint32Array(bvhBuffer, bvhBufferOffset, 3);
 
     if (this.isLeafNode()) {
-      const shapeIndex = shapeBufferOffset / SHAPE_BYTE_SIZE;
       u32view[0] = 1;
-      u32view[1] = shapeIndex;
-      u32view[2] = shapeIndex + this.numberOfShapeDescendants();
+      if (this.hasTriangleChildren()) {
+        const triangleIndex = buffers.triangleBufferOffset / TRIANGLE_BYTE_SIZE;
+        u32view[1] = ObjectBufferType.Triangle;
+        u32view[2] = triangleIndex;
+        u32view[3] = triangleIndex + numberOfObjects(this.shapes).triangles - 1;
+      } else {
+        const shapeIndex = buffers.shapeBufferOffset / SHAPE_BYTE_SIZE;
+        u32view[1] = ObjectBufferType.Shape;
+        u32view[2] = shapeIndex;
+        u32view[3] = shapeIndex + numberOfObjects(this.shapes).shapes - 1;
+      }
     } else {
       u32view[0] = 0;
-      u32view[1] = index + 1;
-      u32view[2] = index + this.numberOfNodeDescendants();
+      u32view[1] = ObjectBufferType.BvhNode;
+      u32view[2] = index + 1;
+      u32view[3] = index + numberOfObjects([], this.bvhNodes).bvhNodes;
     }
 
-    const f32view = new Float32Array(bvhBuffer, bvhBufferOffset, 12);
+    const f32view = new Float32Array(
+      buffers.bvhArrayBuffer,
+      buffers.bvhBufferOffset,
+      12
+    );
 
     f32view[4] = this.bounds.min.x;
     f32view[5] = this.bounds.min.y;
@@ -67,29 +72,15 @@ export class BvhNode implements Intersectable {
     f32view[9] = this.bounds.max.y;
     f32view[10] = this.bounds.max.z;
 
-    bvhBufferOffset += BVH_NODE_BYTE_SIZE;
+    buffers.bvhBufferOffset += BVH_NODE_BYTE_SIZE;
 
     for (const node of this.bvhNodes) {
-      [shapeBufferOffset, bvhBufferOffset] = node.copyToArrayBuffers(
-        shapeBuffer,
-        shapeBufferOffset,
-        bvhBuffer,
-        bvhBufferOffset,
-        parentIndex
-      );
+      node.copyToArrayBuffers(buffers, parentIndex);
     }
 
     for (const shape of this.shapes) {
-      [shapeBufferOffset, bvhBufferOffset] = shape.copyToArrayBuffers(
-        shapeBuffer,
-        shapeBufferOffset,
-        bvhBuffer,
-        bvhBufferOffset,
-        parentIndex
-      );
+      shape.copyToArrayBuffers(buffers, parentIndex);
     }
-
-    return [shapeBufferOffset, bvhBufferOffset];
   }
 
   add(shape: Shape) {

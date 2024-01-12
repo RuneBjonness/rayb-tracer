@@ -19,7 +19,11 @@ export class ObjParser {
   parse(data: string): Group {
     data.split('\n').forEach((cmd) => this.parseLine(cmd));
     if (this.activeGroup?.shapes.length) {
-      this.model.add(this.activeGroup);
+      if (this.model.shapes.length > 0) {
+        this.model.add(this.activeGroup);
+      } else {
+        this.model = this.activeGroup;
+      }
     }
     this.model.divide(4);
 

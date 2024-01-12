@@ -170,25 +170,4 @@ export class World {
         normalDiff * (1 - ic.object.material.diffuse * 0.5)
     );
   }
-
-  numberOfShapes(): number {
-    let count = 0;
-    for (const shape of this.objects) {
-      count++;
-      count += shape.numberOfDescendants();
-    }
-    console.log('Total shapes: ', count);
-    return count;
-  }
-
-  numberOfBvhNodes(): number {
-    let count = 0;
-    for (const shape of this.objects) {
-      if (shape.isGroup() && shape.bvhNode) {
-        count += shape.bvhNode.numberOfNodeDescendants() + 1;
-      }
-    }
-    console.log('Total bvh nodes: ', count);
-    return count;
-  }
 }

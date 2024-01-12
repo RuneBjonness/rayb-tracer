@@ -217,7 +217,7 @@ export class Scene {
       }
       this.setMaterial(idx, obj);
     }
-    if (s.transform) {
+    if (s.transform && obj.isTransformable()) {
       obj.transform = this.createTransformMatrix(s.transform);
     }
     return obj;

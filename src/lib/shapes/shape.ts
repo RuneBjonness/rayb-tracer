@@ -8,7 +8,12 @@ import { CsgShape } from './csg-shape';
 import { Vector4, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
 import { Cylinder } from './primitives/cylinder';
-import { BVH_NODE_BYTE_SIZE } from './bvh-node';
+import {
+  BVH_NODE_BYTE_SIZE,
+  numberOfObjects,
+  ObjectBuffers,
+  SHAPE_BYTE_SIZE,
+} from './object-buffers';
 
 export type ShapeType =
   | 'sphere'
@@ -50,8 +55,6 @@ export function shapeTypeId(shapeType: ShapeType): number {
   }
 }
 
-export const SHAPE_BYTE_SIZE = 256;
-
 export interface Intersectable {
   intersects(r: Ray): Intersection[];
 }
@@ -71,19 +74,13 @@ export interface Shape extends Intersectable {
   normalToWorld(n: Vector4): Vector4;
   pointToWorld(p: Vector4): Vector4;
   divide(threshold: number): void;
+  isTransformable(): this is TransformableShape;
   isGroup(): this is Group;
   isCsgShape(): this is CsgShape;
-  numberOfDescendants(): number;
-  copyToArrayBuffers(
-    shapeBuffer: ArrayBuffer,
-    shapeBufferOffset: number,
-    bvhBuffer: ArrayBuffer,
-    bvhBufferOffset: number,
-    parentIdx: number
-  ): [shapeOffset: number, bvhOffset: number];
+  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void;
 }
 
-export abstract class BaseShape implements Shape {
+export abstract class TransformableShape implements Shape {
   private _transform: Matrix4;
   public get transform() {
     return this._transform;
@@ -164,17 +161,19 @@ export abstract class BaseShape implements Shape {
     return;
   }
 
-  copyToArrayBuffers(
-    shapeBuffer: ArrayBuffer,
-    shapeBufferOffset: number,
-    bvhBuffer: ArrayBuffer,
-    bvhBufferOffset: number,
-    parentIndex = 0
-  ): [shapeOffset: number, bvhOffset: number] {
-    const shapeIndex = shapeBufferOffset / SHAPE_BYTE_SIZE;
+  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+    const shapeIndex = buffers.shapeBufferOffset / SHAPE_BYTE_SIZE;
 
-    const u32view = new Uint32Array(shapeBuffer, shapeBufferOffset, 8);
-    const f32view = new Float32Array(shapeBuffer, shapeBufferOffset, 64);
+    const u32view = new Uint32Array(
+      buffers.shapesArrayBuffer,
+      buffers.shapeBufferOffset,
+      8
+    );
+    const f32view = new Float32Array(
+      buffers.shapesArrayBuffer,
+      buffers.shapeBufferOffset,
+      64
+    );
 
     u32view[0] = shapeTypeId(this.shapeType);
 
@@ -188,12 +187,16 @@ export abstract class BaseShape implements Shape {
     u32view[5] = parentIndex;
 
     if (this.isGroup() && this.bvhNode) {
-      const bvhIndex = bvhBufferOffset / BVH_NODE_BYTE_SIZE;
+      const bvhIndex = buffers.bvhBufferOffset / BVH_NODE_BYTE_SIZE;
       u32view[6] = bvhIndex;
-      u32view[7] = bvhIndex + this.bvhNode.numberOfNodeDescendants() - 1;
-    } else if (this.shapeType === 'group' || this.shapeType === 'csg') {
+      u32view[7] =
+        bvhIndex + numberOfObjects([], this.bvhNode.bvhNodes).bvhNodes;
+    } else if (this.isGroup()) {
       u32view[6] = shapeIndex + 1;
-      u32view[7] = shapeIndex + this.numberOfDescendants();
+      u32view[7] = shapeIndex + numberOfObjects(this.shapes).shapes;
+    } else if (this.isCsgShape()) {
+      u32view[6] = shapeIndex + 1;
+      u32view[7] = shapeIndex + numberOfObjects([this.left, this.right]).shapes;
     }
 
     f32view[8] = this.localBounds.min.x;
@@ -203,57 +206,39 @@ export abstract class BaseShape implements Shape {
     f32view[13] = this.localBounds.max.y;
     f32view[14] = this.localBounds.max.z;
 
-    this.transform.copyToArrayBuffer(shapeBuffer, shapeBufferOffset + 16 * 4);
+    this.transform.copyToArrayBuffer(
+      buffers.shapesArrayBuffer,
+      buffers.shapeBufferOffset + 16 * 4
+    );
     this.invTransform.copyToArrayBuffer(
-      shapeBuffer,
-      shapeBufferOffset + 32 * 4
+      buffers.shapesArrayBuffer,
+      buffers.shapeBufferOffset + 32 * 4
     );
     this.invTransformTransposed.copyToArrayBuffer(
-      shapeBuffer,
-      shapeBufferOffset + 48 * 4
+      buffers.shapesArrayBuffer,
+      buffers.shapeBufferOffset + 48 * 4
     );
 
-    shapeBufferOffset += SHAPE_BYTE_SIZE;
+    buffers.shapeBufferOffset += SHAPE_BYTE_SIZE;
     if (this.isGroup()) {
       for (const shape of this.shapes) {
-        [shapeBufferOffset, bvhBufferOffset] = shape.copyToArrayBuffers(
-          shapeBuffer,
-          shapeBufferOffset,
-          bvhBuffer,
-          bvhBufferOffset,
-          shapeIndex
-        );
+        shape.copyToArrayBuffers(buffers, shapeIndex);
       }
       if (this.bvhNode) {
-        [shapeBufferOffset, bvhBufferOffset] = this.bvhNode.copyToArrayBuffers(
-          shapeBuffer,
-          shapeBufferOffset,
-          bvhBuffer,
-          bvhBufferOffset,
-          shapeIndex
-        );
+        this.bvhNode.copyToArrayBuffers(buffers, shapeIndex);
       }
     } else if (this.isCsgShape()) {
-      [shapeBufferOffset, bvhBufferOffset] = this.left.copyToArrayBuffers(
-        shapeBuffer,
-        shapeBufferOffset,
-        bvhBuffer,
-        bvhBufferOffset,
-        shapeIndex
-      );
-      [shapeBufferOffset, bvhBufferOffset] = this.right.copyToArrayBuffers(
-        shapeBuffer,
-        shapeBufferOffset,
-        bvhBuffer,
-        bvhBufferOffset,
-        shapeIndex
-      );
+      this.left.copyToArrayBuffers(buffers, shapeIndex);
+      this.right.copyToArrayBuffers(buffers, shapeIndex);
     }
-    return [shapeBufferOffset, bvhBufferOffset];
   }
 
   isConeOrCylinder(): this is Cone | Cylinder {
     return this.shapeType === 'cone' || this.shapeType === 'cylinder';
+  }
+
+  isTransformable(): this is TransformableShape {
+    return true;
   }
 
   isGroup(): this is Group {
@@ -263,25 +248,9 @@ export abstract class BaseShape implements Shape {
   isCsgShape(): this is CsgShape {
     return this.shapeType === 'csg';
   }
-
-  numberOfDescendants(): number {
-    let count = 0;
-    if (this.isGroup()) {
-      for (const shape of this.shapes) {
-        count++;
-        count += shape.numberOfDescendants();
-      }
-      count += this.bvhNode?.numberOfShapeDescendants() ?? 0;
-    } else if (this.isCsgShape()) {
-      count += 2;
-      count += this.left.numberOfDescendants();
-      count += this.right.numberOfDescendants();
-    }
-    return count;
-  }
 }
 
-export class TestShape extends BaseShape {
+export class TestShape extends TransformableShape {
   localRayFromBase: Ray | null = null;
 
   constructor() {

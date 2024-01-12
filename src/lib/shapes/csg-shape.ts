@@ -1,9 +1,9 @@
 import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { BaseShape, Shape } from './shape';
+import { TransformableShape, Shape } from './shape';
 
-export class CsgShape extends BaseShape {
+export class CsgShape extends TransformableShape {
   constructor(
     readonly operation: 'union' | 'intersection' | 'difference',
     readonly left: Shape,

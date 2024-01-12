@@ -8,9 +8,13 @@ import {
   MATERIAL_BYTE_SIZE,
   copyMaterialToArrayBuffer,
 } from '../../lib/materials';
-import { SHAPE_BYTE_SIZE } from '../../lib/shapes/shape';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
-import { BVH_NODE_BYTE_SIZE } from '../../lib/shapes/bvh-node';
+import {
+  BVH_NODE_BYTE_SIZE,
+  SHAPE_BYTE_SIZE,
+  TRIANGLE_BYTE_SIZE,
+  numberOfObjects,
+} from '../../lib/shapes/object-buffers';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -79,6 +83,13 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
         binding: 5,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 6,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
           type: 'storage',
         },
       },
@@ -102,35 +113,50 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
   device.queue.writeBuffer(cameraUniformBuffer, 0, cameraArrayBuffer);
 
-  const shapesArrayBuffer = new ArrayBuffer(
-    (scene.world.numberOfShapes() + 1) * SHAPE_BYTE_SIZE
-  );
-  let shapesOffset = SHAPE_BYTE_SIZE;
+  const objCount = numberOfObjects(scene.world.objects);
+  console.log('Total objects: ', JSON.stringify(objCount, null, 2));
 
-  const bvhArrayBuffer = new ArrayBuffer(
-    (scene.world.numberOfBvhNodes() + 1) * BVH_NODE_BYTE_SIZE
-  );
-  let bvhOffset = BVH_NODE_BYTE_SIZE;
+  const objBuffers = {
+    shapesArrayBuffer: new ArrayBuffer((objCount.shapes + 1) * SHAPE_BYTE_SIZE),
+    shapeBufferOffset: SHAPE_BYTE_SIZE,
+    trianglesArrayBuffer: new ArrayBuffer(
+      (objCount.triangles + 1) * TRIANGLE_BYTE_SIZE
+    ),
+    triangleBufferOffset: TRIANGLE_BYTE_SIZE,
+    bvhArrayBuffer: new ArrayBuffer(
+      (objCount.bvhNodes + 1) * BVH_NODE_BYTE_SIZE
+    ),
+    bvhBufferOffset: BVH_NODE_BYTE_SIZE,
+  };
+
   for (let i = 0; i < scene.world.objects.length; i++) {
-    [shapesOffset, bvhOffset] = scene.world.objects[i].copyToArrayBuffers(
-      shapesArrayBuffer,
-      shapesOffset,
-      bvhArrayBuffer,
-      bvhOffset,
-      0
-    );
+    scene.world.objects[i].copyToArrayBuffers(objBuffers, 0);
   }
   const shapesStorageBuffer = device.createBuffer({
-    size: Math.ceil(shapesArrayBuffer.byteLength / 16) * 16,
+    size: Math.ceil(objBuffers.shapesArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(shapesStorageBuffer, 0, shapesArrayBuffer);
+  device.queue.writeBuffer(
+    shapesStorageBuffer,
+    0,
+    objBuffers.shapesArrayBuffer
+  );
+
+  const trianglesStorageBuffer = device.createBuffer({
+    size: Math.ceil(objBuffers.trianglesArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(
+    trianglesStorageBuffer,
+    0,
+    objBuffers.trianglesArrayBuffer
+  );
 
   const bvhStorageBuffer = device.createBuffer({
-    size: Math.ceil(bvhArrayBuffer.byteLength / 16) * 16,
+    size: Math.ceil(objBuffers.bvhArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(bvhStorageBuffer, 0, bvhArrayBuffer);
+  device.queue.writeBuffer(bvhStorageBuffer, 0, objBuffers.bvhArrayBuffer);
 
   const lightsArrayBuffer = new ArrayBuffer(
     scene.world.lights.length * LIGHTS_BYTE_SIZE
@@ -192,23 +218,29 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       {
         binding: 2,
         resource: {
-          buffer: bvhStorageBuffer,
+          buffer: trianglesStorageBuffer,
         },
       },
       {
         binding: 3,
         resource: {
-          buffer: lightsStorageBuffer,
+          buffer: bvhStorageBuffer,
         },
       },
       {
         binding: 4,
         resource: {
-          buffer: materialsStorageBuffer,
+          buffer: lightsStorageBuffer,
         },
       },
       {
         binding: 5,
+        resource: {
+          buffer: materialsStorageBuffer,
+        },
+      },
+      {
+        binding: 6,
         resource: {
           buffer: output,
         },
@@ -245,7 +277,6 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   performance.mark('webgpu-render-pass-end');
 
   const arr = new Uint8ClampedArray(data);
-  // console.log(arr);
   const imageData = new ImageData(arr, scene.camera.width);
   ctx!.putImageData(imageData, 0, 0);
 

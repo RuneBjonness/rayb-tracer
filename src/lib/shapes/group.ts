@@ -2,9 +2,9 @@ import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
 import { BvhNode } from './bvh-node';
-import { BaseShape, Shape } from './shape';
+import { TransformableShape, Shape } from './shape';
 
-export class Group extends BaseShape {
+export class Group extends TransformableShape {
   shapes: Shape[] = [];
   bvhNode: BvhNode | null = null;
 
