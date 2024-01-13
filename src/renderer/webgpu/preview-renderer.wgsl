@@ -86,12 +86,18 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
     result.refractive_index = refractive_index;
   }
 
+  var material_idx = 0u;
+  if(hit.buffer_type == OBJECT_BUFFER_TYPE_SHAPE) {
+    material_idx = shapes[hit.buffer_index].material_idx;
+  } else if(hit.buffer_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
+    material_idx = triangles[hit.buffer_index].material_idx;
+  }
+  let material = materials[material_idx];
+
   let light_count = arrayLength(&lights);
   for(var i = 0u; i < light_count; i++) {
-    result.color += lightning(ray, hit, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
+    result.color += lightning(ray, hit.point, material_idx, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
   }
-
-  let material = materials[shapes[hit.shape_index].material_idx];
   
   var n_ratio = refractive_index / material.refractive_index;
   if(inside) {
@@ -114,16 +120,16 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
   return result;
 }
 
-fn lightning(ray: Ray, hit: HitInfo, normal: vec3f, eye_v: vec3f, light_color: vec3f, light_pos: vec3f) -> vec3<f32> {
-  let material = materials[shapes[hit.shape_index].material_idx];
+fn lightning(ray: Ray, point: vec3f, material_idx: u32, normal: vec3f, eye_v: vec3f, light_color: vec3f, light_pos: vec3f) -> vec3<f32> {
+  let material = materials[material_idx];
   let effective_color = material.color * light_color;
   let ambient = effective_color * material.ambient;
 
-  if(is_shadowed(hit.point + normal * SURFACE_EPSILON, light_pos)) {
+  if(is_shadowed(point + normal * SURFACE_EPSILON, light_pos)) {
     return ambient;
   }
 
-  let light_v = normalize(light_pos - hit.point);
+  let light_v = normalize(light_pos - point);
   let light_dot_normal = dot(light_v, normal);
 
   if(light_dot_normal < 0.0) {

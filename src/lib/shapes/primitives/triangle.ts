@@ -1,7 +1,7 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { Shape, ShapeType, TransformableShape } from '../shape';
+import { Shape, ShapeType, TransformableShape, shapeTypeId } from '../shape';
 import { Vector4, point, vector } from '../../math/vector4';
 import { Material, material } from '../../materials';
 import { CsgShape } from '../csg-shape';
@@ -148,43 +148,40 @@ export class Triangle implements Shape {
     const u32view = new Uint32Array(
       buffers.trianglesArrayBuffer,
       buffers.triangleBufferOffset,
-      32
+      24
     );
     const f32view = new Float32Array(
       buffers.trianglesArrayBuffer,
       buffers.triangleBufferOffset,
-      32
+      24
     );
 
     f32view[0] = this.p1.x;
     f32view[1] = this.p1.y;
     f32view[2] = this.p1.z;
+
     f32view[4] = this.e1.x;
     f32view[5] = this.e1.y;
     f32view[6] = this.e1.z;
+
     f32view[8] = this.e2.x;
     f32view[9] = this.e2.y;
     f32view[10] = this.e2.z;
+
     f32view[12] = this.n1.x;
     f32view[13] = this.n1.y;
     f32view[14] = this.n1.z;
+    u32view[15] = shapeTypeId(this.shapeType);
+
     f32view[16] = this.n2.x;
     f32view[17] = this.n2.y;
     f32view[18] = this.n2.z;
+    u32view[19] = this.materialIdx;
+
     f32view[20] = this.n3.x;
     f32view[21] = this.n3.y;
     f32view[22] = this.n3.z;
-
-    u32view[23] = this.materialIdx;
-
-    f32view[24] = this.bounds.min.x;
-    f32view[25] = this.bounds.min.y;
-    f32view[26] = this.bounds.min.z;
-    f32view[28] = this.bounds.max.x;
-    f32view[29] = this.bounds.max.y;
-    f32view[30] = this.bounds.max.z;
-
-    u32view[31] = parentIndex;
+    u32view[23] = parentIndex;
 
     buffers.triangleBufferOffset += TRIANGLE_BYTE_SIZE;
   }

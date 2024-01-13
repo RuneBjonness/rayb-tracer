@@ -34,12 +34,10 @@ struct Triangle {
   e1: vec3f,
   e2: vec3f,
   n1: vec3f,
+  shape_type: u32,
   n2: vec3f,
-  n3: vec3f,
-
   material_idx: u32,
-  bound_min: vec3f,
-  bound_max: vec3f,
+  n3: vec3f,
   parent_idx: u32,
 }
 

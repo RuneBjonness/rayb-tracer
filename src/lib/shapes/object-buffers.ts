@@ -2,7 +2,7 @@ import { BvhNode } from './bvh-node';
 import { Shape } from './shape';
 
 export const SHAPE_BYTE_SIZE = 256;
-export const TRIANGLE_BYTE_SIZE = 128;
+export const TRIANGLE_BYTE_SIZE = 96;
 export const BVH_NODE_BYTE_SIZE = 48;
 
 export enum ObjectBufferType {

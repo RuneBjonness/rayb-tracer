@@ -9,13 +9,15 @@ struct Ray {
 struct HitInfo {
   distance: f32,
   point: vec3<f32>,
-  shape_index: u32,
+  u: f32,
+  v: f32,
+  buffer_type: u32,
+  buffer_index: u32,
 };
 
 fn hit(ray: Ray) -> HitInfo {
+  var closest_hit: HitInfo = HitInfo(1000000.0, vec3<f32>(0.0, 0.0, 0.0), 0.0, 0.0, 0u, 0u);
   let shape_count = arrayLength(&shapes);
-  var closest_hit = 1000000.0;
-  var closest_shape = 0u;
   var i = 1u;
   var parent_idx = 0u;
   var parent_space_ray = ray;
@@ -63,12 +65,6 @@ fn hit(ray: Ray) -> HitInfo {
       case SHAPE_CONE: {
         hit = cone_local_intersects(inv_ray, shapes[i]);
       }
-      // case SHAPE_TRIANGLE: {
-      //   hit = triangle_local_intersects(inv_ray, shapes[i]);
-      // }
-      // case SHAPE_SMOOTH_TRIANGLE: {
-      //   hit = smooth_triangle_local_intersects(inv_ray, shapes[i]);
-      // }
       case SHAPE_CSG: {
         if(bounds_intersects(inv_ray, shapes[i].bound_min, shapes[i].bound_max) == true) {
           parent_idx = i;
@@ -90,7 +86,7 @@ fn hit(ray: Ray) -> HitInfo {
           parent_idx = i;
           parent_space_ray = inv_ray;
           n = shapes[i].child_idx_start + 1u;
-        } else {
+        } else if(bvh[shapes[i].child_idx_end].child_type == OBJECT_BUFFER_TYPE_SHAPE) {
           i = bvh[shapes[i].child_idx_end].child_idx_end;
         }
       }
@@ -98,9 +94,10 @@ fn hit(ray: Ray) -> HitInfo {
         hit = -1.0;
       }
     }
-    if(hit > 0 && hit < closest_hit) {
-      closest_hit = hit;
-      closest_shape = i;
+    if(hit > 0 && hit < closest_hit.distance) {
+      closest_hit.distance = hit;
+      closest_hit.buffer_index = i;
+      closest_hit.buffer_type = OBJECT_BUFFER_TYPE_SHAPE;
     }
 
     i++;
@@ -108,72 +105,121 @@ fn hit(ray: Ray) -> HitInfo {
     while(n > 0 && n < bvh_node_count && i > last_bvh_approved_shape_idx) {
       if(bounds_intersects(parent_space_ray, bvh[n].bound_min, bvh[n].bound_max) == true) {
         if(bvh[n].leaf == 1u) {
-          i = bvh[n].child_idx_start;
-          last_bvh_approved_shape_idx = bvh[n].child_idx_end;
+          if(bvh[n].child_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
+            let hit = hit_triangle(parent_space_ray, bvh[n].child_idx_start, bvh[n].child_idx_end, closest_hit.distance);
+            if(hit.distance < closest_hit.distance) {
+              closest_hit = hit;
+            }
+          } else if(bvh[n].child_type == OBJECT_BUFFER_TYPE_SHAPE) {
+            i = bvh[n].child_idx_start;
+            last_bvh_approved_shape_idx = bvh[n].child_idx_end;
+          }
         }
         n++;
       } else {
         if(bvh[n].leaf == 1u) {
-          i = bvh[n].child_idx_end + 1u;
+          if(bvh[n].child_type == OBJECT_BUFFER_TYPE_SHAPE) {
+            i = bvh[n].child_idx_end + 1u;
+          }
           n++;
         } else {
-          i = bvh[bvh[n].child_idx_end].child_idx_end + 1u;
+          if(bvh[bvh[n].child_idx_end].child_type == OBJECT_BUFFER_TYPE_SHAPE) {
+            i = bvh[bvh[n].child_idx_end].child_idx_end + 1u;
+          }
           n = bvh[n].child_idx_end + 1u;
         }
       }
     }
   }
 
-  if(closest_hit < 1000000.0) {
-    let hit_point = ray.origin + (ray.direction * closest_hit);
-    return HitInfo(closest_hit, hit_point, closest_shape);
+  if(closest_hit.distance < 1000000.0) {
+    closest_hit.point = ray.origin + (ray.direction * closest_hit.distance);
+    return closest_hit;
   }
 
-  return HitInfo(-1.0, vec3<f32>(0.0, 0.0, 0.0), 0u);
+  return HitInfo(-1.0, vec3<f32>(0.0, 0.0, 0.0), 0.0, 0.0, 0u, 0u);
+}
+
+fn hit_triangle(ray: Ray, start: u32, end: u32, closest_hit: f32) -> HitInfo {
+  var hit: HitInfo = HitInfo(closest_hit, vec3<f32>(0.0, 0.0, 0.0), 0.0, 0.0, 0u, 0u);
+  for(var i = start; i <= end; i++) {
+    let t = triangles[i];
+    let dirCrossE2 = cross(ray.direction, t.e2);
+    let det = dot(t.e1, dirCrossE2);
+    if(abs(det) < EPSILON) {
+      continue;
+    }
+    let f = 1.0 / det;
+    let p1ToOrigin = ray.origin - t.p1;
+    let u = f * dot(p1ToOrigin, dirCrossE2);
+    
+    if(u < 0.0 || u > 1.0) {
+      continue;
+    }
+    let originCrossE1 = cross(p1ToOrigin, t.e1);
+    let v = f * dot(ray.direction, originCrossE1);
+
+    if(v < 0.0 || u + v > 1.0) {
+      continue;
+    }
+    let dist = f * dot(t.e2, originCrossE1);
+
+    if(dist > 0 && dist < hit.distance) {
+      hit.distance = dist;
+      hit.u = u;
+      hit.v = v;
+      hit.buffer_index = i;
+      hit.buffer_type = OBJECT_BUFFER_TYPE_TRIANGLE;
+    }
+  }
+  return hit;
 }
 
 fn normal_at(hit: HitInfo) -> vec3<f32> {
-  let shape = shapes[hit.shape_index];
-
-  var local_point = hit.point;
-  var idx = hit.shape_index;
-
-  var m = shapes[idx].inv_transform;
-  while(shapes[idx].parent_idx > 0) {
-    idx = shapes[idx].parent_idx;
-    m = m * shapes[idx].inv_transform;
-  }
-  local_point = (m * vec4<f32>(local_point, 1.0)).xyz;
-
   var local_normal = vec3<f32>(0.0, 0.0, 0.0);
-  switch(shape.shape_type) {
-    case SHAPE_SPHERE: {
-      local_normal = vec3<f32>(local_point);
+  var idx = hit.buffer_index;
+
+  if(hit.buffer_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
+    let t = triangles[hit.buffer_index];
+    if(t.shape_type == SHAPE_TRIANGLE) {
+      local_normal = t.n1;
+    } else {
+      local_normal = normalize(t.n1 + (t.n2 - t.n1) * hit.u + (t.n3 - t.n1) * hit.v);
     }
-    case SHAPE_PLANE: {
-      local_normal = vec3<f32>(0.0, 1.0, 0.0);
+    idx = t.parent_idx;
+  } else {
+    let shape = shapes[idx];
+
+    var m = shapes[idx].inv_transform;
+    while(shapes[idx].parent_idx > 0) {
+      idx = shapes[idx].parent_idx;
+      m = m * shapes[idx].inv_transform;
     }
-    case SHAPE_CUBE: {
-      local_normal = vec3<f32>(cube_local_normal(local_point));
+    let local_point = (m * vec4<f32>(hit.point, 1.0)).xyz;
+
+    switch(shape.shape_type) {
+      case SHAPE_SPHERE: {
+        local_normal = vec3<f32>(local_point);
+      }
+      case SHAPE_PLANE: {
+        local_normal = vec3<f32>(0.0, 1.0, 0.0);
+      }
+      case SHAPE_CUBE: {
+        local_normal = vec3<f32>(cube_local_normal(local_point));
+      }
+      case SHAPE_CYLINDER: {
+        local_normal = vec3<f32>(cylinder_local_normal(local_point, shape.min, shape.max));
+      }
+      case SHAPE_CONE: {
+        local_normal = vec3<f32>(cone_local_normal(local_point, shape.min, shape.max));
+      }
+      default: {
+        local_normal = vec3<f32>(0.0, 0.0, 0.0);
+      }
     }
-    case SHAPE_CYLINDER: {
-      local_normal = vec3<f32>(cylinder_local_normal(local_point, shape.min, shape.max));
-    }
-    case SHAPE_CONE: {
-      local_normal = vec3<f32>(cone_local_normal(local_point, shape.min, shape.max));
-    }
-    // case SHAPE_TRIANGLE: {
-    //   local_normal = vec3<f32>(triangle_local_normal(local_point));
-    // }
-    // case SHAPE_SMOOTH_TRIANGLE: {
-    //   local_normal = vec3<f32>(smooth_triangle_local_normal(local_point));
-    // }
-    default: {
-      local_normal = vec3<f32>(0.0, 0.0, 0.0);
-    }
+    idx = hit.buffer_index;
   }
 
-  idx = hit.shape_index;
   while(idx > 0) {
     local_normal = normalize((shapes[idx].inv_transform_transposed * vec4<f32>(local_normal, 0.0)).xyz);
     idx = shapes[idx].parent_idx;
