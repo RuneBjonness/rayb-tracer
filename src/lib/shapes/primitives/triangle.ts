@@ -7,6 +7,7 @@ import { Material, material } from '../../material/materials';
 import { CsgShape } from '../csg-shape';
 import { Group } from '../group';
 import { ObjectBuffers, TRIANGLE_BYTE_SIZE } from '../object-buffers';
+import { Pattern } from '../../material/patterns';
 
 export class Triangle implements Shape {
   readonly e1: Vector4;
@@ -66,6 +67,7 @@ export class Triangle implements Shape {
   }
   materialIdx: number = -1;
   materialDefinitions: Material[] = [];
+  patternDefinitions: Pattern[] = [];
 
   parent: Group | CsgShape | null = null;
   bounds: Bounds;

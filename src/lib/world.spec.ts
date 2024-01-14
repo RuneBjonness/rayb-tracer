@@ -282,7 +282,8 @@ test('the refracted color at under total internal reflection', () => {
 test('the refracted color with a refracted ray', () => {
   const w = defaultWorld();
   w.objects[0].material.ambient = 1.0;
-  w.objects[0].material.pattern = new TestPattern();
+  w.objects[0].material.patternIdx = 0;
+  w.objects[0].patternDefinitions = [new TestPattern()];
 
   w.objects[1].material.transparency = 1.0;
   w.objects[1].material.refractiveIndex = 1.5;

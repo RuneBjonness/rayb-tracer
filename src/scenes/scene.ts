@@ -65,6 +65,7 @@ export class Scene {
   world: World = new World();
   camera: Camera = new Camera(0, 0, 0);
   materials: Material[] = [];
+  patterns: Pattern[] = [];
 
   constructor(
     private definiton: SceneDefinition,
@@ -230,6 +231,7 @@ export class Scene {
       this.setMaterial(materialIdx, shape.left);
       this.setMaterial(materialIdx, shape.right);
     } else {
+      shape.patternDefinitions = this.patterns;
       shape.materialDefinitions = this.materials;
       shape.materialIdx = materialIdx;
     }
@@ -280,8 +282,15 @@ export class Scene {
       return mat;
     }
 
+    const pattern = this.createPattern(m.pattern);
+    if (pattern) {
+      mat.patternIdx = this.patterns.indexOf(pattern);
+      if (mat.patternIdx < 0) {
+        mat.patternIdx = this.patterns.push(pattern) - 1;
+      }
+    }
+
     mat.color = this.createColor(m.color) ?? mat.color;
-    mat.pattern = m.pattern ? this.createPattern(m.pattern) : mat.pattern;
     mat.ambient = m.ambient ?? mat.ambient;
     mat.diffuse = m.diffuse ?? mat.diffuse;
     mat.specular = m.specular ?? mat.specular;

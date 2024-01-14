@@ -101,13 +101,14 @@ describe('lighting features', () => {
     const c1 = new Color(1, 1, 1);
     const c2 = new Color(0, 0, 0);
     const mat = material();
-    mat.pattern = new StripePattern(c1, c2);
+    mat.patternIdx = 0;
     mat.ambient = 1;
     mat.diffuse = 0;
     mat.specular = 0;
     const shape = new Sphere();
     shape.materialDefinitions = [mat];
     shape.material = mat;
+    shape.patternDefinitions = [new StripePattern(c1, c2)];
 
     const eyev = vector(0, 0, -1);
     const light = new PointLight(point(0, 0, -10), new Color(1, 1, 1));

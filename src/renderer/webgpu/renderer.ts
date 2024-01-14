@@ -4,10 +4,6 @@ import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
 import previewRendererWgsl from './preview-renderer.wgsl?raw';
-import {
-  MATERIAL_BYTE_SIZE,
-  copyMaterialToArrayBuffer,
-} from '../../lib/material/materials';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
 import {
   BVH_NODE_BYTE_SIZE,
@@ -15,6 +11,10 @@ import {
   TRIANGLE_BYTE_SIZE,
   numberOfObjects,
 } from '../../lib/shapes/object-buffers';
+import {
+  MATERIAL_BYTE_SIZE,
+  copyMaterialToArrayBuffer,
+} from '../../lib/material/material-buffers';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {

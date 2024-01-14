@@ -44,10 +44,7 @@ export class ImageMapping extends Scene {
     const img = await canvasFromImage(moonImgMapFile);
 
     const m = material();
-    m.pattern = new TextureMap(
-      new ImageUvPattern(img.pixels),
-      new SphericalMapper()
-    );
+    m.patternIdx = 0;
     m.specular = 0;
     m.ambient = 0.02;
 
@@ -60,6 +57,9 @@ export class ImageMapping extends Scene {
       .translate(0, 1, 0);
     s.materialDefinitions = this.materials;
     s.materialIdx = 0;
+    s.patternDefinitions = [
+      new TextureMap(new ImageUvPattern(img.pixels), new SphericalMapper()),
+    ];
 
     world.objects.push(s);
     this.world = world;

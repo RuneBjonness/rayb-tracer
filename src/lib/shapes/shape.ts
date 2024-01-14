@@ -14,6 +14,7 @@ import {
   ObjectBuffers,
   SHAPE_BYTE_SIZE,
 } from './object-buffers';
+import { Pattern } from '../material/patterns';
 
 export type ShapeType =
   | 'sphere'
@@ -65,6 +66,7 @@ export interface Shape extends Intersectable {
   material: Material;
   materialIdx: number;
   materialDefinitions: Material[];
+  patternDefinitions: Pattern[];
 
   parent: Group | CsgShape | null;
   bounds: Bounds;
@@ -107,6 +109,7 @@ export abstract class TransformableShape implements Shape {
   }
   materialIdx: number = -1;
   materialDefinitions: Material[] = [];
+  patternDefinitions: Pattern[] = [];
 
   parent: Group | CsgShape | null = null;
 

@@ -58,6 +58,7 @@ struct Light {
 
 struct Material {
   color: vec3<f32>,
+  pattern_idx: u32,
   ambient: f32,
   diffuse: f32,
   specular: f32,

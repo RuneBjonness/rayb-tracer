@@ -1,12 +1,11 @@
 import { Color } from '../math/color';
 import { Light } from '../lights';
-import { Pattern } from './patterns';
 import { Shape } from '../shapes/shape';
 import { Vector4 } from '../math/vector4';
 
 export type Material = {
   color: Color;
-  pattern: Pattern | null;
+  patternIdx: number;
   ambient: number;
   diffuse: number;
   specular: number;
@@ -19,7 +18,7 @@ export type Material = {
 export function material(): Material {
   return {
     color: new Color(1, 1, 1),
-    pattern: null,
+    patternIdx: -1,
     ambient: 0.1,
     diffuse: 0.9,
     specular: 0.9,
@@ -28,26 +27,6 @@ export function material(): Material {
     transparency: 0,
     refractiveIndex: 1,
   };
-}
-
-export const MATERIAL_BYTE_SIZE = 48;
-
-export function copyMaterialToArrayBuffer(
-  m: Material,
-  buffer: ArrayBuffer,
-  offset: number
-): void {
-  const view = new Float32Array(buffer, offset, 10);
-  view[0] = m.color.r;
-  view[1] = m.color.g;
-  view[2] = m.color.b;
-  view[3] = m.ambient;
-  view[4] = m.diffuse;
-  view[5] = m.specular;
-  view[6] = m.shininess;
-  view[7] = m.reflective;
-  view[8] = m.transparency;
-  view[9] = m.refractiveIndex;
 }
 
 export function lighting(
@@ -150,8 +129,9 @@ export function lighting(
 }
 
 export function materialColorAt(shape: Shape, point: Vector4): Color {
-  return shape.material.pattern
-    ? shape.material.pattern.colorAt(shape, point)
+  return shape.material.patternIdx >= 0 &&
+    shape.material.patternIdx < shape.patternDefinitions.length
+    ? shape.patternDefinitions[shape.material.patternIdx].colorAt(shape, point)
     : shape.material.color.clone();
 }
 
