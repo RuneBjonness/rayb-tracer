@@ -32,8 +32,8 @@ import {
   RingPattern,
   SolidPattern,
   StripePattern,
-} from '../lib/patterns/patterns';
-import { Material, material } from '../lib/materials';
+} from '../lib/material/patterns';
+import { Material, material } from '../lib/material/materials';
 import { Cube } from '../lib/shapes/primitives/cube';
 import { Cylinder } from '../lib/shapes/primitives/cylinder';
 import { Cone } from '../lib/shapes/primitives/cone';
@@ -42,7 +42,7 @@ import { CsgShape } from '../lib/shapes/csg-shape';
 import {
   CheckersUvPattern,
   UvPattern,
-} from '../lib/patterns/texture-mapping/uv-patterns';
+} from '../lib/material/texture-mapping/uv-patterns';
 import {
   CubeBackMapper,
   CubeBottomMapper,
@@ -54,11 +54,11 @@ import {
   PlanarMapper,
   SphericalMapper,
   UvMapper,
-} from '../lib/patterns/texture-mapping/uv-mappers';
+} from '../lib/material/texture-mapping/uv-mappers';
 import {
   CubeMap,
   TextureMap,
-} from '../lib/patterns/texture-mapping/texture-map';
+} from '../lib/material/texture-mapping/texture-map';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {

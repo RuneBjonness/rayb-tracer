@@ -10,7 +10,7 @@ import { Light } from './lights';
 import { Ray } from './rays';
 import { Shape } from './shapes/shape';
 import { Color } from './math/color';
-import { lighting } from './materials';
+import { lighting } from './material/materials';
 import { vector, Vector4 } from './math/vector4';
 
 export class World {

@@ -1,8 +1,8 @@
-import { Color } from './math/color';
-import { Light } from './lights';
-import { Pattern } from './patterns/patterns';
-import { Shape } from './shapes/shape';
-import { Vector4 } from './math/vector4';
+import { Color } from '../math/color';
+import { Light } from '../lights';
+import { Pattern } from './patterns';
+import { Shape } from '../shapes/shape';
+import { Vector4 } from '../math/vector4';
 
 export type Material = {
   color: Color;

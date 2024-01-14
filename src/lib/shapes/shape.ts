@@ -1,7 +1,7 @@
 import { Intersection } from '../intersections';
 import { Matrix4 } from '../math/matrices';
 import { Ray } from '../rays';
-import { material, Material } from '../materials';
+import { material, Material } from '../material/materials';
 import { Bounds } from './bounds';
 import { Group } from './group';
 import { CsgShape } from './csg-shape';

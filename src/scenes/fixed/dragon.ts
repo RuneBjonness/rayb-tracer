@@ -12,7 +12,7 @@ import dragonObjFile from '../../resources/dragon.obj?raw';
 import { Shape } from '../../lib/shapes/shape';
 import { Plane } from '../../lib/shapes/primitives/plane';
 import { RenderConfiguration } from '../../renderer/configuration';
-import { material } from '../../lib/materials';
+import { material } from '../../lib/material/materials';
 
 export class Dragon extends Scene {
   constructor(renderCfg: RenderConfiguration) {

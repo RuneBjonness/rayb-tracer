@@ -3,7 +3,7 @@ import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
 import { Shape, ShapeType, TransformableShape, shapeTypeId } from '../shape';
 import { Vector4, point, vector } from '../../math/vector4';
-import { Material, material } from '../../materials';
+import { Material, material } from '../../material/materials';
 import { CsgShape } from '../csg-shape';
 import { Group } from '../group';
 import { ObjectBuffers, TRIANGLE_BYTE_SIZE } from '../object-buffers';

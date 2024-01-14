@@ -7,7 +7,7 @@ import previewRendererWgsl from './preview-renderer.wgsl?raw';
 import {
   MATERIAL_BYTE_SIZE,
   copyMaterialToArrayBuffer,
-} from '../../lib/materials';
+} from '../../lib/material/materials';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
 import {
   BVH_NODE_BYTE_SIZE,

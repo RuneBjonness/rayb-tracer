@@ -11,7 +11,7 @@ import { Sphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './math/transformations';
 import { point, vector } from './math/vector4';
-import { material } from './materials';
+import { material } from './material/materials';
 
 function glassSphere(): Sphere {
   const m = material();

@@ -1,10 +1,10 @@
-import { PointLight } from './lights';
+import { PointLight } from '../lights';
 import { lighting, material } from './materials';
-import { StripePattern } from './patterns/patterns';
-import { Sphere } from './shapes/primitives/sphere';
-import { Color } from './math/color';
-import { defaultWorld } from './world.spec';
-import { point, vector } from './math/vector4';
+import { StripePattern } from './patterns';
+import { Sphere } from '../shapes/primitives/sphere';
+import { Color } from '../math/color';
+import { defaultWorld } from '../world.spec';
+import { point, vector } from '../math/vector4';
 
 test('the default material', () => {
   const m = material();

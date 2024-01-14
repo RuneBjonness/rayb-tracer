@@ -5,7 +5,7 @@ import { scaling } from './math/transformations';
 import { World } from './world';
 import { Color } from './math/color';
 import { Vector4, point, vector } from './math/vector4';
-import { Material, material } from './materials';
+import { Material, material } from './material/materials';
 
 export const LIGHTS_BYTE_SIZE = 32;
 

@@ -3,16 +3,16 @@ import { Sphere } from '../../lib/shapes/primitives/sphere';
 import { radians } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
-import { SphericalMapper } from '../../lib/patterns/texture-mapping/uv-mappers';
 import moonImgMapFile from '../../resources/moon.png';
 import { Scene } from '../scene';
-import { TextureMap } from '../../lib/patterns/texture-mapping/texture-map';
-import { ImageUvPattern } from '../../lib/patterns/texture-mapping/uv-patterns';
 import { RenderConfiguration } from '../../renderer/configuration';
 import { point } from '../../lib/math/vector4';
 import { canvasFromImage } from '../../tools/image-loader';
 import { Matrix4 } from '../../lib/math/matrices';
-import { material } from '../../lib/materials';
+import { material } from '../../lib/material/materials';
+import { TextureMap } from '../../lib/material/texture-mapping/texture-map';
+import { SphericalMapper } from '../../lib/material/texture-mapping/uv-mappers';
+import { ImageUvPattern } from '../../lib/material/texture-mapping/uv-patterns';
 
 export class ImageMapping extends Scene {
   constructor(renderCfg: RenderConfiguration) {

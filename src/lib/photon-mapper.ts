@@ -4,7 +4,7 @@ import {
   reflectance,
   refractedDirection,
 } from './intersections';
-import { materialColorAt } from './materials';
+import { materialColorAt } from './material/materials';
 import { Ray } from './rays';
 import { Color } from './math/color';
 import { World } from './world';

@@ -1,4 +1,4 @@
-import { material } from '../materials';
+import { material } from '../material/materials';
 import { Ray } from '../rays';
 import {
   rotationY,

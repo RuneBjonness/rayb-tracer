@@ -1,4 +1,4 @@
-import { Material, material } from '../lib/materials';
+import { Material, material } from '../lib/material/materials';
 import { Vector4, point, vector } from '../lib/math/vector4';
 import { Group } from '../lib/shapes/group';
 import { Triangle } from '../lib/shapes/primitives/triangle';

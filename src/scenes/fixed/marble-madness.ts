@@ -11,7 +11,7 @@ import {
 import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
 import { Scene } from '../scene';
-import { material } from '../../lib/materials';
+import { material } from '../../lib/material/materials';
 
 export class MarbleMadness extends Scene {
   constructor(renderCfg: RenderConfiguration) {

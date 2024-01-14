@@ -1,6 +1,6 @@
 import { RenderConfiguration } from '../../renderer/configuration';
 import { PointLight } from '../../lib/lights';
-import { material } from '../../lib/materials';
+import { material } from '../../lib/material/materials';
 import { Sphere } from '../../lib/shapes/primitives/sphere';
 import { translation, scaling } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';

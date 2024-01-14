@@ -5,7 +5,7 @@ import { scaling } from './math/transformations';
 import { Color } from './math/color';
 import { World } from './world';
 import { point } from './math/vector4';
-import { material } from './materials';
+import { material } from './material/materials';
 
 describe('photon-mapping', () => {
   test('a photon mapper calculates total light intensity from all light sources in the world', () => {
