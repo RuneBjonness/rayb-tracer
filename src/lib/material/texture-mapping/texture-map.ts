@@ -1,15 +1,7 @@
 import { Color } from '../../math/color';
 import { Pattern } from '../patterns';
 import { UvPattern } from './uv-patterns';
-import {
-  CubeBackMapper,
-  CubeBottomMapper,
-  CubeFrontMapper,
-  CubeLeftMapper,
-  CubeRightMapper,
-  CubeTopMapper,
-  UvMapper,
-} from './uv-mappers';
+import { UvMapper, map } from './uv-mappers';
 import { Vector4 } from '../../math/vector4';
 
 export class TextureMap extends Pattern {
@@ -18,19 +10,19 @@ export class TextureMap extends Pattern {
   }
 
   protected localColorAt(p: Vector4): Color {
-    const [u, v] = this.uvMapper.map(p);
+    const [u, v] = map(p, this.uvMapper);
     return this.uvPattern.colorAt(u, v);
   }
 }
 
 export class CubeMap extends Pattern {
   private mappers: UvMapper[] = [
-    new CubeLeftMapper(),
-    new CubeFrontMapper(),
-    new CubeRightMapper(),
-    new CubeBackMapper(),
-    new CubeTopMapper(),
-    new CubeBottomMapper(),
+    UvMapper.CubeLeft,
+    UvMapper.CubeFront,
+    UvMapper.CubeRight,
+    UvMapper.CubeBack,
+    UvMapper.CubeTop,
+    UvMapper.CubeBottom,
   ];
 
   constructor(
@@ -48,7 +40,7 @@ export class CubeMap extends Pattern {
 
   protected localColorAt(p: Vector4): Color {
     const faceIdx = this.getFaceIndex(p);
-    const [u, v] = this.mappers[faceIdx].map(p);
+    const [u, v] = map(p, this.mappers[faceIdx]);
     return this.faces[faceIdx].colorAt(u, v);
   }
 

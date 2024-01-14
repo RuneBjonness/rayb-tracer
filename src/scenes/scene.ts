@@ -43,18 +43,7 @@ import {
   CheckersUvPattern,
   UvPattern,
 } from '../lib/material/texture-mapping/uv-patterns';
-import {
-  CubeBackMapper,
-  CubeBottomMapper,
-  CubeFrontMapper,
-  CubeLeftMapper,
-  CubeRightMapper,
-  CubeTopMapper,
-  CylindricalMapper,
-  PlanarMapper,
-  SphericalMapper,
-  UvMapper,
-} from '../lib/material/texture-mapping/uv-mappers';
+import { UvMapper } from '../lib/material/texture-mapping/uv-mappers';
 import {
   CubeMap,
   TextureMap,
@@ -409,23 +398,23 @@ export class Scene {
   private createUvMapper(m: UvMapperDefinition): UvMapper {
     switch (m) {
       case 'planar':
-        return new PlanarMapper();
+        return UvMapper.Planar;
       case 'cylindrical':
-        return new CylindricalMapper();
+        return UvMapper.Cylindrical;
       case 'spherical':
-        return new SphericalMapper();
+        return UvMapper.Spherical;
       case 'cube-front':
-        return new CubeFrontMapper();
+        return UvMapper.CubeFront;
       case 'cube-back':
-        return new CubeBackMapper();
+        return UvMapper.CubeBack;
       case 'cube-left':
-        return new CubeLeftMapper();
+        return UvMapper.CubeLeft;
       case 'cube-right':
-        return new CubeRightMapper();
+        return UvMapper.CubeRight;
       case 'cube-top':
-        return new CubeTopMapper();
+        return UvMapper.CubeTop;
       case 'cube-bottom':
-        return new CubeBottomMapper();
+        return UvMapper.CubeBottom;
     }
   }
 

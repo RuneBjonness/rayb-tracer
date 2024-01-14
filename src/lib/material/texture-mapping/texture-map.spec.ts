@@ -3,17 +3,16 @@ import { Cube } from '../../shapes/primitives/cube';
 import { Sphere } from '../../shapes/primitives/sphere';
 import { Color } from '../../math/color';
 import { CubeMap, TextureMap } from './texture-map';
-import { SphericalMapper } from './uv-mappers';
 import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';
 import { point } from '../../math/vector4';
+import { UvMapper } from './uv-mappers';
 
 describe('Texture maps', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
 
   const uvCheckers = new CheckersUvPattern(16, 8, black, white);
-  const uvMapper = new SphericalMapper();
-  const tm = new TextureMap(uvCheckers, uvMapper);
+  const tm = new TextureMap(uvCheckers, UvMapper.Spherical);
   const s = new Sphere();
 
   each`
