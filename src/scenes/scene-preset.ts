@@ -11,7 +11,9 @@ export enum ScenePreset {
   teapot = 'Teapot',
   skybox = 'Skybox',
   imageMapping = 'Image mapping',
-  marbleMadness = 'Marble madness',
+  marbleMadness25bruteForce = 'Marble madness: 25³ Brute force',
+  marbleMadness25bvh = 'Marble madness: 25³ BVH acceleration',
+  marbleMadness100bvh = 'Marble madness: 100³ BVH acceleration',
 }
 
 export async function loadScene(
@@ -33,7 +35,13 @@ export async function loadScene(
     case ScenePreset.teapot:
       return new TeaPot(renderCfg);
 
-    case ScenePreset.marbleMadness:
-      return new MarbleMadness(renderCfg);
+    case ScenePreset.marbleMadness25bruteForce:
+      return new MarbleMadness(renderCfg, 25, false);
+
+    case ScenePreset.marbleMadness25bvh:
+      return new MarbleMadness(renderCfg, 25, true);
+
+    case ScenePreset.marbleMadness100bvh:
+      return new MarbleMadness(renderCfg, 100, true);
   }
 }
