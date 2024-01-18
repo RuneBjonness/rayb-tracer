@@ -4,12 +4,12 @@ import { Color } from './math/color';
 import { scaling, translation } from './math/transformations';
 import { Ray } from './rays';
 import { intersection, prepareComputations } from './intersections';
-import { TestPattern } from './material/patterns';
 import { Plane } from './shapes/primitives/plane';
 import { Sphere } from './shapes/primitives/sphere';
 import each from 'jest-each';
 import { point, vector } from './math/vector4';
 import { material } from './material/materials';
+import { TestPattern } from './material/patterns.spec';
 
 export function defaultWorld(): World {
   const w = new World();

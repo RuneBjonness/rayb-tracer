@@ -1,17 +1,27 @@
 import {
   Checkers3dPattern,
   GradientPattern,
+  Pattern,
   RadialGradientPattern,
   RingPattern,
   SolidPattern,
   StripePattern,
-  TestPattern,
 } from './patterns';
 import { Sphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../math/transformations';
 import { Color } from '../math/color';
-import { point } from '../math/vector4';
+import { Vector4, point } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
+
+export class TestPattern extends Pattern {
+  constructor() {
+    super();
+  }
+
+  protected localColorAt(p: Vector4): Color {
+    return new Color(p.x, p.y, p.z);
+  }
+}
 
 describe('Common pattern features', () => {
   test('the default transformation', () => {

@@ -28,16 +28,6 @@ export abstract class Pattern {
   protected abstract localColorAt(p: Vector4): Color;
 }
 
-export class TestPattern extends Pattern {
-  constructor() {
-    super();
-  }
-
-  protected localColorAt(p: Vector4): Color {
-    return new Color(p.x, p.y, p.z);
-  }
-}
-
 export class StripePattern extends Pattern {
   constructor(public a: Color, public b: Color) {
     super();

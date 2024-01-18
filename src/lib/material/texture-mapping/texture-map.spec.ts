@@ -3,9 +3,39 @@ import { Cube } from '../../shapes/primitives/cube';
 import { Sphere } from '../../shapes/primitives/sphere';
 import { Color } from '../../math/color';
 import { CubeMap, TextureMap } from './texture-map';
-import { CheckersUvPattern, UvAlignTestPattern } from './uv-patterns';
+import { CheckersUvPattern, UvPattern } from './uv-patterns';
 import { point } from '../../math/vector4';
 import { UvMapper } from './uv-mappers';
+
+class UvAlignTestPattern implements UvPattern {
+  constructor(
+    private main: Color,
+    private ul: Color,
+    private ur: Color,
+    private bl: Color,
+    private br: Color
+  ) {}
+
+  colorAt(u: number, v: number): Color {
+    if (v > 0.8) {
+      if (u < 0.2) {
+        return this.ul.clone();
+      }
+      if (u > 0.8) {
+        return this.ur.clone();
+      }
+    }
+    if (v < 0.2) {
+      if (u < 0.2) {
+        return this.bl.clone();
+      }
+      if (u > 0.8) {
+        return this.br.clone();
+      }
+    }
+    return this.main.clone();
+  }
+}
 
 describe('Texture maps', () => {
   const black = new Color(0, 0, 0);
