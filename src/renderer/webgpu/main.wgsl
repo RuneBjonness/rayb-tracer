@@ -68,6 +68,18 @@ struct Material {
   refractive_index: f32,
 }
 
+struct Pattern {
+  pattern_type: u32,
+  uv_mapping_type: u32,
+  idx_start: u32,
+  idx_end: u32, 
+  color1: vec3<f32>,
+  width: u32,
+  color2: vec3<f32>,
+  height: u32,
+  inv_transform: mat4x4<f32>,
+}
+
 const SHAPE_SPHERE = 1u;
 const SHAPE_PLANE = 2u;
 const SHAPE_CUBE = 3u;
@@ -78,6 +90,27 @@ const SHAPE_SMOOTH_TRIANGLE = 7u;
 const SHAPE_CSG = 8u;
 const SHAPE_GROUP = 9u;
 const SHAPE_GROUP_BVH = 10u;
+
+const PATTERN_SOLID = 0u;
+const PATTERN_STRIPE = 1u;
+const PATTERN_CHECKERS_3D = 2u;
+const PATTERN_GRADIENT = 3u;
+const PATTERN_RING = 4u;
+const PATTERN_RADIAL_GRADIENT = 5u;
+const PATTERN_BLENDED = 6u;
+const PATTERN_TEXTURE_MAP_CHECKERS = 7u;
+const PATTERN_TEXTURE_MAP_IMAGE = 8u;
+const PATTERN_CUBE_MAP = 9u;
+
+const UV_MAPPING_PLANAR = 0u;
+const UV_MAPPING_SPHERICAL = 1u;
+const UV_MAPPING_CYLINDRICAL = 2u;
+const UV_MAPPING_CUBIC_LEFT = 3u;
+const UV_MAPPING_CUBIC_FRONT = 4u;
+const UV_MAPPING_CUBIC_RIGHT = 5u;
+const UV_MAPPING_CUBIC_BACK = 6u;
+const UV_MAPPING_CUBIC_TOP = 7u;
+const UV_MAPPING_CUBIC_BOTTOM = 8u;
 
 const OBJECT_BUFFER_TYPE_SHAPE = 0u;
 const OBJECT_BUFFER_TYPE_TRIANGLE = 1u;
@@ -102,6 +135,12 @@ var<storage, read> lights: array<Light>;
 var<storage, read> materials: array<Material>;
 
 @group(0) @binding(6)
+var<storage, read> patterns: array<Pattern>;
+
+@group(0) @binding(7)
+var<storage, read> image_data: array<u32>;
+
+@group(0) @binding(8)
 var<storage, read_write> output: array<u32>;
 
 @compute @workgroup_size(8,8)

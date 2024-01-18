@@ -13,7 +13,9 @@ import {
 } from '../../lib/shapes/object-buffers';
 import {
   MATERIAL_BYTE_SIZE,
+  PATTERN_BYTE_SIZE,
   copyMaterialToArrayBuffer,
+  patternsArrayBufferByteLength,
 } from '../../lib/material/material-buffers';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
@@ -88,6 +90,20 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       },
       {
         binding: 6,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 7,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 8,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
           type: 'storage',
@@ -189,6 +205,33 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
   device.queue.writeBuffer(materialsStorageBuffer, 0, materialsArrayBuffer);
 
+  const patternsArrayBuffer = new ArrayBuffer(
+    patternsArrayBufferByteLength(scene.patterns)
+  );
+  var patternsBufferOffset = PATTERN_BYTE_SIZE;
+  for (let i = 0; i < scene.patterns.length; i++) {
+    patternsBufferOffset = scene.patterns[i].copyToArrayBuffer(
+      patternsArrayBuffer,
+      patternsBufferOffset
+    );
+  }
+  const patternsStorageBuffer = device.createBuffer({
+    size: Math.ceil(patternsArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(patternsStorageBuffer, 0, patternsArrayBuffer);
+
+  const imageDataArrayBuffer = new ArrayBuffer(
+    16 // TODO
+  );
+  // for (let i = 0; i < scene.images.length; i++) {
+  // }
+  const imageDataStorageBuffer = device.createBuffer({
+    size: Math.ceil(imageDataArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(imageDataStorageBuffer, 0, imageDataArrayBuffer);
+
   const OUTPUT_BUFFER_SIZE = scene.camera.width * scene.camera.height * 4;
   const output = device.createBuffer({
     size: OUTPUT_BUFFER_SIZE,
@@ -241,6 +284,18 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       },
       {
         binding: 6,
+        resource: {
+          buffer: patternsStorageBuffer,
+        },
+      },
+      {
+        binding: 7,
+        resource: {
+          buffer: imageDataStorageBuffer,
+        },
+      },
+      {
+        binding: 8,
         resource: {
           buffer: output,
         },

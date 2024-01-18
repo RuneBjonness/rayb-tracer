@@ -11,8 +11,8 @@ import { canvasFromImage } from '../../tools/image-loader';
 import { Matrix4 } from '../../lib/math/matrices';
 import { material } from '../../lib/material/materials';
 import { TextureMap } from '../../lib/material/texture-mapping/texture-map';
-import { SphericalMapper } from '../../lib/material/texture-mapping/uv-mappers';
 import { ImageUvPattern } from '../../lib/material/texture-mapping/uv-patterns';
+import { UvMapper } from '../../lib/material/texture-mapping/uv-mappers';
 
 export class ImageMapping extends Scene {
   constructor(renderCfg: RenderConfiguration) {
@@ -58,7 +58,7 @@ export class ImageMapping extends Scene {
     s.materialDefinitions = this.materials;
     s.materialIdx = 0;
     s.patternDefinitions = [
-      new TextureMap(new ImageUvPattern(img.pixels), new SphericalMapper()),
+      new TextureMap(new ImageUvPattern(img.pixels), UvMapper.Spherical),
     ];
 
     world.objects.push(s);

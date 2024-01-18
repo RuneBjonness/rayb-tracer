@@ -21,6 +21,13 @@ export class TestPattern extends Pattern {
   protected localColorAt(p: Vector4): Color {
     return new Color(p.x, p.y, p.z);
   }
+
+  protected copyCustomToArrayBuffer(
+    buffer: ArrayBuffer,
+    offset: number
+  ): number {
+    throw new Error('Method not implemented.');
+  }
 }
 
 describe('Common pattern features', () => {
