@@ -16,7 +16,7 @@ import { material } from '../../lib/material/materials';
 export class MarbleMadness extends Scene {
   constructor(
     renderCfg: RenderConfiguration,
-    private size: 25 | 100,
+    private size: number,
     private useBvh: boolean
   ) {
     super(
@@ -25,8 +25,8 @@ export class MarbleMadness extends Scene {
         camera: {
           fieldOfView: 60,
           viewTransform: {
-            from: size === 25 ? [40, 30, -40] : [160, 120, -160],
-            to: size === 25 ? [0, -3, 0] : [0, -12, 0],
+            from: [1.6 * size, 1.2 * size, -1.6 * size],
+            to: [0, -0.12 * size, 0],
             up: [0, 1, 0],
           },
           aperture: 0.005,
@@ -56,14 +56,11 @@ export class MarbleMadness extends Scene {
     world.lights.push(lamp);
 
     let matIdx = 0;
+    const posOffset = -this.size / 2;
     const marbles = new Group();
     for (let x = 0; x < this.size; x++) {
       for (let y = 0; y < this.size; y++) {
         for (let z = 0; z < this.size; z++) {
-          const xpos = -this.size / 2 + x;
-          const ypos = -this.size / 2 + y;
-          const zpos = -this.size / 2 + z;
-
           const mat = material();
           mat.color = new Color(x / this.size, y / this.size, z / this.size);
           mat.reflective = 0.9;
@@ -73,11 +70,14 @@ export class MarbleMadness extends Scene {
           matIdx++;
 
           const s = new Sphere();
-          s.transform = translation(xpos, ypos, zpos).multiply(
-            scaling(0.33, 0.33, 0.33)
-          );
+          s.transform = translation(
+            x + posOffset,
+            y + posOffset,
+            z + posOffset
+          ).multiply(scaling(0.33, 0.33, 0.33));
           s.materialDefinitions = this.materials;
           s.materialIdx = matIdx;
+
           if (this.useBvh) {
             marbles.add(s);
           } else {
@@ -88,7 +88,7 @@ export class MarbleMadness extends Scene {
     }
 
     if (this.useBvh) {
-      marbles.divide(2 * 2 * 2);
+      marbles.divide(this.size < 50 ? 4 : 8);
       world.objects.push(marbles);
     }
 
