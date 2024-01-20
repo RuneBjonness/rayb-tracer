@@ -1,6 +1,9 @@
 # RayB Tracer
 
-This is a simple Ray Tracer written in TypeScript.
+This is a simple Ray Tracer written in TypeScript and WGSL for my own pleasure.
+
+https://runebjonness.github.io/rayb-tracer/
+
 I got started with this pet-project by following the test driven approach described in [The Ray Tracer Challenge](http://raytracerchallenge.com/) by Jamis Buck. (..which by the way is a book I highly recommend to everyone)
 
 ## Installation
