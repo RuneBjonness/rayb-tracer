@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react()],
-    assetsInclude: ['obj', 'ppm'],
+  plugins: [react()],
+  assetsInclude: ['obj', 'ppm'],
+  base: '/rayb-tracer/',
 });
