@@ -1,6 +1,3 @@
-const EPSILON = 0.001;
-const SURFACE_EPSILON = 0.005;
-
 struct Ray {
   origin: vec3<f32>,
   direction: vec3<f32>,

@@ -1,4 +1,5 @@
 import { Color } from '../../math/color';
+import { PatternType } from '../patterns';
 
 export type UvPatternType = 'checkers' | 'image';
 export interface UvPattern {
@@ -24,18 +25,19 @@ export class CheckersUvPattern implements UvPattern {
   }
 
   copyCustomToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
-    const u32view = new Uint32Array(buffer, offset, 12);
+    const u32view = new Uint32Array(buffer, offset, 1);
     const f32view = new Float32Array(buffer, offset, 12);
+    u32view[0] = PatternType.TextureMapCheckers;
 
     f32view[4] = this.c1.r;
     f32view[5] = this.c1.g;
     f32view[6] = this.c1.b;
-    u32view[7] = this.width;
+    f32view[7] = this.width;
 
     f32view[8] = this.c2.r;
     f32view[9] = this.c2.g;
     f32view[10] = this.c2.b;
-    u32view[11] = this.height;
+    f32view[11] = this.height;
   }
 }
 

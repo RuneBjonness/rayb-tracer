@@ -1,8 +1,8 @@
 import { Vector4, vector } from '../../math/vector4';
 
 export enum UvMapper {
-  Spherical = 0,
-  Planar = 1,
+  Planar = 0,
+  Spherical = 1,
   Cylindrical = 2,
   CubeLeft = 3,
   CubeFront = 4,
