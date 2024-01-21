@@ -14,7 +14,7 @@ export function copyMaterialToArrayBuffer(
   f32view[0] = m.color.r;
   f32view[1] = m.color.g;
   f32view[2] = m.color.b;
-  u32view[3] = m.patternIdx;
+  u32view[3] = m.patternBufferIdx;
   f32view[4] = m.ambient;
   f32view[5] = m.diffuse;
   f32view[6] = m.specular;
@@ -29,4 +29,8 @@ export function patternsArrayBufferByteLength(patterns: Pattern[]): number {
     (acc, p) => acc + p.arrayBufferByteLength(),
     PATTERN_BYTE_SIZE
   );
+}
+
+export function patternsArrayBufferLength(patterns: Pattern[]): number {
+  return patternsArrayBufferByteLength(patterns) / PATTERN_BYTE_SIZE;
 }

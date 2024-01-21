@@ -96,7 +96,7 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
 
   let light_count = arrayLength(&lights);
   for(var i = 0u; i < light_count; i++) {
-    result.color += lightning(ray, hit.point, material_idx, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
+    result.color += lightning(ray, hit, material_idx, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
   }
   
   var n_ratio = refractive_index / material.refractive_index;
@@ -120,16 +120,16 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
   return result;
 }
 
-fn lightning(ray: Ray, point: vec3f, material_idx: u32, normal: vec3f, eye_v: vec3f, light_color: vec3f, light_pos: vec3f) -> vec3<f32> {
+fn lightning(ray: Ray, hit: HitInfo, material_idx: u32, normal: vec3f, eye_v: vec3f, light_color: vec3f, light_pos: vec3f) -> vec3<f32> {
   let material = materials[material_idx];
-  let effective_color = material.color * light_color;
+  let effective_color = material_color_at(hit, material_idx) * light_color;
   let ambient = effective_color * material.ambient;
 
-  if(is_shadowed(point + normal * SURFACE_EPSILON, light_pos)) {
+  if(is_shadowed(hit.point + normal * SURFACE_EPSILON, light_pos)) {
     return ambient;
   }
 
-  let light_v = normalize(light_pos - point);
+  let light_v = normalize(light_pos - hit.point);
   let light_dot_normal = dot(light_v, normal);
 
   if(light_dot_normal < 0.0) {

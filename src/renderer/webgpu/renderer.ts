@@ -4,6 +4,7 @@ import { RenderConfiguration } from '../configuration';
 import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
 import previewRendererWgsl from './preview-renderer.wgsl?raw';
+import materialsWgsl from './materials.wgsl?raw';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
 import {
   BVH_NODE_BYTE_SIZE,
@@ -41,7 +42,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
 
   const module = device.createShaderModule({
-    code: mainWgsl + intersectionsWgsl + previewRendererWgsl,
+    code: mainWgsl + intersectionsWgsl + previewRendererWgsl + materialsWgsl,
   });
 
   const bindGroupLayout = device.createBindGroupLayout({

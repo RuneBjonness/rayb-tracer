@@ -48,6 +48,7 @@ import {
   CubeMap,
   TextureMap,
 } from '../lib/material/texture-mapping/texture-map';
+import { patternsArrayBufferLength } from '../lib/material/material-buffers';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
@@ -273,9 +274,16 @@ export class Scene {
 
     const pattern = this.createPattern(m.pattern);
     if (pattern) {
-      mat.patternIdx = this.patterns.indexOf(pattern);
-      if (mat.patternIdx < 0) {
-        mat.patternIdx = this.patterns.push(pattern) - 1;
+      const existingPatternIdx = this.patterns.indexOf(pattern);
+      if (existingPatternIdx >= 0) {
+        mat.patternIdx = existingPatternIdx;
+        mat.patternBufferIdx = patternsArrayBufferLength(
+          this.patterns.slice(0, existingPatternIdx)
+        );
+      } else {
+        mat.patternIdx = this.patterns.length;
+        mat.patternBufferIdx = patternsArrayBufferLength(this.patterns);
+        this.patterns.push(pattern);
       }
     }
 

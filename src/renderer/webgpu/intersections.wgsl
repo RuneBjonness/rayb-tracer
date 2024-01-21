@@ -175,6 +175,16 @@ fn hit_triangle(ray: Ray, start: u32, end: u32, closest_hit: f32) -> HitInfo {
   return hit;
 }
 
+fn world_to_object(point: vec3<f32>, shape_idx: u32) -> vec3<f32> {
+  var i = shape_idx;
+  var m = shapes[i].inv_transform;
+  while(shapes[i].parent_idx > 0) {
+    i = shapes[i].parent_idx;
+    m = m * shapes[i].inv_transform;
+  }
+  return (m * vec4<f32>(point, 1.0)).xyz;
+}
+
 fn normal_at(hit: HitInfo) -> vec3<f32> {
   var local_normal = vec3<f32>(0.0, 0.0, 0.0);
   var idx = hit.buffer_index;
@@ -190,12 +200,7 @@ fn normal_at(hit: HitInfo) -> vec3<f32> {
   } else {
     let shape = shapes[idx];
 
-    var m = shapes[idx].inv_transform;
-    while(shapes[idx].parent_idx > 0) {
-      idx = shapes[idx].parent_idx;
-      m = m * shapes[idx].inv_transform;
-    }
-    let local_point = (m * vec4<f32>(hit.point, 1.0)).xyz;
+    let local_point = world_to_object(hit.point, idx);
 
     switch(shape.shape_type) {
       case SHAPE_SPHERE: {

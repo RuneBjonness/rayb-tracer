@@ -6,6 +6,7 @@ import { Vector4 } from '../math/vector4';
 export type Material = {
   color: Color;
   patternIdx: number;
+  patternBufferIdx: number;
   ambient: number;
   diffuse: number;
   specular: number;
@@ -19,6 +20,7 @@ export function material(): Material {
   return {
     color: new Color(1, 1, 1),
     patternIdx: -1,
+    patternBufferIdx: 0,
     ambient: 0.1,
     diffuse: 0.9,
     specular: 0.9,
