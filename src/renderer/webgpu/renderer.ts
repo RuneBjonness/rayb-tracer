@@ -29,17 +29,21 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
     throw new Error('No appropriate GPUAdapter found.');
   }
 
-  const canUse512MBStorageBuffers =
-    adapter?.limits.maxStorageBufferBindingSize >= 512 * 1024 * 1024;
-  if (!canUse512MBStorageBuffers) {
-    throw new Error(
-      `GPUAdapter does not support 512MB storage buffers. Max: ${adapter?.limits.maxStorageBufferBindingSize}`
-    );
+  let deviceDescriptor: GPUDeviceDescriptor | undefined;
+  if (scene.name === 'MarbleMadness_100_BVH') {
+    const canUse512MBStorageBuffers =
+      adapter?.limits.maxStorageBufferBindingSize >= 512 * 1024 * 1024;
+    if (!canUse512MBStorageBuffers) {
+      throw new Error(
+        `GPUAdapter does not support 512MB storage buffers. Max: ${adapter?.limits.maxStorageBufferBindingSize}`
+      );
+    }
+    deviceDescriptor = {
+      requiredLimits: { maxStorageBufferBindingSize: 512 * 1024 * 1024 },
+    };
   }
 
-  const device = await adapter.requestDevice({
-    requiredLimits: { maxStorageBufferBindingSize: 512 * 1024 * 1024 },
-  });
+  const device = await adapter.requestDevice(deviceDescriptor);
 
   const module = device.createShaderModule({
     code: mainWgsl + intersectionsWgsl + previewRendererWgsl + materialsWgsl,
@@ -358,13 +362,15 @@ const renderWebGpu = async (
     scene = new Scene(JSON.parse(sceneDefinition as string), cfg);
   }
 
+  console.log(` -scene: ${scene.name}`);
+
   performance.mark('scene-created');
 
   init(scene, ctx).then(() => {
     performance.mark('render-end');
 
     console.log(
-      ` building scene: ${performance
+      `building scene: ${performance
         .measure('scene', 'render-start', 'scene-created')
         .duration.toFixed(1)} ms\n`,
       `building compute pipeline: ${performance

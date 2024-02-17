@@ -21,7 +21,7 @@ export class MarbleMadness extends Scene {
   ) {
     super(
       {
-        name: 'MarbleMadness',
+        name: `MarbleMadness_${size}_${useBvh ? 'BVH' : 'BruteForce'}`,
         camera: {
           fieldOfView: 60,
           viewTransform: {

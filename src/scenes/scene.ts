@@ -52,15 +52,18 @@ import { patternsArrayBufferLength } from '../lib/material/material-buffers';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
 export class Scene {
+  name: string;
   world: World = new World();
   camera: Camera = new Camera(0, 0, 0);
   materials: Material[] = [];
   patterns: Pattern[] = [];
+  images: ImageData[] = [];
 
   constructor(
     private definiton: SceneDefinition,
     renderCfg: RenderConfiguration
   ) {
+    this.name = definiton.name;
     this.camera = this.createCamera(definiton.camera, renderCfg);
     this.init(renderCfg);
   }
