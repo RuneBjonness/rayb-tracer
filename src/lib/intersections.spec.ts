@@ -1,6 +1,6 @@
 import each from 'jest-each';
 import {
-  hit,
+  hitSorted,
   intersection,
   prepareComputations,
   reflectance,
@@ -60,24 +60,24 @@ test('aggregating intersections', () => {
   expect(xs[1].time).toEqual(2);
 });
 
-test('the hit, when all intersections have positive time', () => {
+test('the hit, when all intersections have positive time and are sorted ascending', () => {
   const s = new Sphere();
   const i1 = intersection(1, s);
   const i2 = intersection(2, s);
-  const xs = [i2, i1];
+  const xs = [i1, i2];
 
-  const i = hit(xs);
+  const i = hitSorted(xs);
 
   expect(i).toBe(i1);
 });
 
-test('the hit, when some intersections have negative time', () => {
+test('the hit, when some intersections have negative time and are sorted ascending', () => {
   const s = new Sphere();
   const i1 = intersection(-1, s);
   const i2 = intersection(1, s);
-  const xs = [i2, i1];
+  const xs = [i1, i2];
 
-  const i = hit(xs);
+  const i = hitSorted(xs);
 
   expect(i).toBe(i2);
 });
@@ -86,24 +86,24 @@ test('the hit, when all intersections have negative time', () => {
   const s = new Sphere();
   const i1 = intersection(-2, s);
   const i2 = intersection(-1, s);
-  const xs = [i2, i1];
+  const xs = [i1, i2];
 
-  const i = hit(xs);
+  const i = hitSorted(xs);
 
   expect(i).toBeNull();
 });
 
-test('the hit is always the lowest nonnegative intersection', () => {
+test('the hit is always the lowest nonnegative intersection for a sorted list', () => {
   const s = new Sphere();
-  const i1 = intersection(5, s);
-  const i2 = intersection(7, s);
-  const i3 = intersection(-3, s);
-  const i4 = intersection(2, s);
+  const i1 = intersection(-3, s);
+  const i2 = intersection(2, s);
+  const i3 = intersection(4, s);
+  const i4 = intersection(7, s);
   const xs = [i1, i2, i3, i4];
 
-  const i = hit(xs);
+  const i = hitSorted(xs);
 
-  expect(i).toBe(i4);
+  expect(i).toBe(i2);
 });
 
 test('precomputing the state of an intersection', () => {

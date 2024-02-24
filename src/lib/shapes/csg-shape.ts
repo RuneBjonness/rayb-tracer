@@ -1,7 +1,8 @@
 import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { TransformableShape, Shape } from './shape';
+import { Shape } from './shape';
+import { TransformableShape } from './transformable-shape';
 
 export class CsgShape extends TransformableShape {
   constructor(
@@ -67,6 +68,16 @@ export class CsgShape extends TransformableShape {
       );
     }
     return [];
+  }
+
+  protected localHits(r: Ray, maxDistance: number): boolean {
+    const validIntersections = this.localIntersects(r);
+    for (const i of validIntersections) {
+      if (i.time >= 0 && i.time < maxDistance) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected localNormalAt(p: Vector4): Vector4 {

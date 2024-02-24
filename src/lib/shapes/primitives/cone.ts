@@ -2,7 +2,7 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { TransformableShape } from '../shape';
+import { TransformableShape } from '../transformable-shape';
 
 export class Cone extends TransformableShape {
   readonly minimum: number;
@@ -57,6 +57,51 @@ export class Cone extends TransformableShape {
     }
 
     return xs;
+  }
+
+  protected localHits(r: Ray, maxDistance: number): boolean {
+    const a = r.direction.x ** 2 - r.direction.y ** 2 + r.direction.z ** 2;
+    const b =
+      2 * r.origin.x * r.direction.x -
+      2 * r.origin.y * r.direction.y +
+      2 * r.origin.z * r.direction.z;
+    const c = r.origin.x ** 2 - r.origin.y ** 2 + r.origin.z ** 2;
+
+    if (Math.abs(a) > 0.00001) {
+      const discriminant = b ** 2 - 4 * a * c;
+
+      if (discriminant >= 0) {
+        const t0 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        if (t0 >= 0 && t0 < maxDistance && this.hitWalls(r, t0).length > 0) {
+          return true;
+        }
+        const t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        if (t1 >= 0 && t1 < maxDistance && this.hitWalls(r, t1).length > 0) {
+          return true;
+        }
+      }
+    } else if (Math.abs(b) > 0.00001) {
+      const t = -c / (2 * b);
+      if (t >= 0 && t < maxDistance && this.hitWalls(r, t).length > 0) {
+        return true;
+      }
+    }
+
+    if (this.closed && Math.abs(r.direction.y) > 0.00001) {
+      if (
+        this.minimum >= maxDistance &&
+        this.hitCaps(r, this.minimum).length > 0
+      ) {
+        return true;
+      }
+      if (
+        this.maximum >= maxDistance &&
+        this.hitCaps(r, this.maximum).length > 0
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected localNormalAt(p: Vector4): Vector4 {

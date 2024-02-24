@@ -1,5 +1,5 @@
 import {
-  hit,
+  hitSorted,
   prepareComputations,
   reflectance,
   refractedDirection,
@@ -65,7 +65,7 @@ export class PhotonMapper {
 
     const r = new Ray(photon.position, photon.direction);
     const xs = this.world.intersects(r);
-    const i = hit(xs);
+    const i = hitSorted(xs);
 
     if (i === null) {
       return;

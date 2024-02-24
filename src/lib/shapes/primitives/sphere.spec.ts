@@ -7,48 +7,58 @@ describe('Spheres', () => {
     const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const s = new Sphere();
     const xs = s.intersects(r);
+    const hit = s.hits(r, 10);
 
     expect(xs.length).toBe(2);
     expect(xs[0].time).toEqual(4.0);
     expect(xs[1].time).toEqual(6.0);
+    expect(hit).toBeTruthy();
   });
 
   test('a ray intersects a sphere at a tangent', () => {
     const r = new Ray(point(0, 1, -5), vector(0, 0, 1));
     const s = new Sphere();
     const xs = s.intersects(r);
+    const hit = s.hits(r, 10);
 
     expect(xs.length).toBe(2);
     expect(xs[0].time).toEqual(5.0);
     expect(xs[1].time).toEqual(5.0);
+    expect(hit).toBeTruthy();
   });
 
   test('a ray misses a sphere', () => {
     const r = new Ray(point(0, 2, -5), vector(0, 0, 1));
     const s = new Sphere();
     const xs = s.intersects(r);
+    const hit = s.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray originates inside a sphere', () => {
     const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
     const s = new Sphere();
     const xs = s.intersects(r);
+    const hit = s.hits(r, 10);
 
     expect(xs.length).toBe(2);
     expect(xs[0].time).toEqual(-1.0);
     expect(xs[1].time).toEqual(1.0);
+    expect(hit).toBeTruthy();
   });
 
   test('a sphere is behind a ray', () => {
     const r = new Ray(point(0, 0, 5), vector(0, 0, 1));
     const s = new Sphere();
     const xs = s.intersects(r);
+    const hit = s.hits(r, 10);
 
     expect(xs.length).toBe(2);
     expect(xs[0].time).toEqual(-6.0);
     expect(xs[1].time).toEqual(-4.0);
+    expect(hit).toBeFalsy();
   });
 
   test('intersect sets the object on the intersection', () => {

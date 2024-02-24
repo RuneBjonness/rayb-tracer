@@ -35,41 +35,51 @@ describe('Triangles', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
     const r = new Ray(point(0, -1, -2), vector(0, 1, 0));
     const xs = t.intersects(r);
+    const hit = t.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray misses the p1-p3 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
     const r = new Ray(point(1, 1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
+    const hit = t.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray misses the p1-p2 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
     const r = new Ray(point(-1, 1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
+    const hit = t.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray misses the p2-p3 edge', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
     const r = new Ray(point(0, -1, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
+    const hit = t.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray strikes a triangle', () => {
     const t = new Triangle(point(0, 1, 0), point(-1, 0, 0), point(1, 0, 0));
     const r = new Ray(point(0, 0.5, -2), vector(0, 0, 1));
     const xs = t.intersects(r);
+    const hit = t.hits(r, 10);
 
     expect(xs.length).toBe(1);
     expect(xs[0].time).toEqual(2);
+    expect(hit).toBeTruthy();
   });
 
   test('the bounds of a triangle', () => {

@@ -3,7 +3,7 @@ import { translation, scaling, rotationY } from '../math/transformations';
 import { Group } from './group';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
-import { TestShape } from './shape';
+import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
 import { Cube } from './primitives/cube';
@@ -28,9 +28,12 @@ describe('Groups', () => {
 
   test('intersecting a ray with an empty group', () => {
     const g = new Group();
-    const xs = g.intersects(new Ray(point(0, 0, 0), vector(0, 0, 1)));
+    const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
+    const xs = g.intersects(r);
+    const hit = g.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('intersecting a ray with a nonempty group', () => {
@@ -45,13 +48,16 @@ describe('Groups', () => {
     g.add(s2);
     g.add(s3);
 
-    const xs = g.intersects(new Ray(point(0, 0, -5), vector(0, 0, 1)));
+    const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
+    const xs = g.intersects(r);
+    const hit = g.hits(r, 10);
 
     expect(xs.length).toBe(4);
     expect(xs[0].object).toBe(s2);
     expect(xs[1].object).toBe(s2);
     expect(xs[2].object).toBe(s1);
     expect(xs[3].object).toBe(s1);
+    expect(hit).toBeTruthy();
   });
 
   test('intersecting a transformed group', () => {
@@ -61,9 +67,12 @@ describe('Groups', () => {
     s.transform = translation(5, 0, 0);
     g.add(s);
 
-    const xs = g.intersects(new Ray(point(10, 0, -10), vector(0, 0, 1)));
+    const r = new Ray(point(10, 0, -10), vector(0, 0, 1));
+    const xs = g.intersects(r);
+    const hit = g.hits(r, 10);
 
     expect(xs.length).toBe(2);
+    expect(hit).toBeTruthy();
   });
 
   test('finding normal on a child object', () => {

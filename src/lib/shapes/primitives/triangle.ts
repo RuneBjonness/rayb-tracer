@@ -1,7 +1,8 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { Shape, ShapeType, TransformableShape, shapeTypeId } from '../shape';
+import { Shape, ShapeType, shapeTypeId } from '../shape';
+import { TransformableShape } from '../transformable-shape';
 import { Vector4, point, vector } from '../../math/vector4';
 import { Material, material } from '../../material/materials';
 import { CsgShape } from '../csg-shape';
@@ -97,6 +98,33 @@ export class Triangle implements Shape {
 
     const t = f * this.e2.dot(p1ToOrigin);
     return [intersection(t, this, u, v)];
+  }
+
+  hits(r: Ray, maxDistance: number): boolean {
+    const dirCrossE2 = r.direction.clone().cross(this.e2);
+    const det = this.e1.dot(dirCrossE2);
+
+    if (Math.abs(det) < 0.00001) {
+      return false;
+    }
+
+    const f = 1 / det;
+    const p1ToOrigin = r.origin.clone().subtract(this.p1);
+    const u = f * p1ToOrigin.dot(dirCrossE2);
+
+    if (u < 0 || u > 1) {
+      return false;
+    }
+
+    p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(p1ToOrigin);
+
+    if (v < 0 || u + v > 1) {
+      return false;
+    }
+
+    const t = f * this.e2.dot(p1ToOrigin);
+    return t >= 0 && t <= maxDistance;
   }
 
   normalAt(p: Vector4, i: Intersection | null): Vector4 {

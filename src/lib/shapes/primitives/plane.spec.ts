@@ -18,36 +18,44 @@ describe('Planes', () => {
     const p = new Plane();
     const r = new Ray(point(0, 10, 0), vector(0, 0, 1));
     const xs = p.intersects(r);
+    const hit = p.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a coplanar ray will not intersect', () => {
     const p = new Plane();
     const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
     const xs = p.intersects(r);
+    const hit = p.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray intersecting the plane from above', () => {
     const p = new Plane();
     const r = new Ray(point(0, 1, 0), vector(0, -1, 0));
     const xs = p.intersects(r);
+    const hit = p.hits(r, 10);
 
     expect(xs.length).toBe(1);
     expect(xs[0].time).toEqual(1);
     expect(xs[0].object).toBe(p);
+    expect(hit).toBeTruthy();
   });
 
   test('a ray intersecting the plane from below', () => {
     const p = new Plane();
     const r = new Ray(point(0, -1, 0), vector(0, 1, 0));
     const xs = p.intersects(r);
+    const hit = p.hits(r, 10);
 
     expect(xs.length).toBe(1);
     expect(xs[0].time).toEqual(1);
     expect(xs[0].object).toBe(p);
+    expect(hit).toBeTruthy();
   });
 
   test('the bounds of a plane', () => {

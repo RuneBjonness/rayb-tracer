@@ -7,7 +7,7 @@ import { Group } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
 import { Sphere } from './primitives/sphere';
-import { TestShape } from './shape';
+import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
 
@@ -89,8 +89,10 @@ describe('CSG Shapes', () => {
 
     const r = new Ray(point(0, 2, -5), vector(0, 0, 1));
     const xs = csg.intersects(r);
+    const hit = csg.hits(r, 10);
 
     expect(xs.length).toBe(0);
+    expect(hit).toBeFalsy();
   });
 
   test('a ray hits a csg shape', () => {
@@ -101,12 +103,14 @@ describe('CSG Shapes', () => {
 
     const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const xs = csg.intersects(r);
+    const hit = csg.hits(r, 10);
 
     expect(xs.length).toBe(2);
     expect(xs[0].time).toEqual(4);
     expect(xs[0].object).toBe(s1);
     expect(xs[1].time).toEqual(6.5);
     expect(xs[1].object).toBe(s2);
+    expect(hit).toBeTruthy();
   });
 
   test('the bounds of a csg contains both operands bounds', () => {

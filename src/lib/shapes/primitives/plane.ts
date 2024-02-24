@@ -2,7 +2,7 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { TransformableShape } from '../shape';
+import { TransformableShape } from '../transformable-shape';
 
 export class Plane extends TransformableShape {
   constructor() {
@@ -19,6 +19,14 @@ export class Plane extends TransformableShape {
       return [];
     }
     return [intersection(-r.origin.y / r.direction.y, this)];
+  }
+
+  protected localHits(r: Ray, maxDistance: number): boolean {
+    if (Math.abs(r.direction.y) < 0.00001) {
+      return false;
+    }
+    const t = -r.origin.y / r.direction.y;
+    return t >= 0 && t < maxDistance;
   }
 
   protected localNormalAt(_p: Vector4): Vector4 {

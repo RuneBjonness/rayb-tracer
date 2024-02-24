@@ -17,11 +17,14 @@ describe('Cubes', () => {
     'a ray intersects a cube from $case',
     ({ origin, direction, t1, t2 }) => {
       const c = new Cube();
-      const xs = c.intersects(new Ray(origin, direction));
+      const r = new Ray(origin, direction);
+      const xs = c.intersects(r);
+      const hit = c.hits(r, 10);
 
       expect(xs.length).toEqual(2);
       expect(xs[0].time).toEqual(t1);
       expect(xs[1].time).toEqual(t2);
+      expect(hit).toBeTruthy();
     }
   );
 
@@ -35,9 +38,12 @@ describe('Cubes', () => {
         ${point(2, 2, 0)}  | ${vector(-1, 0, 0)} 
     `.test('a ray misses a cube', ({ origin, direction }) => {
     const c = new Cube();
-    const xs = c.intersects(new Ray(origin, direction));
+    const r = new Ray(origin, direction);
+    const xs = c.intersects(r);
+    const hit = c.hits(r, 10);
 
     expect(xs.length).toEqual(0);
+    expect(hit).toBeFalsy();
   });
 
   each`

@@ -11,9 +11,12 @@ describe('Cylinders', () => {
         ${point(0, 0, -5)} | ${vector(1, 1, 1)}
     `.test('a ray misses a cylinder', ({ origin, direction }) => {
     const c = new Cylinder();
-    const xs = c.intersects(new Ray(origin, direction.normalize()));
+    const r = new Ray(origin, direction.normalize());
+    const xs = c.intersects(r);
+    const hit = c.hits(r, 10);
 
     expect(xs.length).toEqual(0);
+    expect(hit).toBeFalsy();
   });
 
   each`
@@ -23,11 +26,14 @@ describe('Cylinders', () => {
         ${point(0.5, 0, -5)} | ${vector(0.1, 1, 1)} | ${6.80798} | ${7.08872}
     `.test('a ray strikes a cylinder', ({ origin, direction, t0, t1 }) => {
     const c = new Cylinder();
-    const xs = c.intersects(new Ray(origin, direction.normalize()));
+    const r = new Ray(origin, direction.normalize());
+    const xs = c.intersects(r);
+    const hit = c.hits(r, 10);
 
     expect(xs.length).toEqual(2);
     expect(xs[0].time).toBeCloseTo(t0);
     expect(xs[1].time).toBeCloseTo(t1);
+    expect(hit).toBeTruthy();
   });
 
   each`
@@ -44,20 +50,23 @@ describe('Cylinders', () => {
   });
 
   each`
-        origin               | direction            | count
-        ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}
-        ${point(0, 3, -5)}   | ${vector(0, 0, 1)}   | ${0}
-        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${0}
-        ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}
-        ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}
-        ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}
+        origin               | direction            | count | hits
+        ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}  | ${false}
+        ${point(0, 3, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+        ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+        ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+        ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}  | ${true}
     `.test(
     'a ray strikes a truncated cylinder',
-    ({ origin, direction, count }) => {
+    ({ origin, direction, count, hits }) => {
       const c = new Cylinder(1, 2);
-      const xs = c.intersects(new Ray(origin, direction.normalize()));
+      const r = new Ray(origin, direction.normalize());
+      const xs = c.intersects(r);
+      const hit = c.hits(r, 10);
 
       expect(xs.length).toEqual(count);
+      expect(hit).toBe(hits);
     }
   );
 
@@ -72,9 +81,12 @@ describe('Cylinders', () => {
     'intersecting the caps of a closed cylinder',
     ({ origin, direction, count }) => {
       const c = new Cylinder(1, 2, true);
-      const xs = c.intersects(new Ray(origin, direction.normalize()));
+      const r = new Ray(origin, direction.normalize());
+      const xs = c.intersects(r);
+      const hit = c.hits(r, 10);
 
       expect(xs.length).toEqual(count);
+      expect(hit).toBeTruthy();
     }
   );
 

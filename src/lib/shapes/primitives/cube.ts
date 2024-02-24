@@ -2,7 +2,7 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { TransformableShape } from '../shape';
+import { TransformableShape } from '../transformable-shape';
 
 export class Cube extends TransformableShape {
   constructor() {
@@ -24,6 +24,17 @@ export class Cube extends TransformableShape {
     }
 
     return [intersection(tmin, this), intersection(tmax, this)];
+  }
+
+  protected localHits(r: Ray, maxDistance: number): boolean {
+    const [xtmin, xtmax] = this.checkAxis(r.origin.x, r.direction.x);
+    const [ytmin, ytmax] = this.checkAxis(r.origin.y, r.direction.y);
+    const [ztmin, ztmax] = this.checkAxis(r.origin.z, r.direction.z);
+
+    const tmin = Math.max(xtmin, ytmin, ztmin);
+    const tmax = Math.min(xtmax, ytmax, ztmax);
+
+    return tmin <= tmax && tmin <= maxDistance && tmax >= 0;
   }
 
   protected localNormalAt(p: Vector4): Vector4 {

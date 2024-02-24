@@ -32,14 +32,13 @@ export function intersection(
   return { time, object, u, v };
 }
 
-export function hit(intersections: Intersection[]): Intersection | null {
-  let first: Intersection | null = null;
+export function hitSorted(intersections: Intersection[]): Intersection | null {
   for (const i of intersections) {
-    if (i.time >= 0 && (!first || i.time < first.time)) {
-      first = i;
+    if (i.time >= 0) {
+      return i;
     }
   }
-  return first;
+  return null;
 }
 
 export function prepareComputations(

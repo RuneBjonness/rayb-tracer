@@ -1,5 +1,5 @@
 import {
-  hit,
+  hitSorted,
   Intersection,
   IntersectionComputations,
   prepareComputations,
@@ -24,6 +24,15 @@ export class World {
     }
 
     return intersections.sort((a, b) => a.time - b.time);
+  }
+
+  hitsAny(r: Ray, maxDistance: number): boolean {
+    for (let i = 0; i < this.objects.length; i++) {
+      if (this.objects[i].hits(r, maxDistance)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   shadeHit(
@@ -83,7 +92,7 @@ export class World {
     maxIndirectLightSamples: number = 0
   ): Color {
     const xs = this.intersects(r);
-    const i = hit(xs);
+    const i = hitSorted(xs);
     return i
       ? this.shadeHit(
           prepareComputations(i, r, xs),
@@ -97,9 +106,7 @@ export class World {
     const v = lightPosition.clone().subtract(p);
     const distance = v.magnitude();
     const direction = v.normalize();
-    const r = new Ray(p, direction);
-    const h = hit(this.intersects(r));
-    return h != null && h.time < distance;
+    return this.hitsAny(new Ray(p, direction), distance);
   }
 
   reflectedColor(comps: IntersectionComputations, maxDepth: number = 4): Color {
@@ -148,7 +155,7 @@ export class World {
     const r = new Ray(comps.overPoint, sampleDir);
 
     const xs = this.intersects(r);
-    const i = hit(xs);
+    const i = hitSorted(xs);
     if (i == null) {
       return new Color(0, 0, 0);
     }

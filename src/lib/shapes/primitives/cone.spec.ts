@@ -13,36 +13,43 @@ describe('Cones', () => {
     'intersecting a cone with a ray',
     ({ origin, direction, t0, t1 }) => {
       const c = new Cone();
-      const xs = c.intersects(new Ray(origin, direction.normalize()));
+      const r = new Ray(origin, direction.normalize());
+      const xs = c.intersects(r);
+      const hit = c.hits(r, 10);
 
       expect(xs.length).toEqual(2);
       expect(xs[0].time).toBeCloseTo(t0);
       expect(xs[1].time).toBeCloseTo(t1);
+      expect(hit).toBeTruthy();
     }
   );
 
   test('intersecting a cone with a ray parallel to one of its halves', () => {
     const c = new Cone();
-    const xs = c.intersects(
-      new Ray(point(0, 0, -1), vector(0, 1, 1).normalize())
-    );
+    const r = new Ray(point(0, 0, -1), vector(0, 1, 1).normalize());
+    const xs = c.intersects(r);
+    const hit = c.hits(r, 10);
 
     expect(xs.length).toEqual(1);
     expect(xs[0].time).toBeCloseTo(0.35355);
+    expect(hit).toBeTruthy();
   });
 
   each`
-        origin                | direction           | count
-        ${point(0, 0, -5)}    | ${vector(0, 1, 0)} | ${0}
-        ${point(0, 0, -0.25)} | ${vector(0, 1, 1)} | ${2}
-        ${point(0, 0, -0.25)} | ${vector(0, 1, 0)} | ${4}
+        origin                | direction          | count  | hits
+        ${point(0, 0, -5)}    | ${vector(0, 1, 0)} | ${0}   | ${false}
+        ${point(0, 0, -0.25)} | ${vector(0, 1, 1)} | ${2}   | ${true}
+        ${point(0, 0, -0.25)} | ${vector(0, 1, 0)} | ${4}   | ${true}
     `.test(
     'intersecting the caps of a closed cone',
-    ({ origin, direction, count }) => {
+    ({ origin, direction, count, hits }) => {
       const c = new Cone(-0.5, 0.5, true);
-      const xs = c.intersects(new Ray(origin, direction.normalize()));
+      const r = new Ray(origin, direction.normalize());
+      const xs = c.intersects(r);
+      const hit = c.hits(r, 10);
 
       expect(xs.length).toEqual(count);
+      expect(hit).toBe(hits);
     }
   );
 

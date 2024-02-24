@@ -105,6 +105,25 @@ export class BvhNode implements Intersectable {
     return [];
   }
 
+  hits(r: Ray, maxDistance: number): boolean {
+    if (this.bounds.intersects(r)) {
+      if (this.isLeafNode()) {
+        for (const shape of this.shapes) {
+          if (shape.hits(r, maxDistance)) {
+            return true;
+          }
+        }
+      } else {
+        for (const node of this.bvhNodes) {
+          if (node.hits(r, maxDistance)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   divide(threshold: number): void {
     if (this.shapes.length > threshold) {
       const n1 = new BvhNode();

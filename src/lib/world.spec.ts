@@ -54,6 +54,22 @@ test('intersections for all objects in world', () => {
   expect(xs[3].time).toEqual(6);
 });
 
+test('hits any objects in world', () => {
+  const w = defaultWorld();
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
+  const hitsAny = w.hitsAny(r, 10);
+
+  expect(hitsAny).toBe(true);
+});
+
+test('hits no objects in world before a ray reaches the cloesest object', () => {
+  const w = defaultWorld();
+  const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
+  const hitsAny = w.hitsAny(r, 3);
+
+  expect(hitsAny).toBe(false);
+});
+
 test('shading an intersection', () => {
   const w = defaultWorld();
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
