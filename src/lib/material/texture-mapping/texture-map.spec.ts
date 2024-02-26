@@ -1,6 +1,6 @@
 import each from 'jest-each';
 import { Cube } from '../../shapes/primitives/cube';
-import { Sphere } from '../../shapes/primitives/sphere';
+import { TransformableSphere } from '../../shapes/primitives/sphere';
 import { Color } from '../../math/color';
 import { CubeMap, TextureMap } from './texture-map';
 import { CheckersUvPattern, UvPattern, UvPatternType } from './uv-patterns';
@@ -49,7 +49,7 @@ describe('Texture maps', () => {
 
   const uvCheckers = new CheckersUvPattern(16, 8, black, white);
   const tm = new TextureMap(uvCheckers, UvMapper.Spherical);
-  const s = new Sphere();
+  const s = new TransformableSphere();
 
   each`
         p                                   | result

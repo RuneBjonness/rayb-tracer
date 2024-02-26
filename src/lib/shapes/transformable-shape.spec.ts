@@ -7,7 +7,7 @@ import {
   translation,
 } from '../math/transformations';
 import { Group } from './group';
-import { Sphere } from './primitives/sphere';
+import { TransformableSphere } from './primitives/sphere';
 import { Vector4, point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
 import { Intersection } from '../intersections';
@@ -124,7 +124,7 @@ describe('Common shape features', () => {
     g1.transform = rotationY(Math.PI / 2);
     const g2 = new Group();
     g2.transform = scaling(2, 2, 2);
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.transform = translation(5, 0, 0);
     g1.add(g2);
     g2.add(s);
@@ -139,7 +139,7 @@ describe('Common shape features', () => {
     g1.transform = rotationY(Math.PI / 2);
     const g2 = new Group();
     g2.transform = scaling(1, 2, 3);
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.transform = translation(5, 0, 0);
     g1.add(g2);
     g2.add(s);
@@ -152,9 +152,9 @@ describe('Common shape features', () => {
   });
 
   test('dividing a primitive does nothing', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.divide(1);
 
-    expect(s).toStrictEqual(new Sphere());
+    expect(s).toStrictEqual(new TransformableSphere());
   });
 });

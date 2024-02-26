@@ -1,7 +1,7 @@
 import { PointLight } from '../lights';
 import { lighting, material } from './materials';
 import { StripePattern } from './patterns';
-import { Sphere } from '../shapes/primitives/sphere';
+import { TransformableSphere } from '../shapes/primitives/sphere';
 import { Color } from '../math/color';
 import { defaultWorld } from '../world.spec';
 import { point, vector } from '../math/vector4';
@@ -20,7 +20,7 @@ test('the default material', () => {
 });
 
 describe('lighting features', () => {
-  const shape = new Sphere();
+  const shape = new TransformableSphere();
   const position = point(0, 0, 0);
   const normalv = vector(0, 0, -1);
 
@@ -105,7 +105,7 @@ describe('lighting features', () => {
     mat.ambient = 1;
     mat.diffuse = 0;
     mat.specular = 0;
-    const shape = new Sphere();
+    const shape = new TransformableSphere();
     shape.materialDefinitions = [mat];
     shape.material = mat;
     shape.patternDefinitions = [new StripePattern(c1, c2)];

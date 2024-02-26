@@ -6,14 +6,14 @@ import { CsgShape } from './csg-shape';
 import { Group } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
-import { Sphere } from './primitives/sphere';
+import { TransformableSphere } from './primitives/sphere';
 import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
 
 describe('CSG Shapes', () => {
   test('CSG is created with an operation and two shapes', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     const c = new Cube();
     const csg = new CsgShape('union', s, c);
 
@@ -65,7 +65,7 @@ describe('CSG Shapes', () => {
         ${'intersection'} | ${1} | ${2}
         ${'difference'}   | ${0} | ${1}
     `.test('filtering a list of intersections', ({ operation, x0, x1 }) => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     const c = new Cube();
     const csg = new CsgShape(operation, s, c);
     const xs = [
@@ -83,7 +83,7 @@ describe('CSG Shapes', () => {
   });
 
   test('a ray misses a csg shape', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     const c = new Cube();
     const csg = new CsgShape('union', s, c);
 
@@ -96,8 +96,8 @@ describe('CSG Shapes', () => {
   });
 
   test('a ray hits a csg shape', () => {
-    const s1 = new Sphere();
-    const s2 = new Sphere();
+    const s1 = new TransformableSphere();
+    const s2 = new TransformableSphere();
     s2.transform = translation(0, 0, 0.5);
     const csg = new CsgShape('union', s1, s2);
 
@@ -114,7 +114,7 @@ describe('CSG Shapes', () => {
   });
 
   test('the bounds of a csg contains both operands bounds', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     const c = new Cylinder(-5, 5);
 
     const csg = new CsgShape('union', s, c);
@@ -124,9 +124,9 @@ describe('CSG Shapes', () => {
   });
 
   test('the bounds of a csg is affected by children transformations', () => {
-    const s1 = new Sphere();
+    const s1 = new TransformableSphere();
     s1.transform = scaling(2, 2, 2);
-    const s2 = new Sphere();
+    const s2 = new TransformableSphere();
     s2.transform = translation(5, 0, 0);
 
     const csg = new CsgShape('union', s1, s2);
@@ -136,7 +136,7 @@ describe('CSG Shapes', () => {
   });
 
   test('dividing a csg shape partitions its children', () => {
-    const sphere = new Sphere();
+    const sphere = new TransformableSphere();
     sphere.transform = translation(-1.5, 0, 0);
     const cylinder = new Cylinder(-1, 1);
     cylinder.transform = translation(1.5, 0, 0);

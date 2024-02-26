@@ -1,6 +1,6 @@
 import { AreaLight, PointLight } from './lights';
 import { PhotonMapper } from './photon-mapper';
-import { Sphere } from './shapes/primitives/sphere';
+import { TransformableSphere } from './shapes/primitives/sphere';
 import { scaling } from './math/transformations';
 import { Color } from './math/color';
 import { World } from './world';
@@ -41,7 +41,7 @@ describe('photon-mapping', () => {
     const w = new World();
     w.lights.push(new PointLight(point(0, 0, 0), new Color(1, 1, 1)));
 
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.material.diffuse = 1;
     w.objects.push(s);
 
@@ -60,7 +60,7 @@ describe('photon-mapping', () => {
     mat.diffuse = 0.5;
     mat.reflective = 0.5;
 
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.materialDefinitions = [mat];
     s.material = mat;
 
@@ -84,11 +84,11 @@ describe('photon-mapping', () => {
     const mat2 = material();
     mat2.diffuse = 1;
 
-    const g = new Sphere();
+    const g = new TransformableSphere();
     g.materialDefinitions = [mat, mat2];
     g.material = mat;
 
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.materialDefinitions = [mat, mat2];
     s.material = mat2;
     s.transform = scaling(2, 2, 2);

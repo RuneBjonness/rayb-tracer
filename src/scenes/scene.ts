@@ -20,7 +20,7 @@ import { point, vector } from '../lib/math/vector4';
 import { AreaLight, Light, PointLight } from '../lib/lights';
 import { Color, colorFromHex } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
-import { Sphere } from '../lib/shapes/primitives/sphere';
+import { TransformableSphere } from '../lib/shapes/primitives/sphere';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Matrix4 } from '../lib/math/matrices';
 import {
@@ -171,7 +171,7 @@ export class Scene {
 
     switch (primitive.type) {
       case 'sphere':
-        return new Sphere();
+        return new TransformableSphere();
       case 'plane':
         return new Plane();
       case 'cube':

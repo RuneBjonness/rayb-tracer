@@ -1,5 +1,5 @@
 import { PointLight } from '../../lib/lights';
-import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { TransformableSphere } from '../../lib/shapes/primitives/sphere';
 import { radians } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
@@ -50,7 +50,7 @@ export class ImageMapping extends Scene {
 
     this.materials.push(m);
 
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.transform = new Matrix4()
       .rotateY(radians(-130))
       .scale(1.4, 1.4, 1.4)

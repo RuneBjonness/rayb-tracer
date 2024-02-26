@@ -5,7 +5,7 @@ import { scaling, translation } from './math/transformations';
 import { Ray } from './rays';
 import { intersection, prepareComputations } from './intersections';
 import { Plane } from './shapes/primitives/plane';
-import { Sphere } from './shapes/primitives/sphere';
+import { TransformableSphere } from './shapes/primitives/sphere';
 import each from 'jest-each';
 import { point, vector } from './math/vector4';
 import { material } from './material/materials';
@@ -22,12 +22,12 @@ export function defaultWorld(): World {
 
   const mats = [material(), mat];
 
-  const s1 = new Sphere();
+  const s1 = new TransformableSphere();
   s1.materialDefinitions = mats;
   s1.materialIdx = 1;
   w.objects.push(s1);
 
-  const s2 = new Sphere();
+  const s2 = new TransformableSphere();
   s2.materialDefinitions = mats;
   s2.materialIdx = 0;
   s2.transform = scaling(0.5, 0.5, 0.5);
@@ -139,9 +139,9 @@ each`
 test('shading an intersection in shadow', () => {
   const w = new World();
   w.lights.push(new PointLight(point(0, 0, -10), new Color(1, 1, 1)));
-  const s = new Sphere();
+  const s = new TransformableSphere();
   s.transform = translation(0, 0, 10);
-  w.objects.push(new Sphere(), s);
+  w.objects.push(new TransformableSphere(), s);
 
   const r = new Ray(point(0, 0, 5), vector(0, 0, 1));
   const i = intersection(4, s);
@@ -336,7 +336,7 @@ test('shadeHit() with a transparent material', () => {
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);
 
-  const ball = new Sphere();
+  const ball = new TransformableSphere();
   ball.materialDefinitions = mats;
   ball.material = mat2;
   ball.transform = translation(0, -3.5, -0.5);
@@ -373,7 +373,7 @@ test('shadeHit() with a reflective and transparent material', () => {
   floor.transform = translation(0, -1, 0);
   w.objects.push(floor);
 
-  const ball = new Sphere();
+  const ball = new TransformableSphere();
   ball.materialDefinitions = mats;
   ball.material = mat2;
   ball.transform = translation(0, -3.5, -0.5);

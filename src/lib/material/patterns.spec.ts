@@ -7,7 +7,7 @@ import {
   SolidPattern,
   StripePattern,
 } from './patterns';
-import { Sphere } from '../shapes/primitives/sphere';
+import { TransformableSphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../math/transformations';
 import { Color } from '../math/color';
 import { Vector4, point } from '../math/vector4';
@@ -45,7 +45,7 @@ describe('Common pattern features', () => {
   });
 
   test('a pattern with an object transformation', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.transform = scaling(2, 2, 2);
     const p = new TestPattern();
     const c = p.colorAt(s, point(2, 3, 4));
@@ -54,7 +54,7 @@ describe('Common pattern features', () => {
   });
 
   test('a pattern with a pattern transformation', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     const p = new TestPattern();
     p.transform = scaling(2, 2, 2);
     const c = p.colorAt(s, point(2, 3, 4));
@@ -63,7 +63,7 @@ describe('Common pattern features', () => {
   });
 
   test('a pattern with both an object and a pattern transformation', () => {
-    const s = new Sphere();
+    const s = new TransformableSphere();
     s.transform = scaling(2, 2, 2);
     const p = new TestPattern();
     p.transform = translation(0.5, 1, 1.5);
@@ -76,7 +76,7 @@ describe('Common pattern features', () => {
 describe('Stripe pattern', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const p = new StripePattern(white, black);
 
   test('creating a stripe pattern', () => {
@@ -109,7 +109,7 @@ describe('Stripe pattern', () => {
 describe('Gradient pattern', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const p = new GradientPattern(white, black);
 
   test('a gradient linearly interpolates between colors', () => {
@@ -128,7 +128,7 @@ describe('Ring pattern', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
   const p = new RingPattern(white, black);
-  const s = new Sphere();
+  const s = new TransformableSphere();
 
   test('a ring should extend in both x and z', () => {
     expect(p.colorAt(s, point(0, 0, 0))).toEqual(white);
@@ -142,7 +142,7 @@ describe('Checkers 3D pattern', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
   const p = new Checkers3dPattern(white, black);
-  const s = new Sphere();
+  const s = new TransformableSphere();
 
   test('should repeat in x', () => {
     expect(p.colorAt(s, point(0, 0, 0))).toEqual(white);
@@ -166,7 +166,7 @@ describe('Checkers 3D pattern', () => {
 describe('Radial Gradient pattern', () => {
   const black = new Color(0, 0, 0);
   const white = new Color(1, 1, 1);
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const p = new RadialGradientPattern(white, black);
 
   test('a radial gradient linearly interpolates between colors in both x and z', () => {
@@ -185,7 +185,7 @@ describe('Radial Gradient pattern', () => {
 describe('Solid pattern', () => {
   const white = new Color(1, 1, 1);
   const p = new SolidPattern(white);
-  const s = new Sphere();
+  const s = new TransformableSphere();
 
   test('any point should return the specified color', () => {
     expect(p.colorAt(s, point(0, 0, 0)).equals(white));

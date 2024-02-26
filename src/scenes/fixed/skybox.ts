@@ -1,7 +1,7 @@
 import { RenderConfiguration } from '../../renderer/configuration';
 import { PointLight } from '../../lib/lights';
 import { material } from '../../lib/material/materials';
-import { Sphere } from '../../lib/shapes/primitives/sphere';
+import { TransformableSphere } from '../../lib/shapes/primitives/sphere';
 import { translation, scaling } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
@@ -16,6 +16,7 @@ import { Scene } from '../scene';
 // import { CubeMap } from '../../lib/patterns/texture-mapping/texture-map';
 // import { ImageUvPattern } from '../../lib/patterns/texture-mapping/uv-patterns';
 import { point } from '../../lib/math/vector4';
+import { Cube } from '../../lib/shapes/primitives/cube';
 
 export class Skybox extends Scene {
   constructor(renderCfg: RenderConfiguration) {
@@ -60,7 +61,7 @@ export class Skybox extends Scene {
     // ]);
     this.materials.push(skyboxMaterial);
 
-    const skybox = new Sphere();
+    const skybox = new Cube();
     skybox.transform = scaling(1000, 1000, 1000);
     skybox.materialDefinitions = this.materials;
     skybox.material = skyboxMaterial;
@@ -72,17 +73,17 @@ export class Skybox extends Scene {
     m.shininess = 30;
     this.materials.push(m);
 
-    const s1 = new Sphere();
+    const s1 = new TransformableSphere();
     s1.transform = translation(2.5, 1, 4).multiply(scaling(0.8, 0.8, 0.8));
     s1.materialDefinitions = this.materials;
     s1.material = m;
 
-    const s2 = new Sphere();
+    const s2 = new TransformableSphere();
     s2.transform = translation(-2.5, 1, 4).multiply(scaling(0.8, 0.8, 0.8));
     s2.materialDefinitions = this.materials;
     s2.material = m;
 
-    const s3 = new Sphere();
+    const s3 = new TransformableSphere();
     s3.transform = translation(0, 0, 4).multiply(scaling(0.8, 0.8, 0.8));
     s3.materialDefinitions = this.materials;
     s3.material = m;

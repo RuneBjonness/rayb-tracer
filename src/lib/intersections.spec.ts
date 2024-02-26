@@ -7,18 +7,18 @@ import {
 } from './intersections';
 import { Ray } from './rays';
 import { Plane } from './shapes/primitives/plane';
-import { Sphere } from './shapes/primitives/sphere';
+import { TransformableSphere } from './shapes/primitives/sphere';
 import { Triangle } from './shapes/primitives/triangle';
 import { scaling, translation } from './math/transformations';
 import { point, vector } from './math/vector4';
 import { material } from './material/materials';
 
-function glassSphere(): Sphere {
+function glassSphere(): TransformableSphere {
   const m = material();
   m.transparency = 1.0;
   m.refractiveIndex = 1.5;
 
-  const s = new Sphere();
+  const s = new TransformableSphere();
   s.materialDefinitions = [m];
   s.material = m;
   return s;
@@ -31,7 +31,7 @@ test('a helper for producing a sphere with a glassy material', () => {
 });
 
 test('an intersection encapsulates time and object', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i = intersection(3.5, s);
 
   expect(i.time).toEqual(3.5);
@@ -47,7 +47,7 @@ test('an intersection can encapsulate u and v', () => {
 });
 
 test('aggregating intersections', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i1 = intersection(1, s);
   const i2 = intersection(2, s);
 
@@ -61,7 +61,7 @@ test('aggregating intersections', () => {
 });
 
 test('the hit, when all intersections have positive time and are sorted ascending', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i1 = intersection(1, s);
   const i2 = intersection(2, s);
   const xs = [i1, i2];
@@ -72,7 +72,7 @@ test('the hit, when all intersections have positive time and are sorted ascendin
 });
 
 test('the hit, when some intersections have negative time and are sorted ascending', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i1 = intersection(-1, s);
   const i2 = intersection(1, s);
   const xs = [i1, i2];
@@ -83,7 +83,7 @@ test('the hit, when some intersections have negative time and are sorted ascendi
 });
 
 test('the hit, when all intersections have negative time', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i1 = intersection(-2, s);
   const i2 = intersection(-1, s);
   const xs = [i1, i2];
@@ -94,7 +94,7 @@ test('the hit, when all intersections have negative time', () => {
 });
 
 test('the hit is always the lowest nonnegative intersection for a sorted list', () => {
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i1 = intersection(-3, s);
   const i2 = intersection(2, s);
   const i3 = intersection(4, s);
@@ -108,7 +108,7 @@ test('the hit is always the lowest nonnegative intersection for a sorted list', 
 
 test('precomputing the state of an intersection', () => {
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i = intersection(4, s);
 
   const comps = prepareComputations(i, r);
@@ -122,7 +122,7 @@ test('precomputing the state of an intersection', () => {
 
 test('the hit, when an intersection occurs on the outside', () => {
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i = intersection(4, s);
   const comps = prepareComputations(i, r);
 
@@ -131,7 +131,7 @@ test('the hit, when an intersection occurs on the outside', () => {
 
 test('the hit, when an intersection occurs on the inside', () => {
   const r = new Ray(point(0, 0, 0), vector(0, 0, 1));
-  const s = new Sphere();
+  const s = new TransformableSphere();
   const i = intersection(1, s);
   const comps = prepareComputations(i, r);
 
@@ -143,7 +143,7 @@ test('the hit, when an intersection occurs on the inside', () => {
 
 test('the hit should offset the point', () => {
   const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
-  const s = new Sphere();
+  const s = new TransformableSphere();
   s.transform = translation(0, 0, 1);
   const i = intersection(5, s);
 

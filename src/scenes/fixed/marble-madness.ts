@@ -4,7 +4,6 @@ import { Group } from '../../lib/shapes/group';
 import { Sphere } from '../../lib/shapes/primitives/sphere';
 import {
   translation,
-  scaling,
   radians,
   rotationZ,
 } from '../../lib/math/transformations';
@@ -12,6 +11,7 @@ import { Color } from '../../lib/math/color';
 import { World } from '../../lib/world';
 import { Scene } from '../scene';
 import { material } from '../../lib/material/materials';
+import { point } from '../../lib/math/vector4';
 
 export class MarbleMadness extends Scene {
   constructor(
@@ -69,12 +69,10 @@ export class MarbleMadness extends Scene {
           this.materials.push(mat);
           matIdx++;
 
-          const s = new Sphere();
-          s.transform = translation(
-            x + posOffset,
-            y + posOffset,
-            z + posOffset
-          ).multiply(scaling(0.33, 0.33, 0.33));
+          const s = new Sphere(
+            point(x + posOffset, y + posOffset, z + posOffset),
+            0.33
+          );
           s.materialDefinitions = this.materials;
           s.materialIdx = matIdx;
 
