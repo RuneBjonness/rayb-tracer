@@ -8,6 +8,7 @@ import materialsWgsl from './materials.wgsl?raw';
 import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
 import {
   BVH_NODE_BYTE_SIZE,
+  PRIMITIVE_BYTE_SIZE,
   SHAPE_BYTE_SIZE,
   TRIANGLE_BYTE_SIZE,
   numberOfObjects,
@@ -90,7 +91,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
         binding: 5,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
-          type: 'read-only-storage',
+          type: 'uniform',
         },
       },
       {
@@ -109,6 +110,13 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       },
       {
         binding: 8,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+          type: 'read-only-storage',
+        },
+      },
+      {
+        binding: 9,
         visibility: GPUShaderStage.COMPUTE,
         buffer: {
           type: 'storage',
@@ -140,6 +148,10 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   const objBuffers = {
     shapesArrayBuffer: new ArrayBuffer((objCount.shapes + 1) * SHAPE_BYTE_SIZE),
     shapeBufferOffset: SHAPE_BYTE_SIZE,
+    primitivesArrayBuffer: new ArrayBuffer(
+      (objCount.primitives + 1) * PRIMITIVE_BYTE_SIZE
+    ),
+    primitiveBufferOffset: PRIMITIVE_BYTE_SIZE,
     trianglesArrayBuffer: new ArrayBuffer(
       (objCount.triangles + 1) * TRIANGLE_BYTE_SIZE
     ),
@@ -163,6 +175,16 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
     objBuffers.shapesArrayBuffer
   );
 
+  const primitivesStorageBuffer = device.createBuffer({
+    size: Math.ceil(objBuffers.primitivesArrayBuffer.byteLength / 16) * 16,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(
+    primitivesStorageBuffer,
+    0,
+    objBuffers.primitivesArrayBuffer
+  );
+
   const trianglesStorageBuffer = device.createBuffer({
     size: Math.ceil(objBuffers.trianglesArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
@@ -179,10 +201,13 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   });
   device.queue.writeBuffer(bvhStorageBuffer, 0, objBuffers.bvhArrayBuffer);
 
-  const lightsArrayBuffer = new ArrayBuffer(
-    scene.world.lights.length * LIGHTS_BYTE_SIZE
-  );
-  for (let i = 0; i < scene.world.lights.length; i++) {
+  if (scene.world.lights.length > 5) {
+    console.warn(
+      'Too many lights in the scene. Max 5 lights supported at the moment.'
+    );
+  }
+  const lightsArrayBuffer = new ArrayBuffer(5 * LIGHTS_BYTE_SIZE);
+  for (let i = 0; i < scene.world.lights.length && i < 5; i++) {
     scene.world.lights[i].copyLightToArrayBuffer(
       lightsArrayBuffer,
       i * LIGHTS_BYTE_SIZE
@@ -190,7 +215,7 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   }
   const lightsStorageBuffer = device.createBuffer({
     size: Math.ceil(lightsArrayBuffer.byteLength / 16) * 16,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
   device.queue.writeBuffer(lightsStorageBuffer, 0, lightsArrayBuffer);
 
@@ -266,41 +291,47 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
       {
         binding: 2,
         resource: {
-          buffer: trianglesStorageBuffer,
+          buffer: primitivesStorageBuffer,
         },
       },
       {
         binding: 3,
         resource: {
-          buffer: bvhStorageBuffer,
+          buffer: trianglesStorageBuffer,
         },
       },
       {
         binding: 4,
         resource: {
-          buffer: lightsStorageBuffer,
+          buffer: bvhStorageBuffer,
         },
       },
       {
         binding: 5,
         resource: {
-          buffer: materialsStorageBuffer,
+          buffer: lightsStorageBuffer,
         },
       },
       {
         binding: 6,
         resource: {
-          buffer: patternsStorageBuffer,
+          buffer: materialsStorageBuffer,
         },
       },
       {
         binding: 7,
         resource: {
-          buffer: imageDataStorageBuffer,
+          buffer: patternsStorageBuffer,
         },
       },
       {
         binding: 8,
+        resource: {
+          buffer: imageDataStorageBuffer,
+        },
+      },
+      {
+        binding: 9,
         resource: {
           buffer: output,
         },

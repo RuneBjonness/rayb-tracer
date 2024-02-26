@@ -6,8 +6,8 @@ import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
 import { CsgShape } from '../csg-shape';
 import { Group } from '../group';
-import { ObjectBuffers } from '../object-buffers';
-import { Shape, ShapeType } from '../shape';
+import { ObjectBuffers, PRIMITIVE_BYTE_SIZE } from '../object-buffers';
+import { Shape, ShapeType, shapeTypeId } from '../shape';
 import { TransformableShape } from '../transformable-shape';
 
 export class TransformableSphere extends TransformableShape {
@@ -68,7 +68,7 @@ export class Sphere implements Shape {
   }
 
   readonly r2: number;
-  shapeType: ShapeType = 'sphere';
+  shapeType: ShapeType = 'primitive-sphere';
   get material(): Material {
     if (
       this.materialIdx < 0 ||
@@ -166,5 +166,27 @@ export class Sphere implements Shape {
     return false;
   }
 
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {}
+  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+    const u32view = new Uint32Array(
+      buffers.primitivesArrayBuffer,
+      buffers.primitiveBufferOffset,
+      8
+    );
+    const f32view = new Float32Array(
+      buffers.primitivesArrayBuffer,
+      buffers.primitiveBufferOffset,
+      8
+    );
+
+    f32view[0] = this.center.x;
+    f32view[1] = this.center.y;
+    f32view[2] = this.center.z;
+    f32view[3] = this.r2;
+
+    u32view[4] = shapeTypeId(this.shapeType);
+    u32view[5] = this.materialIdx;
+    u32view[6] = parentIndex;
+
+    buffers.primitiveBufferOffset += PRIMITIVE_BYTE_SIZE;
+  }
 }

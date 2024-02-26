@@ -33,6 +33,14 @@ struct Shape {
   inv_transform_transposed: mat4x4<f32>,
 }
 
+struct Primitive {
+  center: vec3f,
+  radius_squared: f32,
+  shape_type: u32,
+  material_idx: u32,
+  parent_idx: u32,
+}
+
 struct Triangle {
   p1: vec3f,
   e1: vec3f,
@@ -70,10 +78,12 @@ const SHAPE_SMOOTH_TRIANGLE = 7u;
 const SHAPE_CSG = 8u;
 const SHAPE_GROUP = 9u;
 const SHAPE_GROUP_BVH = 10u;
+const SHAPE_PRIMITIVE_SPHERE = 11u;
 
 const OBJECT_BUFFER_TYPE_SHAPE = 0u;
-const OBJECT_BUFFER_TYPE_TRIANGLE = 1u;
-const OBJECT_BUFFER_TYPE_BVH_NODE = 2u;
+const OBJECT_BUFFER_TYPE_PRIMITIVE = 1u;
+const OBJECT_BUFFER_TYPE_TRIANGLE = 2u;
+const OBJECT_BUFFER_TYPE_BVH_NODE = 3u;
 
 @group(0) @binding(0)
 var<uniform> camera: Camera;
@@ -82,24 +92,27 @@ var<uniform> camera: Camera;
 var<storage, read> shapes: array<Shape>;
 
 @group(0) @binding(2)
-var<storage, read> triangles: array<Triangle>;
+var<storage, read> primitives: array<Primitive>;
 
 @group(0) @binding(3)
-var<storage, read> bvh: array<BvhNode>;
+var<storage, read> triangles: array<Triangle>;
 
 @group(0) @binding(4)
-var<storage, read> lights: array<Light>;
+var<storage, read> bvh: array<BvhNode>;
 
 @group(0) @binding(5)
-var<storage, read> materials: array<Material>;
+var<uniform> lights: array<Light, 5>;
 
 @group(0) @binding(6)
-var<storage, read> patterns: array<Pattern>;
+var<storage, read> materials: array<Material>;
 
 @group(0) @binding(7)
-var<storage, read> image_data: array<u32>;
+var<storage, read> patterns: array<Pattern>;
 
 @group(0) @binding(8)
+var<storage, read> image_data: array<u32>;
+
+@group(0) @binding(9)
 var<storage, read_write> output: array<u32>;
 
 @compute @workgroup_size(8,8)

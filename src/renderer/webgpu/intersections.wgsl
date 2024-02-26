@@ -102,7 +102,12 @@ fn hit(ray: Ray) -> HitInfo {
     while(n > 0 && n < bvh_node_count && i > last_bvh_approved_shape_idx) {
       if(bounds_intersects(parent_space_ray, bvh[n].bound_min, bvh[n].bound_max) == true) {
         if(bvh[n].leaf == 1u) {
-          if(bvh[n].child_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
+          if(bvh[n].child_type == OBJECT_BUFFER_TYPE_PRIMITIVE) {
+            let hit = hit_primitive(parent_space_ray, bvh[n].child_idx_start, bvh[n].child_idx_end, closest_hit.distance);
+            if(hit.distance < closest_hit.distance) {
+              closest_hit = hit;
+            }
+          } else if(bvh[n].child_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
             let hit = hit_triangle(parent_space_ray, bvh[n].child_idx_start, bvh[n].child_idx_end, closest_hit.distance);
             if(hit.distance < closest_hit.distance) {
               closest_hit = hit;
@@ -129,12 +134,52 @@ fn hit(ray: Ray) -> HitInfo {
     }
   }
 
+  let primitives_count = arrayLength(&primitives);
+  if(primitives_count > 1 && primitives[1].parent_idx == 0) {
+    let hit_primitive_orphan = hit_primitive(parent_space_ray, 1, primitives_count, closest_hit.distance);
+    if(hit_primitive_orphan.distance < closest_hit.distance) {
+      closest_hit = hit_primitive_orphan;
+    }
+  }
+
+
   if(closest_hit.distance < 1000000.0) {
     closest_hit.point = ray.origin + (ray.direction * closest_hit.distance);
     return closest_hit;
   }
 
   return HitInfo(-1.0, vec3<f32>(0.0, 0.0, 0.0), 0.0, 0.0, 0u, 0u);
+}
+
+fn hit_primitive(ray: Ray, start: u32, end: u32, closest_hit: f32) -> HitInfo {
+  var hit: HitInfo = HitInfo(closest_hit, vec3<f32>(0.0, 0.0, 0.0), 0.0, 0.0, 0u, 0u);
+  for(var i = start; i <= end; i++) {
+    let prim = primitives[i];
+
+    let l = prim.center - ray.origin;
+    let tca = dot(l, ray.direction);
+    if(tca < 0.0) {
+      continue;
+    }
+    let d2 = dot(l, l) - tca * tca;
+    if(d2 > prim.radius_squared) {
+      continue;
+    }
+    let thc = sqrt(prim.radius_squared - d2);
+    let t0 = tca - thc;
+    let t1 = tca + thc;
+
+    if(t0 > 0 && t0 < hit.distance) {
+      hit.distance = t0;
+      hit.buffer_index = i;
+      hit.buffer_type = OBJECT_BUFFER_TYPE_PRIMITIVE;
+    } else if(t1 > 0 && t1 < hit.distance) {
+      hit.distance = t1;
+      hit.buffer_index = i;
+      hit.buffer_type = OBJECT_BUFFER_TYPE_PRIMITIVE;
+    }
+  }
+  return hit;
 }
 
 fn hit_triangle(ray: Ray, start: u32, end: u32, closest_hit: f32) -> HitInfo {
@@ -186,7 +231,11 @@ fn normal_at(hit: HitInfo) -> vec3<f32> {
   var local_normal = vec3<f32>(0.0, 0.0, 0.0);
   var idx = hit.buffer_index;
 
-  if(hit.buffer_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
+  if(hit.buffer_type == OBJECT_BUFFER_TYPE_PRIMITIVE) {
+    let prim = primitives[hit.buffer_index];
+    local_normal = normalize(hit.point - prim.center);
+    idx = prim.parent_idx;
+  } else if(hit.buffer_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
     let t = triangles[hit.buffer_index];
     if(t.shape_type == SHAPE_TRIANGLE) {
       local_normal = t.n1;

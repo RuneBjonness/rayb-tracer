@@ -4,7 +4,7 @@ import { Material } from '../material/materials';
 import { Bounds } from './bounds';
 import { Group } from './group';
 import { CsgShape } from './csg-shape';
-import { Vector4, vector } from '../math/vector4';
+import { Vector4 } from '../math/vector4';
 import { ObjectBuffers } from './object-buffers';
 import { Pattern } from '../material/patterns';
 import { TransformableShape } from './transformable-shape';
@@ -20,6 +20,7 @@ export type ShapeType =
   | 'csg'
   | 'group'
   | 'group-bvh'
+  | 'primitive-sphere'
   | 'unknown';
 
 export function shapeTypeId(shapeType: ShapeType): number {
@@ -44,6 +45,8 @@ export function shapeTypeId(shapeType: ShapeType): number {
       return 9;
     case 'group-bvh':
       return 10;
+    case 'primitive-sphere':
+      return 11;
     default:
       return 0;
   }

@@ -5,6 +5,7 @@ import {
   BVH_NODE_BYTE_SIZE,
   ObjectBufferType,
   ObjectBuffers,
+  PRIMITIVE_BYTE_SIZE,
   SHAPE_BYTE_SIZE,
   TRIANGLE_BYTE_SIZE,
   numberOfObjects,
@@ -20,6 +21,12 @@ export class BvhNode implements Intersectable {
 
   isLeafNode(): boolean {
     return this.bvhNodes.length === 0;
+  }
+
+  hasPrimitiveChildren(): boolean {
+    return (
+      this.shapes.length > 0 && this.shapes[0].shapeType === 'primitive-sphere'
+    );
   }
 
   hasTriangleChildren(): boolean {
@@ -40,7 +47,14 @@ export class BvhNode implements Intersectable {
 
     if (this.isLeafNode()) {
       u32view[0] = 1;
-      if (this.hasTriangleChildren()) {
+      if (this.hasPrimitiveChildren()) {
+        const primitiveIndex =
+          buffers.primitiveBufferOffset / PRIMITIVE_BYTE_SIZE;
+        u32view[1] = ObjectBufferType.Primitive;
+        u32view[2] = primitiveIndex;
+        u32view[3] =
+          primitiveIndex + numberOfObjects(this.shapes).primitives - 1;
+      } else if (this.hasTriangleChildren()) {
         const triangleIndex = buffers.triangleBufferOffset / TRIANGLE_BYTE_SIZE;
         u32view[1] = ObjectBufferType.Triangle;
         u32view[2] = triangleIndex;

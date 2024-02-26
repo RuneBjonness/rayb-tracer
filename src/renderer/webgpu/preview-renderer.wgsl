@@ -89,14 +89,20 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
   var material_idx = 0u;
   if(hit.buffer_type == OBJECT_BUFFER_TYPE_SHAPE) {
     material_idx = shapes[hit.buffer_index].material_idx;
+  } else if(hit.buffer_type == OBJECT_BUFFER_TYPE_PRIMITIVE) {
+    material_idx = primitives[hit.buffer_index].material_idx;
   } else if(hit.buffer_type == OBJECT_BUFFER_TYPE_TRIANGLE) {
     material_idx = triangles[hit.buffer_index].material_idx;
   }
   let material = materials[material_idx];
 
-  let light_count = arrayLength(&lights);
+  let light_count = 5u; // arrayLength(&lights);
   for(var i = 0u; i < light_count; i++) {
-    result.color += lightning(ray, hit, material_idx, normal, eye_v, lights[i].color, lights[i].position) * blend_factor;
+    let c = lights[i].color;
+    if(c.r + c.g + c.b < 0.01) {
+      break;
+    }
+    result.color += lightning(ray, hit, material_idx, normal, eye_v, c, lights[i].position) * blend_factor;
   }
   
   var n_ratio = refractive_index / material.refractive_index;
