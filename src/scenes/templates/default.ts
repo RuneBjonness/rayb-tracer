@@ -23,7 +23,7 @@ export const defaultScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: {
           color: [1, 1, 1],
           diffuse: 0.67,
@@ -32,8 +32,7 @@ export const defaultScene: SceneDefinition = {
         },
       },
       {
-        primitive: { type: 'sphere' },
-        transform: [['translate', -0.8, 1, 0]],
+        type: { type: 'primitive-sphere', center: [-0.8, 1, 0], radius: 1 },
         material: {
           color: [0.5, 0, 1],
           diffuse: 0.67,

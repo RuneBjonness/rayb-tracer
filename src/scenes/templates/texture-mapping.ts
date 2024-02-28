@@ -29,7 +29,7 @@ export const textureMappingScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: {
           pattern: {
             type: 'texture-map',
@@ -49,7 +49,7 @@ export const textureMappingScene: SceneDefinition = {
         },
       },
       {
-        primitive: { type: 'sphere' },
+        type: { type: 'sphere' },
         transform: [['translate', 0, 1, 0]],
         material: {
           pattern: {
@@ -67,7 +67,7 @@ export const textureMappingScene: SceneDefinition = {
         },
       },
       {
-        primitive: { type: 'cylinder', minimum: 0, maximum: 0.625 },
+        type: { type: 'cylinder', minimum: 0, maximum: 0.625 },
         transform: [
           ['scale', 1.25, 1.25 * 3.1415, 1.25],
           ['translate', -1.75, 0, 2.5],
@@ -88,7 +88,7 @@ export const textureMappingScene: SceneDefinition = {
         },
       },
       {
-        primitive: { type: 'cube' },
+        type: { type: 'cube' },
         transform: [
           ['scale', 1.25, 1.25, 1.25],
           ['rotateY', 45],

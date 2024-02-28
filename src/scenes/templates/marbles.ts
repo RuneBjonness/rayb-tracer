@@ -1,6 +1,6 @@
 import { SceneDefinition } from '../scene-definition';
 import { MATERIAL_GLASS, MATERIAL_SHINY } from './helpers/materials';
-import { sphere } from './helpers/shapes';
+import { primitiveSphere } from './helpers/shapes';
 
 export function marbleScene(options: {
   lightShape: 'round' | 'rectangular';
@@ -32,7 +32,7 @@ export function marbleScene(options: {
       ],
       objects: [
         {
-          primitive: { type: 'plane' },
+          type: { type: 'plane' },
           material: {
             color: [1, 1, 1],
             diffuse: 0.67,
@@ -40,18 +40,18 @@ export function marbleScene(options: {
             reflective: 0.2,
           },
         },
-        sphere(0.3, 0.4, 0.7, ['glass', [0.1, 0, 0.2]]),
+        primitiveSphere(0.3, 0.4, 0.7, ['glass', [0.1, 0, 0.2]]),
 
-        sphere(-1.2, 0.2, 0.5, ['shiny', [0.5, 0, 1]]),
-        sphere(-2.5, 2, 0.75, ['shiny', [0.6, 0.2, 1]]),
-        sphere(1.9, 6, 0.5, ['shiny', [0.6, 0.3, 1]]),
-        sphere(1.3, -2.5, 0.8, ['shiny', [0.7, 0.3, 0.9]]),
-        sphere(-0.4, -1.5, 0.3, ['shiny', [0.8, 0.3, 0.9]]),
-        sphere(-1, 7, 0.5, ['shiny', [0.8, 0.3, 0.8]]),
-        sphere(0.3, -1.1, 0.3, ['shiny', [0.9, 0.3, 0.8]]),
-        sphere(-1.4, -1.5, 0.5, ['shiny', [1, 0.4, 0.8]]),
-        sphere(-1.1, 4, 0.5, ['shiny', [1, 0.5, 0.9]]),
-        sphere(-3, 11, 0.5, ['shiny', [1, 0.6, 1]]),
+        primitiveSphere(-1.2, 0.2, 0.5, ['shiny', [0.5, 0, 1]]),
+        primitiveSphere(-2.5, 2, 0.75, ['shiny', [0.6, 0.2, 1]]),
+        primitiveSphere(1.9, 6, 0.5, ['shiny', [0.6, 0.3, 1]]),
+        primitiveSphere(1.3, -2.5, 0.8, ['shiny', [0.7, 0.3, 0.9]]),
+        primitiveSphere(-0.4, -1.5, 0.3, ['shiny', [0.8, 0.3, 0.9]]),
+        primitiveSphere(-1, 7, 0.5, ['shiny', [0.8, 0.3, 0.8]]),
+        primitiveSphere(0.3, -1.1, 0.3, ['shiny', [0.9, 0.3, 0.8]]),
+        primitiveSphere(-1.4, -1.5, 0.5, ['shiny', [1, 0.4, 0.8]]),
+        primitiveSphere(-1.1, 4, 0.5, ['shiny', [1, 0.5, 0.9]]),
+        primitiveSphere(-3, 11, 0.5, ['shiny', [1, 0.6, 1]]),
       ],
     },
     materials: {
@@ -62,7 +62,7 @@ export function marbleScene(options: {
 
   if (options.lightShape === 'round') {
     scene.world.objects!.push({
-      primitive: { type: 'sphere' },
+      type: { type: 'sphere' },
       transform: [
         ['scale', 1.75, 1.75, 1.75],
         ['translate', -7, 8, -5],

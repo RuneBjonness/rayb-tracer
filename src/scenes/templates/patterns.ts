@@ -1,6 +1,6 @@
 import { SceneDefinition } from '../scene-definition';
 import { MATERIAL_GLASS, MATERIAL_METAL } from './helpers/materials';
-import { sphere } from './helpers/shapes';
+import { primitiveSphere, sphere } from './helpers/shapes';
 
 export const patternsScene: SceneDefinition = {
   name: 'Patterns',
@@ -28,7 +28,7 @@ export const patternsScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: {
           pattern: {
             type: 'checkers',
@@ -44,7 +44,7 @@ export const patternsScene: SceneDefinition = {
         },
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: {
           color: 'lightGreen',
           ambient: 0.5,
@@ -53,7 +53,7 @@ export const patternsScene: SceneDefinition = {
         transform: [['translate', 0, 5, 0]],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: 'wall',
         transform: [
           ['rotateX', 90],
@@ -62,7 +62,7 @@ export const patternsScene: SceneDefinition = {
         ],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: 'wall',
         transform: [
           ['rotateX', 90],
@@ -71,7 +71,7 @@ export const patternsScene: SceneDefinition = {
         ],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: 'wall',
         transform: [
           ['rotateX', 90],
@@ -80,7 +80,7 @@ export const patternsScene: SceneDefinition = {
         ],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: 'wall',
         transform: [
           ['rotateX', 90],
@@ -89,7 +89,7 @@ export const patternsScene: SceneDefinition = {
         ],
       },
       {
-        primitive: {
+        type: {
           type: 'group',
           shapes: [
             sphere(-1.3, 0.1, 0.5, {
@@ -107,7 +107,7 @@ export const patternsScene: SceneDefinition = {
               shininess: 50,
               diffuse: 0.9,
             }),
-            sphere(0.7, 1, 1, ['metal', [0.2, 0.2, 0.2]]),
+            primitiveSphere(0.7, 1, 1, ['metal', [0.2, 0.2, 0.2]]),
             sphere(-1.4, -1, 0.25, {
               pattern: {
                 type: 'blended',
@@ -133,7 +133,7 @@ export const patternsScene: SceneDefinition = {
               specular: 0.2,
               shininess: 100,
             }),
-            sphere(-0.3, -1.2, 0.5, ['glass', [0, 0, 0.3]]),
+            primitiveSphere(-0.3, -1.2, 0.5, ['glass', [0, 0, 0.3]]),
             sphere(-1.2, 2.5, 0.75, {
               pattern: {
                 type: 'checkers',

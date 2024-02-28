@@ -10,17 +10,19 @@ import {
   PatternDefinition,
   SceneDefinition,
   ShapeDefinition,
-  ShapePrimitiveDefinition,
+  ShapeTypeDefinition,
   Transform,
+  TransformableShapePrimitiveDefinition,
   UvMapperDefinition,
   UvPatternDefinition,
+  isTransformableShapeDefinition,
 } from './scene-definition';
 import { radians, viewTransform } from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';
 import { AreaLight, Light, PointLight } from '../lib/lights';
 import { Color, colorFromHex } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
-import { TransformableSphere } from '../lib/shapes/primitives/sphere';
+import { Sphere, TransformableSphere } from '../lib/shapes/primitives/sphere';
 import { Plane } from '../lib/shapes/primitives/plane';
 import { Matrix4 } from '../lib/math/matrices';
 import {
@@ -159,9 +161,7 @@ export class Scene {
     return [lights, objects];
   }
 
-  private createShapePrimitive(
-    primitive: ShapePrimitiveDefinition | string
-  ): Shape {
+  private createShapePrimitive(primitive: ShapeTypeDefinition | string): Shape {
     if (typeof primitive === 'string') {
       if (!this.definiton.shapes) {
         throw new Error('No shapes defined');
@@ -198,11 +198,13 @@ export class Scene {
           this.createShape(primitive.left),
           this.createShape(primitive.right)
         );
+      case 'primitive-sphere':
+        return new Sphere(point(...primitive.center), primitive.radius);
     }
   }
 
   private createShape(s: ShapeDefinition): Shape {
-    const obj = this.createShapePrimitive(s.primitive);
+    const obj = this.createShapePrimitive(s.type);
     if (s.material) {
       const m = this.createMaterial(s.material);
       let idx = this.materials.indexOf(m);
@@ -211,7 +213,12 @@ export class Scene {
       }
       this.setMaterial(idx, obj);
     }
-    if (s.transform && obj.isTransformable()) {
+
+    if (
+      obj.isTransformable() &&
+      isTransformableShapeDefinition(s) &&
+      s.transform
+    ) {
       obj.transform = this.createTransformMatrix(s.transform);
     }
     return obj;

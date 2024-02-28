@@ -23,51 +23,51 @@ export const CsgRbScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         material: 'matteBlue',
       },
       {
-        primitive: {
+        type: {
           type: 'group',
           shapes: [
             {
-              primitive: 'capitalR',
+              type: 'capitalR',
               transform: [['translate', -9.4, 0, 0]],
             },
             {
-              primitive: 'lowercaseA',
+              type: 'lowercaseA',
               transform: [['translate', -7.4, 0, 0]],
             },
             {
-              primitive: 'lowercaseY',
+              type: 'lowercaseY',
               transform: [['translate', -5.4, 0, 0]],
             },
             {
-              primitive: 'capitalB',
+              type: 'capitalB',
               transform: [['translate', -3.4, 0, 0]],
             },
             {
-              primitive: 'capitalT',
+              type: 'capitalT',
               transform: [['translate', -0.4, 0, 0]],
             },
             {
-              primitive: 'lowercaseR',
+              type: 'lowercaseR',
               transform: [['translate', 1.1, 0, 0]],
             },
             {
-              primitive: 'lowercaseA',
+              type: 'lowercaseA',
               transform: [['translate', 3.1, 0, 0]],
             },
             {
-              primitive: 'lowercaseC',
+              type: 'lowercaseC',
               transform: [['translate', 5.3, 0, 0]],
             },
             {
-              primitive: 'lowercaseE',
+              type: 'lowercaseE',
               transform: [['translate', 7.3, 0, 0]],
             },
             {
-              primitive: 'lowercaseR',
+              type: 'lowercaseR',
               transform: [['translate', 9.3, 0, 0]],
             },
           ],
@@ -92,7 +92,7 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'difference',
       left: {
-        primitive: {
+        type: {
           type: 'cylinder',
           minimum: 0,
           maximum: 0.25,
@@ -100,7 +100,7 @@ export const CsgRbScene: SceneDefinition = {
         },
       },
       right: {
-        primitive: { type: 'cylinder', minimum: 0, maximum: 0.3, closed: true },
+        type: { type: 'cylinder', minimum: 0, maximum: 0.3, closed: true },
         transform: [['scale', 0.5, 1, 0.5]],
       },
     },
@@ -108,10 +108,10 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'difference',
       left: {
-        primitive: 'circle',
+        type: 'circle',
       },
       right: {
-        primitive: { type: 'cube' },
+        type: { type: 'cube' },
         transform: [['translate', -1, 0, 0]],
       },
     },
@@ -119,7 +119,7 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -128,14 +128,14 @@ export const CsgRbScene: SceneDefinition = {
         ],
       },
       right: {
-        primitive: 'halfCircle',
+        type: 'halfCircle',
       },
     },
     capitalR: {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -145,28 +145,28 @@ export const CsgRbScene: SceneDefinition = {
         ],
       },
       right: {
-        primitive: 'capitalP',
+        type: 'capitalP',
       },
     },
     capitalB: {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'halfCircle',
+        type: 'halfCircle',
         transform: [
           ['scale', 1.3, 1, 1.2],
           ['translate', 0, 0, -1.8],
         ],
       },
       right: {
-        primitive: 'capitalP',
+        type: 'capitalP',
       },
     },
     capitalT: {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -175,7 +175,7 @@ export const CsgRbScene: SceneDefinition = {
         ],
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -188,11 +188,11 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'circle',
+        type: 'circle',
         transform: [['translate', 0, 0, -2]],
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -205,11 +205,11 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'difference',
       left: {
-        primitive: 'circle',
+        type: 'circle',
         transform: [['translate', 0, 0, -2]],
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -222,15 +222,15 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'csg',
           operation: 'difference',
           left: {
-            primitive: 'circle',
+            type: 'circle',
             transform: [['translate', 0, 0, -2]],
           },
           right: {
-            primitive: {
+            type: {
               type: 'cube',
             },
             transform: [
@@ -241,7 +241,7 @@ export const CsgRbScene: SceneDefinition = {
         },
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -254,15 +254,15 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'csg',
           operation: 'intersection',
           left: {
-            primitive: 'circle',
+            type: 'circle',
             transform: [['translate', 0.1, 0, -2]],
           },
           right: {
-            primitive: {
+            type: {
               type: 'cube',
             },
             transform: [
@@ -273,7 +273,7 @@ export const CsgRbScene: SceneDefinition = {
         },
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -286,7 +286,7 @@ export const CsgRbScene: SceneDefinition = {
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [
@@ -296,7 +296,7 @@ export const CsgRbScene: SceneDefinition = {
         ],
       },
       right: {
-        primitive: {
+        type: {
           type: 'cube',
         },
         transform: [

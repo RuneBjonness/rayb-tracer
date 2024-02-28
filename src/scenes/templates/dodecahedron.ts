@@ -32,7 +32,7 @@ export const dodecahedronScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [
           ['translate', 0, -(inscribedSphereRadius + cylinderRadius), 0],
         ],
@@ -44,7 +44,7 @@ export const dodecahedronScene: SceneDefinition = {
         },
       },
       {
-        primitive: 'dodecahedron',
+        type: 'dodecahedron',
         material: ['metal', [0.5, 0.5, 0.5]],
         transform: [['rotateY', 12]],
       },

@@ -7,7 +7,7 @@ import {
   MaterialDefinition,
 } from '../scene-definition';
 import { MATERIAL_DIAMOND, MATERIAL_GLASS } from './helpers/materials';
-import { sphere } from './helpers/shapes';
+import { primitiveSphere } from './helpers/shapes';
 
 const cornellBoxCameraConfiguration: CameraConfiguration = {
   fieldOfView: 60,
@@ -29,17 +29,17 @@ const cornellBoxLampLight: LightConfiguration = {
 
 const emptyCornellBox: ShapeDefinition[] = [
   {
-    primitive: { type: 'plane' },
+    type: { type: 'plane' },
     material: ['matte', 'white'],
     transform: [['translate', 0, -0.001, 0]],
   },
   {
-    primitive: { type: 'plane' },
+    type: { type: 'plane' },
     material: ['matte', 'white'],
     transform: [['translate', 0, 5, 0]],
   },
   {
-    primitive: { type: 'plane' },
+    type: { type: 'plane' },
     material: ['matte', 'white'],
     transform: [
       ['rotateX', 90],
@@ -47,7 +47,7 @@ const emptyCornellBox: ShapeDefinition[] = [
     ],
   },
   {
-    primitive: { type: 'plane' },
+    type: { type: 'plane' },
     material: ['matte', 'red'],
     transform: [
       ['rotateX', 90],
@@ -56,7 +56,7 @@ const emptyCornellBox: ShapeDefinition[] = [
     ],
   },
   {
-    primitive: { type: 'plane' },
+    type: { type: 'plane' },
     material: ['matte', 'green'],
     transform: [
       ['rotateX', 90],
@@ -89,7 +89,7 @@ export const cornellBoxTransparencyScene: SceneDefinition = {
     objects: [
       ...emptyCornellBox,
       {
-        primitive: { type: 'cube' },
+        type: { type: 'cube' },
         material: ['diamond', [0.1, 0, 0.2]],
         transform: [
           ['rotateY', 30],
@@ -97,7 +97,7 @@ export const cornellBoxTransparencyScene: SceneDefinition = {
           ['translate', -1.1, 1.8, 1.4],
         ],
       },
-      sphere(1.4, 0, 1.1, ['glass', [0.1, 0, 0.2]]),
+      primitiveSphere(1.4, 0, 1.1, ['glass', [0.1, 0, 0.2]]),
     ],
   },
   colors: cornellBoxColorDefs,
@@ -116,9 +116,9 @@ export const cornellBoxMatteDiffuseScene: SceneDefinition = {
     lights: [cornellBoxLampLight],
     objects: [
       ...emptyCornellBox,
-      sphere(-2.5, 2.5, 1.1, ['matte', 'white']),
-      sphere(0, 2.5, 1.1, ['matte', 'blue']),
-      sphere(2.5, 2.5, 1.1, ['matte', 'white']),
+      primitiveSphere(-2.5, 2.5, 1.1, ['matte', 'white']),
+      primitiveSphere(0, 2.5, 1.1, ['matte', 'blue']),
+      primitiveSphere(2.5, 2.5, 1.1, ['matte', 'white']),
     ],
   },
   colors: {

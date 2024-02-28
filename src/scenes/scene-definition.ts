@@ -5,7 +5,7 @@ export type SceneDefinition = {
   colors?: Record<string, ColorDefinition>;
   patterns?: Record<string, PatternDefinition>;
   materials?: Record<string, MaterialDefinition>;
-  shapes?: Record<string, ShapePrimitiveDefinition>;
+  shapes?: Record<string, ShapeTypeDefinition>;
 };
 
 export type WorldDefinition = {
@@ -53,13 +53,30 @@ export type LightConfiguration =
       includeGeometry?: boolean;
     };
 
-export type ShapePrimitiveDefinition =
+export type TransformableShapePrimitiveDefinition =
   | { type: 'sphere' | 'plane' | 'cube' }
   | {
       type: 'cylinder' | 'cone';
       minimum?: number;
       maximum?: number;
       closed?: boolean;
+    }
+  | {
+      type: 'group';
+      shapes: ShapeDefinition[];
+    }
+  | {
+      type: 'csg';
+      operation: 'union' | 'intersection' | 'difference';
+      left: ShapeDefinition;
+      right: ShapeDefinition;
+    };
+
+export type ShapePrimitiveDefinition =
+  | {
+      type: 'primitive-sphere';
+      center: Vec3;
+      radius: number;
     }
   | {
       type: 'triangle';
@@ -75,22 +92,31 @@ export type ShapePrimitiveDefinition =
       n1: Vec3[];
       n2: Vec3[];
       n3: Vec3[];
-    }
-  | {
-      type: 'group';
-      shapes: ShapeDefinition[];
-    }
-  | {
-      type: 'csg';
-      operation: 'union' | 'intersection' | 'difference';
-      left: ShapeDefinition;
-      right: ShapeDefinition;
     };
 
-export type ShapeDefinition = {
-  primitive: ShapePrimitiveDefinition | string;
+export type ShapeTypeDefinition =
+  | TransformableShapePrimitiveDefinition
+  | ShapePrimitiveDefinition
+  | string;
+
+export type BasicShapeDefinition = {
+  type: ShapePrimitiveDefinition | string;
+  material?: MaterialDefinition | string | [string, ColorDefinition | string];
+};
+export type TransformableShapeDefinition = {
+  type: TransformableShapePrimitiveDefinition | string;
   transform?: Transform[];
   material?: MaterialDefinition | string | [string, ColorDefinition | string];
+};
+
+export type ShapeDefinition =
+  | BasicShapeDefinition
+  | TransformableShapeDefinition;
+
+export const isTransformableShapeDefinition = (
+  def: ShapeDefinition
+): def is TransformableShapeDefinition => {
+  return (def as TransformableShapeDefinition).transform !== undefined;
 };
 
 export type MaterialDefinition = {

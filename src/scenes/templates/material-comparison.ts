@@ -41,17 +41,17 @@ export const materialComparisonScene: SceneDefinition = {
     ],
     objects: [
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [['translate', 0, -0.001, 0]],
         material: ['matte', 'mistyTeal'],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [['translate', 0, 15, 0]],
         material: ['matte', 'mistyTeal'],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [
           ['rotateX', 90],
           ['translate', 0, 0, -28],
@@ -59,7 +59,7 @@ export const materialComparisonScene: SceneDefinition = {
         material: ['matte', 'mistyTeal'],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [
           ['rotateZ', 90],
           ['translate', -15, 0, 0],
@@ -67,7 +67,7 @@ export const materialComparisonScene: SceneDefinition = {
         material: ['matte', 'mistyTeal'],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [
           ['rotateZ', 90],
           ['translate', 15, 0, 0],
@@ -75,7 +75,7 @@ export const materialComparisonScene: SceneDefinition = {
         material: ['matte', 'mistyTeal'],
       },
       {
-        primitive: { type: 'plane' },
+        type: { type: 'plane' },
         transform: [
           ['rotateX', 90],
           ['translate', 0, -0.01, 3],
@@ -95,26 +95,26 @@ export const materialComparisonScene: SceneDefinition = {
         },
       },
       {
-        primitive: 'shapeSet',
+        type: 'shapeSet',
         material: ['matte', 'darkTeal'],
         transform: [['translate', -6, 0, 0]],
       },
       {
-        primitive: 'shapeSet',
+        type: 'shapeSet',
         material: ['shiny', 'darkTeal'],
         transform: [['translate', -3, 0, 0]],
       },
       {
-        primitive: 'shapeSet',
+        type: 'shapeSet',
         material: ['metal', 'darkTeal'],
       },
       {
-        primitive: 'shapeSet',
+        type: 'shapeSet',
         material: ['glass', 'darkTeal'],
         transform: [['translate', 3, 0, 0]],
       },
       {
-        primitive: 'shapeSet',
+        type: 'shapeSet',
         material: ['diamond', 'darkTeal'],
         transform: [['translate', 6, 0, 0]],
       },
@@ -137,11 +137,11 @@ export const materialComparisonScene: SceneDefinition = {
       type: 'group',
       shapes: [
         {
-          primitive: { type: 'sphere' },
+          type: { type: 'sphere' },
           transform: [['translate', 0, 4.5, 0]],
         },
         {
-          primitive: 'dodecahedron',
+          type: 'dodecahedron',
           transform: [
             ['scale', 0.8, 0.8, 0.8],
             ['translate', 0, 2.52, 0],
@@ -149,7 +149,7 @@ export const materialComparisonScene: SceneDefinition = {
           ],
         },
         {
-          primitive: { type: 'cube' },
+          type: { type: 'cube' },
           transform: [
             ['scale', 0.9, 0.9, 0.9],
             ['translate', 0, 0.9, 0],
@@ -157,14 +157,14 @@ export const materialComparisonScene: SceneDefinition = {
           ],
         },
         {
-          primitive: { type: 'sphere' },
+          type: { type: 'sphere' },
           transform: [
             ['scale', 0.4, 0.4, 0.4],
             ['translate', -0.5, 0.4, -2.75],
           ],
         },
         {
-          primitive: {
+          type: {
             type: 'cylinder',
             minimum: -1,
             maximum: 1,

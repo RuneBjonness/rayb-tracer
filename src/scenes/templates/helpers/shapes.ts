@@ -1,8 +1,8 @@
 import {
   ShapeDefinition,
-  ShapePrimitiveDefinition,
   ColorDefinition,
   MaterialDefinition,
+  ShapeTypeDefinition,
 } from '../../scene-definition';
 import { restingOnYplane } from './transforms';
 
@@ -13,8 +13,20 @@ export function sphere(
   material: MaterialDefinition | string | [string, ColorDefinition | string]
 ): ShapeDefinition {
   return {
-    primitive: { type: 'sphere' },
+    type: { type: 'sphere' },
     transform: restingOnYplane(x, z, scale),
+    material: material,
+  };
+}
+
+export function primitiveSphere(
+  x: number,
+  z: number,
+  scale: number,
+  material: MaterialDefinition | string | [string, ColorDefinition | string]
+): ShapeDefinition {
+  return {
+    type: { type: 'primitive-sphere', center: [x, scale, z], radius: scale },
     material: material,
   };
 }
@@ -22,7 +34,7 @@ export function sphere(
 export function dodecahedronDefinition(
   edgeLength: number,
   cylinderRadius: number
-): Record<string, ShapePrimitiveDefinition> {
+): Record<string, ShapeTypeDefinition> {
   const midradius = edgeLength * 1.309016994;
 
   return {
@@ -30,7 +42,7 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: {
+        type: {
           type: 'cylinder',
           minimum: -0.5,
           maximum: 0.5,
@@ -39,7 +51,7 @@ export function dodecahedronDefinition(
         transform: [['scale', cylinderRadius, edgeLength, cylinderRadius]],
       },
       right: {
-        primitive: { type: 'sphere' },
+        type: { type: 'sphere' },
         transform: [
           ['scale', cylinderRadius, cylinderRadius, cylinderRadius],
           ['translate', 0, edgeLength / 2, 0],
@@ -50,7 +62,7 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'edgeAndVertex',
+        type: 'edgeAndVertex',
         transform: [
           ['rotateZ', 90],
           ['translate', 0, -midradius, -0],
@@ -58,7 +70,7 @@ export function dodecahedronDefinition(
         ],
       },
       right: {
-        primitive: 'edgeAndVertex',
+        type: 'edgeAndVertex',
         transform: [
           ['rotateX', -90],
           ['translate', 0, -midradius, 0],
@@ -71,10 +83,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'bottomAndLowerEdges',
+        type: 'bottomAndLowerEdges',
       },
       right: {
-        primitive: {
+        type: {
           type: 'cylinder',
           minimum: -0.5,
           maximum: 0.5,
@@ -92,10 +104,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'bottomLowerAndMiddleEdges',
+        type: 'bottomLowerAndMiddleEdges',
       },
       right: {
-        primitive: {
+        type: {
           type: 'cylinder',
           minimum: -0.5,
           maximum: 0.5,
@@ -113,10 +125,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'bottomLowerAndTwoMiddleEdges',
+        type: 'bottomLowerAndTwoMiddleEdges',
       },
       right: {
-        primitive: 'bottomAndLowerEdges',
+        type: 'bottomAndLowerEdges',
         transform: [
           ['rotateZ', 180],
           ['rotateY', 36],
@@ -127,10 +139,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'sixEdgesTopToBottom',
+        type: 'sixEdgesTopToBottom',
       },
       right: {
-        primitive: 'sixEdgesTopToBottom',
+        type: 'sixEdgesTopToBottom',
         transform: [['rotateY', 72]],
       },
     },
@@ -138,10 +150,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'twelveEdges',
+        type: 'twelveEdges',
       },
       right: {
-        primitive: 'twelveEdges',
+        type: 'twelveEdges',
         transform: [['rotateY', 72 * 2]],
       },
     },
@@ -149,10 +161,10 @@ export function dodecahedronDefinition(
       type: 'csg',
       operation: 'union',
       left: {
-        primitive: 'twentyFourEdges',
+        type: 'twentyFourEdges',
       },
       right: {
-        primitive: 'sixEdgesTopToBottom',
+        type: 'sixEdgesTopToBottom',
         transform: [['rotateY', -72]],
       },
     },
