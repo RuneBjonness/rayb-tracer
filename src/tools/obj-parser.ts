@@ -25,8 +25,6 @@ export class ObjParser {
         this.model = this.activeGroup;
       }
     }
-    this.model.divide(4);
-
     console.log(
       `Parsed obj file with ${this.ignoredLines} ignored lines, ${
         this.vertices.length
@@ -34,6 +32,8 @@ export class ObjParser {
         Object.keys(this.groups).length
       } groups and ${this.model.shapes.length} shapes.`
     );
+
+    this.model.divide(4);
     return this.model;
   }
 
@@ -64,9 +64,9 @@ export class ObjParser {
       for (let i = 1; i < p.length - 1; i++) {
         if (p[i].length == 1) {
           const t = new Triangle(
-            this.vertices[p[0][0] - 1],
-            this.vertices[p[i][0] - 1],
-            this.vertices[p[i + 1][0] - 1]
+            this.getVertex(p[0][0]),
+            this.getVertex(p[i][0]),
+            this.getVertex(p[i + 1][0])
           );
           t.materialDefinitions = this.materialDefinitions;
           t.material = this.currentMaterial;
@@ -77,12 +77,12 @@ export class ObjParser {
           }
         } else if (p[i].length == 3) {
           const t = new Triangle(
-            this.vertices[p[0][0] - 1],
-            this.vertices[p[i][0] - 1],
-            this.vertices[p[i + 1][0] - 1],
-            this.normals[p[0][2] - 1],
-            this.normals[p[i][2] - 1],
-            this.normals[p[i + 1][2] - 1]
+            this.getVertex(p[0][0]),
+            this.getVertex(p[i][0]),
+            this.getVertex(p[i + 1][0]),
+            this.getNormal(p[0][2]),
+            this.getNormal(p[i][2]),
+            this.getNormal(p[i + 1][2])
           );
           t.materialDefinitions = this.materialDefinitions;
           t.material = this.currentMaterial;
@@ -102,5 +102,15 @@ export class ObjParser {
     } else {
       this.ignoredLines++;
     }
+  }
+
+  private getAbsoluteIndex(index: number, arr: Vector4[]): number {
+    return index < 0 ? arr.length + index : index - 1;
+  }
+  private getVertex(index: number): Vector4 {
+    return this.vertices[this.getAbsoluteIndex(index, this.vertices)];
+  }
+  private getNormal(index: number): Vector4 {
+    return this.normals[this.getAbsoluteIndex(index, this.normals)];
   }
 }

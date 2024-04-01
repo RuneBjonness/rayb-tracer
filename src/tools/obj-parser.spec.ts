@@ -52,6 +52,31 @@ f 1 3 4`;
   expect(t2.p3).toEqual(parser.vertices[3]);
 });
 
+test('parsing triangle faces with relative indexes', () => {
+  const objData = `
+v -1 1 0
+v -1 0 0
+v 1 0 0
+v 1 1 0
+
+f -4 -3 -2
+f -4 -2 -1`;
+
+  const parser = new ObjParser();
+  parser.parse(objData);
+
+  const t1 = parser.model.bvhNode?.shapes[0] as Triangle;
+  const t2 = parser.model.bvhNode?.shapes[1] as Triangle;
+
+  expect(t1.p1).toEqual(parser.vertices[0]);
+  expect(t1.p2).toEqual(parser.vertices[1]);
+  expect(t1.p3).toEqual(parser.vertices[2]);
+
+  expect(t2.p1).toEqual(parser.vertices[0]);
+  expect(t2.p2).toEqual(parser.vertices[2]);
+  expect(t2.p3).toEqual(parser.vertices[3]);
+});
+
 test('triangulating polygons', () => {
   const objData = `
 v -1 1 0
