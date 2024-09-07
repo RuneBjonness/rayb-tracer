@@ -12,7 +12,6 @@ import {
   ShapeDefinition,
   ShapeTypeDefinition,
   Transform,
-  TransformableShapePrimitiveDefinition,
   UvMapperDefinition,
   UvPatternDefinition,
   isTransformableShapeDefinition,

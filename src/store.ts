@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { RenderMode } from './renderer/configuration';
 import { ScenePreset } from './scenes/scene-preset';
