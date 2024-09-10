@@ -3,10 +3,13 @@ import { Pattern, PatternType } from '../patterns';
 import { UvPattern } from './uv-patterns';
 import { UvMapper, map } from './uv-mappers';
 import { Vector4 } from '../../math/vector4';
-import { PATTERN_BYTE_SIZE } from '../material-buffers';
+import { PATTERN_BYTE_SIZE } from '../patterns-buffer';
 
 export class TextureMap extends Pattern {
-  constructor(private uvPattern: UvPattern, private uvMapper: UvMapper) {
+  constructor(
+    private uvPattern: UvPattern,
+    private uvMapper: UvMapper
+  ) {
     super();
     this.type =
       uvPattern.type === 'checkers'
@@ -20,7 +23,7 @@ export class TextureMap extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const u32view = new Uint32Array(buffer, offset, 2);
@@ -48,7 +51,7 @@ export class CubeMap extends Pattern {
       right: UvPattern,
       back: UvPattern,
       top: UvPattern,
-      bottom: UvPattern
+      bottom: UvPattern,
     ]
   ) {
     super();
@@ -62,7 +65,7 @@ export class CubeMap extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const idx = offset + PATTERN_BYTE_SIZE;

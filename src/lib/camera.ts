@@ -1,4 +1,4 @@
-import { Matrix4 } from './math/matrices';
+import { Matrix4, MatrixOrder } from './math/matrices';
 import { Ray, rayFocalPoint, rayToTarget } from './rays';
 import { World } from './world';
 import { Canvas } from './canvas';
@@ -152,8 +152,13 @@ export class Camera {
     return c;
   }
 
-  toArrayBuffer(): ArrayBuffer {
-    const buffer = new ArrayBuffer(27 * 4);
+  toArrayBuffer(
+    useSharedArrayBuffer: boolean,
+    matrixOrder: MatrixOrder
+  ): ArrayBufferLike {
+    const buffer = useSharedArrayBuffer
+      ? new SharedArrayBuffer(27 * 4)
+      : new ArrayBuffer(27 * 4);
     const view = new Float32Array(buffer);
     const u32view = new Uint32Array(buffer);
 
@@ -161,7 +166,7 @@ export class Camera {
     view[1] = this.origin.y;
     view[2] = this.origin.z;
 
-    this.invTransform.copyToArrayBuffer(buffer, 4 * 4);
+    this.invTransform.copyToArrayBuffer(buffer, 4 * 4, matrixOrder);
 
     view[20] = this.pixelSize;
     view[21] = this.halfWidth;

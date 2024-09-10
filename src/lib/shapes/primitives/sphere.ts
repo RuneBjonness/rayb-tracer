@@ -1,6 +1,7 @@
 import { intersection, Intersection } from '../../intersections';
 import { material, Material } from '../../material/materials';
 import { Pattern } from '../../material/patterns';
+import { MatrixOrder } from '../../math/matrices';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
@@ -59,7 +60,10 @@ export class TransformableSphere extends TransformableShape {
 }
 
 export class Sphere implements Shape {
-  constructor(readonly center: Vector4, readonly radius: number) {
+  constructor(
+    readonly center: Vector4,
+    readonly radius: number
+  ) {
     this.bounds = new Bounds(
       point(center.x - radius, center.y - radius, center.z - radius),
       point(center.x + radius, center.y + radius, center.z + radius)
@@ -166,7 +170,11 @@ export class Sphere implements Shape {
     return false;
   }
 
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+  copyToArrayBuffers(
+    buffers: ObjectBuffers,
+    parentIndex: number,
+    matrixOrder: MatrixOrder
+  ): void {
     const u32view = new Uint32Array(
       buffers.primitivesArrayBuffer,
       buffers.primitiveBufferOffset,

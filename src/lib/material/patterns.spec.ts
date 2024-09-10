@@ -23,7 +23,7 @@ export class TestPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     throw new Error('Method not implemented.');

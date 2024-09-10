@@ -1,5 +1,5 @@
 import { Intersection } from '../intersections';
-import { Matrix4 } from '../math/matrices';
+import { Matrix4, MatrixOrder } from '../math/matrices';
 import { Ray } from '../rays';
 import { material, Material } from '../material/materials';
 import { Bounds } from './bounds';
@@ -104,7 +104,11 @@ export abstract class TransformableShape implements Shape {
     return;
   }
 
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+  copyToArrayBuffers(
+    buffers: ObjectBuffers,
+    parentIndex: number,
+    matrixOrder: MatrixOrder
+  ): void {
     const shapeIndex = buffers.shapeBufferOffset / SHAPE_BYTE_SIZE;
 
     const u32view = new Uint32Array(
@@ -151,28 +155,31 @@ export abstract class TransformableShape implements Shape {
 
     this.transform.copyToArrayBuffer(
       buffers.shapesArrayBuffer,
-      buffers.shapeBufferOffset + 16 * 4
+      buffers.shapeBufferOffset + 16 * 4,
+      matrixOrder
     );
     this.invTransform.copyToArrayBuffer(
       buffers.shapesArrayBuffer,
-      buffers.shapeBufferOffset + 32 * 4
+      buffers.shapeBufferOffset + 32 * 4,
+      matrixOrder
     );
     this.invTransformTransposed.copyToArrayBuffer(
       buffers.shapesArrayBuffer,
-      buffers.shapeBufferOffset + 48 * 4
+      buffers.shapeBufferOffset + 48 * 4,
+      matrixOrder
     );
 
     buffers.shapeBufferOffset += SHAPE_BYTE_SIZE;
     if (this.isGroup()) {
       for (const shape of this.shapes) {
-        shape.copyToArrayBuffers(buffers, shapeIndex);
+        shape.copyToArrayBuffers(buffers, shapeIndex, matrixOrder);
       }
       if (this.bvhNode) {
-        this.bvhNode.copyToArrayBuffers(buffers, shapeIndex);
+        this.bvhNode.copyToArrayBuffers(buffers, shapeIndex, matrixOrder);
       }
     } else if (this.isCsgShape()) {
-      this.left.copyToArrayBuffers(buffers, shapeIndex);
-      this.right.copyToArrayBuffers(buffers, shapeIndex);
+      this.left.copyToArrayBuffers(buffers, shapeIndex, matrixOrder);
+      this.right.copyToArrayBuffers(buffers, shapeIndex, matrixOrder);
     }
   }
 

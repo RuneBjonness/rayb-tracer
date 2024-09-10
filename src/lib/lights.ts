@@ -7,8 +7,6 @@ import { Color } from './math/color';
 import { Vector4, point, vector } from './math/vector4';
 import { Material, material } from './material/materials';
 
-export const LIGHTS_BYTE_SIZE = 32;
-
 export interface Light {
   intensity: Color;
   shapeIdx: number;
@@ -20,7 +18,7 @@ export interface Light {
   samplePoints(): Vector4[];
   emitPhotons(count: number, powerFactor: number): Photon[];
 
-  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void;
+  copyLightToArrayBuffer(buffer: ArrayBufferLike, offset: number): void;
 }
 
 export class PointLight implements Light {
@@ -29,7 +27,10 @@ export class PointLight implements Light {
   maxSamples = 1;
   adaptiveSampleSensitivity = 1;
 
-  constructor(private position: Vector4, public intensity: Color) {}
+  constructor(
+    private position: Vector4,
+    public intensity: Color
+  ) {}
 
   samplePoints(): Vector4[] {
     return [this.position];
@@ -56,7 +57,7 @@ export class PointLight implements Light {
     return photons;
   }
 
-  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+  copyLightToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
     const f32view = new Float32Array(buffer, offset, 8);
     f32view[0] = this.intensity.r;
     f32view[1] = this.intensity.g;
@@ -188,7 +189,7 @@ export class AreaLight extends Cube implements Light {
     return photons;
   }
 
-  copyLightToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+  copyLightToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
     const f32view = new Float32Array(buffer, offset, 8);
     f32view[0] = this.intensity.r;
     f32view[1] = this.intensity.g;

@@ -1,4 +1,5 @@
 import { Intersection } from '../intersections';
+import { MatrixOrder } from '../math/matrices';
 import { Ray } from '../rays';
 import { Bounds } from './bounds';
 import {
@@ -37,7 +38,11 @@ export class BvhNode implements Intersectable {
     );
   }
 
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+  copyToArrayBuffers(
+    buffers: ObjectBuffers,
+    parentIndex: number,
+    matrixOrder: MatrixOrder
+  ): void {
     const index = buffers.bvhBufferOffset / BVH_NODE_BYTE_SIZE;
     const u32view = new Uint32Array(
       buffers.bvhArrayBuffer,
@@ -89,11 +94,11 @@ export class BvhNode implements Intersectable {
     buffers.bvhBufferOffset += BVH_NODE_BYTE_SIZE;
 
     for (const node of this.bvhNodes) {
-      node.copyToArrayBuffers(buffers, parentIndex);
+      node.copyToArrayBuffers(buffers, parentIndex, matrixOrder);
     }
 
     for (const shape of this.shapes) {
-      shape.copyToArrayBuffers(buffers, parentIndex);
+      shape.copyToArrayBuffers(buffers, parentIndex, matrixOrder);
     }
   }
 

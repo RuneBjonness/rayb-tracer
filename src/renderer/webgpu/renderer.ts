@@ -5,20 +5,7 @@ import mainWgsl from './main.wgsl?raw';
 import intersectionsWgsl from './intersections.wgsl?raw';
 import previewRendererWgsl from './preview-renderer.wgsl?raw';
 import materialsWgsl from './materials.wgsl?raw';
-import { LIGHTS_BYTE_SIZE } from '../../lib/lights';
-import {
-  BVH_NODE_BYTE_SIZE,
-  PRIMITIVE_BYTE_SIZE,
-  SHAPE_BYTE_SIZE,
-  TRIANGLE_BYTE_SIZE,
-  numberOfObjects,
-} from '../../lib/shapes/object-buffers';
-import {
-  MATERIAL_BYTE_SIZE,
-  PATTERN_BYTE_SIZE,
-  copyMaterialToArrayBuffer,
-  patternsArrayBufferByteLength,
-} from '../../lib/material/material-buffers';
+import { MatrixOrder } from '../../lib/math/matrices';
 
 async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
   if (!navigator.gpu) {
@@ -135,140 +122,92 @@ async function init(scene: Scene, ctx: CanvasRenderingContext2D) {
     },
   });
 
-  const cameraArrayBuffer = scene.camera.toArrayBuffer();
+  const buffers = scene.toArrayBuffers(false, MatrixOrder.ColumnMajor);
+
   const cameraUniformBuffer = device.createBuffer({
-    size: Math.ceil(cameraArrayBuffer.byteLength / 16) * 16,
+    label: 'camera-uniform',
+    size: Math.ceil(buffers.camera.byteLength / 16) * 16,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(cameraUniformBuffer, 0, cameraArrayBuffer);
+  device.queue.writeBuffer(cameraUniformBuffer, 0, buffers.camera);
 
-  const objCount = numberOfObjects(scene.world.objects);
-  console.log('Total objects: ', JSON.stringify(objCount, null, 2));
-
-  const objBuffers = {
-    shapesArrayBuffer: new ArrayBuffer((objCount.shapes + 1) * SHAPE_BYTE_SIZE),
-    shapeBufferOffset: SHAPE_BYTE_SIZE,
-    primitivesArrayBuffer: new ArrayBuffer(
-      (objCount.primitives + 1) * PRIMITIVE_BYTE_SIZE
-    ),
-    primitiveBufferOffset: PRIMITIVE_BYTE_SIZE,
-    trianglesArrayBuffer: new ArrayBuffer(
-      (objCount.triangles + 1) * TRIANGLE_BYTE_SIZE
-    ),
-    triangleBufferOffset: TRIANGLE_BYTE_SIZE,
-    bvhArrayBuffer: new ArrayBuffer(
-      (objCount.bvhNodes + 1) * BVH_NODE_BYTE_SIZE
-    ),
-    bvhBufferOffset: BVH_NODE_BYTE_SIZE,
-  };
-
-  for (let i = 0; i < scene.world.objects.length; i++) {
-    scene.world.objects[i].copyToArrayBuffers(objBuffers, 0);
-  }
   const shapesStorageBuffer = device.createBuffer({
-    size: Math.ceil(objBuffers.shapesArrayBuffer.byteLength / 16) * 16,
+    label: 'shapes-storage',
+    size: Math.ceil(buffers.objects.shapesArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
   device.queue.writeBuffer(
     shapesStorageBuffer,
     0,
-    objBuffers.shapesArrayBuffer
+    buffers.objects.shapesArrayBuffer
   );
 
   const primitivesStorageBuffer = device.createBuffer({
-    size: Math.ceil(objBuffers.primitivesArrayBuffer.byteLength / 16) * 16,
+    label: 'primitives-storage',
+    size: Math.ceil(buffers.objects.primitivesArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
   device.queue.writeBuffer(
     primitivesStorageBuffer,
     0,
-    objBuffers.primitivesArrayBuffer
+    buffers.objects.primitivesArrayBuffer
   );
 
   const trianglesStorageBuffer = device.createBuffer({
-    size: Math.ceil(objBuffers.trianglesArrayBuffer.byteLength / 16) * 16,
+    label: 'triangles-storage',
+    size: Math.ceil(buffers.objects.trianglesArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
   device.queue.writeBuffer(
     trianglesStorageBuffer,
     0,
-    objBuffers.trianglesArrayBuffer
+    buffers.objects.trianglesArrayBuffer
   );
 
   const bvhStorageBuffer = device.createBuffer({
-    size: Math.ceil(objBuffers.bvhArrayBuffer.byteLength / 16) * 16,
+    label: 'bvh-storage',
+    size: Math.ceil(buffers.objects.bvhArrayBuffer.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(bvhStorageBuffer, 0, objBuffers.bvhArrayBuffer);
+  device.queue.writeBuffer(bvhStorageBuffer, 0, buffers.objects.bvhArrayBuffer);
 
-  if (scene.world.lights.length > 5) {
-    console.warn(
-      'Too many lights in the scene. Max 5 lights supported at the moment.'
-    );
-  }
-  const lightsArrayBuffer = new ArrayBuffer(5 * LIGHTS_BYTE_SIZE);
-  for (let i = 0; i < scene.world.lights.length && i < 5; i++) {
-    scene.world.lights[i].copyLightToArrayBuffer(
-      lightsArrayBuffer,
-      i * LIGHTS_BYTE_SIZE
-    );
-  }
   const lightsStorageBuffer = device.createBuffer({
-    size: Math.ceil(lightsArrayBuffer.byteLength / 16) * 16,
+    label: 'lights-uniform',
+    size: Math.ceil(buffers.lights.byteLength / 16) * 16,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(lightsStorageBuffer, 0, lightsArrayBuffer);
+  device.queue.writeBuffer(lightsStorageBuffer, 0, buffers.lights);
 
-  const materialsArrayBuffer = new ArrayBuffer(
-    scene.materials.length * MATERIAL_BYTE_SIZE
-  );
-  for (let i = 0; i < scene.materials.length; i++) {
-    copyMaterialToArrayBuffer(
-      scene.materials[i],
-      materialsArrayBuffer,
-      i * MATERIAL_BYTE_SIZE
-    );
-  }
   const materialsStorageBuffer = device.createBuffer({
-    size: Math.ceil(materialsArrayBuffer.byteLength / 16) * 16,
+    label: 'materials-storage',
+    size: Math.ceil(buffers.materials.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(materialsStorageBuffer, 0, materialsArrayBuffer);
+  device.queue.writeBuffer(materialsStorageBuffer, 0, buffers.materials);
 
-  const patternsArrayBuffer = new ArrayBuffer(
-    patternsArrayBufferByteLength(scene.patterns)
-  );
-  var patternsBufferOffset = PATTERN_BYTE_SIZE;
-  for (let i = 0; i < scene.patterns.length; i++) {
-    patternsBufferOffset = scene.patterns[i].copyToArrayBuffer(
-      patternsArrayBuffer,
-      patternsBufferOffset
-    );
-  }
   const patternsStorageBuffer = device.createBuffer({
-    size: Math.ceil(patternsArrayBuffer.byteLength / 16) * 16,
+    label: 'patterns-storage',
+    size: Math.ceil(buffers.patterns.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(patternsStorageBuffer, 0, patternsArrayBuffer);
+  device.queue.writeBuffer(patternsStorageBuffer, 0, buffers.patterns);
 
-  const imageDataArrayBuffer = new ArrayBuffer(
-    16 // TODO
-  );
-  // for (let i = 0; i < scene.images.length; i++) {
-  // }
   const imageDataStorageBuffer = device.createBuffer({
-    size: Math.ceil(imageDataArrayBuffer.byteLength / 16) * 16,
+    label: 'image-data-storage',
+    size: Math.ceil(buffers.imageData.byteLength / 16) * 16,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
-  device.queue.writeBuffer(imageDataStorageBuffer, 0, imageDataArrayBuffer);
+  device.queue.writeBuffer(imageDataStorageBuffer, 0, buffers.imageData);
 
   const OUTPUT_BUFFER_SIZE = scene.camera.width * scene.camera.height * 4;
   const output = device.createBuffer({
+    label: 'output',
     size: OUTPUT_BUFFER_SIZE,
     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
   });
 
   const stagingBuffer = device.createBuffer({
+    label: 'staging',
     size: OUTPUT_BUFFER_SIZE,
     usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
   });

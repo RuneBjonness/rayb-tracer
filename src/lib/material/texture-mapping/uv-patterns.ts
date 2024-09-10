@@ -5,7 +5,7 @@ export type UvPatternType = 'checkers' | 'image';
 export interface UvPattern {
   type: UvPatternType;
   colorAt(u: number, v: number): Color;
-  copyCustomToArrayBuffer(buffer: ArrayBuffer, offset: number): void;
+  copyCustomToArrayBuffer(buffer: ArrayBufferLike, offset: number): void;
 }
 
 export class CheckersUvPattern implements UvPattern {
@@ -24,7 +24,7 @@ export class CheckersUvPattern implements UvPattern {
     return (uw + vh) % 2 === 0 ? this.c1.clone() : this.c2.clone();
   }
 
-  copyCustomToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+  copyCustomToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
     const u32view = new Uint32Array(buffer, offset, 1);
     const f32view = new Float32Array(buffer, offset, 12);
     u32view[0] = PatternType.TextureMapCheckers;
@@ -52,7 +52,7 @@ export class ImageUvPattern implements UvPattern {
     return this.pixels[x][y].clone();
   }
 
-  copyCustomToArrayBuffer(buffer: ArrayBuffer, offset: number): void {
+  copyCustomToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
     // const u32view = new Uint32Array(buffer, offset, 12);
     // u32view[2] = this.width;
     // u32view[3] = this.height;

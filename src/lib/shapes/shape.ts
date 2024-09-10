@@ -8,6 +8,7 @@ import { Vector4 } from '../math/vector4';
 import { ObjectBuffers } from './object-buffers';
 import { Pattern } from '../material/patterns';
 import { TransformableShape } from './transformable-shape';
+import { MatrixOrder } from '../math/matrices';
 
 export type ShapeType =
   | 'sphere'
@@ -76,5 +77,9 @@ export interface Shape extends Intersectable {
   isTransformable(): this is TransformableShape;
   isGroup(): this is Group;
   isCsgShape(): this is CsgShape;
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void;
+  copyToArrayBuffers(
+    buffers: ObjectBuffers,
+    parentIndex: number,
+    matrixOrder: MatrixOrder
+  ): void;
 }

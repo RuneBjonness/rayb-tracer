@@ -1,8 +1,8 @@
 import { Color } from '../math/color';
-import { Matrix4 } from '../math/matrices';
+import { Matrix4, MatrixOrder } from '../math/matrices';
 import { Vector4 } from '../math/vector4';
 import { Shape } from '../shapes/shape';
-import { PATTERN_BYTE_SIZE } from './material-buffers';
+import { PATTERN_BYTE_SIZE } from './patterns-buffer';
 
 export enum PatternType {
   Solid = 0,
@@ -42,16 +42,21 @@ export abstract class Pattern {
   }
   protected abstract localColorAt(p: Vector4): Color;
 
-  copyToArrayBuffer(buffer: ArrayBuffer, offset: number): number {
+  copyToArrayBuffer(
+    buffer: ArrayBufferLike,
+    offset: number,
+    order: MatrixOrder
+  ): number {
     const u32view = new Uint32Array(buffer, offset, 2);
     u32view[0] = this.type;
     u32view[1] = 0;
-    this.invTransform.copyToArrayBuffer(buffer, offset + 48);
-    return this.copyCustomToArrayBuffer(buffer, offset);
+    this.invTransform.copyToArrayBuffer(buffer, offset + 48, order);
+    return this.copyCustomToArrayBuffer(buffer, offset, order);
   }
   protected abstract copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
-    offset: number
+    buffer: ArrayBufferLike,
+    offset: number,
+    order: MatrixOrder
   ): number;
 
   arrayBufferByteLength(): number {
@@ -60,7 +65,10 @@ export abstract class Pattern {
 }
 
 export class StripePattern extends Pattern {
-  constructor(public a: Color, public b: Color) {
+  constructor(
+    public a: Color,
+    public b: Color
+  ) {
     super();
     this.type = PatternType.Stripe;
   }
@@ -70,7 +78,7 @@ export class StripePattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -88,7 +96,10 @@ export class StripePattern extends Pattern {
 
 export class GradientPattern extends Pattern {
   distance: Color;
-  constructor(public a: Color, public b: Color) {
+  constructor(
+    public a: Color,
+    public b: Color
+  ) {
     super();
     this.type = PatternType.Gradient;
     this.distance = this.b.clone().subtract(this.a);
@@ -100,7 +111,7 @@ export class GradientPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -117,7 +128,10 @@ export class GradientPattern extends Pattern {
 }
 
 export class RingPattern extends Pattern {
-  constructor(public a: Color, public b: Color) {
+  constructor(
+    public a: Color,
+    public b: Color
+  ) {
     super();
     this.type = PatternType.Ring;
   }
@@ -129,7 +143,7 @@ export class RingPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -146,7 +160,10 @@ export class RingPattern extends Pattern {
 }
 
 export class Checkers3dPattern extends Pattern {
-  constructor(public a: Color, public b: Color) {
+  constructor(
+    public a: Color,
+    public b: Color
+  ) {
     super();
     this.type = PatternType.Checkers3d;
   }
@@ -158,7 +175,7 @@ export class Checkers3dPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -176,7 +193,10 @@ export class Checkers3dPattern extends Pattern {
 
 export class RadialGradientPattern extends Pattern {
   distance: Color;
-  constructor(public a: Color, public b: Color) {
+  constructor(
+    public a: Color,
+    public b: Color
+  ) {
     super();
     this.type = PatternType.RadialGradient;
     this.distance = this.b.clone().subtract(this.a);
@@ -189,7 +209,7 @@ export class RadialGradientPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -216,7 +236,7 @@ export class SolidPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
+    buffer: ArrayBufferLike,
     offset: number
   ): number {
     const f32view = new Float32Array(buffer, offset, 12);
@@ -229,7 +249,10 @@ export class SolidPattern extends Pattern {
 }
 
 export class BlendedPatterns extends Pattern {
-  constructor(public a: Pattern, public b: Pattern) {
+  constructor(
+    public a: Pattern,
+    public b: Pattern
+  ) {
     super();
     this.type = PatternType.Blended;
   }
@@ -243,15 +266,16 @@ export class BlendedPatterns extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBuffer,
-    offset: number
+    buffer: ArrayBufferLike,
+    offset: number,
+    order: MatrixOrder
   ): number {
     var nextOffset = offset + PATTERN_BYTE_SIZE;
     const u32view = new Uint32Array(buffer, offset, 4);
     u32view[2] = nextOffset / PATTERN_BYTE_SIZE;
-    nextOffset = this.a.copyToArrayBuffer(buffer, nextOffset);
+    nextOffset = this.a.copyToArrayBuffer(buffer, nextOffset, order);
     u32view[3] = nextOffset / PATTERN_BYTE_SIZE;
-    nextOffset = this.b.copyToArrayBuffer(buffer, nextOffset);
+    nextOffset = this.b.copyToArrayBuffer(buffer, nextOffset, order);
 
     return nextOffset;
   }

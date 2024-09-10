@@ -1,12 +1,10 @@
 import { Material } from './materials';
-import { Pattern } from './patterns';
 
 export const MATERIAL_BYTE_SIZE = 48;
-export const PATTERN_BYTE_SIZE = 112;
 
 export function copyMaterialToArrayBuffer(
   m: Material,
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   offset: number
 ): void {
   const f32view = new Float32Array(buffer, offset, 12);
@@ -24,13 +22,22 @@ export function copyMaterialToArrayBuffer(
   f32view[10] = m.refractiveIndex;
 }
 
-export function patternsArrayBufferByteLength(patterns: Pattern[]): number {
-  return patterns.reduce(
-    (acc, p) => acc + p.arrayBufferByteLength(),
-    PATTERN_BYTE_SIZE
-  );
-}
+export function toMaterialsArrayBuffer(
+  materials: Material[],
+  useSharedArrayBuffer: boolean
+): ArrayBufferLike {
+  const size = materials.length * MATERIAL_BYTE_SIZE;
+  const materialBuffers = useSharedArrayBuffer
+    ? new SharedArrayBuffer(size)
+    : new ArrayBuffer(size);
 
-export function patternsArrayBufferLength(patterns: Pattern[]): number {
-  return patternsArrayBufferByteLength(patterns) / PATTERN_BYTE_SIZE;
+  for (let i = 0; i < materials.length; i++) {
+    copyMaterialToArrayBuffer(
+      materials[i],
+      materialBuffers,
+      i * MATERIAL_BYTE_SIZE
+    );
+  }
+
+  return materialBuffers;
 }

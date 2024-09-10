@@ -9,6 +9,7 @@ import { CsgShape } from '../csg-shape';
 import { Group } from '../group';
 import { ObjectBuffers, TRIANGLE_BYTE_SIZE } from '../object-buffers';
 import { Pattern } from '../../material/patterns';
+import { MatrixOrder } from '../../math/matrices';
 
 export class Triangle implements Shape {
   readonly e1: Vector4;
@@ -174,7 +175,11 @@ export class Triangle implements Shape {
     return false;
   }
 
-  copyToArrayBuffers(buffers: ObjectBuffers, parentIndex: number): void {
+  copyToArrayBuffers(
+    buffers: ObjectBuffers,
+    parentIndex: number,
+    matrixOrder: MatrixOrder
+  ): void {
     const u32view = new Uint32Array(
       buffers.trianglesArrayBuffer,
       buffers.triangleBufferOffset,

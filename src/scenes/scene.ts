@@ -23,7 +23,7 @@ import { Color, colorFromHex } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
 import { Sphere, TransformableSphere } from '../lib/shapes/primitives/sphere';
 import { Plane } from '../lib/shapes/primitives/plane';
-import { Matrix4 } from '../lib/math/matrices';
+import { Matrix4, MatrixOrder } from '../lib/math/matrices';
 import {
   BlendedPatterns,
   Checkers3dPattern,
@@ -49,9 +49,25 @@ import {
   CubeMap,
   TextureMap,
 } from '../lib/material/texture-mapping/texture-map';
-import { patternsArrayBufferLength } from '../lib/material/material-buffers';
+import { toMaterialsArrayBuffer } from '../lib/material/materials-buffer';
+import { ObjectBuffers, toObjectBuffers } from '../lib/shapes/object-buffers';
+import { toLightsArrayBuffer } from '../lib/lights-buffer';
+import {
+  patternsArrayBufferLength,
+  toPatternsArrayBuffer,
+} from '../lib/material/patterns-buffer';
 
 export type SceneMode = 'sceneDefinition' | 'scenePreset';
+
+type SceneArrayBuffers = {
+  camera: ArrayBufferLike;
+  objects: ObjectBuffers;
+  lights: ArrayBufferLike;
+  materials: ArrayBufferLike;
+  patterns: ArrayBufferLike;
+  imageData: ArrayBufferLike;
+};
+
 export class Scene {
   name: string;
   world: World = new World();
@@ -71,6 +87,30 @@ export class Scene {
 
   public renderTile(x: number, y: number, w: number, h: number): ImageData {
     return this.camera.renderPart(this.world, x, y, w, h).getImageData();
+  }
+
+  public toArrayBuffers(
+    useSharedArrayBuffer: boolean,
+    matrixOrder: MatrixOrder
+  ): SceneArrayBuffers {
+    return {
+      camera: this.camera.toArrayBuffer(useSharedArrayBuffer, matrixOrder),
+      objects: toObjectBuffers(
+        this.world.objects,
+        useSharedArrayBuffer,
+        matrixOrder
+      ),
+      lights: toLightsArrayBuffer(this.world.lights, useSharedArrayBuffer),
+      materials: toMaterialsArrayBuffer(this.materials, useSharedArrayBuffer),
+      patterns: toPatternsArrayBuffer(
+        this.patterns,
+        useSharedArrayBuffer,
+        matrixOrder
+      ),
+      imageData: useSharedArrayBuffer
+        ? new SharedArrayBuffer(16)
+        : new ArrayBuffer(16), // TODO: Implement
+    };
   }
 
   private createCamera(
