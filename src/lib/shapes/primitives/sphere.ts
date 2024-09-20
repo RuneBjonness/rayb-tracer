@@ -18,7 +18,10 @@ export class TransformableSphere extends TransformableShape {
     this.localBounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     const spehereToRay = vector(r.origin.x, r.origin.y, r.origin.z);
     const a = r.direction.dot(r.direction);
     const b = 2 * r.direction.dot(spehereToRay);
@@ -26,13 +29,14 @@ export class TransformableSphere extends TransformableShape {
     const discriminant = b * b - 4 * a * c;
 
     if (discriminant < 0) {
-      return [];
+      return accumulatedIntersections;
     }
     const sqrtDiscriminant = Math.sqrt(discriminant);
-    return [
+    accumulatedIntersections.push(
       intersection((-b - sqrtDiscriminant) / (2 * a), this),
-      intersection((-b + sqrtDiscriminant) / (2 * a), this),
-    ];
+      intersection((-b + sqrtDiscriminant) / (2 * a), this)
+    );
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {
@@ -92,7 +96,7 @@ export class Sphere implements Shape {
   parent: Group | CsgShape | null = null;
   bounds: Bounds;
 
-  intersects(r: Ray): Intersection[] {
+  intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[] {
     const l = vector(
       this.center.x - r.origin.x,
       this.center.y - r.origin.y,
@@ -100,19 +104,23 @@ export class Sphere implements Shape {
     );
     const tca = l.dot(r.direction);
     if (tca < 0) {
-      return [];
+      return accumulatedIntersections;
     }
     const d2 = l.dot(l) - tca * tca;
     if (d2 > this.r2) {
-      return [];
+      return accumulatedIntersections;
     }
     const thc = Math.sqrt(this.r2 - d2);
     let t0 = tca - thc;
     let t1 = tca + thc;
     if (t1 < 0) {
-      return [];
+      return accumulatedIntersections;
     }
-    return [intersection(t0, this), intersection(t1, this)];
+    accumulatedIntersections.push(
+      intersection(t0, this),
+      intersection(t1, this)
+    );
+    return accumulatedIntersections;
   }
 
   hits(r: Ray, maxDistance: number): boolean {

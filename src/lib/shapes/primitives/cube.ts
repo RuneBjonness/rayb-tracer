@@ -11,7 +11,10 @@ export class Cube extends TransformableShape {
     this.localBounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     const [xtmin, xtmax] = this.checkAxis(r.origin.x, r.direction.x);
     const [ytmin, ytmax] = this.checkAxis(r.origin.y, r.direction.y);
     const [ztmin, ztmax] = this.checkAxis(r.origin.z, r.direction.z);
@@ -20,10 +23,14 @@ export class Cube extends TransformableShape {
     const tmax = Math.min(xtmax, ytmax, ztmax);
 
     if (tmin > tmax) {
-      return [];
+      return accumulatedIntersections;
     }
 
-    return [intersection(tmin, this), intersection(tmax, this)];
+    accumulatedIntersections.push(
+      intersection(tmin, this),
+      intersection(tmax, this)
+    );
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {

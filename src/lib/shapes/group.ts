@@ -29,19 +29,20 @@ export class Group extends TransformableShape {
     this.bvhNode.divide(threshold);
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     if (this.bvhNode) {
-      return this.bvhNode.intersects(r).sort((a, b) => a.time - b.time);
+      return this.bvhNode.intersects(r, accumulatedIntersections);
     }
 
     if (this.localBounds.intersects(r)) {
-      const intersections: Intersection[] = [];
       for (const shape of this.shapes) {
-        intersections.push(...shape.intersects(r));
+        shape.intersects(r, accumulatedIntersections);
       }
-      return intersections.sort((a, b) => a.time - b.time);
     }
-    return [];
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {

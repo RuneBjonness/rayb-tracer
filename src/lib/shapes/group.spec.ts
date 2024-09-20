@@ -53,10 +53,6 @@ describe('Groups', () => {
     const hit = g.hits(r, 10);
 
     expect(xs.length).toBe(4);
-    expect(xs[0].object).toBe(s2);
-    expect(xs[1].object).toBe(s2);
-    expect(xs[2].object).toBe(s1);
-    expect(xs[3].object).toBe(s1);
     expect(hit).toBeTruthy();
   });
 

@@ -14,11 +14,17 @@ export class Plane extends TransformableShape {
     );
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     if (Math.abs(r.direction.y) < 0.00001) {
-      return [];
+      return accumulatedIntersections;
     }
-    return [intersection(-r.origin.y / r.direction.y, this)];
+    accumulatedIntersections.push(
+      intersection(-r.origin.y / r.direction.y, this)
+    );
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {

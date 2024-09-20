@@ -107,21 +107,19 @@ export class BvhNode implements Intersectable {
     this.bounds.merge(shape.bounds);
   }
 
-  intersects(r: Ray): Intersection[] {
+  intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[] {
     if (this.bounds.intersects(r)) {
-      const intersections: Intersection[] = [];
       if (this.isLeafNode()) {
         for (const shape of this.shapes) {
-          intersections.push(...shape.intersects(r));
+          shape.intersects(r, accumulatedIntersections);
         }
       } else {
         for (const node of this.bvhNodes) {
-          intersections.push(...node.intersects(r));
+          node.intersects(r, accumulatedIntersections);
         }
       }
-      return intersections;
     }
-    return [];
+    return accumulatedIntersections;
   }
 
   hits(r: Ray, maxDistance: number): boolean {

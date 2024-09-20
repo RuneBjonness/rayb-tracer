@@ -54,7 +54,7 @@ export function shapeTypeId(shapeType: ShapeType): number {
 }
 
 export interface Intersectable {
-  intersects(r: Ray): Intersection[];
+  intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[];
   hits(r: Ray, maxDistance: number): boolean;
 }
 

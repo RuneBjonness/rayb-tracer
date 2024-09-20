@@ -68,10 +68,19 @@ export abstract class TransformableShape implements Shape {
     this.localBounds = Bounds.empty();
   }
 
-  intersects(r: Ray): Intersection[] {
-    return this.localIntersects(r.clone().transform(this.invTransform));
+  intersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[] = []
+  ): Intersection[] {
+    return this.localIntersects(
+      r.clone().transform(this.invTransform),
+      accumulatedIntersections
+    );
   }
-  protected abstract localIntersects(r: Ray): Intersection[];
+  protected abstract localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[];
 
   hits(r: Ray, maxDistance: number): boolean {
     return this.localHits(r.clone().transform(this.invTransform), maxDistance);

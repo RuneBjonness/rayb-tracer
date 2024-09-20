@@ -57,21 +57,25 @@ export class CsgShape extends TransformableShape {
     return res;
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     if (this.localBounds.intersects(r)) {
-      const intersections: Intersection[] = [
-        ...this.left.intersects(r),
-        ...this.right.intersects(r),
-      ];
-      return this.filterIntersections(
-        intersections.sort((a, b) => a.time - b.time)
+      const intersections: Intersection[] = [];
+      this.left.intersects(r, intersections);
+      this.right.intersects(r, intersections);
+      accumulatedIntersections.push(
+        ...this.filterIntersections(
+          intersections.sort((a, b) => a.time - b.time)
+        )
       );
     }
-    return [];
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {
-    const validIntersections = this.localIntersects(r);
+    const validIntersections = this.localIntersects(r, []);
     for (const i of validIntersections) {
       if (i.time >= 0 && i.time < maxDistance) {
         return true;

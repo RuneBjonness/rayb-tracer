@@ -74,12 +74,15 @@ export class Triangle implements Shape {
   parent: Group | CsgShape | null = null;
   bounds: Bounds;
 
-  intersects(r: Ray): Intersection[] {
+  intersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[] = []
+  ): Intersection[] {
     const dirCrossE2 = r.direction.clone().cross(this.e2);
     const det = this.e1.dot(dirCrossE2);
 
     if (Math.abs(det) < 0.00001) {
-      return [];
+      return accumulatedIntersections;
     }
 
     const f = 1 / det;
@@ -87,18 +90,19 @@ export class Triangle implements Shape {
     const u = f * p1ToOrigin.dot(dirCrossE2);
 
     if (u < 0 || u > 1) {
-      return [];
+      return accumulatedIntersections;
     }
 
     p1ToOrigin.cross(this.e1);
     const v = f * r.direction.dot(p1ToOrigin);
 
     if (v < 0 || u + v > 1) {
-      return [];
+      return accumulatedIntersections;
     }
 
     const t = f * this.e2.dot(p1ToOrigin);
-    return [intersection(t, this, u, v)];
+    accumulatedIntersections.push(intersection(t, this, u, v));
+    return accumulatedIntersections;
   }
 
   hits(r: Ray, maxDistance: number): boolean {

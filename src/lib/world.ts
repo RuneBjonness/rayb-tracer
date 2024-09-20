@@ -20,7 +20,7 @@ export class World {
   intersects(r: Ray): Intersection[] {
     const intersections: Intersection[] = [];
     for (let i = 0; i < this.objects.length; i++) {
-      intersections.push(...this.objects[i].intersects(r));
+      this.objects[i].intersects(r, intersections);
     }
 
     return intersections.sort((a, b) => a.time - b.time);

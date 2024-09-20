@@ -23,9 +23,10 @@ export class Cone extends TransformableShape {
     );
   }
 
-  protected localIntersects(r: Ray): Intersection[] {
-    const xs: Intersection[] = [];
-
+  protected localIntersects(
+    r: Ray,
+    accumulatedIntersections: Intersection[]
+  ): Intersection[] {
     const a = r.direction.x ** 2 - r.direction.y ** 2 + r.direction.z ** 2;
     const b =
       2 * r.origin.x * r.direction.x -
@@ -44,19 +45,19 @@ export class Cone extends TransformableShape {
           [t0, t1] = [t1, t0];
         }
 
-        xs.push(...this.hitWalls(r, t0));
-        xs.push(...this.hitWalls(r, t1));
+        this.hitWalls(r, t0, accumulatedIntersections);
+        this.hitWalls(r, t1, accumulatedIntersections);
       }
     } else if (Math.abs(b) > 0.00001) {
-      xs.push(...this.hitWalls(r, -c / (2 * b)));
+      this.hitWalls(r, -c / (2 * b), accumulatedIntersections);
     }
 
     if (this.closed && Math.abs(r.direction.y) > 0.00001) {
-      xs.push(...this.hitCaps(r, this.minimum));
-      xs.push(...this.hitCaps(r, this.maximum));
+      this.hitCaps(r, this.minimum, accumulatedIntersections);
+      this.hitCaps(r, this.maximum, accumulatedIntersections);
     }
 
-    return xs;
+    return accumulatedIntersections;
   }
 
   protected localHits(r: Ray, maxDistance: number): boolean {
@@ -118,15 +119,29 @@ export class Cone extends TransformableShape {
     return vector(p.x, p.y > 0 ? -y : y, p.z);
   }
 
-  private hitWalls(r: Ray, t: number): Intersection[] {
+  private hitWalls(
+    r: Ray,
+    t: number,
+    accumulatedIntersections: Intersection[] = []
+  ): Intersection[] {
     const y = r.origin.y + t * r.direction.y;
-    return this.minimum < y && y < this.maximum ? [intersection(t, this)] : [];
+    if (this.minimum < y && y < this.maximum) {
+      accumulatedIntersections.push(intersection(t, this));
+    }
+    return accumulatedIntersections;
   }
 
-  private hitCaps(r: Ray, y: number): Intersection[] {
+  private hitCaps(
+    r: Ray,
+    y: number,
+    accumulatedIntersections: Intersection[] = []
+  ): Intersection[] {
     const t = (y - r.origin.y) / r.direction.y;
     const x = r.origin.x + t * r.direction.x;
     const z = r.origin.z + t * r.direction.z;
-    return x ** 2 + z ** 2 <= Math.abs(y) ? [intersection(t, this)] : [];
+    if (x ** 2 + z ** 2 <= Math.abs(y)) {
+      accumulatedIntersections.push(intersection(t, this));
+    }
+    return accumulatedIntersections;
   }
 }
