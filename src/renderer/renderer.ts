@@ -3,6 +3,7 @@ import { SceneMode } from '../scenes/scene';
 import { ScenePreset } from '../scenes/scene-preset';
 import renderWebGpu from './webgpu/renderer';
 import renderWebWorkers from './web-workers/renderer';
+import renderWebWorkersSharedMemory from './web-workers-shared-memory/renderer';
 
 const render = async (
   ctx: CanvasRenderingContext2D,
@@ -22,6 +23,8 @@ const render = async (
 
   if (cfg.renderMode === RenderMode.webGpuPreview) {
     return renderWebGpu(ctx, cfg, sceneMode, scene, onProgress);
+  } else if (cfg.renderMode === RenderMode.testWebWorkerSharedMemory) {
+    return renderWebWorkersSharedMemory(ctx, cfg, sceneMode, scene, onProgress);
   }
   return renderWebWorkers(ctx, cfg, sceneMode, scene, onProgress);
 };

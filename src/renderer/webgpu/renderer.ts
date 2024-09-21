@@ -340,6 +340,7 @@ const renderWebGpu = async (
     performance.mark('render-end');
 
     console.log(
+      'Render stats:\n',
       `building scene: ${performance
         .measure('scene', 'render-start', 'scene-created')
         .duration.toFixed(1)} ms\n`,

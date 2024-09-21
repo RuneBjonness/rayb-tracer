@@ -1,7 +1,8 @@
 import { RenderConfiguration, RenderMode } from '../configuration';
-import { SceneMode } from '../../scenes/scene';
-import { ScenePreset } from '../../scenes/scene-preset';
+import { Scene, SceneMode } from '../../scenes/scene';
+import { loadScene, ScenePreset } from '../../scenes/scene-preset';
 import RenderWorker from './renderer-worker?worker';
+import { MatrixOrder } from '../../lib/math/matrices';
 
 type CanvasPart = {
   x: number;
@@ -45,7 +46,7 @@ function createRenderPartList(
   return canvasParts;
 }
 
-const renderWebWorkers = async (
+const renderWebWorkersSharedMemory = async (
   ctx: CanvasRenderingContext2D,
   cfg: RenderConfiguration,
   sceneMode: SceneMode,
@@ -53,7 +54,7 @@ const renderWebWorkers = async (
   onProgress: (units: number) => void
 ) => {
   console.log(
-    `renderWebWorkers(${cfg.width}X${cfg.height}) started - using ${cfg.numberOfWorkers} workers`
+    `renderWebWorkersSharedMemory(${cfg.width}X${cfg.height}) started - using ${cfg.numberOfWorkers} workers`
   );
   performance.clearMarks();
   performance.mark('render-start');
@@ -66,7 +67,16 @@ const renderWebWorkers = async (
   const canvasParts = createRenderPartList(cfg, true);
   performance.mark('preparations-complete');
 
-  let remainingPhotonMapperIterations = cfg.iterations;
+  const preparedScene =
+    sceneMode === 'scenePreset'
+      ? await loadScene(scene as ScenePreset, cfg)
+      : new Scene(JSON.parse(scene as string), cfg);
+
+  performance.mark('scene-created');
+
+  const buffers = preparedScene.toArrayBuffers(true, MatrixOrder.RowMajor);
+  performance.mark('buffers-created');
+
   let activeWorkers = 0;
 
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
@@ -94,8 +104,11 @@ const renderWebWorkers = async (
               `building scene: ${performance
                 .measure('scene', 'render-start', 'scene-created')
                 .duration.toFixed(1)} ms\n`,
+              `building buffers: ${performance
+                .measure('buffers', 'scene-created', 'buffers-created')
+                .duration.toFixed(1)} ms\n`,
               `render pass: ${performance
-                .measure('render-pass', 'scene-created', 'render-end')
+                .measure('render-pass', 'buffers-created', 'render-end')
                 .duration.toFixed(1)} ms\n`,
               `total time: ${performance
                 .measure('total', 'render-start', 'render-end')
@@ -107,76 +120,25 @@ const renderWebWorkers = async (
         const cp: CanvasPart = e.data.cp;
         ctx!.putImageData(e.data.imageData, cp.x, cp.y);
         onProgress(cp.w * cp.h);
-      } else if (e.data.command === 'photonMapperIteration') {
-        if (remainingPhotonMapperIterations > 0) {
-          remainingPhotonMapperIterations--;
-          worker.postMessage({
-            command: 'photonMapperIteration',
-            photons: cfg.photonsPerIteration,
-          });
-        } else {
-          activeWorkers--;
-          if (activeWorkers === 0) {
-            performance.mark('render-end');
-            performance.measure('render', 'render-start', 'render-end');
-            console.log(
-              'Render stats:\n',
-              `preparations: ${performance
-                .measure(
-                  'preparations',
-                  'render-start',
-                  'preparations-complete'
-                )
-                .duration.toFixed(1)} ms\n`,
-              `building scene: ${performance
-                .measure('scene', 'render-start', 'scene-created')
-                .duration.toFixed(1)} ms\n`,
-              `photo mapper: ${performance
-                .measure('photon-mapper', 'scene-created', 'render-end')
-                .duration.toFixed(1)} ms\n`,
-              `total time: ${performance
-                .measure('total', 'render-start', 'render-end')
-                .duration.toFixed(1)} ms\n`
-            );
-          }
-        }
-
-        onProgress(1);
       } else if (e.data.command === 'initComplete') {
-        performance.mark('scene-created');
-        if (cfg.renderMode === RenderMode.progressivePhotonMapping) {
-          if (remainingPhotonMapperIterations > 0) {
-            remainingPhotonMapperIterations--;
-            worker.postMessage({
-              command: 'photonMapperIteration',
-              photons: cfg.photonsPerIteration,
-            });
-            activeWorkers++;
-          }
-        } else {
-          const cp = canvasParts.pop();
-          if (cp) {
-            worker.postMessage({ command: 'rtRenderTile', cp });
-            activeWorkers++;
-          }
+        const cp = canvasParts.pop();
+        if (cp) {
+          worker.postMessage({ command: 'rtRenderTile', cp });
+          activeWorkers++;
         }
       }
     };
 
-    if (sceneMode === 'scenePreset') {
-      worker.postMessage({
-        command: 'initPreset',
-        scenePreset: scene,
-        renderCfg: cfg,
-      });
-    } else {
-      worker.postMessage({
-        command: 'init',
-        definition: scene,
-        renderCfg: cfg,
-      });
-    }
+    worker.postMessage({
+      command: 'init',
+      camera: buffers.camera,
+      lights: buffers.lights,
+      objects: buffers.objects,
+      materials: buffers.materials,
+      patterns: buffers.patterns,
+      imageData: buffers.imageData,
+    });
   }
 };
 
-export default renderWebWorkers;
+export default renderWebWorkersSharedMemory;

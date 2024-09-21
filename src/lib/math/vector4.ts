@@ -107,6 +107,16 @@ export class Vector4 {
     this.z = m.elements[8] * x + m.elements[9] * y + m.elements[10] * this.z + m.elements[11] * this.w;
     return this;
   }
+
+  public applyMatrixBuffer(m: Float32Array): Vector4 {
+    const x = this.x;
+    const y = this.y;
+
+    this.x = m[0] * x + m[1] * y + m[2] * this.z + m[3] * this.w;
+    this.y = m[4] * x + m[5] * y + m[6] * this.z + m[7] * this.w;
+    this.z = m[8] * x + m[9] * y + m[10] * this.z + m[11] * this.w;
+    return this;
+  }
 }
 
 export function point(x: number, y: number, z: number): Vector4 {
