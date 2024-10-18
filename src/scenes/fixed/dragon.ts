@@ -1,11 +1,11 @@
-import { AreaLight } from '../../lib/lights';
+import { AreaLight } from '../../lib/lights/lights';
 import {
   radians,
   rotationZ,
   translation,
 } from '../../lib/math/transformations';
 import { Color, colorFromHex } from '../../lib/math/color';
-import { World } from '../../lib/world';
+import { World } from '../../lib/world/world';
 import { Scene } from '../scene';
 import { ObjParser } from '../../tools/obj-parser';
 import dragonObjFile from '../../resources/dragon.obj?raw';

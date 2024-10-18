@@ -5,10 +5,10 @@ import {
   rotationX,
   rotationZ,
   translation,
-} from './math/transformations';
-import { Color } from './math/color';
-import { defaultWorld } from './world.spec';
-import { point } from './math/vector4';
+} from '../math/transformations';
+import { Color } from '../math/color';
+import { defaultWorld } from '../world/world.spec';
+import { point } from '../math/vector4';
 
 describe('point-light', () => {
   test('a point light has a single sample position and intensity', () => {

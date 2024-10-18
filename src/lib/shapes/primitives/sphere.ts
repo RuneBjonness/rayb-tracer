@@ -8,13 +8,13 @@ import { Bounds } from '../bounds';
 import { CsgShape } from '../csg-shape';
 import { Group } from '../group';
 import { ObjectBuffers, PRIMITIVE_BYTE_SIZE } from '../object-buffers';
-import { Shape, ShapeType, shapeTypeId } from '../shape';
+import { Shape, ShapeType } from '../shape';
 import { TransformableShape } from '../transformable-shape';
 
 export class TransformableSphere extends TransformableShape {
   constructor() {
     super();
-    this.shapeType = 'sphere';
+    this.shapeType = ShapeType.Sphere;
     this.localBounds = new Bounds(point(-1, -1, -1), point(1, 1, 1));
   }
 
@@ -76,7 +76,7 @@ export class Sphere implements Shape {
   }
 
   readonly r2: number;
-  shapeType: ShapeType = 'primitive-sphere';
+  shapeType = ShapeType.PrimitiveSphere;
   get material(): Material {
     if (
       this.materialIdx < 0 ||
@@ -199,7 +199,7 @@ export class Sphere implements Shape {
     f32view[2] = this.center.z;
     f32view[3] = this.r2;
 
-    u32view[4] = shapeTypeId(this.shapeType);
+    u32view[4] = this.shapeType;
     u32view[5] = this.materialIdx;
     u32view[6] = parentIndex;
 

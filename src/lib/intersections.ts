@@ -71,7 +71,7 @@ export function prepareComputations(
 
   const containers: Shape[] = [];
   for (const inter of xs) {
-    if (inter === i) {
+    if (inter.time === i.time) {
       comps.n1 =
         containers.length > 0
           ? containers[containers.length - 1].material.refractiveIndex
@@ -85,7 +85,7 @@ export function prepareComputations(
       containers.push(inter.object);
     }
 
-    if (inter === i) {
+    if (inter.time === i.time) {
       comps.n2 =
         containers.length > 0
           ? containers[containers.length - 1].material.refractiveIndex

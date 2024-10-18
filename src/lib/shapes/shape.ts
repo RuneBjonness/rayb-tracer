@@ -10,49 +10,20 @@ import { Pattern } from '../material/patterns';
 import { TransformableShape } from './transformable-shape';
 import { MatrixOrder } from '../math/matrices';
 
-export type ShapeType =
-  | 'sphere'
-  | 'plane'
-  | 'cube'
-  | 'cylinder'
-  | 'cone'
-  | 'triangle'
-  | 'smooth-triangle'
-  | 'csg'
-  | 'group'
-  | 'group-bvh'
-  | 'primitive-sphere'
-  | 'unknown';
-
-export function shapeTypeId(shapeType: ShapeType): number {
-  switch (shapeType) {
-    case 'sphere':
-      return 1;
-    case 'plane':
-      return 2;
-    case 'cube':
-      return 3;
-    case 'cylinder':
-      return 4;
-    case 'cone':
-      return 5;
-    case 'triangle':
-      return 6;
-    case 'smooth-triangle':
-      return 7;
-    case 'csg':
-      return 8;
-    case 'group':
-      return 9;
-    case 'group-bvh':
-      return 10;
-    case 'primitive-sphere':
-      return 11;
-    default:
-      return 0;
-  }
+export enum ShapeType {
+  Unknown = 0,
+  Sphere,
+  Plane,
+  Cube,
+  Cylinder,
+  Cone,
+  Triangle,
+  SmoothTriangle,
+  Csg,
+  Group,
+  GroupBvh,
+  PrimitiveSphere,
 }
-
 export interface Intersectable {
   intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[];
   hits(r: Ray, maxDistance: number): boolean;

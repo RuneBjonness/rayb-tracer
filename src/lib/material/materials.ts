@@ -1,5 +1,5 @@
 import { Color } from '../math/color';
-import { Light } from '../lights';
+import { Light } from '../lights/lights';
 import { Shape } from '../shapes/shape';
 import { Vector4 } from '../math/vector4';
 

@@ -5,13 +5,13 @@ import {
   prepareComputations,
   reflectance,
   refractedDirection,
-} from './intersections';
-import { Light } from './lights';
-import { Ray } from './rays';
-import { Shape } from './shapes/shape';
-import { Color } from './math/color';
-import { lighting } from './material/materials';
-import { vector, Vector4 } from './math/vector4';
+} from '../intersections';
+import { Light } from '../lights/lights';
+import { Ray } from '../rays';
+import { Shape } from '../shapes/shape';
+import { Color } from '../math/color';
+import { lighting } from '../material/materials';
+import { vector, Vector4 } from '../math/vector4';
 
 export class World {
   objects: Shape[] = [];
@@ -105,7 +105,7 @@ export class World {
   isShadowed(p: Vector4, lightPosition: Vector4): boolean {
     const v = lightPosition.clone().subtract(p);
     const distance = v.magnitude();
-    const direction = v.normalize();
+    const direction = v.scale(1 / distance);
     return this.hitsAny(new Ray(p, direction), distance);
   }
 

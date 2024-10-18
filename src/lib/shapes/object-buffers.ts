@@ -1,6 +1,6 @@
 import { MatrixOrder } from '../math/matrices';
 import { BvhNode } from './bvh-node';
-import { Shape } from './shape';
+import { Shape, ShapeType } from './shape';
 
 export const SHAPE_BYTE_SIZE = 256;
 export const PRIMITIVE_BYTE_SIZE = 32;
@@ -54,7 +54,7 @@ export function numberOfObjects(
         numberOfObjects([shape.left, shape.right], [], objCount);
       }
     } else {
-      if (shape.shapeType === 'primitive-sphere') {
+      if (shape.shapeType === ShapeType.PrimitiveSphere) {
         objCount.primitives++;
       } else {
         objCount.triangles++;

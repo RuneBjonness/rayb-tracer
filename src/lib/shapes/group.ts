@@ -2,7 +2,7 @@ import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
 import { BvhNode } from './bvh-node';
-import { Shape } from './shape';
+import { Shape, ShapeType } from './shape';
 import { TransformableShape } from './transformable-shape';
 
 export class Group extends TransformableShape {
@@ -11,7 +11,7 @@ export class Group extends TransformableShape {
 
   constructor() {
     super();
-    this.shapeType = 'group';
+    this.shapeType = ShapeType.Group;
   }
 
   add(child: Shape) {
@@ -21,7 +21,7 @@ export class Group extends TransformableShape {
   }
 
   override divide(threshold: number): void {
-    this.shapeType = 'group-bvh';
+    this.shapeType = ShapeType.GroupBvh;
     this.bvhNode = new BvhNode();
     this.bvhNode.bounds = this.localBounds;
     this.bvhNode.shapes = [...this.shapes];

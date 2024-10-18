@@ -23,7 +23,7 @@ const render = async (
 
   if (cfg.renderMode === RenderMode.webGpuPreview) {
     return renderWebGpu(ctx, cfg, sceneMode, scene, onProgress);
-  } else if (cfg.renderMode === RenderMode.testWebWorkerSharedMemory) {
+  } else if (cfg.renderMode === RenderMode.sharedMemoryPreview) {
     return renderWebWorkersSharedMemory(ctx, cfg, sceneMode, scene, onProgress);
   }
   return renderWebWorkers(ctx, cfg, sceneMode, scene, onProgress);

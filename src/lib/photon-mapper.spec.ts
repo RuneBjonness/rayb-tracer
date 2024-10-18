@@ -1,9 +1,9 @@
-import { AreaLight, PointLight } from './lights';
+import { AreaLight, PointLight } from './lights/lights';
 import { PhotonMapper } from './photon-mapper';
 import { TransformableSphere } from './shapes/primitives/sphere';
 import { scaling } from './math/transformations';
 import { Color } from './math/color';
-import { World } from './world';
+import { World } from './world/world';
 import { point } from './math/vector4';
 import { material } from './material/materials';
 

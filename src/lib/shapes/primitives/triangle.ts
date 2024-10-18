@@ -1,7 +1,7 @@
 import { Intersection, intersection } from '../../intersections';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
-import { Shape, ShapeType, shapeTypeId } from '../shape';
+import { Shape, ShapeType } from '../shape';
 import { TransformableShape } from '../transformable-shape';
 import { Vector4, point, vector } from '../../math/vector4';
 import { Material, material } from '../../material/materials';
@@ -30,12 +30,12 @@ export class Triangle implements Shape {
     this.e2 = p3.clone().subtract(p1);
 
     if (n1 && n2 && n3) {
-      this.shapeType = 'smooth-triangle';
+      this.shapeType = ShapeType.SmoothTriangle;
       this.n1 = n1;
       this.n2 = n2;
       this.n3 = n3;
     } else {
-      this.shapeType = 'triangle';
+      this.shapeType = ShapeType.Triangle;
       this.n1 = this.e2.clone().cross(this.e1).normalize();
       this.n2 = this.n1;
       this.n3 = this.n1;
@@ -133,7 +133,7 @@ export class Triangle implements Shape {
   }
 
   normalAt(p: Vector4, i: Intersection | null): Vector4 {
-    if (this.shapeType === 'triangle') {
+    if (this.shapeType === ShapeType.Triangle) {
       return this.normalToWorld(this.n1);
     }
 
@@ -210,7 +210,7 @@ export class Triangle implements Shape {
     f32view[12] = this.n1.x;
     f32view[13] = this.n1.y;
     f32view[14] = this.n1.z;
-    u32view[15] = shapeTypeId(this.shapeType);
+    u32view[15] = this.shapeType;
 
     f32view[16] = this.n2.x;
     f32view[17] = this.n2.y;

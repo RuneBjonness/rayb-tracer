@@ -1,10 +1,10 @@
 import { RenderConfiguration } from '../../renderer/configuration';
-import { PointLight } from '../../lib/lights';
+import { PointLight } from '../../lib/lights/lights';
 import { material } from '../../lib/material/materials';
 import { TransformableSphere } from '../../lib/shapes/primitives/sphere';
 import { translation, scaling } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
-import { World } from '../../lib/world';
+import { World } from '../../lib/world/world';
 // import negXImgMapFile from '../resources/skybox/negx.ppm?raw';
 // import negYImgMapFile from '../resources/skybox/negy.ppm?raw';
 // import negZImgMapFile from '../resources/skybox/negz.ppm?raw';

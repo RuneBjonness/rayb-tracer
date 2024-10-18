@@ -1,8 +1,8 @@
-import { PointLight } from '../../lib/lights';
+import { PointLight } from '../../lib/lights/lights';
 import { TransformableSphere } from '../../lib/shapes/primitives/sphere';
 import { radians } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
-import { World } from '../../lib/world';
+import { World } from '../../lib/world/world';
 import moonImgMapFile from '../../resources/moon.png';
 import { Scene } from '../scene';
 import { RenderConfiguration } from '../../renderer/configuration';

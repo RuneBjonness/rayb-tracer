@@ -1,26 +1,29 @@
 import { World } from './world';
-import { PointLight } from './lights';
-import { Color } from './math/color';
-import { scaling, translation } from './math/transformations';
-import { Ray } from './rays';
-import { intersection, prepareComputations } from './intersections';
-import { Plane } from './shapes/primitives/plane';
-import { TransformableSphere } from './shapes/primitives/sphere';
+import { PointLight } from '../lights/lights';
+import { Color } from '../math/color';
+import { scaling, translation } from '../math/transformations';
+import { Ray } from '../rays';
+import { intersection, prepareComputations } from '../intersections';
+import { Plane } from '../shapes/primitives/plane';
+import { TransformableSphere } from '../shapes/primitives/sphere';
 import each from 'jest-each';
-import { point, vector } from './math/vector4';
-import { material } from './material/materials';
-import { TestPattern } from './material/patterns.spec';
+import { point, vector } from '../math/vector4';
+import { Material, material } from '../material/materials';
+import { TestPattern } from '../material/patterns.spec';
 
-export function defaultWorld(): World {
-  const w = new World();
-  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
-
+export function defaultWorldMaterials(): Material[] {
   const mat = material();
   mat.color = new Color(0.8, 1.0, 0.6);
   mat.diffuse = 0.7;
   mat.specular = 0.2;
 
-  const mats = [material(), mat];
+  return [material(), mat];
+}
+export function defaultWorld(): World {
+  const w = new World();
+  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
+
+  const mats = defaultWorldMaterials();
 
   const s1 = new TransformableSphere();
   s1.materialDefinitions = mats;
@@ -354,7 +357,7 @@ test('shadeHit() with a transparent material', () => {
   expect(c.equals(new Color(0.93642, 0.68642, 0.68642))).toBe(true);
 });
 
-test('shadeHit() with a reflective and transparent material', () => {
+test('colorAt() with a reflective and transparent material', () => {
   const w = defaultWorld();
   const mat = material();
   mat.reflective = 0.5;
@@ -383,10 +386,7 @@ test('shadeHit() with a reflective and transparent material', () => {
     point(0, 0, -3),
     vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2)
   );
-  const i = intersection(Math.sqrt(2), floor);
-
-  const comps = prepareComputations(i, r);
-  const c = w.shadeHit(comps, 5);
+  const c = w.colorAt(r, 5);
 
   expect(c.equals(new Color(0.93391, 0.69643, 0.69243))).toBe(true);
 });

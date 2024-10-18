@@ -10,6 +10,7 @@ import { TransformableSphere } from './primitives/sphere';
 import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
+import { ShapeType } from './shape';
 
 describe('CSG Shapes', () => {
   test('CSG is created with an operation and two shapes', () => {
@@ -155,9 +156,13 @@ describe('CSG Shapes', () => {
     const csg = new CsgShape('difference', g1, g2);
     csg.divide(1);
 
-    expect(g1.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual('sphere');
-    expect(g1.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cylinder');
-    expect(g2.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual('cube');
-    expect(g2.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cone');
+    expect(g1.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual(
+      ShapeType.Sphere
+    );
+    expect(g1.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual(
+      ShapeType.Cylinder
+    );
+    expect(g2.bvhNode?.bvhNodes[0].shapes[0].shapeType).toEqual(ShapeType.Cube);
+    expect(g2.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual(ShapeType.Cone);
   });
 });

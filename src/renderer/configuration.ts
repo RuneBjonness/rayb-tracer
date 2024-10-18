@@ -29,7 +29,7 @@ export enum RenderMode {
   fixedSampling = 'Fixed sampling',
   progressivePhotonMapping = 'Progressive photon mapping (experimental)',
   webGpuPreview = 'WebGPU preview (experimental)',
-  testWebWorkerSharedMemory = 'Test Web Workers with Shared Memory',
+  sharedMemoryPreview = 'Shared Memory preview (experimental)',
 }
 
 function renderConfiguration(

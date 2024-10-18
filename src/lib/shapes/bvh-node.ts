@@ -11,7 +11,7 @@ import {
   TRIANGLE_BYTE_SIZE,
   numberOfObjects,
 } from './object-buffers';
-import { Intersectable, Shape } from './shape';
+import { Intersectable, Shape, ShapeType } from './shape';
 
 export class BvhNode implements Intersectable {
   bvhNodes: BvhNode[] = [];
@@ -26,15 +26,16 @@ export class BvhNode implements Intersectable {
 
   hasPrimitiveChildren(): boolean {
     return (
-      this.shapes.length > 0 && this.shapes[0].shapeType === 'primitive-sphere'
+      this.shapes.length > 0 &&
+      this.shapes[0].shapeType === ShapeType.PrimitiveSphere
     );
   }
 
   hasTriangleChildren(): boolean {
     return (
       this.shapes.length > 0 &&
-      (this.shapes[0].shapeType === 'triangle' ||
-        this.shapes[0].shapeType === 'smooth-triangle')
+      (this.shapes[0].shapeType === ShapeType.Triangle ||
+        this.shapes[0].shapeType === ShapeType.SmoothTriangle)
     );
   }
 

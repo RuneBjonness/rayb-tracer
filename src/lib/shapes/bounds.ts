@@ -29,7 +29,10 @@ export class Bounds {
     );
   }
 
-  constructor(public min: Vector4, public max: Vector4) {}
+  constructor(
+    public min: Vector4,
+    public max: Vector4
+  ) {}
 
   clone(): Bounds {
     return new Bounds(this.min.clone(), this.max.clone());
@@ -114,30 +117,33 @@ export class Bounds {
   }
 
   public intersects(r: Ray): boolean {
-    const invRayDir = vector(
-      1 / r.direction.x,
-      1 / r.direction.y,
-      1 / r.direction.z
-    );
-    const tx1 = (this.min.x - r.origin.x) * invRayDir.x;
-    const tx2 = (this.max.x - r.origin.x) * invRayDir.x;
-    const ty1 = (this.min.y - r.origin.y) * invRayDir.y;
-    const ty2 = (this.max.y - r.origin.y) * invRayDir.y;
-    const tz1 = (this.min.z - r.origin.z) * invRayDir.z;
-    const tz2 = (this.max.z - r.origin.z) * invRayDir.z;
-
-    const tmin = Math.max(
-      Math.min(tx1, tx2),
-      Math.min(ty1, ty2),
-      Math.min(tz1, tz2),
-      0
-    );
-    const tmax = Math.min(
-      Math.max(tx1, tx2),
-      Math.max(ty1, ty2),
-      Math.max(tz1, tz2)
-    );
-
-    return tmin <= tmax;
+    return intersectsBounds(r, this.min, this.max);
   }
+}
+
+export function intersectsBounds(
+  r: Ray,
+  boundMin: Vector4,
+  boundMax: Vector4
+): boolean {
+  const tx1 = (boundMin.x - r.origin.x) / r.direction.x;
+  const tx2 = (boundMax.x - r.origin.x) / r.direction.x;
+  const ty1 = (boundMin.y - r.origin.y) / r.direction.y;
+  const ty2 = (boundMax.y - r.origin.y) / r.direction.y;
+  const tz1 = (boundMin.z - r.origin.z) / r.direction.z;
+  const tz2 = (boundMax.z - r.origin.z) / r.direction.z;
+
+  const tmin = Math.max(
+    Math.min(tx1, tx2),
+    Math.min(ty1, ty2),
+    Math.min(tz1, tz2),
+    0
+  );
+  const tmax = Math.min(
+    Math.max(tx1, tx2),
+    Math.max(ty1, ty2),
+    Math.max(tz1, tz2)
+  );
+
+  return tmin <= tmax;
 }

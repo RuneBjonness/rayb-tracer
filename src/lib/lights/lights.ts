@@ -1,11 +1,11 @@
-import { Matrix4 } from './math/matrices';
-import { Photon } from './photon-mapper';
-import { Cube } from './shapes/primitives/cube';
-import { scaling } from './math/transformations';
-import { World } from './world';
-import { Color } from './math/color';
-import { Vector4, point, vector } from './math/vector4';
-import { Material, material } from './material/materials';
+import { Matrix4 } from '../math/matrices';
+import { Photon } from '../photon-mapper';
+import { Cube } from '../shapes/primitives/cube';
+import { scaling } from '../math/transformations';
+import { World } from '../world/world';
+import { Color } from '../math/color';
+import { Vector4, point, vector } from '../math/vector4';
+import { Material, material } from '../material/materials';
 
 export interface Light {
   intensity: Color;

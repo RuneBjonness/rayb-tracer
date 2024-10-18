@@ -15,7 +15,7 @@ import {
   SHAPE_BYTE_SIZE,
 } from './object-buffers';
 import { Pattern } from '../material/patterns';
-import { Shape, ShapeType, shapeTypeId } from './shape';
+import { Shape, ShapeType } from './shape';
 
 export abstract class TransformableShape implements Shape {
   private _transform: Matrix4;
@@ -28,7 +28,7 @@ export abstract class TransformableShape implements Shape {
     this.invTransformTransposed = this.invTransform.clone().transpose();
   }
 
-  shapeType: ShapeType = 'unknown';
+  shapeType = ShapeType.Unknown;
 
   get material(): Material {
     if (
@@ -131,7 +131,7 @@ export abstract class TransformableShape implements Shape {
       64
     );
 
-    u32view[0] = shapeTypeId(this.shapeType);
+    u32view[0] = this.shapeType;
 
     if (this.isConeOrCylinder()) {
       f32view[1] = this.minimum;
@@ -193,7 +193,9 @@ export abstract class TransformableShape implements Shape {
   }
 
   isConeOrCylinder(): this is Cone | Cylinder {
-    return this.shapeType === 'cone' || this.shapeType === 'cylinder';
+    return (
+      this.shapeType === ShapeType.Cone || this.shapeType === ShapeType.Cylinder
+    );
   }
 
   isTransformable(): this is TransformableShape {
@@ -201,10 +203,13 @@ export abstract class TransformableShape implements Shape {
   }
 
   isGroup(): this is Group {
-    return this.shapeType === 'group' || this.shapeType === 'group-bvh';
+    return (
+      this.shapeType === ShapeType.Group ||
+      this.shapeType === ShapeType.GroupBvh
+    );
   }
 
   isCsgShape(): this is CsgShape {
-    return this.shapeType === 'csg';
+    return this.shapeType === ShapeType.Csg;
   }
 }

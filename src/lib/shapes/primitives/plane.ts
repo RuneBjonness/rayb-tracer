@@ -2,12 +2,13 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
+import { ShapeType } from '../shape';
 import { TransformableShape } from '../transformable-shape';
 
 export class Plane extends TransformableShape {
   constructor() {
     super();
-    this.shapeType = 'plane';
+    this.shapeType = ShapeType.Plane;
     this.localBounds = new Bounds(
       point(Number.NEGATIVE_INFINITY, 0, Number.NEGATIVE_INFINITY),
       point(Number.POSITIVE_INFINITY, 0, Number.POSITIVE_INFINITY)

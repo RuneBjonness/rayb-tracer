@@ -126,3 +126,11 @@ export function point(x: number, y: number, z: number): Vector4 {
 export function vector(x: number, y: number, z: number): Vector4 {
   return new Vector4(x, y, z, 0);
 }
+
+export function pointFromF32Array(f32view: Float32Array): Vector4 {
+  return new Vector4(f32view[0], f32view[1], f32view[2], 1);
+}
+
+export function vectorFromF32Array(f32view: Float32Array): Vector4 {
+  return new Vector4(f32view[0], f32view[1], f32view[2], 0);
+}

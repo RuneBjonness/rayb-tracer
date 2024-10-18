@@ -2,6 +2,7 @@ import { intersection, Intersection } from '../../intersections';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { Bounds } from '../bounds';
+import { ShapeType } from '../shape';
 import { TransformableShape } from '../transformable-shape';
 
 export class Cone extends TransformableShape {
@@ -11,7 +12,7 @@ export class Cone extends TransformableShape {
 
   constructor(minimum?: number, maximum?: number, closed?: boolean) {
     super();
-    this.shapeType = 'cone';
+    this.shapeType = ShapeType.Cone;
     this.minimum = minimum ?? Number.NEGATIVE_INFINITY;
     this.maximum = maximum ?? Number.POSITIVE_INFINITY;
     this.closed = closed ?? false;

@@ -1,5 +1,5 @@
 import { RenderConfiguration } from '../../renderer/configuration';
-import { AreaLight } from '../../lib/lights';
+import { AreaLight } from '../../lib/lights/lights';
 import { Group } from '../../lib/shapes/group';
 import { Sphere } from '../../lib/shapes/primitives/sphere';
 import {
@@ -8,7 +8,7 @@ import {
   rotationZ,
 } from '../../lib/math/transformations';
 import { Color } from '../../lib/math/color';
-import { World } from '../../lib/world';
+import { World } from '../../lib/world/world';
 import { Scene } from '../scene';
 import { material } from '../../lib/material/materials';
 import { point } from '../../lib/math/vector4';

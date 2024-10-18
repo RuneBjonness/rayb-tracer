@@ -1,6 +1,6 @@
-import { Camera } from '../lib/camera';
+import { Camera } from '../lib/camera/camera';
 import { RenderConfiguration } from '../renderer/configuration';
-import { World } from '../lib/world';
+import { World } from '../lib/world/world';
 import {
   CameraConfiguration,
   ColorDefinition,
@@ -18,7 +18,7 @@ import {
 } from './scene-definition';
 import { radians, viewTransform } from '../lib/math/transformations';
 import { point, vector } from '../lib/math/vector4';
-import { AreaLight, Light, PointLight } from '../lib/lights';
+import { AreaLight, Light, PointLight } from '../lib/lights/lights';
 import { Color, colorFromHex } from '../lib/math/color';
 import { Shape } from '../lib/shapes/shape';
 import { Sphere, TransformableSphere } from '../lib/shapes/primitives/sphere';
@@ -51,7 +51,7 @@ import {
 } from '../lib/material/texture-mapping/texture-map';
 import { toMaterialsArrayBuffer } from '../lib/material/materials-buffer';
 import { ObjectBuffers, toObjectBuffers } from '../lib/shapes/object-buffers';
-import { toLightsArrayBuffer } from '../lib/lights-buffer';
+import { toLightsArrayBuffer } from '../lib/lights/lights-buffer';
 import {
   patternsArrayBufferLength,
   toPatternsArrayBuffer,

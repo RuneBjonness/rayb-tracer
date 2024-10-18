@@ -7,7 +7,7 @@ import {
 import { materialColorAt } from './material/materials';
 import { Ray } from './rays';
 import { Color } from './math/color';
-import { World } from './world';
+import { World } from './world/world';
 import { Vector4, vector } from './math/vector4';
 
 export type Photon = {

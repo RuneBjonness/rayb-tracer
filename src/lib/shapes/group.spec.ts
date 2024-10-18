@@ -7,6 +7,7 @@ import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
 import { Cube } from './primitives/cube';
+import { ShapeType } from './shape';
 
 describe('Groups', () => {
   test('creating a new group', () => {
@@ -130,11 +131,11 @@ describe('Groups', () => {
     expect(g.bvhNode?.bvhNodes.length).toBe(2);
     expect(g.bvhNode?.shapes.length).toBe(0);
     expect(g.bvhNode?.bvhNodes[0].bvhNodes[0].shapes[0].shapeType).toEqual(
-      'sphere'
+      ShapeType.Sphere
     );
     expect(g.bvhNode?.bvhNodes[0].bvhNodes[1].shapes[0].shapeType).toEqual(
-      'cylinder'
+      ShapeType.Cylinder
     );
-    expect(g.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual('cube');
+    expect(g.bvhNode?.bvhNodes[1].shapes[0].shapeType).toEqual(ShapeType.Cube);
   });
 });

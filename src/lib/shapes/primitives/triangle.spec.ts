@@ -119,7 +119,6 @@ describe('Smooth Triangles', () => {
   test('a smooth triangle uses u/v to interpolate the normal', () => {
     const i = intersection(1, tri, 0.45, 0.25);
     const n = tri.normalAt(point(0, 0, 0), i);
-    console.log(n);
     expect(n.equals(vector(-0.5547, 0.83205, 0))).toBe(true);
   });
 
@@ -127,7 +126,6 @@ describe('Smooth Triangles', () => {
     const i = intersection(1, tri, 0.45, 0.25);
     const r = new Ray(point(-0.2, 0.3, -2), vector(0, 0, 1));
     const comps = prepareComputations(i, r);
-    console.log(comps.normalv);
     expect(comps.normalv.equals(vector(-0.5547, 0.83205, 0))).toBe(true);
   });
 });

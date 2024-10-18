@@ -1,7 +1,7 @@
 import { Intersection } from '../intersections';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
-import { Shape } from './shape';
+import { Shape, ShapeType } from './shape';
 import { TransformableShape } from './transformable-shape';
 
 export class CsgShape extends TransformableShape {
@@ -11,7 +11,7 @@ export class CsgShape extends TransformableShape {
     readonly right: Shape
   ) {
     super();
-    this.shapeType = 'csg';
+    this.shapeType = ShapeType.Csg;
     left.parent = this;
     right.parent = this;
 
