@@ -6,86 +6,76 @@ import { ShapeType } from '../shape';
 import { EPSILON, Intersectable } from './buffer-backed-objects';
 
 export class BufferBackedTriangle implements Intersectable {
-  p1: Vector4;
-  e1: Vector4;
-  e2: Vector4;
-
-  n1: Vector4;
-  n2: Vector4;
-  n3: Vector4;
-
-  shapeType: number;
-  materialIdx: number;
-  parentIdx: number;
-
   readonly listLength: number;
-  private _listIndex: number;
+  listIndex: number;
+  float32View: Float32Array;
+  int32View: Int32Array;
 
   constructor(private buffer: ArrayBufferLike) {
-    this._listIndex = 0;
+    this.listIndex = 0;
     this.listLength = buffer.byteLength / TRIANGLE_BYTE_SIZE;
-
-    this.p1 = point(0, 0, 0);
-    this.e1 = vector(0, 0, 0);
-    this.e2 = vector(0, 0, 0);
-
-    this.n1 = vector(0, 0, 0);
-    this.n2 = vector(0, 0, 0);
-    this.n3 = vector(0, 0, 0);
-
-    this.shapeType = 0;
-    this.materialIdx = 0;
-    this.parentIdx = 0;
+    this.float32View = new Float32Array(this.buffer);
+    this.int32View = new Int32Array(this.buffer);
   }
 
-  get listIndex() {
-    return this._listIndex;
+  get p1() {
+    return point(
+      this.float32View[this.listIndex * 24 + 0],
+      this.float32View[this.listIndex * 24 + 1],
+      this.float32View[this.listIndex * 24 + 2]
+    );
   }
 
-  set listIndex(index: number) {
-    if (index === this._listIndex) {
-      return;
-    }
-
-    this._listIndex = index;
-    const float32View = new Float32Array(
-      this.buffer,
-      index * TRIANGLE_BYTE_SIZE,
-      TRIANGLE_BYTE_SIZE / 4
+  get e1() {
+    return vector(
+      this.float32View[this.listIndex * 24 + 4],
+      this.float32View[this.listIndex * 24 + 5],
+      this.float32View[this.listIndex * 24 + 6]
     );
-    const int32View = new Int32Array(
-      this.buffer,
-      index * TRIANGLE_BYTE_SIZE,
-      TRIANGLE_BYTE_SIZE / 4
+  }
+
+  get e2() {
+    return vector(
+      this.float32View[this.listIndex * 24 + 8],
+      this.float32View[this.listIndex * 24 + 9],
+      this.float32View[this.listIndex * 24 + 10]
     );
+  }
 
-    this.p1.x = float32View[0];
-    this.p1.y = float32View[1];
-    this.p1.z = float32View[2];
+  get n1() {
+    return vector(
+      this.float32View[this.listIndex * 24 + 12],
+      this.float32View[this.listIndex * 24 + 13],
+      this.float32View[this.listIndex * 24 + 14]
+    );
+  }
 
-    this.e1.x = float32View[4];
-    this.e1.y = float32View[5];
-    this.e1.z = float32View[6];
+  get n2() {
+    return vector(
+      this.float32View[this.listIndex * 24 + 16],
+      this.float32View[this.listIndex * 24 + 17],
+      this.float32View[this.listIndex * 24 + 18]
+    );
+  }
 
-    this.e2.x = float32View[8];
-    this.e2.y = float32View[9];
-    this.e2.z = float32View[10];
+  get n3() {
+    return vector(
+      this.float32View[this.listIndex * 24 + 20],
+      this.float32View[this.listIndex * 24 + 21],
+      this.float32View[this.listIndex * 24 + 22]
+    );
+  }
 
-    this.n1.x = float32View[12];
-    this.n1.y = float32View[13];
-    this.n1.z = float32View[14];
+  get shapeType() {
+    return this.int32View[this.listIndex * 24 + 15];
+  }
 
-    this.n2.x = float32View[16];
-    this.n2.y = float32View[17];
-    this.n2.z = float32View[18];
+  get materialIdx() {
+    return this.int32View[this.listIndex * 24 + 19];
+  }
 
-    this.n3.x = float32View[20];
-    this.n3.y = float32View[21];
-    this.n3.z = float32View[22];
-
-    this.shapeType = int32View[15];
-    this.materialIdx = int32View[19];
-    this.parentIdx = int32View[23];
+  get parentIdx() {
+    return this.int32View[this.listIndex * 24 + 23];
   }
 
   intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[] {
@@ -116,7 +106,7 @@ export class BufferBackedTriangle implements Intersectable {
       intersection(
         t,
         ObjectBufferType.Triangle,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx,
         u,
         v

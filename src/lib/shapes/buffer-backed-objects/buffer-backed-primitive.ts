@@ -6,57 +6,37 @@ import { ShapeType } from '../shape';
 import { Intersectable } from './buffer-backed-objects';
 
 export class BufferBackedPrimitive implements Intersectable {
-  center: Vector4;
-  r2: number;
-
-  shapeType: ShapeType;
-  materialIdx: number;
-  parentIdx: number;
-
   readonly listLength: number;
-  private _listIndex: number;
+  listIndex: number;
+  float32View: Float32Array;
+  int32View: Int32Array;
 
   constructor(private buffer: ArrayBufferLike) {
-    this._listIndex = 0;
+    this.listIndex = 0;
     this.listLength = buffer.byteLength / PRIMITIVE_BYTE_SIZE;
-
-    this.center = point(0, 0, 0);
-    this.r2 = 0;
-
-    this.shapeType = ShapeType.PrimitiveSphere;
-    this.materialIdx = 0;
-    this.parentIdx = 0;
+    this.float32View = new Float32Array(this.buffer);
+    this.int32View = new Int32Array(this.buffer);
   }
 
-  get listIndex() {
-    return this._listIndex;
+  get center() {
+    return point(
+      this.float32View[this.listIndex * 8 + 0],
+      this.float32View[this.listIndex * 8 + 1],
+      this.float32View[this.listIndex * 8 + 2]
+    );
+  }
+  get r2() {
+    return this.float32View[this.listIndex * 8 + 3];
+  }
+  get shapeType() {
+    return this.int32View[this.listIndex * 8 + 4];
   }
 
-  set listIndex(index: number) {
-    if (index === this._listIndex) {
-      return;
-    }
-    this._listIndex = index;
-    const float32View = new Float32Array(
-      this.buffer,
-      index * PRIMITIVE_BYTE_SIZE,
-      PRIMITIVE_BYTE_SIZE / 4
-    );
-    const int32View = new Int32Array(
-      this.buffer,
-      index * PRIMITIVE_BYTE_SIZE,
-      PRIMITIVE_BYTE_SIZE / 4
-    );
-
-    this.center.x = float32View[0];
-    this.center.y = float32View[1];
-    this.center.z = float32View[2];
-
-    this.r2 = float32View[3];
-
-    this.shapeType = int32View[4];
-    this.materialIdx = int32View[5];
-    this.parentIdx = int32View[6];
+  get materialIdx() {
+    return this.int32View[this.listIndex * 8 + 5];
+  }
+  get parentIdx() {
+    return this.int32View[this.listIndex * 8 + 6];
   }
 
   intersects(r: Ray, accumulatedIntersections: Intersection[]): Intersection[] {
@@ -84,13 +64,13 @@ export class BufferBackedPrimitive implements Intersectable {
       intersection(
         t0,
         ObjectBufferType.Primitive,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       ),
       intersection(
         t1,
         ObjectBufferType.Primitive,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       )
     );

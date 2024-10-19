@@ -4,68 +4,56 @@ import { Vector4 } from '../math/vector4';
 import { MATERIAL_BYTE_SIZE } from './materials-buffer';
 
 export class BufferBackedMaterial {
-  color: Color;
-  patternIdx: number;
-  ambient: number;
-  diffuse: number;
-  specular: number;
-  shininess: number;
-  reflective: number;
-  transparency: number;
-  refractiveIndex: number;
-
   readonly listLength: number;
-  private _listIndex: number;
+  listIndex: number;
+  float32View: Float32Array;
+  int32View: Int32Array;
 
   constructor(private buffer: ArrayBufferLike) {
-    this._listIndex = -1;
+    this.listIndex = -1;
     this.listLength = buffer.byteLength / MATERIAL_BYTE_SIZE;
-
-    this.color = new Color(1, 1, 1);
-    this.patternIdx = -1;
-    this.ambient = 0.1;
-    this.diffuse = 0.9;
-    this.specular = 0.9;
-    this.shininess = 200.0;
-    this.reflective = 0;
-    this.transparency = 0;
-    this.refractiveIndex = 1;
+    this.float32View = new Float32Array(this.buffer);
+    this.int32View = new Int32Array(this.buffer);
   }
 
-  get listIndex() {
-    return this._listIndex;
+  get color(): Color {
+    return new Color(
+      this.float32View[this.listIndex * 12 + 0],
+      this.float32View[this.listIndex * 12 + 1],
+      this.float32View[this.listIndex * 12 + 2]
+    );
   }
 
-  set listIndex(index: number) {
-    if (index === this._listIndex) {
-      return;
-    }
+  get patternIdx(): number {
+    return this.int32View[this.listIndex * 12 + 3];
+  }
 
-    this._listIndex = index;
-    const float32View = new Float32Array(
-      this.buffer,
-      index * MATERIAL_BYTE_SIZE,
-      MATERIAL_BYTE_SIZE / 4
-    );
-    const int32View = new Int32Array(
-      this.buffer,
-      index * MATERIAL_BYTE_SIZE,
-      MATERIAL_BYTE_SIZE / 4
-    );
+  get ambient(): number {
+    return this.float32View[this.listIndex * 12 + 4];
+  }
 
-    this.color.r = float32View[0];
-    this.color.g = float32View[1];
-    this.color.b = float32View[2];
+  get diffuse(): number {
+    return this.float32View[this.listIndex * 12 + 5];
+  }
 
-    this.patternIdx = int32View[3];
+  get specular(): number {
+    return this.float32View[this.listIndex * 12 + 6];
+  }
 
-    this.ambient = float32View[4];
-    this.diffuse = float32View[5];
-    this.specular = float32View[6];
-    this.shininess = float32View[7];
-    this.reflective = float32View[8];
-    this.transparency = float32View[9];
-    this.refractiveIndex = float32View[10];
+  get shininess(): number {
+    return this.float32View[this.listIndex * 12 + 7];
+  }
+
+  get reflective(): number {
+    return this.float32View[this.listIndex * 12 + 8];
+  }
+
+  get transparency(): number {
+    return this.float32View[this.listIndex * 12 + 9];
+  }
+
+  get refractiveIndex(): number {
+    return this.float32View[this.listIndex * 12 + 10];
   }
 
   colorAt(p: Vector4): Color {

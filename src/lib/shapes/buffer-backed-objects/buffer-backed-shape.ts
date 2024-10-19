@@ -7,91 +7,85 @@ import { ShapeType } from '../shape';
 import { EPSILON, Intersectable } from './buffer-backed-objects';
 
 export class BufferBackedShape implements Intersectable {
-  shapeType: ShapeType;
-
-  min: number;
-  max: number;
-  closed: boolean;
-
-  materialIdx: number;
-  parentIdx: number;
-  childIdxStart: number;
-  childIdxEnd: number;
-
-  boundMin: Vector4;
-  boundMax: Vector4;
-
-  transform: Float32Array;
-  inverseTransform: Float32Array;
-  inverseTransformTransposed: Float32Array;
-
   readonly listLength: number;
-  private _listIndex: number;
+  listIndex: number;
+  float32View: Float32Array;
+  int32View: Int32Array;
 
   constructor(private buffer: ArrayBufferLike) {
-    this._listIndex = 0;
+    this.listIndex = 0;
     this.listLength = buffer.byteLength / SHAPE_BYTE_SIZE;
-
-    this.shapeType = ShapeType.Unknown;
-    this.min = 0;
-    this.max = 0;
-    this.closed = false;
-
-    this.materialIdx = 0;
-    this.parentIdx = 0;
-    this.childIdxStart = 0;
-    this.childIdxEnd = 0;
-
-    this.boundMin = point(0, 0, 0);
-    this.boundMax = point(0, 0, 0);
-
-    this.transform = new Float32Array(16);
-    this.inverseTransform = new Float32Array(16);
-    this.inverseTransformTransposed = new Float32Array(16);
+    this.float32View = new Float32Array(this.buffer);
+    this.int32View = new Int32Array(this.buffer);
   }
 
-  get listIndex() {
-    return this._listIndex;
+  get shapeType() {
+    return this.int32View[this.listIndex * 64 + 0];
   }
 
-  set listIndex(index: number) {
-    if (index === this._listIndex) {
-      return;
-    }
+  get min() {
+    return this.float32View[this.listIndex * 64 + 1];
+  }
 
-    this._listIndex = index;
-    const float32View = new Float32Array(
-      this.buffer,
-      index * SHAPE_BYTE_SIZE,
-      SHAPE_BYTE_SIZE / 4
+  get max() {
+    return this.float32View[this.listIndex * 64 + 2];
+  }
+
+  get closed() {
+    return this.int32View[this.listIndex * 64 + 3] === 1;
+  }
+
+  get materialIdx() {
+    return this.int32View[this.listIndex * 64 + 4];
+  }
+
+  get parentIdx() {
+    return this.int32View[this.listIndex * 64 + 5];
+  }
+
+  get childIdxStart() {
+    return this.int32View[this.listIndex * 64 + 6];
+  }
+
+  get childIdxEnd() {
+    return this.int32View[this.listIndex * 64 + 7];
+  }
+
+  get boundMin() {
+    return point(
+      this.float32View[this.listIndex * 64 + 8],
+      this.float32View[this.listIndex * 64 + 9],
+      this.float32View[this.listIndex * 64 + 10]
     );
-    const int32View = new Int32Array(
-      this.buffer,
-      index * SHAPE_BYTE_SIZE,
-      SHAPE_BYTE_SIZE / 4
+  }
+
+  get boundMax() {
+    return point(
+      this.float32View[this.listIndex * 64 + 12],
+      this.float32View[this.listIndex * 64 + 13],
+      this.float32View[this.listIndex * 64 + 14]
     );
+  }
 
-    this.shapeType = int32View[0];
-    this.min = float32View[1];
-    this.max = float32View[2];
-    this.closed = int32View[3] === 1;
+  get transform() {
+    return this.float32View.subarray(
+      this.listIndex * 64 + 16,
+      this.listIndex * 64 + 32
+    );
+  }
 
-    this.materialIdx = int32View[4];
-    this.parentIdx = int32View[5];
-    this.childIdxStart = int32View[6];
-    this.childIdxEnd = int32View[7];
+  get inverseTransform() {
+    return this.float32View.subarray(
+      this.listIndex * 64 + 32,
+      this.listIndex * 64 + 48
+    );
+  }
 
-    this.boundMin.x = float32View[8];
-    this.boundMin.y = float32View[9];
-    this.boundMin.z = float32View[10];
-
-    this.boundMax.x = float32View[12];
-    this.boundMax.y = float32View[13];
-    this.boundMax.z = float32View[14];
-
-    this.transform = float32View.subarray(16, 32);
-    this.inverseTransform = float32View.subarray(32, 48);
-    this.inverseTransformTransposed = float32View.subarray(48, 64);
+  get inverseTransformTransposed() {
+    return this.float32View.subarray(
+      this.listIndex * 64 + 48,
+      this.listIndex * 64 + 64
+    );
   }
 
   intersects(
@@ -167,13 +161,13 @@ export class BufferBackedShape implements Intersectable {
       intersection(
         (-b - sqrtDiscriminant) / (2 * a),
         ObjectBufferType.Shape,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       ),
       intersection(
         (-b + sqrtDiscriminant) / (2 * a),
         ObjectBufferType.Shape,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       )
     );
@@ -214,7 +208,7 @@ export class BufferBackedShape implements Intersectable {
       intersection(
         -r.origin.y / r.direction.y,
         ObjectBufferType.Shape,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       )
     );
@@ -252,13 +246,13 @@ export class BufferBackedShape implements Intersectable {
       intersection(
         tmin,
         ObjectBufferType.Shape,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       ),
       intersection(
         tmax,
         ObjectBufferType.Shape,
-        this._listIndex,
+        this.listIndex,
         this.materialIdx
       )
     );
@@ -416,7 +410,7 @@ export class BufferBackedShape implements Intersectable {
         intersection(
           t,
           ObjectBufferType.Shape,
-          this._listIndex,
+          this.listIndex,
           this.materialIdx
         )
       );
@@ -436,7 +430,7 @@ export class BufferBackedShape implements Intersectable {
         intersection(
           t,
           ObjectBufferType.Shape,
-          this._listIndex,
+          this.listIndex,
           this.materialIdx
         )
       );
@@ -559,7 +553,7 @@ export class BufferBackedShape implements Intersectable {
         intersection(
           t,
           ObjectBufferType.Shape,
-          this._listIndex,
+          this.listIndex,
           this.materialIdx
         )
       );
