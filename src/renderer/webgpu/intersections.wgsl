@@ -504,7 +504,7 @@ fn bounds_intersects(ray: Ray, min_bounds: vec3f, max_bounds: vec3f) -> bool {
   let ztmin = (min_bounds.z - ray.origin.z) / ray.direction.z;
   let ztmax = (max_bounds.z - ray.origin.z) / ray.direction.z;
 
-  let tmin = max(max(min(xtmin, xtmax), min(ytmin, ytmax)), min(ztmin, ztmax));
+  let tmin = max(max(max(min(xtmin, xtmax), min(ytmin, ytmax)), min(ztmin, ztmax)), 0);
   let tmax = min(min(max(xtmin, xtmax), max(ytmin, ytmax)), max(ztmin, ztmax));
 
   return tmin <= tmax;

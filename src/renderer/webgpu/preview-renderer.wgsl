@@ -79,13 +79,6 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
   // return abs(normal); // Debug surface normals
   let eye_v = -ray.direction;
 
-  var inside: bool = false;
-  if(dot(normal, eye_v) < 0.0) {
-    normal = -normal;
-    inside = true;
-    result.refractive_index = refractive_index;
-  }
-
   var material_idx = 0u;
   if(hit.buffer_type == OBJECT_BUFFER_TYPE_SHAPE) {
     material_idx = shapes[hit.buffer_index].material_idx;
@@ -96,6 +89,13 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
   }
   let material = materials[material_idx];
 
+  var n_ratio = refractive_index / material.refractive_index;
+  if(dot(normal, eye_v) < 0.0) {
+    normal = -normal;
+    result.refractive_index = material.refractive_index;
+    n_ratio = material.refractive_index / refractive_index;
+  }
+
   let light_count = 5u; // arrayLength(&lights);
   for(var i = 0u; i < light_count; i++) {
     let c = lights[i].color;
@@ -105,22 +105,34 @@ fn trace(ray: Ray, color: vec3f, blend_factor: f32, refractive_index: f32) -> Tr
     result.color += lightning(ray, hit, material_idx, normal, eye_v, c, lights[i].position) * blend_factor;
   }
   
-  var n_ratio = refractive_index / material.refractive_index;
-  if(inside) {
-    n_ratio = material.refractive_index / refractive_index;
-  }
   var r = 1.0;
   if(material.reflective > 0.0 && material.transparency > 0.0) {
     r = reflectance(eye_v, normal, n_ratio);
   }
   if(material.reflective > 0.0) {
     result.reflect_ray = Ray(hit.point + normal * SURFACE_EPSILON, reflect(ray.direction, normal));
-    result.reflect_blend_factor = material.reflective * blend_factor * r;
+    result.reflect_blend_factor = material.reflective * blend_factor;
+
+    if(material.transparency > 0.0) {
+      result.reflect_blend_factor *= r;
+    }
+
     result.terminate = false;
   }
   if(material.transparency > 0.0) {
     result.refract_ray = Ray(hit.point - normal * SURFACE_EPSILON, refracted_direction(eye_v, normal, n_ratio));
-    result.refract_blend_factor = material.transparency * blend_factor * (1.0 - r);
+
+    if(result.refract_ray.direction.x == 0.0 && result.refract_ray.direction.y == 0.0 && result.refract_ray.direction.z == 0.0) {
+      result.refract_blend_factor = 0.0;
+      return result;
+    }
+
+    result.refract_blend_factor = material.transparency * blend_factor;
+
+    if(material.reflective > 0.0) {
+      result.refract_blend_factor *= (1.0 - r);
+    }
+
     result.terminate = false;
   }
   return result;
@@ -177,12 +189,15 @@ fn refracted_direction(eyev: vec3f, normal: vec3f, n_ratio: f32) -> vec3f {
 }
 
 fn reflectance(eyev: vec3f, normal: vec3f, n_ratio: f32) -> f32 {
-  let cos = dot(eyev, normal);
-  let sin2_t = n_ratio * n_ratio * (1.0 - cos * cos);
-  if(sin2_t > 1.0) {
-    return 1.0;
+  var cos = dot(eyev, normal);
+
+  if(n_ratio > 1) {
+    let sin2_t = n_ratio * n_ratio * (1.0 - cos * cos);
+    if(sin2_t > 1.0) {
+      return 1.0;
+    }
+    cos = sqrt(1.0 - sin2_t);
   }
-  let cos_t = sqrt(1.0 - sin2_t);
   let r = (1.0 - n_ratio) / (1.0 + n_ratio);
   let r0 = r * r;
   return r0 + (1.0 - r0) * pow(1.0 - cos, 5.0);

@@ -1,4 +1,4 @@
-const PI = 3.14159;
+const PI = 3.14159265;
 const EPSILON = 0.001;
 const SURFACE_EPSILON = 0.005;
 

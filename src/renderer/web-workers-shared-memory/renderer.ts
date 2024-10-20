@@ -54,8 +54,9 @@ const renderWebWorkersSharedMemory = async (
   onProgress: (units: number) => void
 ) => {
   console.log(
-    `renderWebWorkersSharedMemory(${cfg.width}X${cfg.height}) started - using ${cfg.numberOfWorkers} workers`
+    `renderWebWorkersSharedMemory(${cfg.width}X${cfg.height}) started - using ${cfg.numberOfWorkers} workers. (Supported hardware concurrency: ${navigator.hardwareConcurrency})`
   );
+
   performance.clearMarks();
   performance.mark('render-start');
 
