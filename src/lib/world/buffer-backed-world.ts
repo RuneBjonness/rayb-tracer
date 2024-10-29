@@ -7,7 +7,6 @@ import {
   BufferBackedMaterial,
   lighting,
 } from '../material/buffer-backed-material';
-import { PATTERN_BYTE_SIZE } from '../material/patterns-buffer';
 import { Color } from '../math/color';
 import { Vector4 } from '../math/vector4';
 import { Ray } from '../rays';
@@ -51,11 +50,8 @@ export class BufferBackedWorld {
     );
     this.bvhNode = new BufferBackedBvhNode(objectsBuffer.bvhArrayBuffer);
 
-    this.material = new BufferBackedMaterial(materialsBuffer);
+    this.material = new BufferBackedMaterial(materialsBuffer, patternsBuffer);
 
-    if (patternsBuffer.byteLength > PATTERN_BYTE_SIZE) {
-      console.log('Patterns not implemented');
-    }
     if (texturesBuffer.byteLength > 16) {
       console.log('Textures not implemented');
     }

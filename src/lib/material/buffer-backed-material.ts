@@ -1,6 +1,7 @@
 import { BufferBackedLight } from '../lights/buffer-backed-light';
 import { Color } from '../math/color';
 import { Vector4 } from '../math/vector4';
+import { BufferBackedPattern } from './buffer-backed-pattern';
 import { MATERIAL_BYTE_SIZE } from './materials-buffer';
 
 export class BufferBackedMaterial {
@@ -8,12 +9,18 @@ export class BufferBackedMaterial {
   listIndex: number;
   float32View: Float32Array;
   int32View: Int32Array;
+  pattern: BufferBackedPattern;
 
-  constructor(private buffer: ArrayBufferLike) {
+  constructor(
+    materialsBuffer: ArrayBufferLike,
+    patternsBuffer: ArrayBufferLike
+  ) {
     this.listIndex = -1;
-    this.listLength = buffer.byteLength / MATERIAL_BYTE_SIZE;
-    this.float32View = new Float32Array(this.buffer);
-    this.int32View = new Int32Array(this.buffer);
+    this.listLength = materialsBuffer.byteLength / MATERIAL_BYTE_SIZE;
+    this.float32View = new Float32Array(materialsBuffer);
+    this.int32View = new Int32Array(materialsBuffer);
+
+    this.pattern = new BufferBackedPattern(patternsBuffer);
   }
 
   get color(): Color {
@@ -60,8 +67,8 @@ export class BufferBackedMaterial {
     if (this.patternIdx === 0) {
       return this.color.clone();
     }
-
-    return new Color(p.x, p.y, p.z);
+    this.pattern.listIndex = this.patternIdx;
+    return this.pattern.colorAt(p);
   }
 }
 

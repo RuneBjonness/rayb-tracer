@@ -86,7 +86,7 @@ export class MarbleMadness extends Scene {
     }
 
     if (this.useBvh) {
-      marbles.divide(this.size < 50 ? 4 : 8);
+      marbles.divide(4);
       world.objects.push(marbles);
     }
 
