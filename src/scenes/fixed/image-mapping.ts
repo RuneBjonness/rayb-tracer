@@ -58,7 +58,7 @@ export class ImageMapping extends Scene {
     s.materialDefinitions = this.materials;
     s.materialIdx = 0;
     s.patternDefinitions = [
-      new TextureMap(new ImageUvPattern(img.pixels), UvMapper.Spherical),
+      new TextureMap(new ImageUvPattern(img), UvMapper.Spherical),
     ];
 
     world.objects.push(s);

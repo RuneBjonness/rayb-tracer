@@ -36,7 +36,7 @@ test.each`
 0 0 0  255 0 0  0 255 0  0 0 255
 255 255 0  0 255 255  255 0 255  127 127 127`);
 
-  expect(canvas.pixels[x][y].r).toBeCloseTo(color[0]);
-  expect(canvas.pixels[x][y].g).toBeCloseTo(color[1]);
-  expect(canvas.pixels[x][y].b).toBeCloseTo(color[2]);
+  expect(canvas.getColor(x, y).r).toBeCloseTo(color[0]);
+  expect(canvas.getColor(x, y).g).toBeCloseTo(color[1]);
+  expect(canvas.getColor(x, y).b).toBeCloseTo(color[2]);
 });

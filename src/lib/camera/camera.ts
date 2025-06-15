@@ -90,10 +90,10 @@ export class Camera {
       for (let x = 0; x < lengthX; x++) {
         const rays = this.raysForPixel(startX + x, startY + y);
         if (rays.length === 1) {
-          c.pixels[x][y] = w.colorAt(
-            rays[0],
-            this.maxDepth,
-            this.maxIndirectLightSamples
+          c.setColor(
+            x,
+            y,
+            w.colorAt(rays[0], this.maxDepth, this.maxIndirectLightSamples)
           );
         } else {
           const sumSamples = w.colorAt(
@@ -141,7 +141,7 @@ export class Camera {
             }
           }
 
-          c.pixels[x][y] = avgSampleColor;
+          c.setColor(x, y, avgSampleColor);
         }
       }
     }

@@ -1,3 +1,4 @@
+import { Canvas } from '../../canvas';
 import { Color } from '../../math/color';
 import { PatternType } from '../patterns';
 
@@ -44,12 +45,12 @@ export class CheckersUvPattern implements UvPattern {
 export class ImageUvPattern implements UvPattern {
   type: UvPatternType = 'image';
 
-  constructor(private pixels: Color[][]) {}
+  constructor(private image: Canvas) {}
 
   colorAt(u: number, v: number): Color {
-    const x = Math.round(u * (this.pixels.length - 1));
-    const y = Math.round((1 - v) * (this.pixels[x].length - 1));
-    return this.pixels[x][y].clone();
+    const x = Math.round(u * (this.image.width - 1));
+    const y = Math.round((1 - v) * (this.image.height - 1));
+    return this.image.getColor(x, y).clone();
   }
 
   copyCustomToArrayBuffer(_buffer: ArrayBufferLike, _offset: number): void {

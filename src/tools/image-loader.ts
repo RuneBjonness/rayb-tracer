@@ -8,10 +8,14 @@ export async function canvasFromImage(imageUrl: string): Promise<Canvas> {
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const i = (y * canvas.width + x) * 4;
-      canvas.pixels[x][y] = new Color(
-        img.data[i] / 255,
-        img.data[i + 1] / 255,
-        img.data[i + 2] / 255
+      canvas.setColor(
+        x,
+        y,
+        new Color(
+          img.data[i] / 255,
+          img.data[i + 1] / 255,
+          img.data[i + 2] / 255
+        )
       );
     }
   }

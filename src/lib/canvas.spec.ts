@@ -7,13 +7,13 @@ test('creating a Canvas', () => {
 
   expect(canvas.width).toBe(10);
   expect(canvas.height).toBe(20);
-  expect(canvas.pixels[5][5]).toStrictEqual(new Color(0, 0, 0));
+  expect(canvas.getColor(5, 5)).toStrictEqual(new Color(0, 0, 0));
 });
 
 test('writing pixels to a Canvas', () => {
   const canvas = new Canvas(10, 20);
   const red = new Color(1, 0, 0);
 
-  canvas.pixels[2][3] = red;
-  expect(canvas.pixels[2][3]).toStrictEqual(red);
+  canvas.setColor(2, 3, red);
+  expect(canvas.getColor(2, 3)).toStrictEqual(red);
 });

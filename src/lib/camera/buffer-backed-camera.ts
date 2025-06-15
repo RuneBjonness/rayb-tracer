@@ -62,7 +62,7 @@ export class BufferBackedCamera {
       for (let x = 0; x < lengthX; x++) {
         const rays = this.raysForPixel(startX + x, startY + y);
         if (rays.length === 1) {
-          c.pixels[x][y] = w.colorAt(rays[0], this.maxDepth);
+          c.setColor(x, y, w.colorAt(rays[0], this.maxDepth));
           // } else {
           //   const sumSamples = w.colorAt(
           //     rays[0],

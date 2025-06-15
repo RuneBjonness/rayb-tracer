@@ -17,10 +17,10 @@ export function parsePPM(ppm: string): Canvas {
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const i = (y * canvas.width + x) * 3;
-      canvas.pixels[x][y] = new Color(
-        data[i] / scale,
-        data[i + 1] / scale,
-        data[i + 2] / scale
+      canvas.setColor(
+        x,
+        y,
+        new Color(data[i] / scale, data[i + 1] / scale, data[i + 2] / scale)
       );
     }
   }

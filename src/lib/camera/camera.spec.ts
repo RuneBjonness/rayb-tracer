@@ -61,7 +61,7 @@ test('rendering a world with a camera', () => {
 
   const image = c.render(defaultWorld());
 
-  expect(image.pixels[5][5].equals(new Color(0.38066, 0.47583, 0.2855))).toBe(
+  expect(image.getColor(5, 5).equals(new Color(0.38066, 0.47583, 0.2855))).toBe(
     true
   );
 });

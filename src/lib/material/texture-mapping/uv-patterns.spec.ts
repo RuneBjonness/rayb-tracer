@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { Color } from '../../math/color';
 import { CheckersUvPattern, ImageUvPattern } from './uv-patterns';
+import { Canvas } from '../../canvas';
 
 describe('uv-patterns', () => {
   const black = new Color(0, 0, 0);
@@ -28,18 +29,12 @@ describe('uv-patterns', () => {
     ${0.3} | ${0.6} | ${gray}
     ${1.0} | ${1.0} | ${white}
   `('Image pattern in 2D', ({ u, v, result }) => {
-    const p = new ImageUvPattern([
-      [red, red, red, red, red, red, red, red, red, black],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, gray, red, red, red, red, gray],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, red, red, red, red, red, red],
-      [red, red, red, red, red, red, red, red, red, red],
-      [white, red, red, red, red, red, red, red, red, red],
-    ]);
+    const canvas = new Canvas(10, 10);
+    canvas.setColor(0, 9, black);
+    canvas.setColor(3, 9, gray);
+    canvas.setColor(3, 4, gray);
+    canvas.setColor(9, 0, white);
+    const p = new ImageUvPattern(canvas);
 
     expect(p.colorAt(u, v)).toEqual(result);
   });
