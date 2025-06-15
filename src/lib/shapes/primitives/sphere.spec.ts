@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { point, vector } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { TransformableSphere } from './sphere';

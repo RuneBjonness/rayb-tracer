@@ -1,15 +1,15 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import { Ray } from '../../rays';
 import { Cylinder } from './cylinder';
 import { point, vector } from '../../math/vector4';
 
 describe('Cylinders', () => {
-  each`
-        origin             | direction          
-        ${point(1, 0, 0)}  | ${vector(0, 1, 0)}
-        ${point(0, 0, 0)}  | ${vector(0, 1, 0)} 
-        ${point(0, 0, -5)} | ${vector(1, 1, 1)}
-    `.test('a ray misses a cylinder', ({ origin, direction }) => {
+  test.each`
+    origin             | direction
+    ${point(1, 0, 0)}  | ${vector(0, 1, 0)}
+    ${point(0, 0, 0)}  | ${vector(0, 1, 0)}
+    ${point(0, 0, -5)} | ${vector(1, 1, 1)}
+  `('a ray misses a cylinder', ({ origin, direction }) => {
     const c = new Cylinder();
     const r = new Ray(origin, direction.normalize());
     const xs = c.intersects(r);
@@ -19,12 +19,12 @@ describe('Cylinders', () => {
     expect(hit).toBeFalsy();
   });
 
-  each`
-        origin               | direction            | t0         | t1
-        ${point(1, 0, -5)}   | ${vector(0, 0, 1)}   | ${5}       | ${5}
-        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${4}       | ${6}
-        ${point(0.5, 0, -5)} | ${vector(0.1, 1, 1)} | ${6.80798} | ${7.08872}
-    `.test('a ray strikes a cylinder', ({ origin, direction, t0, t1 }) => {
+  test.each`
+    origin               | direction            | t0         | t1
+    ${point(1, 0, -5)}   | ${vector(0, 0, 1)}   | ${5}       | ${5}
+    ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${4}       | ${6}
+    ${point(0.5, 0, -5)} | ${vector(0.1, 1, 1)} | ${6.80798} | ${7.08872}
+  `('a ray strikes a cylinder', ({ origin, direction, t0, t1 }) => {
     const c = new Cylinder();
     const r = new Ray(origin, direction.normalize());
     const xs = c.intersects(r);
@@ -36,28 +36,28 @@ describe('Cylinders', () => {
     expect(hit).toBeTruthy();
   });
 
-  each`
-        point              | normal          
-        ${point(1, 0, 0)}  | ${vector(1, 0, 0)}
-        ${point(0, 5, -1)} | ${vector(0, 0, -1)} 
-        ${point(0, -2, 1)} | ${vector(0, 0, 1)}
-        ${point(-1, 1, 0)} | ${vector(-1, 0, 0)} 
-    `.test('the normal on a cylinder', ({ point, normal }) => {
+  test.each`
+    point              | normal
+    ${point(1, 0, 0)}  | ${vector(1, 0, 0)}
+    ${point(0, 5, -1)} | ${vector(0, 0, -1)}
+    ${point(0, -2, 1)} | ${vector(0, 0, 1)}
+    ${point(-1, 1, 0)} | ${vector(-1, 0, 0)}
+  `('the normal on a cylinder', ({ point, normal }) => {
     const c = new Cylinder();
     const n = c.normalAt(point);
 
     expect(n.equals(normal)).toBe(true);
   });
 
-  each`
-        origin               | direction            | count | hits
-        ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}  | ${false}
-        ${point(0, 3, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
-        ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
-        ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
-        ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
-        ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}  | ${true}
-    `.test(
+  test.each`
+    origin               | direction            | count | hits
+    ${point(0, 1.5, 0)}  | ${vector(0.1, 1, 0)} | ${0}  | ${false}
+    ${point(0, 3, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+    ${point(0, 0, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+    ${point(0, 2, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+    ${point(0, 1, -5)}   | ${vector(0, 0, 1)}   | ${0}  | ${false}
+    ${point(0, 1.5, -2)} | ${vector(0, 0, 1)}   | ${2}  | ${true}
+  `(
     'a ray strikes a truncated cylinder',
     ({ origin, direction, count, hits }) => {
       const c = new Cylinder(1, 2);
@@ -70,14 +70,14 @@ describe('Cylinders', () => {
     }
   );
 
-  each`
-        origin              | direction           | count
-        ${point(0, 3, 0)}   | ${vector(0, -1, 0)} | ${2}
-        ${point(0, 3, -2)}  | ${vector(0, -1, 2)} | ${2}
-        ${point(0, 4, -2)}  | ${vector(0, -1, 1)} | ${2}
-        ${point(0, 0, -2)}  | ${vector(0, 1, 2)}  | ${2}
-        ${point(0, -1, -2)} | ${vector(0, 1, 1)}  | ${2}
-    `.test(
+  test.each`
+    origin              | direction           | count
+    ${point(0, 3, 0)}   | ${vector(0, -1, 0)} | ${2}
+    ${point(0, 3, -2)}  | ${vector(0, -1, 2)} | ${2}
+    ${point(0, 4, -2)}  | ${vector(0, -1, 1)} | ${2}
+    ${point(0, 0, -2)}  | ${vector(0, 1, 2)}  | ${2}
+    ${point(0, -1, -2)} | ${vector(0, 1, 1)}  | ${2}
+  `(
     'intersecting the caps of a closed cylinder',
     ({ origin, direction, count }) => {
       const c = new Cylinder(1, 2, true);
@@ -90,23 +90,20 @@ describe('Cylinders', () => {
     }
   );
 
-  each`
-        point               | normal
-        ${point(0, 1, 0)}   | ${vector(0, -1, 0)}
-        ${point(0.5, 1, 0)} | ${vector(0, -1, 0)} 
-        ${point(0, 1, 0.5)} | ${vector(0, -1, 0)}
-        ${point(0, 2, 0)}   | ${vector(0, 1, 0)} 
-        ${point(0.5, 2, 0)} | ${vector(0, 1, 0)} 
-        ${point(0, 2, 0.5)} | ${vector(0, 1, 0)} 
-    `.test(
-    "the normal vector on a cylinder's end caps ",
-    ({ point, normal }) => {
-      const c = new Cylinder(1, 2, true);
-      const n = c.normalAt(point);
+  test.each`
+    point               | normal
+    ${point(0, 1, 0)}   | ${vector(0, -1, 0)}
+    ${point(0.5, 1, 0)} | ${vector(0, -1, 0)}
+    ${point(0, 1, 0.5)} | ${vector(0, -1, 0)}
+    ${point(0, 2, 0)}   | ${vector(0, 1, 0)}
+    ${point(0.5, 2, 0)} | ${vector(0, 1, 0)}
+    ${point(0, 2, 0.5)} | ${vector(0, 1, 0)}
+  `("the normal vector on a cylinder's end caps ", ({ point, normal }) => {
+    const c = new Cylinder(1, 2, true);
+    const n = c.normalAt(point);
 
-      expect(n.equals(normal)).toBe(true);
-    }
-  );
+    expect(n.equals(normal)).toBe(true);
+  });
 
   test('the default bounds of a cylinder', () => {
     const c = new Cylinder();

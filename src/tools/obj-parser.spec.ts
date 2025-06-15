@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { ObjParser } from './obj-parser';
 import { Triangle } from '../lib/shapes/primitives/triangle';
 import { point, vector } from '../lib/math/vector4';

@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { AreaLight, PointLight } from './lights/lights';
 import { PhotonMapper } from './photon-mapper';
 import { TransformableSphere } from './shapes/primitives/sphere';

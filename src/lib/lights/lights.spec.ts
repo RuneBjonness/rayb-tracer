@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import { AreaLight, PointLight } from './lights';
 import {
   radians,
@@ -21,7 +21,7 @@ describe('point-light', () => {
     expect(light.intensity.equals(intensity)).toBe(true);
   });
 
-  each`
+  test.each`
     p                       | result
     ${point(0, 1.0001, 0)}  | ${1.0}
     ${point(-1.0001, 0, 0)} | ${1.0}
@@ -30,7 +30,7 @@ describe('point-light', () => {
     ${point(1.0001, 0, 0)}  | ${0.0}
     ${point(0, -1.0001, 0)} | ${0.0}
     ${point(0, 0, 0)}       | ${0.0}
-`.test(
+  `(
     'Point lights evaluate the light intensity at a given point',
     ({ p, result }) => {
       const w = defaultWorld();
@@ -97,7 +97,7 @@ describe('area-light', () => {
     expect(light.intensity.equals(intensity)).toBe(true);
   });
 
-  each`
+  test.each`
     p                       | result
     ${point(0, 1.0001, 0)}  | ${1.0}
     ${point(-1.0001, 0, 0)} | ${1.0}
@@ -106,7 +106,7 @@ describe('area-light', () => {
     ${point(1.0001, 0, 0)}  | ${0.0}
     ${point(0, -1.0001, 0)} | ${0.0}
     ${point(0, 0, 0)}       | ${0.0}
-`.test(
+  `(
     'Area lights with maxSamples=1 evaluate the light intensity at a given point as if it were a point light placed in its center',
     ({ p, result }) => {
       const l = new AreaLight(new Color(1, 1, 1), 1, 1, []);
@@ -118,14 +118,14 @@ describe('area-light', () => {
     }
   );
 
-  each`
+  test.each`
     p                       | result
     ${point(0, 0, 2)}       | ${0.0}
     ${point(1, -1, 3)}      | ${0.2}
     ${point(1.5, 0, 2)}     | ${0.4}
     ${point(1.25, 1.25, 3)} | ${0.6}
     ${point(0, 0, -2)}      | ${1.0}
-`.test(
+  `(
     'Area lights evaluate the average light intensity at a given point based on an evenly distributed collection of samples',
     ({ p, result }) => {
       const l = new AreaLight(new Color(1, 1, 1), 5, 1, []);

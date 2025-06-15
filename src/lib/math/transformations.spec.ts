@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { Matrix4 } from './matrices';
 import {
   translation,

@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import { intersection } from '../intersections';
 import { Ray } from '../rays';
 import { translation, scaling } from '../math/transformations';
@@ -25,33 +25,33 @@ describe('CSG Shapes', () => {
     expect(c.parent).toBe(csg);
   });
 
-  each`
-        operation         | leftHit  | inLeft   | inRight  | result
-        ${'union'}        | ${true}  | ${true}  | ${true}  | ${false}
-        ${'union'}        | ${true}  | ${true}  | ${false} | ${true}
-        ${'union'}        | ${true}  | ${false} | ${true}  | ${false}
-        ${'union'}        | ${true}  | ${false} | ${false} | ${true}
-        ${'union'}        | ${false} | ${true}  | ${true}  | ${false}
-        ${'union'}        | ${false} | ${true}  | ${false} | ${false}
-        ${'union'}        | ${false} | ${false} | ${true}  | ${true}
-        ${'union'}        | ${false} | ${false} | ${false} | ${true}
-        ${'intersection'} | ${true}  | ${true}  | ${true}  | ${true}
-        ${'intersection'} | ${true}  | ${true}  | ${false} | ${false}
-        ${'intersection'} | ${true}  | ${false} | ${true}  | ${true}
-        ${'intersection'} | ${true}  | ${false} | ${false} | ${false}
-        ${'intersection'} | ${false} | ${true}  | ${true}  | ${true}
-        ${'intersection'} | ${false} | ${true}  | ${false} | ${true}
-        ${'intersection'} | ${false} | ${false} | ${true}  | ${false}
-        ${'intersection'} | ${false} | ${false} | ${false} | ${false}
-        ${'difference'}   | ${true}  | ${true}  | ${true}  | ${false}
-        ${'difference'}   | ${true}  | ${true}  | ${false} | ${true}
-        ${'difference'}   | ${true}  | ${false} | ${true}  | ${false}
-        ${'difference'}   | ${true}  | ${false} | ${false} | ${true}
-        ${'difference'}   | ${false} | ${true}  | ${true}  | ${true}
-        ${'difference'}   | ${false} | ${true}  | ${false} | ${true}
-        ${'difference'}   | ${false} | ${false} | ${true}  | ${false}
-        ${'difference'}   | ${false} | ${false} | ${false} | ${false}
-    `.test(
+  test.each`
+    operation         | leftHit  | inLeft   | inRight  | result
+    ${'union'}        | ${true}  | ${true}  | ${true}  | ${false}
+    ${'union'}        | ${true}  | ${true}  | ${false} | ${true}
+    ${'union'}        | ${true}  | ${false} | ${true}  | ${false}
+    ${'union'}        | ${true}  | ${false} | ${false} | ${true}
+    ${'union'}        | ${false} | ${true}  | ${true}  | ${false}
+    ${'union'}        | ${false} | ${true}  | ${false} | ${false}
+    ${'union'}        | ${false} | ${false} | ${true}  | ${true}
+    ${'union'}        | ${false} | ${false} | ${false} | ${true}
+    ${'intersection'} | ${true}  | ${true}  | ${true}  | ${true}
+    ${'intersection'} | ${true}  | ${true}  | ${false} | ${false}
+    ${'intersection'} | ${true}  | ${false} | ${true}  | ${true}
+    ${'intersection'} | ${true}  | ${false} | ${false} | ${false}
+    ${'intersection'} | ${false} | ${true}  | ${true}  | ${true}
+    ${'intersection'} | ${false} | ${true}  | ${false} | ${true}
+    ${'intersection'} | ${false} | ${false} | ${true}  | ${false}
+    ${'intersection'} | ${false} | ${false} | ${false} | ${false}
+    ${'difference'}   | ${true}  | ${true}  | ${true}  | ${false}
+    ${'difference'}   | ${true}  | ${true}  | ${false} | ${true}
+    ${'difference'}   | ${true}  | ${false} | ${true}  | ${false}
+    ${'difference'}   | ${true}  | ${false} | ${false} | ${true}
+    ${'difference'}   | ${false} | ${true}  | ${true}  | ${true}
+    ${'difference'}   | ${false} | ${true}  | ${false} | ${true}
+    ${'difference'}   | ${false} | ${false} | ${true}  | ${false}
+    ${'difference'}   | ${false} | ${false} | ${false} | ${false}
+  `(
     'evaluating the intersections for csg operation $operation',
     ({ operation, leftHit, inLeft, inRight, result }) => {
       const csg = new CsgShape(operation, new TestShape(), new TestShape());
@@ -60,12 +60,12 @@ describe('CSG Shapes', () => {
     }
   );
 
-  each`
-        operation         | x0   | x1
-        ${'union'}        | ${0} | ${3}
-        ${'intersection'} | ${1} | ${2}
-        ${'difference'}   | ${0} | ${1}
-    `.test('filtering a list of intersections', ({ operation, x0, x1 }) => {
+  test.each`
+    operation         | x0   | x1
+    ${'union'}        | ${0} | ${3}
+    ${'intersection'} | ${1} | ${2}
+    ${'difference'}   | ${0} | ${1}
+  `('filtering a list of intersections', ({ operation, x0, x1 }) => {
     const s = new TransformableSphere();
     const c = new Cube();
     const csg = new CsgShape(operation, s, c);

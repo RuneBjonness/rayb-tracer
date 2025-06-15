@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import { Color } from '../math/color';
 import { point } from '../math/vector4';
 import { PointLight } from './lights';
@@ -24,7 +24,7 @@ describe('buffer-backed point-light', () => {
     expect(bufferBackedLight[0].intensity.equals(intensity)).toBe(true);
   });
 
-  each`
+  test.each`
     p                       | result
     ${point(0, 1.0001, 0)}  | ${1.0}
     ${point(-1.0001, 0, 0)} | ${1.0}
@@ -33,7 +33,7 @@ describe('buffer-backed point-light', () => {
     ${point(1.0001, 0, 0)}  | ${0.0}
     ${point(0, -1.0001, 0)} | ${0.0}
     ${point(0, 0, 0)}       | ${0.0}
-`.test(
+  `(
     'Point lights evaluate the light intensity at a given point',
     ({ p, result }) => {
       const w = defaultBufferBackedWorld();

@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { PointLight } from '../lights/lights';
 import { lighting, material } from './materials';
 import { StripePattern } from './patterns';

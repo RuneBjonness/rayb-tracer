@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { expect, test } from 'vitest';
 import { parsePPM } from './ppm-parser';
 
 test('Reading a PPM returns a canvas of the right size', () => {
@@ -14,21 +14,21 @@ test('Reading a PPM returns a canvas of the right size', () => {
   expect(canvas.height).toEqual(2);
 });
 
-each`
-    x    | y    | color
-    ${0} | ${0} | ${[1, 0.498, 0]}
-    ${1} | ${0} | ${[0, 0.498, 1]}
-    ${2} | ${0} | ${[0.498, 1, 0]}
-    ${3} | ${0} | ${[1, 1, 1]}
-    ${0} | ${1} | ${[0, 0, 0]}
-    ${1} | ${1} | ${[1, 0, 0]}
-    ${2} | ${1} | ${[0, 1, 0]}
-    ${3} | ${1} | ${[0, 0, 1]}
-    ${0} | ${2} | ${[1, 1, 0]}
-    ${1} | ${2} | ${[0, 1, 1]}
-    ${2} | ${2} | ${[1, 0, 1]}
-    ${3} | ${2} | ${[0.498, 0.498, 0.498]}
-`.test('Reading pixel data from a PPM file', ({ x, y, color }) => {
+test.each`
+  x    | y    | color
+  ${0} | ${0} | ${[1, 0.498, 0]}
+  ${1} | ${0} | ${[0, 0.498, 1]}
+  ${2} | ${0} | ${[0.498, 1, 0]}
+  ${3} | ${0} | ${[1, 1, 1]}
+  ${0} | ${1} | ${[0, 0, 0]}
+  ${1} | ${1} | ${[1, 0, 0]}
+  ${2} | ${1} | ${[0, 1, 0]}
+  ${3} | ${1} | ${[0, 0, 1]}
+  ${0} | ${2} | ${[1, 1, 0]}
+  ${1} | ${2} | ${[0, 1, 1]}
+  ${2} | ${2} | ${[1, 0, 1]}
+  ${3} | ${2} | ${[0.498, 0.498, 0.498]}
+`('Reading pixel data from a PPM file', ({ x, y, color }) => {
   const canvas = parsePPM(`P3
 4 3
 255

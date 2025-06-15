@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { Camera } from './camera';
 import { Color } from '../math/color';
 import { Matrix4 } from '../math/matrices';

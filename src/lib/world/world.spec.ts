@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { World } from './world';
 import { PointLight } from '../lights/lights';
 import { Color } from '../math/color';
@@ -6,7 +7,6 @@ import { Ray } from '../rays';
 import { intersection, prepareComputations } from '../intersections';
 import { Plane } from '../shapes/primitives/plane';
 import { TransformableSphere } from '../shapes/primitives/sphere';
-import each from 'jest-each';
 import { point, vector } from '../math/vector4';
 import { Material, material } from '../material/materials';
 import { TestPattern } from '../material/patterns.spec';
@@ -126,14 +126,13 @@ test('the color with an intersection behind the ray', () => {
   expect(c.equals(inner.material.color)).toBe(true);
 });
 
-// prettier-ignore
-each`
-    case                                                | p                      | result
-    ${'nothing is collinear with point and light'}      | ${point(0, 10, 0)}     | ${false}
-    ${'an object is between the point and the light'}   | ${point(10, -10, 10)}  | ${true}
-    ${'an object is behind the light'}                  | ${point(-20, 20, -20)} | ${false}
-    ${'an object is behind the point'}                  | ${point(-2, 2, -2)}    | ${false}
-`.test('isShadowed() when $case', ({ p, result }) => {
+test.each`
+  case                                              | p                      | result
+  ${'nothing is collinear with point and light'}    | ${point(0, 10, 0)}     | ${false}
+  ${'an object is between the point and the light'} | ${point(10, -10, 10)}  | ${true}
+  ${'an object is behind the light'}                | ${point(-20, 20, -20)} | ${false}
+  ${'an object is behind the point'}                | ${point(-2, 2, -2)}    | ${false}
+`('isShadowed() when $case', ({ p, result }) => {
   const w = defaultWorld();
   const lightPos = point(-10, 10, -10);
   expect(w.isShadowed(p, lightPos)).toBe(result);

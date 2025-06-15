@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { Color } from './math/color';
 import { Canvas } from './canvas';
 
@@ -16,15 +17,3 @@ test('writing pixels to a Canvas', () => {
   canvas.pixels[2][3] = red;
   expect(canvas.pixels[2][3]).toStrictEqual(red);
 });
-
-// test('exporting as ImageData', () => {
-//     const canvas = new Canvas(10, 20);
-
-//     canvas.pixels[0][0] = [1, 0, 0];
-//     canvas.pixels[5][5] = [2, 0, 0];
-//     canvas.pixels[9][19] = [0, 0.5, 0];
-
-//     const img = canvas.getImageData();
-
-//     expect(img.data.length).toBe(800);
-// });

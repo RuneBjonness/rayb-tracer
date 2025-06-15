@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import {
   hitSorted,
   intersection,
@@ -178,15 +178,15 @@ describe('finding n1 and n2 at various intersections', () => {
   c.material.refractiveIndex = 2.5;
 
   const r = new Ray(point(0, 0, -4), vector(0, 0, 1));
-  each`
-        index | n1     | n2
-        ${0}  | ${1.0} | ${1.5}
-        ${1}  | ${1.5} | ${2.0}
-        ${2}  | ${2.0} | ${2.5}
-        ${3}  | ${2.5} | ${2.5}
-        ${4}  | ${2.5} | ${1.5}
-        ${5}  | ${1.5} | ${1.0}
-    `.test('at index $index', ({ index, n1, n2 }) => {
+  test.each`
+    index | n1     | n2
+    ${0}  | ${1.0} | ${1.5}
+    ${1}  | ${1.5} | ${2.0}
+    ${2}  | ${2.0} | ${2.5}
+    ${3}  | ${2.5} | ${2.5}
+    ${4}  | ${2.5} | ${1.5}
+    ${5}  | ${1.5} | ${1.0}
+  `('at index $index', ({ index, n1, n2 }) => {
     const xs = [
       intersection(2, a),
       intersection(2.75, b),

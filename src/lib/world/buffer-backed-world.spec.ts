@@ -1,4 +1,4 @@
-import each from 'jest-each';
+import { describe, expect, test } from 'vitest';
 import { BufferBackedWorld } from './buffer-backed-world';
 import { World } from './world';
 import { PointLight } from '../lights/lights';
@@ -50,6 +50,7 @@ export function defaultBufferBackedWorld(
 
   return bufferBackedWorld;
 }
+
 export function customBufferBackedWorld(
   w: World,
   mats: Material[]
@@ -145,14 +146,13 @@ describe('buffer-backed world', () => {
     expect(c.equals(inner.material.color)).toBe(true);
   });
 
-  // prettier-ignore
-  each`
-      case                                                | p                      | result
-      ${'nothing is collinear with point and light'}      | ${point(0, 10, 0)}     | ${false}
-      ${'an object is between the point and the light'}   | ${point(10, -10, 10)}  | ${true}
-      ${'an object is behind the light'}                  | ${point(-20, 20, -20)} | ${false}
-      ${'an object is behind the point'}                  | ${point(-2, 2, -2)}    | ${false}
-  `.test('isShadowed() when $case', ({ p, result }) => {
+  test.each`
+    case                                              | p                      | result
+    ${'nothing is collinear with point and light'}    | ${point(0, 10, 0)}     | ${false}
+    ${'an object is between the point and the light'} | ${point(10, -10, 10)}  | ${true}
+    ${'an object is behind the light'}                | ${point(-20, 20, -20)} | ${false}
+    ${'an object is behind the point'}                | ${point(-2, 2, -2)}    | ${false}
+  `('isShadowed() when $case', ({ p, result }) => {
     const lightPos = point(-10, 10, -10);
     const w = defaultBufferBackedWorld(lightPos);
     expect(w.isShadowed(p, lightPos)).toBe(result);

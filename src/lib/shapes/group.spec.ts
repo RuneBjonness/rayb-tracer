@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { Ray } from '../rays';
 import { translation, scaling, rotationY } from '../math/transformations';
 import { Group } from './group';

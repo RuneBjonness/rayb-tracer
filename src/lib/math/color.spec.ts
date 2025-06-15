@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { Color, colorFromHex, colorFromRgbUint8 } from './color';
 
 test('colors are (red, green, blue) tuples', () => {
