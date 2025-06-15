@@ -2,7 +2,6 @@ import { intersection, Intersection } from '../../intersections-buffer-objects';
 import { point, vector, Vector4 } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { ObjectBufferType, PRIMITIVE_BYTE_SIZE } from '../object-buffers';
-import { ShapeType } from '../shape';
 import { Intersectable } from './buffer-backed-objects';
 
 export class BufferBackedPrimitive implements Intersectable {

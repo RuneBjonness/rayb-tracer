@@ -1,5 +1,9 @@
 export class Color {
-  constructor(public r: number, public g: number, public b: number) {}
+  constructor(
+    public r: number,
+    public g: number,
+    public b: number
+  ) {}
 
   public clone(): Color {
     return new Color(this.r, this.g, this.b);
@@ -67,6 +71,6 @@ export function colorFromHex(hex: string): Color {
     const b = parseInt(hex.substring(5, 7), 16);
     return colorFromRgbUint8(r, g, b);
   } catch (e) {
-    throw new Error(`Invalid hex color: ${hex}`);
+    throw new Error(`Invalid hex color: ${hex} (${JSON.stringify(e)})`);
   }
 }

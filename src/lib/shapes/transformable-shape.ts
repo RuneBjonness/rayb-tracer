@@ -109,7 +109,7 @@ export abstract class TransformableShape implements Shape {
     return this.parent ? this.parent.pointToWorld(point) : point;
   }
 
-  divide(threshold: number): void {
+  divide(_threshold: number): void {
     return;
   }
 

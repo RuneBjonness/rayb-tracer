@@ -41,7 +41,7 @@ export class PointLight implements Light {
   }
 
   emitPhotons(count: number, powerFactor: number): Photon[] {
-    const photons = new Array<Photon>(count);
+    const photons = Array.from<Photon>({ length: count });
     for (let i = 0; i < count; i++) {
       photons[i] = {
         position: this.position,
@@ -80,7 +80,7 @@ export class AreaLight extends Cube implements Light {
   }
 
   shapeIdx = 0;
-  samplePassCounts = new Array<number>(7);
+  samplePassCounts = Array.from<number>({ length: 7 });
 
   private corner: Vector4;
   private uVec: Vector4;
@@ -172,7 +172,7 @@ export class AreaLight extends Cube implements Light {
   }
 
   emitPhotons(count: number, powerFactor: number): Photon[] {
-    const photons = new Array<Photon>(count);
+    const photons = Array.from<Photon>({ length: count });
     for (let i = 0; i < count; i++) {
       let samplePos = this.uvSampleConfig[i % this.uvSampleConfig.length];
       photons[i] = {

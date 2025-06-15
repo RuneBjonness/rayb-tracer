@@ -38,7 +38,7 @@ class UvAlignTestPattern implements UvPattern {
     return this.main.clone();
   }
 
-  copyCustomToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
+  copyCustomToArrayBuffer(_buffer: ArrayBufferLike, _offset: number): void {
     throw new Error('Method not implemented.');
   }
 }

@@ -26,7 +26,7 @@ export class TestShape extends TransformableShape {
     return [];
   }
 
-  protected localHits(r: Ray, maxDistance: number): boolean {
+  protected localHits(r: Ray, _maxDistance: number): boolean {
     this.localRayFromBase = r;
     return false;
   }
@@ -83,7 +83,7 @@ describe('Common shape features', () => {
     const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const s = new TestShape();
     s.transform = scaling(2, 2, 2);
-    const xs = s.intersects(r);
+    const _xs = s.intersects(r);
 
     expect(s.localRayFromBase).not.toBeNull();
     expect(s.localRayFromBase!.origin.equals(point(0, 0, -2.5))).toBe(true);
@@ -94,7 +94,7 @@ describe('Common shape features', () => {
     const r = new Ray(point(0, 0, -5), vector(0, 0, 1));
     const s = new TestShape();
     s.transform = translation(5, 0, 0);
-    const xs = s.intersects(r);
+    const _xs = s.intersects(r);
 
     expect(s.localRayFromBase).not.toBeNull();
     expect(s.localRayFromBase!.origin.equals(point(-5, 0, -5))).toBe(true);

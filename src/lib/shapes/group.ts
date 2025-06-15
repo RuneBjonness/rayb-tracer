@@ -60,7 +60,7 @@ export class Group extends TransformableShape {
     return false;
   }
 
-  protected localNormalAt(p: Vector4): Vector4 {
+  protected localNormalAt(_p: Vector4): Vector4 {
     throw new Error(
       "Groups don't have normal vectors, and if this is called we have done something wrong somewhere.."
     );

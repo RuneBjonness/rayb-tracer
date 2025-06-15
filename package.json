@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "oxlint --fix",
     "build": "vite build",
     "serve": "vite preview",
     "test": "vitest --ui",
@@ -27,6 +28,7 @@
     "@vitest/coverage-v8": "^3.2.3",
     "@vitest/ui": "^3.2.3",
     "@webgpu/types": "^0.1.44",
+    "oxlint": "^1.1.0",
     "prettier": "3.3.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",

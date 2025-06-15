@@ -24,8 +24,8 @@ export class TestPattern extends Pattern {
   }
 
   protected copyCustomToArrayBuffer(
-    buffer: ArrayBufferLike,
-    offset: number
+    _buffer: ArrayBufferLike,
+    _offset: number
   ): number {
     throw new Error('Method not implemented.');
   }

@@ -318,7 +318,7 @@ const renderWebGpu = async (
   cfg: RenderConfiguration,
   sceneMode: SceneMode,
   sceneDefinition: ScenePreset | string | null,
-  onProgress: (units: number) => void
+  _onProgress: (units: number) => void
 ) => {
   console.log(`renderWebGpu(${cfg.width}X${cfg.height}) started..`);
 

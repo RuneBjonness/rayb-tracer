@@ -163,7 +163,7 @@ export class Triangle implements Shape {
     return this.parent ? this.parent.pointToWorld(p) : p.clone();
   }
 
-  divide(threshold: number): void {
+  divide(_threshold: number): void {
     return;
   }
 
@@ -182,7 +182,7 @@ export class Triangle implements Shape {
   copyToArrayBuffers(
     buffers: ObjectBuffers,
     parentIndex: number,
-    matrixOrder: MatrixOrder
+    _matrixOrder: MatrixOrder
   ): void {
     const u32view = new Uint32Array(
       buffers.trianglesArrayBuffer,

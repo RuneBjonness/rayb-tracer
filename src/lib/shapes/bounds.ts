@@ -1,5 +1,5 @@
 import { Matrix4 } from '../math/matrices';
-import { Vector4, point, vector } from '../math/vector4';
+import { Vector4, point } from '../math/vector4';
 import { Ray } from '../rays';
 
 export class Bounds {

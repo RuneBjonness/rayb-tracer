@@ -52,7 +52,7 @@ export class ImageUvPattern implements UvPattern {
     return this.pixels[x][y].clone();
   }
 
-  copyCustomToArrayBuffer(buffer: ArrayBufferLike, offset: number): void {
+  copyCustomToArrayBuffer(_buffer: ArrayBufferLike, _offset: number): void {
     // const u32view = new Uint32Array(buffer, offset, 12);
     // u32view[2] = this.width;
     // u32view[3] = this.height;

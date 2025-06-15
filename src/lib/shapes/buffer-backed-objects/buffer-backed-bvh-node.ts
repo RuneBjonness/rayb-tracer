@@ -1,4 +1,4 @@
-import { point, Vector4 } from '../../math/vector4';
+import { point } from '../../math/vector4';
 import { Ray } from '../../rays';
 import { intersectsBounds } from '../bounds';
 import { BVH_NODE_BYTE_SIZE } from '../object-buffers';

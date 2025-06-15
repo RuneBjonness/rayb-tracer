@@ -84,7 +84,7 @@ export class CsgShape extends TransformableShape {
     return false;
   }
 
-  protected localNormalAt(p: Vector4): Vector4 {
+  protected localNormalAt(_p: Vector4): Vector4 {
     throw new Error(
       "CSG Shapes don't have normal vectors, and if this is called we have done something wrong somewhere.."
     );
@@ -92,8 +92,7 @@ export class CsgShape extends TransformableShape {
 
   private includes(s1: Shape, s2: Shape): boolean {
     if (s1.isGroup()) {
-      const self = this;
-      return s1.shapes.some((s) => self.includes(s, s2));
+      return s1.shapes.some((s) => this.includes(s, s2));
     }
     if (s1.isCsgShape()) {
       return this.includes(s1.left, s2) || this.includes(s1.right, s2);

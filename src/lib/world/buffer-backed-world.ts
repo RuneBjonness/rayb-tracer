@@ -70,10 +70,8 @@ export class BufferBackedWorld {
     const point = r.position(hit.time);
     const eyev = r.direction.clone().negate();
     const normalv = this.normalAt(point, hit);
-    let inside = false;
 
     if (normalv.dot(eyev) < 0) {
-      inside = true;
       normalv.negate();
     }
     const adjustv = normalv.clone().scale(EPSILON);

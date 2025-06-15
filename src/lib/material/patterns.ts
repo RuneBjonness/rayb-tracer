@@ -260,7 +260,7 @@ export class BlendedPatterns extends Pattern {
   colorAt(shape: Shape, p: Vector4): Color {
     return this.a.colorAt(shape, p).add(this.b.colorAt(shape, p));
   }
-  protected localColorAt(p: Vector4): Color {
+  protected localColorAt(_p: Vector4): Color {
     // Not used in overriden colorAt()
     return new Color(0, 0, 0);
   }
