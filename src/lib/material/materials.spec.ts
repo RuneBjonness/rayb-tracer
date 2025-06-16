@@ -4,8 +4,8 @@ import { lighting, material } from './materials';
 import { StripePattern } from './patterns';
 import { TransformableSphere } from '../shapes/primitives/sphere';
 import { Color } from '../math/color';
-import { defaultWorld } from '../world/world.spec';
 import { point, vector } from '../math/vector4';
+import { defaultWorld } from '../../test/test-world';
 
 test('the default material', () => {
   const m = material();

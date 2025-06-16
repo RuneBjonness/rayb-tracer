@@ -1,74 +1,18 @@
 import { describe, expect, test } from 'vitest';
-import { BufferBackedWorld } from './buffer-backed-world';
 import { World } from './world';
 import { PointLight } from '../lights/lights';
-import { point, vector, Vector4 } from '../math/vector4';
+import { point, vector } from '../math/vector4';
 import { Color } from '../math/color';
-import { Material, material } from '../material/materials';
+import { material } from '../material/materials';
 import { TransformableSphere } from '../shapes/primitives/sphere';
-import { scaling, translation } from '../math/transformations';
-import { toLightsArrayBuffer } from '../lights/lights-buffer';
-import { MatrixOrder } from '../math/matrices';
-import { toObjectBuffers } from '../shapes/object-buffers';
+import { translation } from '../math/transformations';
 import { Ray } from '../rays';
-import { toMaterialsArrayBuffer } from '../material/materials-buffer';
-import { defaultWorld, defaultWorldMaterials } from './world.spec';
 import { Plane } from '../shapes/primitives/plane';
-
-export function defaultBufferBackedWorld(
-  lightPosition?: Vector4
-): BufferBackedWorld {
-  const w = new World();
-  w.lights.push(
-    new PointLight(lightPosition ?? point(-10, 10, -10), new Color(1, 1, 1))
-  );
-
-  const mats = defaultWorldMaterials();
-
-  const s1 = new TransformableSphere();
-  s1.materialDefinitions = mats;
-  s1.materialIdx = 1;
-  w.objects.push(s1);
-
-  const s2 = new TransformableSphere();
-  s2.materialDefinitions = mats;
-  s2.materialIdx = 0;
-  s2.transform = scaling(0.5, 0.5, 0.5);
-  w.objects.push(s2);
-
-  const objectBuffers = toObjectBuffers(w.objects, true, MatrixOrder.RowMajor);
-  const lightsBuffer = toLightsArrayBuffer(w.lights, true);
-  const materialsBuffer = toMaterialsArrayBuffer(mats, true);
-
-  const bufferBackedWorld = new BufferBackedWorld(
-    lightsBuffer,
-    objectBuffers,
-    materialsBuffer,
-    new ArrayBuffer(0),
-    new ArrayBuffer(0)
-  );
-
-  return bufferBackedWorld;
-}
-
-export function customBufferBackedWorld(
-  w: World,
-  mats: Material[]
-): BufferBackedWorld {
-  const objectBuffers = toObjectBuffers(w.objects, true, MatrixOrder.RowMajor);
-  const lightsBuffer = toLightsArrayBuffer(w.lights, true);
-  const materialsBuffer = toMaterialsArrayBuffer(mats, true);
-
-  const bufferBackedWorld = new BufferBackedWorld(
-    lightsBuffer,
-    objectBuffers,
-    materialsBuffer,
-    new ArrayBuffer(0),
-    new ArrayBuffer(0)
-  );
-
-  return bufferBackedWorld;
-}
+import {
+  defaultBufferBackedWorld,
+  customBufferBackedWorld,
+} from '../../test/test-buffer-backed-world';
+import { defaultWorld, defaultWorldMaterials } from '../../test/test-world';
 
 describe('buffer-backed world', () => {
   test('intersections for all objects in world', () => {

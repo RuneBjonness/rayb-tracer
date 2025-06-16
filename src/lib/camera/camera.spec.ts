@@ -4,7 +4,7 @@ import { Color } from '../math/color';
 import { Matrix4 } from '../math/matrices';
 import { rotationY, translation, viewTransform } from '../math/transformations';
 import { point, vector } from '../math/vector4';
-import { defaultWorld } from '../world/world.spec';
+import { defaultWorld } from '../../test/test-world';
 
 test('creating a Camera', () => {
   const c = new Camera(160, 120, Math.PI / 2);
@@ -66,7 +66,7 @@ test('rendering a world with a camera', () => {
   );
 });
 
-test('a camera with default aperture will construct 1 ray per pixel ', () => {
+test('a camera with default aperture will construct 1 ray per pixel', () => {
   const c = new Camera(201, 101, Math.PI / 2);
   const rays = c.raysForPixel(100, 50);
 

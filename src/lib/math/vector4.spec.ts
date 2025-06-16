@@ -2,13 +2,13 @@ import { expect, test } from 'vitest';
 import { Matrix4 } from './matrices';
 import { Vector4, point, vector } from './vector4';
 
-test('two vectors are equal if no values have a difference greater than 0.00001 ', () => {
+test('two vectors are equal if no values have a difference greater than 0.00001', () => {
   const v1 = new Vector4(1, -1.00001, 0, 1);
   const v2 = new Vector4(1, -1.000019, 0, 1);
   expect(v1.equals(v2)).toBe(true);
 });
 
-test('two vectors are not equal if any value has a difference greater than 0.00001 ', () => {
+test('two vectors are not equal if any value has a difference greater than 0.00001', () => {
   const v1 = new Vector4(1, -1.0, 0, 1);
   const v2 = new Vector4(1, -1.00002, 0, 1);
   expect(v1.equals(v2)).toBe(false);

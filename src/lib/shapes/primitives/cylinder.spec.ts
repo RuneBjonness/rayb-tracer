@@ -98,7 +98,7 @@ describe('Cylinders', () => {
     ${point(0, 2, 0)}   | ${vector(0, 1, 0)}
     ${point(0.5, 2, 0)} | ${vector(0, 1, 0)}
     ${point(0, 2, 0.5)} | ${vector(0, 1, 0)}
-  `("the normal vector on a cylinder's end caps ", ({ point, normal }) => {
+  `("the normal vector on a cylinder's end caps", ({ point, normal }) => {
     const c = new Cylinder(1, 2, true);
     const n = c.normalAt(point);
 

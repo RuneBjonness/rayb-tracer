@@ -9,14 +9,14 @@ test('colors are (red, green, blue) tuples', () => {
   expect(b).toBe(1.7);
 });
 
-test('two colors are equal if no values have a difference greater than 0.00001 ', () => {
+test('two colors are equal if no values have a difference greater than 0.00001', () => {
   const c1: Color = new Color(1, 0.00001, 0);
   const c2: Color = new Color(1, 0.000019, 0);
 
   expect(c1.equals(c2)).toBe(true);
 });
 
-test('two tuples are not equal if any value has a difference greater than 0.00001 ', () => {
+test('two tuples are not equal if any value has a difference greater than 0.00001', () => {
   const c1: Color = new Color(1, 0.00001, 0);
   const c2: Color = new Color(1, 0.00003, 0);
 

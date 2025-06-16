@@ -2,41 +2,15 @@ import { expect, test } from 'vitest';
 import { World } from './world';
 import { PointLight } from '../lights/lights';
 import { Color } from '../math/color';
-import { scaling, translation } from '../math/transformations';
+import { translation } from '../math/transformations';
 import { Ray } from '../rays';
 import { intersection, prepareComputations } from '../intersections';
 import { Plane } from '../shapes/primitives/plane';
 import { TransformableSphere } from '../shapes/primitives/sphere';
 import { point, vector } from '../math/vector4';
-import { Material, material } from '../material/materials';
-import { TestPattern } from '../material/patterns.spec';
-
-export function defaultWorldMaterials(): Material[] {
-  const mat = material();
-  mat.color = new Color(0.8, 1.0, 0.6);
-  mat.diffuse = 0.7;
-  mat.specular = 0.2;
-
-  return [material(), mat];
-}
-export function defaultWorld(): World {
-  const w = new World();
-  w.lights.push(new PointLight(point(-10, 10, -10), new Color(1, 1, 1)));
-
-  const mats = defaultWorldMaterials();
-
-  const s1 = new TransformableSphere();
-  s1.materialDefinitions = mats;
-  s1.materialIdx = 1;
-  w.objects.push(s1);
-
-  const s2 = new TransformableSphere();
-  s2.materialDefinitions = mats;
-  s2.materialIdx = 0;
-  s2.transform = scaling(0.5, 0.5, 0.5);
-  w.objects.push(s2);
-  return w;
-}
+import { material } from '../material/materials';
+import { defaultWorld } from '../../test/test-world';
+import { TestPattern } from '../../test/test-pattern';
 
 test('creating a world', () => {
   const w = new World();

@@ -9,28 +9,9 @@ import {
 } from '../math/transformations';
 import { Group } from './group';
 import { TransformableSphere } from './primitives/sphere';
-import { Vector4, point, vector } from '../math/vector4';
+import { point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
-import { Intersection } from '../intersections';
-import { TransformableShape } from './transformable-shape';
-
-export class TestShape extends TransformableShape {
-  localRayFromBase: Ray | null = null;
-
-  protected localIntersects(r: Ray): Intersection[] {
-    this.localRayFromBase = r;
-    return [];
-  }
-
-  protected localHits(r: Ray, _maxDistance: number): boolean {
-    this.localRayFromBase = r;
-    return false;
-  }
-
-  protected localNormalAt(p: Vector4): Vector4 {
-    return vector(p.x, p.y, p.z);
-  }
-}
+import { TestShape } from '../../test/test-shape';
 
 describe('Common shape features', () => {
   test('the default transformation', () => {

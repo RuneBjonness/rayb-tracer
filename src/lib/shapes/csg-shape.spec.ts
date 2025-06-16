@@ -7,10 +7,10 @@ import { Group } from './group';
 import { Cube } from './primitives/cube';
 import { Cylinder } from './primitives/cylinder';
 import { TransformableSphere } from './primitives/sphere';
-import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Cone } from './primitives/cone';
 import { ShapeType } from './shape';
+import { TestShape } from '../../test/test-shape';
 
 describe('CSG Shapes', () => {
   test('CSG is created with an operation and two shapes', () => {

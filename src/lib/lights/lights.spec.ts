@@ -7,8 +7,8 @@ import {
   translation,
 } from '../math/transformations';
 import { Color } from '../math/color';
-import { defaultWorld } from '../world/world.spec';
 import { point } from '../math/vector4';
+import { defaultWorld } from '../../test/test-world';
 
 describe('point-light', () => {
   test('a point light has a single sample position and intensity', () => {
@@ -159,7 +159,7 @@ describe('photon-mapping: point-light', () => {
     expect(photons[3].direction.equals(photons[4].direction)).not.toBe(true);
   });
 
-  test('the intesity of a point light is evenly distributed on all emitted photons ', () => {
+  test('the intesity of a point light is evenly distributed on all emitted photons', () => {
     expect(
       photons
         .map((p) => p.power)
@@ -200,7 +200,7 @@ describe('photon-mapping: area-light', () => {
     expect(photons.map((x) => x.direction.y).every((y) => y < 0)).toBe(true);
   });
 
-  test('the intesity of an area light is evenly distributed on all emitted photons ', () => {
+  test('the intesity of an area light is evenly distributed on all emitted photons', () => {
     expect(
       photons
         .map((p) => p.power)

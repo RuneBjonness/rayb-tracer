@@ -4,7 +4,7 @@ import { point } from '../math/vector4';
 import { PointLight } from './lights';
 import { toLightsArrayBuffer } from './lights-buffer';
 import { bufferBackedLightArray } from './buffer-backed-light';
-import { defaultBufferBackedWorld } from '../world/buffer-backed-world.spec';
+import { defaultBufferBackedWorld } from '../../test/test-buffer-backed-world';
 
 describe('buffer-backed point-light', () => {
   test('a point light has a single sample position and intensity', () => {

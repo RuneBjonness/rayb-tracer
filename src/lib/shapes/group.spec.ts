@@ -4,11 +4,11 @@ import { translation, scaling, rotationY } from '../math/transformations';
 import { Group } from './group';
 import { Cylinder } from './primitives/cylinder';
 import { TransformableSphere } from './primitives/sphere';
-import { TestShape } from './transformable-shape.spec';
 import { point, vector } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
 import { Cube } from './primitives/cube';
 import { ShapeType } from './shape';
+import { TestShape } from '../../test/test-shape';
 
 describe('Groups', () => {
   test('creating a new group', () => {

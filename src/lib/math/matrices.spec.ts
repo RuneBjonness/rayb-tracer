@@ -20,7 +20,7 @@ test('constructing and inspecting a 4x4 matrix', () => {
   expect(m.elements[14]).toBe(15.5);
 });
 
-test('two matrices are equal if no values have a difference greater than 0.00001 ', () => {
+test('two matrices are equal if no values have a difference greater than 0.00001', () => {
   // prettier-ignore
   const m1 = new Matrix4([
     1, 2, 3, 4,
@@ -39,7 +39,7 @@ test('two matrices are equal if no values have a difference greater than 0.00001
   expect(m1.equals(m2)).toBe(true);
 });
 
-test('two matrices are not equal if any value has a difference greater than 0.00001 ', () => {
+test('two matrices are not equal if any value has a difference greater than 0.00001', () => {
   // prettier-ignore
   const m1 = new Matrix4([
     1, 2, 3, 4,

@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest';
 import {
   Checkers3dPattern,
   GradientPattern,
-  Pattern,
   RadialGradientPattern,
   RingPattern,
   SolidPattern,
@@ -11,21 +10,9 @@ import {
 import { TransformableSphere } from '../shapes/primitives/sphere';
 import { scaling, translation } from '../math/transformations';
 import { Color } from '../math/color';
-import { Vector4, point } from '../math/vector4';
+import { point } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
-
-export class TestPattern extends Pattern {
-  protected localColorAt(p: Vector4): Color {
-    return new Color(p.x, p.y, p.z);
-  }
-
-  protected copyCustomToArrayBuffer(
-    _buffer: ArrayBufferLike,
-    _offset: number
-  ): number {
-    throw new Error('Method not implemented.');
-  }
-}
+import { TestPattern } from '../../test/test-pattern';
 
 describe('Common pattern features', () => {
   test('the default transformation', () => {
@@ -187,7 +174,7 @@ describe('Solid pattern', () => {
   const s = new TransformableSphere();
 
   test('any point should return the specified color', () => {
-    expect(p.colorAt(s, point(0, 0, 0)).equals(white));
-    expect(p.colorAt(s, point(-0.7, 10, 0.33)).equals(white));
+    expect(p.colorAt(s, point(0, 0, 0)).equals(white)).toBeTruthy();
+    expect(p.colorAt(s, point(-0.7, 10, 0.33)).equals(white)).toBeTruthy();
   });
 });

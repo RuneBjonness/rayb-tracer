@@ -1,4 +1,10 @@
 {
+  "plugins": [
+    "oxc",
+    "typescript",
+    "unicorn",
+    "vitest"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
