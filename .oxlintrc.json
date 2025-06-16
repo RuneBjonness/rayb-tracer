@@ -3,6 +3,8 @@
     "oxc",
     "typescript",
     "unicorn",
+    "import",
+    "promise",
     "vitest"
   ],
   "categories": {

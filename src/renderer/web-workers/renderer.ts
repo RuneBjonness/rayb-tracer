@@ -1,7 +1,6 @@
 import { RenderConfiguration, RenderMode } from '../configuration';
 import { SceneMode } from '../../scenes/scene';
 import { ScenePreset } from '../../scenes/scene-preset';
-import RenderWorker from './renderer-worker?worker';
 
 type CanvasPart = {
   x: number;
@@ -60,7 +59,11 @@ const renderWebWorkers = async (
 
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
     if (workerPool.length <= i) {
-      workerPool.push(new RenderWorker());
+      workerPool.push(
+        new Worker(new URL('./renderer-worker.js', import.meta.url), {
+          type: 'module',
+        })
+      );
     }
   }
   const canvasParts = createRenderPartList(cfg, true);

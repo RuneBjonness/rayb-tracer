@@ -8,8 +8,7 @@ import {
   Divider,
 } from '@mui/material';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
-import { useState } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 
 type ResolutionSelectorProps = {
   onSetResolution: (width: number, height: number) => void;

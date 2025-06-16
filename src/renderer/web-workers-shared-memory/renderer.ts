@@ -1,7 +1,6 @@
 import { RenderConfiguration, RenderMode } from '../configuration';
 import { Scene, SceneMode } from '../../scenes/scene';
 import { loadScene, ScenePreset } from '../../scenes/scene-preset';
-import RenderWorker from './renderer-worker?worker';
 import { MatrixOrder } from '../../lib/math/matrices';
 
 type CanvasPart = {
@@ -62,7 +61,11 @@ const renderWebWorkersSharedMemory = async (
 
   for (let i = 0; i < cfg.numberOfWorkers; i++) {
     if (workerPool.length <= i) {
-      workerPool.push(new RenderWorker());
+      workerPool.push(
+        new Worker(new URL('./renderer-worker.js', import.meta.url), {
+          type: 'module',
+        })
+      );
     }
   }
   const canvasParts = createRenderPartList(cfg, true);
