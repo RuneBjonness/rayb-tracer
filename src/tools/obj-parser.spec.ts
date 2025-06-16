@@ -141,14 +141,14 @@ f 1 3 4`;
 test('parsing vertex normal vectors', () => {
   const objData = `
 vn 0 0 1
-vn 0.707 0 -0.707
+vn 0.123 0 -0.123
 vn 1 2 3`;
 
   const parser = new ObjParser();
   parser.parse(objData);
 
   expect(parser.normals[0]).toEqual(vector(0, 0, 1));
-  expect(parser.normals[1]).toEqual(vector(0.707, 0, -0.707));
+  expect(parser.normals[1]).toEqual(vector(0.123, 0, -0.123));
   expect(parser.normals[2]).toEqual(vector(1, 2, 3));
 });
 

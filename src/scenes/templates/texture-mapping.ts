@@ -69,7 +69,7 @@ export const textureMappingScene: SceneDefinition = {
       {
         type: { type: 'cylinder', minimum: 0, maximum: 0.625 },
         transform: [
-          ['scale', 1.25, 1.25 * 3.1415, 1.25],
+          ['scale', 1.25, 1.25 * Math.PI, 1.25],
           ['translate', -1.75, 0, 2.5],
         ],
         material: {

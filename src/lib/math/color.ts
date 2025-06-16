@@ -1,3 +1,5 @@
+import { equals } from './common';
+
 export class Color {
   constructor(
     public r: number,
@@ -10,11 +12,7 @@ export class Color {
   }
 
   public equals(c: Color): boolean {
-    const eq = function (a: number, b: number): boolean {
-      return Math.abs(a - b) < 0.00001 || (Number.isNaN(a) && Number.isNaN(b));
-    };
-
-    return eq(this.r, c.r) && eq(this.g, c.g) && eq(this.b, c.b);
+    return equals(this.r, c.r) && equals(this.g, c.g) && equals(this.b, c.b);
   }
 
   public add(c: Color): Color {

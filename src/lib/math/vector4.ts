@@ -1,3 +1,4 @@
+import { equals } from './common';
 import { Matrix4 } from './matrices';
 
 export class Vector4 {
@@ -13,12 +14,11 @@ export class Vector4 {
   }
 
   public equals(v: Vector4): boolean {
-    const eq = function (a: number, b: number): boolean {
-      return Math.abs(a - b) < 0.00001 || (Number.isNaN(a) && Number.isNaN(b));
-    };
-
     return (
-      eq(this.x, v.x) && eq(this.y, v.y) && eq(this.z, v.z) && eq(this.w, v.w)
+      equals(this.x, v.x) &&
+      equals(this.y, v.y) &&
+      equals(this.z, v.z) &&
+      equals(this.w, v.w)
     );
   }
 

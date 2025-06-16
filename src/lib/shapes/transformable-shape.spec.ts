@@ -17,10 +17,6 @@ import { TransformableShape } from './transformable-shape';
 export class TestShape extends TransformableShape {
   localRayFromBase: Ray | null = null;
 
-  constructor() {
-    super();
-  }
-
   protected localIntersects(r: Ray): Intersection[] {
     this.localRayFromBase = r;
     return [];
@@ -104,8 +100,8 @@ describe('Common shape features', () => {
   test('computing the normal on a translated shape', () => {
     const s = new TestShape();
     s.transform = translation(0, 1, 0);
-    const n = s.normalAt(point(0, 1.70711, -0.70711));
-    expect(n.equals(vector(0, 0.70711, -0.70711))).toBe(true);
+    const n = s.normalAt(point(0, 1.70711, -Math.SQRT1_2));
+    expect(n.equals(vector(0, Math.SQRT1_2, -Math.SQRT1_2))).toBe(true);
   });
 
   test('computing the normal on a transformed shape', () => {

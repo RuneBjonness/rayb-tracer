@@ -14,8 +14,6 @@ export class ObjParser {
 
   private activeGroup: Group | null = null;
 
-  constructor() {}
-
   parse(data: string): Group {
     data.split('\n').forEach((cmd) => this.parseLine(cmd));
     if (this.activeGroup?.shapes.length) {

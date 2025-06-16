@@ -1,3 +1,4 @@
+import { equals } from './common';
 import {
   rotationX,
   rotationY,
@@ -167,12 +168,8 @@ export class Matrix4 {
   }
 
   public equals(m: Matrix4): boolean {
-    const eq = function (a: number, b: number): boolean {
-      return Math.abs(a - b) < 0.00001;
-    };
-
     for (let i = 0; i < 16; i++) {
-      if (!eq(this.elements[i], m.elements[i])) {
+      if (!equals(this.elements[i], m.elements[i])) {
         return false;
       }
     }

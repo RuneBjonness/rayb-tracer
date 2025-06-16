@@ -15,10 +15,6 @@ import { Vector4, point } from '../math/vector4';
 import { Matrix4 } from '../math/matrices';
 
 export class TestPattern extends Pattern {
-  constructor() {
-    super();
-  }
-
   protected localColorAt(p: Vector4): Color {
     return new Color(p.x, p.y, p.z);
   }
@@ -179,7 +175,9 @@ describe('Radial Gradient pattern', () => {
     expect(p.colorAt(s, point(0.75, 0, 0))).toEqual(
       new Color(0.25, 0.25, 0.25)
     );
-    expect(p.colorAt(s, point(0.707107, 0, 0.707107)).equals(white)).toBe(true);
+    expect(
+      p.colorAt(s, point(Math.SQRT1_2, 0, Math.SQRT1_2)).equals(white)
+    ).toBe(true);
   });
 });
 

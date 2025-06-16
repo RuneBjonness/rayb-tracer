@@ -24,13 +24,13 @@ describe('uv-patterns', () => {
 
   test.each`
     u      | v      | result
-    ${0.0} | ${0.0} | ${black}
+    ${0.0} | ${0.0} | ${red}
     ${0.3} | ${0.0} | ${gray}
     ${0.3} | ${0.6} | ${gray}
     ${1.0} | ${1.0} | ${white}
   `('Image pattern in 2D', ({ u, v, result }) => {
     const canvas = new Canvas(10, 10);
-    canvas.setColor(0, 9, black);
+    canvas.setColor(0, 9, red);
     canvas.setColor(3, 9, gray);
     canvas.setColor(3, 4, gray);
     canvas.setColor(9, 0, white);

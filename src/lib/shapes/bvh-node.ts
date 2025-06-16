@@ -18,8 +18,6 @@ export class BvhNode implements Intersectable {
   shapes: Shape[] = [];
   bounds: Bounds = Bounds.empty();
 
-  constructor() {}
-
   isLeafNode(): boolean {
     return this.bvhNodes.length === 0;
   }
