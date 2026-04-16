@@ -1,16 +1,9 @@
 {
-  "plugins": [
-    "oxc",
-    "typescript",
-    "unicorn",
-    "import",
-    "promise",
-    "vitest"
-  ],
+  "plugins": ["oxc", "typescript", "unicorn", "import", "promise", "vitest"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
-    "perf":"warn"
+    "perf": "warn"
   },
   "rules": {
     "unicorn/require-post-message-target-origin": "off",
