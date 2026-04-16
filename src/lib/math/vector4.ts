@@ -93,8 +93,11 @@ export class Vector4 {
   }
 
   public reflect(normal: Vector4): Vector4 {
-    const n = normal.clone();
-    return this.subtract(n.scale(2 * this.dot(n)));
+    const d = 2 * this.dot(normal);
+    this.x -= d * normal.x;
+    this.y -= d * normal.y;
+    this.z -= d * normal.z;
+    return this;
   }
 
   // prettier-ignore
