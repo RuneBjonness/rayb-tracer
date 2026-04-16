@@ -13,6 +13,14 @@ export class Vector4 {
     return new Vector4(this.x, this.y, this.z, this.w);
   }
 
+  public setFrom(v: Vector4): Vector4 {
+    this.x = v.x;
+    this.y = v.y;
+    this.z = v.z;
+    this.w = v.w;
+    return this;
+  }
+
   public equals(v: Vector4): boolean {
     return (
       equals(this.x, v.x) &&

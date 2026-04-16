@@ -17,6 +17,20 @@ import {
 import { Pattern } from '../material/patterns';
 import { Shape, ShapeType } from './shape';
 
+const scratchRays: Ray[] = [];
+let scratchDepth = 0;
+
+function acquireScratchRay(): Ray {
+  if (scratchDepth >= scratchRays.length) {
+    scratchRays.push(new Ray(new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0)));
+  }
+  return scratchRays[scratchDepth++];
+}
+
+function releaseScratchRay(): void {
+  scratchDepth--;
+}
+
 export abstract class TransformableShape implements Shape {
   private _transform: Matrix4;
   public get transform() {
@@ -72,10 +86,11 @@ export abstract class TransformableShape implements Shape {
     r: Ray,
     accumulatedIntersections: Intersection[] = []
   ): Intersection[] {
-    return this.localIntersects(
-      r.clone().transform(this.invTransform),
-      accumulatedIntersections
-    );
+    const ray = acquireScratchRay();
+    r.transformInto(this.invTransform, ray);
+    const result = this.localIntersects(ray, accumulatedIntersections);
+    releaseScratchRay();
+    return result;
   }
   protected abstract localIntersects(
     r: Ray,
@@ -83,7 +98,11 @@ export abstract class TransformableShape implements Shape {
   ): Intersection[];
 
   hits(r: Ray, maxDistance: number): boolean {
-    return this.localHits(r.clone().transform(this.invTransform), maxDistance);
+    const ray = acquireScratchRay();
+    r.transformInto(this.invTransform, ray);
+    const result = this.localHits(ray, maxDistance);
+    releaseScratchRay();
+    return result;
   }
   protected abstract localHits(r: Ray, maxDistance: number): boolean;
 

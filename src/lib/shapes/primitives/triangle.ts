@@ -11,6 +11,9 @@ import { ObjectBuffers, TRIANGLE_BYTE_SIZE } from '../object-buffers';
 import { Pattern } from '../../material/patterns';
 import { MatrixOrder } from '../../math/matrices';
 
+const _dirCrossE2 = new Vector4(0, 0, 0, 0);
+const _p1ToOrigin = new Vector4(0, 0, 0, 0);
+
 export class Triangle implements Shape {
   readonly e1: Vector4;
   readonly e2: Vector4;
@@ -78,57 +81,57 @@ export class Triangle implements Shape {
     r: Ray,
     accumulatedIntersections: Intersection[] = []
   ): Intersection[] {
-    const dirCrossE2 = r.direction.clone().cross(this.e2);
-    const det = this.e1.dot(dirCrossE2);
+    _dirCrossE2.setFrom(r.direction).cross(this.e2);
+    const det = this.e1.dot(_dirCrossE2);
 
     if (Math.abs(det) < 0.00001) {
       return accumulatedIntersections;
     }
 
     const f = 1 / det;
-    const p1ToOrigin = r.origin.clone().subtract(this.p1);
-    const u = f * p1ToOrigin.dot(dirCrossE2);
+    _p1ToOrigin.setFrom(r.origin).subtract(this.p1);
+    const u = f * _p1ToOrigin.dot(_dirCrossE2);
 
     if (u < 0 || u > 1) {
       return accumulatedIntersections;
     }
 
-    p1ToOrigin.cross(this.e1);
-    const v = f * r.direction.dot(p1ToOrigin);
+    _p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(_p1ToOrigin);
 
     if (v < 0 || u + v > 1) {
       return accumulatedIntersections;
     }
 
-    const t = f * this.e2.dot(p1ToOrigin);
+    const t = f * this.e2.dot(_p1ToOrigin);
     accumulatedIntersections.push(intersection(t, this, u, v));
     return accumulatedIntersections;
   }
 
   hits(r: Ray, maxDistance: number): boolean {
-    const dirCrossE2 = r.direction.clone().cross(this.e2);
-    const det = this.e1.dot(dirCrossE2);
+    _dirCrossE2.setFrom(r.direction).cross(this.e2);
+    const det = this.e1.dot(_dirCrossE2);
 
     if (Math.abs(det) < 0.00001) {
       return false;
     }
 
     const f = 1 / det;
-    const p1ToOrigin = r.origin.clone().subtract(this.p1);
-    const u = f * p1ToOrigin.dot(dirCrossE2);
+    _p1ToOrigin.setFrom(r.origin).subtract(this.p1);
+    const u = f * _p1ToOrigin.dot(_dirCrossE2);
 
     if (u < 0 || u > 1) {
       return false;
     }
 
-    p1ToOrigin.cross(this.e1);
-    const v = f * r.direction.dot(p1ToOrigin);
+    _p1ToOrigin.cross(this.e1);
+    const v = f * r.direction.dot(_p1ToOrigin);
 
     if (v < 0 || u + v > 1) {
       return false;
     }
 
-    const t = f * this.e2.dot(p1ToOrigin);
+    const t = f * this.e2.dot(_p1ToOrigin);
     return t >= 0 && t <= maxDistance;
   }
 
@@ -141,12 +144,13 @@ export class Triangle implements Shape {
       return vector(0, 0, 0);
     }
 
-    const localNormal = this.n2
-      .clone()
-      .scale(i.u)
-      .add(this.n3.clone().scale(i.v))
-      .add(this.n1.clone().scale(1 - i.u - i.v))
-      .normalize();
+    const w = 1 - i.u - i.v;
+    const localNormal = new Vector4(
+      this.n2.x * i.u + this.n3.x * i.v + this.n1.x * w,
+      this.n2.y * i.u + this.n3.y * i.v + this.n1.y * w,
+      this.n2.z * i.u + this.n3.z * i.v + this.n1.z * w,
+      0
+    ).normalize();
 
     return this.normalToWorld(localNormal);
   }

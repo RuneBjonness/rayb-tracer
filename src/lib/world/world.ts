@@ -13,6 +13,8 @@ import { Color } from '../math/color';
 import { lighting } from '../material/materials';
 import { vector, Vector4 } from '../math/vector4';
 
+const _shadowVec = new Vector4(0, 0, 0, 0);
+
 export class World {
   objects: Shape[] = [];
   lights: Light[] = [];
@@ -103,10 +105,13 @@ export class World {
   }
 
   isShadowed(p: Vector4, lightPosition: Vector4): boolean {
-    const v = lightPosition.clone().subtract(p);
-    const distance = v.magnitude();
-    const direction = v.scale(1 / distance);
-    return this.hitsAny(new Ray(p, direction), distance);
+    _shadowVec.x = lightPosition.x - p.x;
+    _shadowVec.y = lightPosition.y - p.y;
+    _shadowVec.z = lightPosition.z - p.z;
+    _shadowVec.w = 0;
+    const distance = _shadowVec.magnitude();
+    _shadowVec.scale(1 / distance);
+    return this.hitsAny(new Ray(p, _shadowVec), distance);
   }
 
   reflectedColor(comps: IntersectionComputations, maxDepth: number = 4): Color {

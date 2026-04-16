@@ -15,6 +15,12 @@ export class Ray {
     return this.direction.clone().scale(time).add(this.origin);
   }
 
+  public transformInto(m: Matrix4, out: Ray): Ray {
+    out.origin.setFrom(this.origin).applyMatrix(m);
+    out.direction.setFrom(this.direction).applyMatrix(m);
+    return out;
+  }
+
   public transform(m: Matrix4): Ray {
     this.origin.applyMatrix(m);
     this.direction.applyMatrix(m);

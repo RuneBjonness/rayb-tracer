@@ -51,7 +51,7 @@ export function prepareComputations(
     t: i.time,
     object: i.object,
     point: p,
-    eyev: r.direction.clone().negate(),
+    eyev: new Vector4(-r.direction.x, -r.direction.y, -r.direction.z, 0),
     normalv: i.object.normalAt(p, i),
     inside: false,
     overPoint: p.clone(),
